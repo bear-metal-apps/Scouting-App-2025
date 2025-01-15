@@ -53,7 +53,7 @@ actual fun TeleMenu (
     Column(
         Modifier
             .padding(20.dp)
-            .fillMaxWidth()
+            .fillMaxSize()
             .verticalScroll(state = scrollState, enabled = isScrollEnabled.value)
     ){
         Row(modifier = Modifier.fillMaxWidth()) {
@@ -71,7 +71,7 @@ actual fun TeleMenu (
                         "L4 missed",
                         teleLFourMissed,
                         alignment = Alignment.CenterEnd,
-                        modifier = Modifier.fillMaxWidth(1 / 2f)
+                        modifier = Modifier.fillMaxWidth()
                     )
                 }
                 Row(modifier = Modifier.fillMaxWidth()) {
@@ -85,13 +85,13 @@ actual fun TeleMenu (
                         "L3 scored",
                         teleLThree,
                         alignment = Alignment.CenterEnd,
-                        modifier = Modifier.fillMaxWidth(3 / 8f)
+                        modifier = Modifier.fillMaxWidth(1 / 2f)
                     )
                     EnumerableValue(
                         "L3 missed",
                         teleLThreeMissed,
                         alignment = Alignment.CenterEnd,
-                        modifier = Modifier.fillMaxWidth(3 / 8f)
+                        modifier = Modifier.fillMaxWidth()
                     )
                 }
                 Row(modifier = Modifier.fillMaxWidth()) {
@@ -105,13 +105,13 @@ actual fun TeleMenu (
                         "L2 scored",
                         teleLTwo,
                         alignment = Alignment.CenterEnd,
-                        modifier = Modifier.fillMaxWidth(3 / 8f)
+                        modifier = Modifier.fillMaxWidth(1 / 2f)
                     )
                     EnumerableValue(
                         "L2 missed",
                         teleLTwoMissed,
                         alignment = Alignment.CenterEnd,
-                        modifier = Modifier.fillMaxWidth(3 / 8f)
+                        modifier = Modifier.fillMaxWidth()
                     )
                 }
                 Row(modifier = Modifier.fillMaxWidth()) {
@@ -125,7 +125,7 @@ actual fun TeleMenu (
                         "L1 missed",
                         teleLOneMissed,
                         alignment = Alignment.CenterEnd,
-                        modifier = Modifier.fillMaxWidth(1 / 2f)
+                        modifier = Modifier.fillMaxWidth()
                     )
                 }
                 EnumerableValue(
@@ -135,7 +135,7 @@ actual fun TeleMenu (
                     modifier = Modifier.fillMaxWidth()
                 )
             }
-            Column(modifier = Modifier.fillMaxWidth(1 / 4f)) {
+            Column(modifier = Modifier.fillMaxSize()) {
                 EnumerableValue(
                     label = "Net Scored",
                     value =  teleNet,
@@ -145,7 +145,7 @@ actual fun TeleMenu (
                     label = "Net Missed",
                     value =  teleNetMissed,
                     alignment = Alignment.BottomCenter,
-                    modifier = Modifier.fillMaxWidth().fillMaxHeight(1/2f))
+                    modifier = Modifier.fillMaxWidth().fillMaxHeight())
             }
         }
         OutlinedButton(
