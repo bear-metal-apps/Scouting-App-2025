@@ -258,6 +258,26 @@ actual class MainMenu actual constructor(
             OutlinedButton(
                 border = BorderStroke(3.dp, Color.Yellow),
                 shape = RoundedCornerShape(25.dp),
+                contentPadding = PaddingValues(horizontal = 80.dp, vertical = 5.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
+                onClick = {
+                    backStack.push(RootNode.NavTarget.StratScreen)
+                },
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(horizontal = 50.dp, vertical = 50.dp),
+
+                ) {
+                Text(
+                    text = "Strat-Scouting",
+                    color = getCurrentTheme().onPrimary,
+                    fontSize = 35.sp
+                )
+            }
+
+            OutlinedButton(
+                border = BorderStroke(3.dp, Color.Yellow),
+                shape = RoundedCornerShape(25.dp),
                 contentPadding = PaddingValues(horizontal = 10.dp, vertical = 15.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
                 onClick = {
