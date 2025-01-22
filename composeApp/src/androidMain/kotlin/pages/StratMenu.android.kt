@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bumble.appyx.components.backstack.BackStack
@@ -34,6 +35,8 @@ import com.bumble.appyx.components.backstack.operation.pop
 import com.bumble.appyx.components.backstack.operation.push
 import com.bumble.appyx.interactions.core.model.progress.Draggable
 import composables.CheckBox
+import composables.DraggableList
+import composables.DraggableText
 //import composables.AutoCheckboxesHorizontal
 //import composables.AutoCheckboxesVertical
 import composables.EnumerableValueAuto
@@ -68,31 +71,9 @@ actual fun StratMenu(
                     }
                 }
         )
-//        DraggableText("Team 1", IntRange(0,1500), Color.Red)
-//        DraggableText("Team 2", IntRange(0,1000),Color.Red)
-        DraggableText("Team 3", 0..200,Color.Red)
+            DraggableList(true)
+
     }
 }
 
-@Composable
-fun DraggableText(label: String,range: IntRange,color : Color): Int{
-    var offsetY by remember { mutableStateOf(0f) }
-    Text(
-        modifier = Modifier
-            .offset { IntOffset(0, offsetY.roundToInt()) }
-            .background(color)
-            .draggable(
-                orientation = Orientation.Vertical,
-                state = rememberDraggableState { delta ->
-                    if (offsetY > range.first && offsetY < range.last){
-                        offsetY += delta
-                        if (!(offsetY > range.first && offsetY < range.last))
-                            offsetY -= delta
-                        println(offsetY)
-                    }
-                }
-            ),
-        text = label
-    )
-    return offsetY.roundToInt()
-}
+
