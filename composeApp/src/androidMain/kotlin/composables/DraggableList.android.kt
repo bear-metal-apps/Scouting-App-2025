@@ -33,9 +33,9 @@ actual fun DraggableList(redAliance: Boolean) {
     }
     var locations = intArrayOf(1,2,3);
 
-    DraggableText("Team 1", 0..1000, color, 1/3f, locations,1)
-    DraggableText("Team 2", 0..1000,color2, 1/3f, locations,2)
-    DraggableText("Team 3", 0..1000,color3,1/3f, locations,3)
+    DraggableText("Team 1", 0..900, color, 1/8f, locations,1)
+    DraggableText("Team 2", 0..900,color2, 1/8f, locations,2)
+    DraggableText("Team 3", 0..900,color3,1/8f, locations,3)
 }
 @Composable
 fun DraggableText(label: String, range: IntRange, color : Color, fillAmount : Float, intArray : IntArray, team: Int) {
@@ -75,13 +75,13 @@ fun DraggableText(label: String, range: IntRange, color : Color, fillAmount : Fl
                         if (!(offsetY >= range.first && offsetY <= range.last))
                             offsetY -= delta
                     }
-//                    if(offsetY != range.last/2f|| offsetY != range.last/6f || offsetY != (range.last*5)/6f ){
-//                        when(intArray.indexOf(team)){
-//                            0 -> offsetY = range.last/6f
-//                            1 -> offsetY = range.last/2f
-//                            2 -> offsetY = (range.last*5)/6f
-//                        }
-//                    }
+                    if(offsetY == range.last/2f || offsetY == range.last/6f || offsetY == (range.last*5)/6f ){
+                        when(intArray.indexOf(team)){
+                            0 -> offsetY = range.last/6f
+                            1 -> offsetY = range.last/2f
+                            2 -> offsetY = (range.last*5)/6f
+                        }
+                    }
                 }
             )
             .fillMaxHeight(fillAmount),
