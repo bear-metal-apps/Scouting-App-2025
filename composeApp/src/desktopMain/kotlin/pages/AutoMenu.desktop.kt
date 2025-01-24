@@ -204,3 +204,13 @@ actual fun AutoMenu (
         }
     }
 }
+
+@Composable
+actual fun AutoMenu(
+    backStack: BackStack<AutoTeleSelectorNode.NavTarget>,
+    mainMenuBackStack: BackStack<RootNode.NavTarget>,
+    match: MutableState<String>,
+    team: MutableIntState,
+    robotStartPosition: MutableIntState
+) {
+}

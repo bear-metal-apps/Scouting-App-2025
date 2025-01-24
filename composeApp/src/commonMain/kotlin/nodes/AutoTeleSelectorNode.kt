@@ -13,7 +13,11 @@ import com.bumble.appyx.navigation.node.Node
 import com.bumble.appyx.navigation.node.ParentNode
 import com.bumble.appyx.utils.multiplatform.Parcelable
 import com.bumble.appyx.utils.multiplatform.Parcelize
-import pages.AutoTeleSelectorMenu
+import org.bridj.util.Tuple
+import pages.AutoTeleSelectorMenuTop
+import pages.AutoTeleSelectorMenuBottom
+import java.util.Stack
+import javax.swing.undo.UndoManager
 
 class AutoTeleSelectorNode(
     buildContext: BuildContext,
@@ -31,8 +35,7 @@ class AutoTeleSelectorNode(
     appyxComponent = backStack,
     buildContext = buildContext
 ) {
-    private val selectAuto = mutableStateOf(false)
-
+    private val selectAuto = mutableStateOf("Auto")
 
     sealed class NavTarget : Parcelable {
         @Parcelize
@@ -47,24 +50,27 @@ class AutoTeleSelectorNode(
 
     override fun resolve(interactionTarget: NavTarget, buildContext: BuildContext): Node =
         when (interactionTarget) {
-            NavTarget.AutoScouting -> AutoNode(buildContext, backStack, mainMenuBackStack, selectAuto, match, team, robotStartPosition)
-            NavTarget.TeleScouting -> TeleNode(buildContext, backStack, mainMenuBackStack, selectAuto, match, team, robotStartPosition)
-            NavTarget.EndGameScouting -> EndgameNode(buildContext,backStack, mainMenuBackStack, selectAuto, match, team, robotStartPosition )
+            NavTarget.AutoScouting -> AutoNode(buildContext, backStack, mainMenuBackStack, match, team, robotStartPosition)
+            NavTarget.TeleScouting -> TeleNode(buildContext, backStack, mainMenuBackStack, match, team, robotStartPosition)
+            NavTarget.EndGameScouting -> EndgameNode(buildContext,backStack, mainMenuBackStack, match, team, robotStartPosition )
         }
 
     @Composable
     override fun View(modifier: Modifier) {
         Column {
-            AutoTeleSelectorMenu(match, team, robotStartPosition, selectAuto, backStack, mainMenuBackStack)
+            AutoTeleSelectorMenuTop(match, team, robotStartPosition)
             AppyxComponent(
                 appyxComponent = backStack,
-                modifier = Modifier.weight(0.9f)
+                modifier = Modifier.weight(0.9f),
             )
+            AutoTeleSelectorMenuBottom(robotStartPosition,team,selectAuto,backStack,mainMenuBackStack)
         }
     }
 }
 
 
+var undoList = Stack<Array<Any>>()
+var redoList = Stack<Array<Any>>()
 
 val match = mutableStateOf("1")
 val teleNet = mutableIntStateOf(0)

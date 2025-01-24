@@ -33,24 +33,12 @@ import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
 actual fun AutoMenu(
     backStack: BackStack<AutoTeleSelectorNode.NavTarget>,
     mainMenuBackStack: BackStack<RootNode.NavTarget>,
-
-    selectAuto: MutableState<Boolean>,
-
     match: MutableState<String>,
     team: MutableIntState,
     robotStartPosition: MutableIntState
 ) {
 
     val context = LocalContext.current
-    fun bob() {
-        mainMenuBackStack.pop()
-        matchScoutArray.putIfAbsent(robotStartPosition.intValue, HashMap())
-        matchScoutArray[robotStartPosition.intValue]?.set(
-            Integer.parseInt(match.value),
-            createOutput(team, robotStartPosition)
-        )
-        exportScoutData(context)
-    }
 
     val scrollState = rememberScrollState(0)
     val isScrollEnabled = remember { mutableStateOf(true) }
@@ -302,46 +290,5 @@ actual fun AutoMenu(
             }
 
         }
-
-        Row (
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth()
-        ) {
-
-            OutlinedButton(
-                border = BorderStroke(2.dp, color = Color.Yellow),
-                shape = CircleShape,
-                colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
-                onClick = {
-                    backStack.push(AutoTeleSelectorNode.NavTarget.EndGameScouting)
-                    selectAuto.value = true
-                },
-                modifier = Modifier
-            ) {
-                Text(
-                    text = "EndGame",
-                    color = Color.Yellow,
-                    fontSize = 35.sp
-                )
-            }
-
-            OutlinedButton(
-                border = BorderStroke(2.dp, color = Color.Yellow),
-                shape = CircleShape,
-                colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
-                onClick = {
-                    bob()
-                },
-                modifier = Modifier
-            ) {
-                Text(
-                    text = "Back",
-                    color = Color.Yellow
-                )
-            }
-
-        }
-
     }
 }

@@ -16,8 +16,6 @@ buildContext: BuildContext,
 private val backStack: BackStack<AutoTeleSelectorNode.NavTarget>,
 private val mainMenuBackStack: BackStack<RootNode.NavTarget>,
 
-private val selectAuto: MutableState<Boolean>,
-
 private val match: MutableState<String>,
 private val team: MutableIntState,
 private val robotStartPosition: MutableIntState,
@@ -28,8 +26,6 @@ private val robotStartPosition: MutableIntState,
         EndGameMenu(
             backStack,
             mainMenuBackStack,
-
-            selectAuto,
 
             match,
             team,

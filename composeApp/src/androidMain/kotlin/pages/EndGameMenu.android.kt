@@ -28,11 +28,11 @@ import setTeam
 import java.lang.Integer.parseInt
 
 
+
 @Composable
 actual fun EndGameMenu(
     backStack: BackStack<AutoTeleSelectorNode.NavTarget>,
     mainMenuBackStack: BackStack<RootNode.NavTarget>,
-    selectAuto: MutableState<Boolean>,
     match: MutableState<String>,
     team: MutableIntState,
     robotStartPosition: MutableIntState
@@ -64,44 +64,5 @@ actual fun EndGameMenu(
             }
             Comments(teleNotes)
             Spacer(Modifier.height(4.dp))
-            OutlinedButton(
-                border = BorderStroke(3.dp, Color.Yellow),
-                shape = RoundedCornerShape(25.dp),
-                contentPadding = PaddingValues(horizontal = 10.dp, vertical = 15.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
-                onClick = {
-                    matchScoutArray.putIfAbsent(robotStartPosition.intValue, HashMap())
-                    matchScoutArray[robotStartPosition.intValue]?.set(
-                        parseInt(match.value),
-                        createOutput(team, robotStartPosition)
-                    )
-                    match.value = (parseInt(match.value) + 1).toString()
-                    reset()
-                    teleNotes.value = ""
-                    selectAuto.value = false
-                    exportScoutData(context)
-                    loadData(parseInt(match.value), team, robotStartPosition)
-                    backStack.pop()
-                    setTeam(team,match,robotStartPosition.intValue)
-                },
-                modifier = Modifier.align(Alignment.CenterHorizontally).padding(top = 10.dp)
-            ) {
-                Text("Next Match", fontSize = 20.sp)
-            }
-
-            OutlinedButton(
-                border = BorderStroke(2.dp, color = Color.Yellow),
-                shape = CircleShape,
-                colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
-                onClick = {
-                    bob()
-                },
-                modifier = Modifier.align(Alignment.End)
-            ) {
-                Text(
-                    text = "Back",
-                    color = Color.Yellow
-                )
-            }
         }
 }

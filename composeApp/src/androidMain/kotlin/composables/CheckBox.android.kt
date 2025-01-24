@@ -23,6 +23,8 @@ import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.unit.dp
 import defaultPrimaryVariant
 import getCurrentTheme
+import nodes.redoList
+import nodes.undoList
 
 @Composable
 actual fun CheckBox(
@@ -45,6 +47,7 @@ actual fun CheckBox(
         shape = RoundedCornerShape(0.dp),
         colors = ButtonDefaults.buttonColors(containerColor = backgroundColor.value),
         onClick = {
+            undoList.push(arrayOf("tristate", ifChecked, ifChecked.value, backgroundColor, backgroundColor.value, textColor, textColor.value))
             ifChecked.value = getNewState(ifChecked.value)
 
             if(ifChecked.value == ToggleableState.On) {

@@ -11,7 +11,6 @@ import nodes.RootNode
 actual fun EndGameMenu(
     backStack: BackStack<AutoTeleSelectorNode.NavTarget>,
     mainMenuBackStack: BackStack<RootNode.NavTarget>,
-    selectAuto: MutableState<Boolean>,
     match: MutableState<String>,
     team: MutableIntState,
     robotStartPosition: MutableIntState
