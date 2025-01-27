@@ -7,12 +7,19 @@ import com.bumble.appyx.components.backstack.BackStack
 import nodes.AutoTeleSelectorNode
 import nodes.RootNode
 
+
 @Composable
-expect fun AutoTeleSelectorMenu(
+expect fun AutoTeleSelectorMenuTop(
     match: MutableState<String>,
     team: MutableIntState,
     robotStartPosition: MutableIntState,
-    selectAuto: MutableState<Boolean>,
+)
+
+@Composable
+expect fun AutoTeleSelectorMenuBottom(
+    robotStartPosition: MutableIntState,
+    team: MutableIntState,
+    selectPage: MutableState<String>,
     backStack: BackStack<AutoTeleSelectorNode.NavTarget>,
     mainMenuBackStack: BackStack<RootNode.NavTarget>
 )

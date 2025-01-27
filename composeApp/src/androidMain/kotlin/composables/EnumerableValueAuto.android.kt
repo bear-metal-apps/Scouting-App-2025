@@ -16,6 +16,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.sp
 import getCurrentTheme
+import nodes.redoList
+import nodes.undoList
+import org.bridj.util.Tuple
 
 @Composable
 actual fun EnumerableValueAuto(
@@ -29,7 +32,9 @@ actual fun EnumerableValueAuto(
         border = BorderStroke(2.dp, color = getCurrentTheme().primaryVariant),
         shape = RoundedCornerShape(0.dp),
         onClick = {
+            undoList.push(arrayOf("number" ,value, value.value))
             value.value += 1
+            redoList.push(arrayOf("number" ,value, value.value))
         },
         contentPadding = PaddingValues(5.dp, 5.dp),
         modifier = modifier
@@ -43,5 +48,4 @@ actual fun EnumerableValueAuto(
             )
         }
     }
-
 }

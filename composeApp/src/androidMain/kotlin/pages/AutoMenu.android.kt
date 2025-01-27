@@ -33,24 +33,12 @@ import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
 actual fun AutoMenu(
     backStack: BackStack<AutoTeleSelectorNode.NavTarget>,
     mainMenuBackStack: BackStack<RootNode.NavTarget>,
-
-    selectAuto: MutableState<Boolean>,
-
     match: MutableState<String>,
     team: MutableIntState,
     robotStartPosition: MutableIntState
 ) {
 
     val context = LocalContext.current
-    fun bob() {
-        mainMenuBackStack.pop()
-        matchScoutArray.putIfAbsent(robotStartPosition.intValue, HashMap())
-        matchScoutArray[robotStartPosition.intValue]?.set(
-            Integer.parseInt(match.value),
-            createOutput(team, robotStartPosition)
-        )
-        exportScoutData(context)
-    }
 
     val scrollState = rememberScrollState(0)
     val isScrollEnabled = remember { mutableStateOf(true) }
@@ -67,6 +55,7 @@ actual fun AutoMenu(
 
         Row (
             modifier = Modifier
+                .weight(10f)
                 .fillMaxWidth()
         ) {
 
@@ -301,6 +290,5 @@ actual fun AutoMenu(
             }
 
         }
-
     }
 }
