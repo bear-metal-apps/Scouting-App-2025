@@ -199,7 +199,7 @@ actual fun AutoTeleSelectorMenuBottom(
     backStack: BackStack<AutoTeleSelectorNode.NavTarget>,
     mainMenuBackStack: BackStack<RootNode.NavTarget>,
 ) {
-    var pageName = mutableListOf("Auto","Tele","Endgame","NextPage")
+    var pageName = mutableListOf("Auto","Tele","End","Next")
     var pageIndex by remember { mutableStateOf(0) }
     val context = LocalContext.current
     var backgroundColor = remember { mutableStateOf(Color.Black) }
@@ -262,12 +262,13 @@ actual fun AutoTeleSelectorMenuBottom(
                         redoList.push(arrayOf(action[0], action[1], getNewState((action[1] as MutableState<ToggleableState>).value), action[3], action[4], action[5], action[6]))
                     }
                 }
-            }
+            },
+            modifier = Modifier.fillMaxWidth(1/5f)
         ) {
             Text(
                 "Undo",
                 color = Color.Yellow,
-                fontSize = 35.sp
+                fontSize = 24.sp
             )
         }
         OutlinedButton(
@@ -295,12 +296,13 @@ actual fun AutoTeleSelectorMenuBottom(
                     }
                 }
 
-            }
+            },
+            modifier = Modifier.fillMaxWidth(1/4f)
         ) {
             Text(
                 "Redo",
                 color = Color.Yellow,
-                fontSize = 35.sp
+                fontSize = 24.sp
             )
         }
 
@@ -344,15 +346,45 @@ actual fun AutoTeleSelectorMenuBottom(
                 }
 
             },
-            modifier = Modifier
+            modifier = Modifier.fillMaxWidth(1/3f)
         ) {
             Text(
                 text = pageName[pageIndex+1],
                 color = Color.Yellow,
-                fontSize = 35.sp
+                fontSize = 24.sp
             )
         }
+        OutlinedButton(
+            border = BorderStroke(1.dp, color = Color.Yellow),
+            shape = RoundedCornerShape(1.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
+            onClick = {
+                backStack.pop()
 
+                if(pageIndex == 0){
+                    matchScoutArray.putIfAbsent(robotStartPosition.intValue, HashMap())
+                    matchScoutArray[robotStartPosition.intValue]?.set(
+                        parseInt(match.value),
+                        createOutput(team, robotStartPosition)
+                    )
+                    match.value = (parseInt(match.value) - 1).toString()
+                    reset()
+                    teleNotes.value = ""
+                    exportScoutData(context)
+                    loadData(parseInt(match.value), team, robotStartPosition)
+                    setTeam(team, match, robotStartPosition.intValue)
+                }else{
+                    pageIndex--
+                }
+            },
+            modifier = Modifier.fillMaxWidth(1/2f)
+        ) {
+            Text(
+                text = "Back",
+                color = Color.Yellow,
+                fontSize = 24.sp
+            )
+        }
         OutlinedButton(
             border = BorderStroke(1.dp, color = Color.Yellow),
             shape = RoundedCornerShape(1.dp),
@@ -360,12 +392,12 @@ actual fun AutoTeleSelectorMenuBottom(
             onClick = {
                 bob()
             },
-            modifier = Modifier
+            modifier = Modifier.fillMaxWidth()
         ) {
             Text(
-                text = "Back",
+                text = "Main",
                 color = Color.Yellow,
-                fontSize = 35.sp
+                fontSize = 24.sp
             )
         }
     }
