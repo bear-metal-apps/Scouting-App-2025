@@ -50,9 +50,7 @@ actual fun AutoMenu(
 //    val rotateAuto = remember { mutableStateOf(false)}
 
     Column(
-
     ){
-
         Row (
             modifier = Modifier
                 .weight(10f)
