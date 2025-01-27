@@ -7,6 +7,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -19,6 +20,7 @@ import androidx.compose.ui.unit.sp
 import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.components.backstack.operation.pop
 import composables.Cage
+import composables.CheckBox
 import composables.Comments
 import defaultSecondary
 import exportScoutData
@@ -62,6 +64,20 @@ actual fun EndGameMenu(
                 Cage("Middle", bClimb, bDeep, aClimb, cClimb, Modifier.fillMaxSize())
                 Cage("Outer Edge", cClimb, cDeep, aClimb, bClimb, Modifier.fillMaxSize())
             }
+            Row(){
+                Text(
+                    text = "Played Defense:",
+                    fontSize = 24.sp
+                )
+                Checkbox(
+                    checked = playedD.value,
+                    onCheckedChange ={
+                        playedD.value = !playedD.value
+                    },
+                    modifier = Modifier,
+                )
+            }
+
             Comments(teleNotes)
             Spacer(Modifier.height(4.dp))
         }

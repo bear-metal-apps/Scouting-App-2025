@@ -14,7 +14,6 @@ import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.unit.dp
 import getCurrentTheme
 import nodes.autoStop
-import nodes.autos
 import nodes.redoList
 import nodes.undoList
 

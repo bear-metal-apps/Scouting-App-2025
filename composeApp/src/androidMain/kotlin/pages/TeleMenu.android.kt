@@ -147,7 +147,7 @@ actual fun TeleMenu(
                 ){
                     EnumerableValue(
                         label = "Score L1",
-                        value = autoCoralLevel1Scored,
+                        value = teleLOne,
                         alignment = Alignment.CenterEnd,
                         modifier = Modifier
                             .weight(1f)
@@ -155,7 +155,7 @@ actual fun TeleMenu(
                     )
                     EnumerableValue(
                         label = "Miss L1",
-                        value = autoCoralLevel1Missed,
+                        value = teleLOneMissed,
                         alignment = Alignment.CenterEnd,
                         modifier = Modifier
                             .weight(1f)
@@ -164,7 +164,7 @@ actual fun TeleMenu(
                 }
                 EnumerableValue(
                     label = "Algae Processed",
-                    value = algaeProcessed,
+                    value = teleProcessed,
                     alignment = Alignment.CenterEnd,
                     modifier = Modifier
                         .weight(1f)
@@ -195,7 +195,13 @@ actual fun TeleMenu(
                         .weight(1f)
                         .fillMaxWidth()
                 )
-
+                CheckBox(
+                    label = "lost Comms",
+                    ifChecked = lostComms,
+                    modifier = Modifier
+                        .weight(0.25f)
+                        .fillMaxWidth()
+                )
             }
         }
     }

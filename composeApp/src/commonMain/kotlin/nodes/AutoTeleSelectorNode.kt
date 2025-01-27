@@ -87,6 +87,8 @@ val teleLFourMissed = mutableIntStateOf(0)
 val teleLThreeMissed = mutableIntStateOf(0)
 val teleLTwoMissed = mutableIntStateOf(0)
 val teleLOneMissed = mutableIntStateOf(0)
+
+var playedD = mutableStateOf(false)
 var lostComms = mutableIntStateOf(0)
 val autoStop = mutableIntStateOf(0)
 var teleNotes = mutableStateOf("")
