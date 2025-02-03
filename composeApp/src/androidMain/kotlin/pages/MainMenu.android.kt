@@ -31,6 +31,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import matchData
 import nodes.RootNode
+import nodes.client
 import nodes.match
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
@@ -321,8 +322,8 @@ actual class MainMenu actual constructor(
                 contentPadding = PaddingValues(horizontal = 10.dp, vertical = 15.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
                 onClick = {
-                    serverDialogOpen = true
-                    //deviceListOpen = true
+                    client.discoverAndConnect()
+//                    client.sendData()
                 }
             ) {
                 Text("Export")
@@ -345,37 +346,6 @@ actual class MainMenu actual constructor(
                 }
             }
             Text(tempCompKey)
-
-            if (serverDialogOpen) {
-                Dialog(
-                    onDismissRequest = {
-                        serverDialogOpen = false
-                        if (ipAddress.value.matches(Regex("^((25[0-5]|(2[0-4]|1\\d|[1-9]|)\\d)\\.?\\b){4}\$"))) {
-                            CoroutineScope(Dispatchers.Default).launch {
-                                sendData(context, ipAddress.value)
-                            }
-                        } else
-                            ipAddressErrorDialog = true
-
-                    }
-                ) {
-                    Column {
-                        Text("Set Device Address", fontSize = 24.sp)
-                        TextField(
-                            ipAddress.value,
-                            onValueChange = { ipAddress.value = it }
-                        )
-                    }
-                }
-            }
-
-            if (ipAddressErrorDialog) {
-                BasicAlertDialog(
-                    onDismissRequest = { ipAddressErrorDialog = false }
-                ) {
-                    Text("Ip Address was entered incorrectly, check address and enter again")
-                }
-            }
         }
     }
 }

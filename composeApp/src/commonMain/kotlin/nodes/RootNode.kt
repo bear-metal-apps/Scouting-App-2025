@@ -15,6 +15,7 @@ import com.bumble.appyx.navigation.node.Node
 import com.bumble.appyx.navigation.node.ParentNode
 import com.bumble.appyx.utils.multiplatform.Parcelable
 import com.bumble.appyx.utils.multiplatform.Parcelize
+import org.tahomarobotics.scouting.Client
 import pages.*
 import java.lang.Integer.parseInt
 
@@ -77,7 +78,7 @@ class RootNode(
 
 var scoutName =  mutableStateOf("")
 val matchScoutArray = HashMap<Int, HashMap<Int, String>>()
-
+val client = Client()
 
 fun loadData(match: Int, team: MutableIntState, robotStartPosition: MutableIntState){
 //    reset()
