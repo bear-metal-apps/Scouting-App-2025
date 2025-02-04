@@ -14,6 +14,7 @@ import com.bumble.appyx.navigation.node.Node
 import com.bumble.appyx.navigation.node.ParentNode
 import com.bumble.appyx.utils.multiplatform.Parcelable
 import com.bumble.appyx.utils.multiplatform.Parcelize
+import org.tahomarobotics.scouting.Client
 import pages.*
 
 
@@ -75,3 +76,4 @@ class RootNode(
 
 var scoutName =  mutableStateOf("")
 val teamDataArray : HashMap<TeamMatchKey, String> = hashMapOf<TeamMatchKey, String>()
+val client = Client()

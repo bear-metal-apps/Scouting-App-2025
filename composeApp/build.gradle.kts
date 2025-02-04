@@ -14,6 +14,13 @@ plugins {
 repositories {
     google()
     mavenCentral()
+    maven {
+        url = uri("https://maven.pkg.github.com/betterbearmetalcode/koala")
+        credentials {
+            username = System.getenv("GITHUB_USERNAME")
+            password = System.getenv("GITHUB_TOKEN")
+        }
+    }
 }
 
 kotlin {
@@ -60,6 +67,7 @@ kotlin {
             implementation(libs.json)
             implementation(libs.gson)
             implementation(libs.bumble.appyx.navigation)
+            implementation("org.tahomarobotics.scouting:koala:1.0-SNAPSHOT")
             api(libs.backstack)
         }
     }

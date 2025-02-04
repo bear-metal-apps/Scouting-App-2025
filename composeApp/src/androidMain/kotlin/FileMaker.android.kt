@@ -10,12 +10,12 @@ import nodes.teamDataArray
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
+import org.tahomarobotics.scouting.Client
 import java.io.*
 import java.net.InetSocketAddress
 import java.net.Socket
 import java.net.SocketException
 import java.nio.ByteBuffer
-
 
 fun createFile(context: Context) {
     val file = File(context.filesDir, "match_data.json")
@@ -95,7 +95,7 @@ fun deleteFile(context: Context){
     file.delete()
 }
 
-fun sendData(context: Context, ipAddress: String) {
+fun sendData(context: Context, client: Client) {
 
 //    exportScoutData(context)
 //
