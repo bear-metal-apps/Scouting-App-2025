@@ -18,13 +18,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.components.backstack.operation.pop
+import com.bumble.appyx.components.backstack.operation.push
 import composables.Cage
 import composables.Comments
 import defaultSecondary
-import exportScoutData
 import keyboardAsState
 import nodes.*
-import setTeam
 import java.lang.Integer.parseInt
 
 
@@ -42,12 +41,11 @@ actual fun EndGameMenu(
     val isKeyboardOpen by keyboardAsState()
     val context = LocalContext.current
 
-    fun bob() {
-        mainMenuBackStack.pop()
-        matchScoutArray.putIfAbsent(robotStartPosition.intValue, HashMap())
-        matchScoutArray[robotStartPosition.intValue]?.set(parseInt(match.value), createOutput(team, robotStartPosition))
-        exportScoutData(context)
-    }
+//    fun bob() {
+//        mainMenuBackStack.pop()
+//        teamDataArray[robotStartPosition.intValue]?.set(parseInt(match.value), createOutput(team, robotStartPosition))
+//        exportScoutData(context)
+//    }
 
     if(!isKeyboardOpen){
         isScrollEnabled.value = true
@@ -62,7 +60,7 @@ actual fun EndGameMenu(
                 Cage("Middle", bClimb, bDeep, aClimb, cClimb, Modifier.fillMaxSize())
                 Cage("Outer Edge", cClimb, cDeep, aClimb, bClimb, Modifier.fillMaxSize())
             }
-            Comments(teleNotes)
+            Comments(notes)
             Spacer(Modifier.height(4.dp))
             OutlinedButton(
                 border = BorderStroke(3.dp, Color.Yellow),
@@ -70,19 +68,11 @@ actual fun EndGameMenu(
                 contentPadding = PaddingValues(horizontal = 10.dp, vertical = 15.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
                 onClick = {
-                    matchScoutArray.putIfAbsent(robotStartPosition.intValue, HashMap())
-                    matchScoutArray[robotStartPosition.intValue]?.set(
-                        parseInt(match.value),
-                        createOutput(team, robotStartPosition)
-                    )
+                    teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
+                    println(teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)])
                     match.value = (parseInt(match.value) + 1).toString()
                     reset()
-                    teleNotes.value = ""
-                    selectAuto.value = false
-                    exportScoutData(context)
-                    loadData(parseInt(match.value), team, robotStartPosition)
-                    backStack.pop()
-                    setTeam(team,match,robotStartPosition.intValue)
+                    backStack.push(AutoTeleSelectorNode.NavTarget.AutoScouting)
                 },
                 modifier = Modifier.align(Alignment.CenterHorizontally).padding(top = 10.dp)
             ) {
@@ -94,7 +84,11 @@ actual fun EndGameMenu(
                 shape = CircleShape,
                 colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
                 onClick = {
-                    bob()
+                    if(parseInt(match.value) != 1) {
+                        match.value = (parseInt(match.value) - 1).toString()
+                    }
+                    loadData(parseInt(match.value), team, robotStartPosition)
+                    backStack.pop()
                 },
                 modifier = Modifier.align(Alignment.End)
             ) {

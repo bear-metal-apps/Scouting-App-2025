@@ -24,7 +24,6 @@ actual fun EnumerableValueAuto(
     alignment: Alignment,
     modifier: Modifier
 ) {
-
     OutlinedButton(
         border = BorderStroke(2.dp, color = getCurrentTheme().primaryVariant),
         shape = RoundedCornerShape(0.dp),
@@ -34,9 +33,9 @@ actual fun EnumerableValueAuto(
         contentPadding = PaddingValues(5.dp, 5.dp),
         modifier = modifier
     ) {
-        Box(modifier = Modifier.fillMaxSize()){
+        Box(modifier = Modifier.fillMaxSize()) {
             Text(
-                text = label + ": \n" + value.value.toString(),
+                text = label + ": \n" + value.intValue.toString(),
                 fontSize = 18.sp,
                 color = Color.White,
                 modifier = Modifier.align(Alignment.CenterStart)

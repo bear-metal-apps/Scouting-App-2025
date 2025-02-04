@@ -1,12 +1,9 @@
 package pages
 
-import android.graphics.Paint.Align
+import android.annotation.SuppressLint
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -19,16 +16,14 @@ import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.components.backstack.operation.pop
 import com.bumble.appyx.components.backstack.operation.push
 import composables.CheckBox
-//import composables.AutoCheckboxesHorizontal
-//import composables.AutoCheckboxesVertical
 import composables.EnumerableValueAuto
-import defaultOnPrimary
 import defaultSecondary
 import exportScoutData
 import keyboardAsState
 import nodes.*
-import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
+import java.lang.Integer.parseInt
 
+@SuppressLint("UnrememberedMutableState")
 @Composable
 actual fun AutoMenu(
     backStack: BackStack<AutoTeleSelectorNode.NavTarget>,
@@ -44,15 +39,9 @@ actual fun AutoMenu(
     val context = LocalContext.current
     fun bob() {
         mainMenuBackStack.pop()
-        matchScoutArray.putIfAbsent(robotStartPosition.intValue, HashMap())
-        matchScoutArray[robotStartPosition.intValue]?.set(
-            Integer.parseInt(match.value),
-            createOutput(team, robotStartPosition)
-        )
-        exportScoutData(context)
+        teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
     }
 
-    val scrollState = rememberScrollState(0)
     val isScrollEnabled = remember { mutableStateOf(true) }
     val isKeyboardOpen by keyboardAsState()
     if (!isKeyboardOpen) {
