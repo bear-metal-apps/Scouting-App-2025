@@ -4,7 +4,6 @@ import android.hardware.usb.UsbConstants.USB_DIR_OUT
 import android.hardware.usb.UsbManager
 import android.hardware.usb.UsbRequest
 import android.os.Build
-import android.os.Parcel
 import android.util.Log
 import androidx.annotation.RequiresApi
 import nodes.matchScoutArray
@@ -13,9 +12,6 @@ import org.json.JSONException
 import org.json.JSONObject
 import org.tahomarobotics.scouting.Client
 import java.io.*
-import java.net.InetSocketAddress
-import java.net.Socket
-import java.net.SocketException
 import java.nio.ByteBuffer
 
 fun createFile(context: Context) {
@@ -95,13 +91,15 @@ fun deleteFile(context: Context){
     file.delete()
 }
 
-fun sendData(context: Context, client: Client) {
-
+/**
+ *@param scoutingType should be "match", "strat", or "pit"
+ */
+fun sendData(context: Context, client: Client, scoutingType: String) {
     exportScoutData(context)
 
     val jsonObject = getJsonFromMatchHash()
 
-    client.sendData(jsonObject.toString(1), "match")
+    client.sendData(jsonObject.toString(1), scoutingType)
 
     Log.i("Client", "Message Sent: ${jsonObject.toString(1)}")
 }
