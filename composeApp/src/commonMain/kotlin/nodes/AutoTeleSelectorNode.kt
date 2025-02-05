@@ -161,7 +161,57 @@ fun createOutput(team: MutableIntState, robotStartPosition: MutableIntState): St
 
     notes.value = notes.value.replace(":","")
     return(
-            " {\"match\":\"${match.value}\",\n\"team\":${team.intValue.toString()},\n\"comp\":\"${compKey}\",\n\"scoutName\":\"${scoutName.value}\",\n\"robotStartPosition\":${robotStartPosition.intValue.toString()},\n\"autoFeederCollection\":${autoFeederCollection.intValue.toString()},\n\"coral3Collected\":${stateToInt(coral3Collected.value).toString()},\n\"coral2Collected\":${stateToInt(coral2Collected.value).toString()},\n\"coral1Collected\":${stateToInt(coral1Collected.value).toString()},\n\"algae3Collected\":${stateToInt(algae3Collected.value).toString()},\n\"algae2Collected\":${stateToInt(algae2Collected.value).toString()},\n\"algae1Collected\":${stateToInt(algae1Collected.value).toString()},\n\"algaeProcessed\":${algaeProcessed.intValue.toString()},\n\"algaeRemoved\":${algaeRemoved.intValue.toString()},\n\"autoCoralLevel4Scored\":${autoCoralLevel4Scored.intValue.toString()},\n\"coral3Collected\":${stateToInt(coral3Collected.value).toString()},\n\"coral2Collected\":${stateToInt(coral2Collected.value).toString()},\n\"coral1Collected\":${stateToInt(coral1Collected.value).toString()},\n\"algae3Collected\":${stateToInt(algae3Collected.value).toString()},\n\"algae2Collected\":${stateToInt(algae2Collected.value).toString()},\n\"algae1Collected\":${stateToInt(algae1Collected.value).toString()},\n\"algaeProcessed\":${algaeProcessed.intValue.toString()},\n\"algaeRemoved\":${algaeRemoved.intValue.toString()},\n\"autoCoralLevel4Scored\":${autoCoralLevel4Scored.intValue.toString()},\n\"autoCoralLevel3Scored\":${autoCoralLevel3Scored.intValue.toString()},\n\"autoCoralLevel2Scored\":${autoCoralLevel2Scored.intValue.toString()},\n\"autoCoralLevel1Scored\":${autoCoralLevel1Scored.intValue.toString()},\n\"autoCoralLevel4Missed\":${autoCoralLevel4Missed.intValue.toString()},\n\"autoCoralLevel3Missed\":${autoCoralLevel3Missed.intValue.toString()},\n\"autoCoralLevel2Missed\":${autoCoralLevel2Missed.intValue.toString()},\n\"autoCoralLevel1Missed\":${autoCoralLevel1Missed.intValue.toString()},\n\"autoNetScored\":${autoNetScored.intValue.toString()},\n\"autoNetMissed\":${autoNetMissed.intValue.toString()},\n\"autoStop\":${autoStop.intValue.toString()},\n\"teleNet\":${teleNet.intValue.toString()},\n\"teleNetMissed\":${teleNetMissed.intValue.toString()},\n\"teleLFour\":${teleLFour.intValue.toString()},\n\"teleLThree\":${teleLThree.intValue.toString()},\n\"teleLThreeAlgae\":${teleLThreeAlgae.intValue.toString()},\n\"teleLTwo\":${teleLTwo.intValue.toString()},\n\"teleLTwoAlgae\":${teleLTwoAlgae.intValue.toString()},\n\"teleLOne\":${teleLOne.intValue.toString()},\n\"teleProcessed\":${teleProcessed.intValue.toString()},\n\"teleLFourMissed\":${teleLFourMissed.intValue.toString()},\n\"teleLThreeMissed\":${teleLThreeMissed.intValue.toString()},\n\"teleLTwoMissed\":${teleLTwoMissed.intValue.toString()},\n\"teleLOneMissed\":${teleLOneMissed.intValue.toString()},\n\"lostComms\":${lostComms.intValue.toString()},\n\"playedDefense\":${playedDefense.value.toString()},\n\"aDeep\":${aDeep.value.toString()},\n\"bDeep\":${bDeep.value.toString()},\n\"cDeep\":${cDeep.value.toString()}, \"aClimb\":${stateToInt(aClimb.value).toString()},\n\"bClimb\":${stateToInt(bClimb.value).toString()},\n\"cClimb\":${stateToInt(cClimb.value).toString()},\n\"notes\":\"${notes.value.replace("\"", "\\\"")}\"}"
+            """
+            {
+                "match":${match.value},
+                "team":${team.intValue.toString()},
+                "comp":"${compKey}",
+                "scoutName":"${scoutName.value}",
+                "robotStartPosition":${robotStartPosition.intValue.toString()},
+                "autoFeederCollection":${autoFeederCollection.intValue.toString()},
+                "coral3Collected":${stateToInt(coral3Collected.value).toString()},
+                "coral2Collected":${stateToInt(coral2Collected.value).toString()},
+                "coral1Collected":${stateToInt(coral1Collected.value).toString()},
+                "algae3Collected":${stateToInt(algae3Collected.value).toString()},
+                "algae2Collected":${stateToInt(algae2Collected.value).toString()},
+                "algae1Collected":${stateToInt(algae1Collected.value).toString()},
+                "algaeProcessed":${algaeProcessed.intValue.toString()},
+                "algaeRemoved":${algaeRemoved.intValue.toString()},
+                "autoCoralLevel4Scored":${autoCoralLevel4Scored.intValue.toString()},
+                "autoCoralLevel3Scored":${autoCoralLevel3Scored.intValue.toString()},
+                "autoCoralLevel2Scored":${autoCoralLevel2Scored.intValue.toString()},
+                "autoCoralLevel1Scored":${autoCoralLevel1Scored.intValue.toString()},
+                "autoCoralLevel4Missed":${autoCoralLevel4Missed.intValue.toString()},
+                "autoCoralLevel3Missed":${autoCoralLevel3Missed.intValue.toString()},
+                "autoCoralLevel2Missed":${autoCoralLevel2Missed.intValue.toString()},
+                "autoCoralLevel1Missed":${autoCoralLevel1Missed.intValue.toString()},
+                "autoNetScored":${autoNetScored.intValue.toString()},
+                "autoNetMissed":${autoNetMissed.intValue.toString()},
+                "autoStop":${autoStop.intValue.toString()},
+                "teleNet":${teleNet.intValue.toString()},
+                "teleNetMissed":${teleNetMissed.intValue.toString()},
+                "teleLFour":${teleLFour.intValue.toString()},
+                "teleLThree":${teleLThree.intValue.toString()},
+                "teleLThreeAlgae":${teleLThreeAlgae.intValue.toString()},
+                "teleLTwo":${teleLTwo.intValue.toString()},
+                "teleLTwoAlgae":${teleLTwoAlgae.intValue.toString()},
+                "teleLOne":${teleLOne.intValue.toString()},
+                "teleProcessed":${teleProcessed.intValue.toString()},
+                "teleLFourMissed":${teleLFourMissed.intValue.toString()},
+                "teleLThreeMissed":${teleLThreeMissed.intValue.toString()},
+                "teleLTwoMissed":${teleLTwoMissed.intValue.toString()},
+                "teleLOneMissed":${teleLOneMissed.intValue.toString()},
+                "lostComms":${lostComms.intValue.toString()},
+                "playedDefense":${playedDefense.value.toString()},
+                "aDeep":${aDeep.value.toString()},
+                "bDeep":${bDeep.value.toString()},
+                "cDeep":${cDeep.value.toString()},
+                "aClimb":${stateToInt(aClimb.value).toString()},
+                "bClimb":${stateToInt(bClimb.value).toString()},
+                "cClimb":${stateToInt(cClimb.value).toString()},
+                "notes":"${notes.value}"
+            }
+            """.trimIndent()
     )
 }
 
@@ -181,6 +231,8 @@ fun loadData(match: Int, team: MutableIntState, robotStartPosition: MutableIntSt
 
     val list : MutableList<String> =
         ((teamDataArray[TeamMatchKey(match, team.value)]?.split("\n"))?.toMutableList()?: createOutput(team, robotStartPosition).split("\n").toMutableList()).toMutableList()
+
+    println(list)
 
     list.withIndex().forEach { (index, it) ->
         var firstIndex: Int
