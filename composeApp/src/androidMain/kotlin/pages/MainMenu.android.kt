@@ -322,8 +322,19 @@ actual class MainMenu actual constructor(
                 contentPadding = PaddingValues(horizontal = 10.dp, vertical = 15.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
                 onClick = {
-                    client.discoverAndConnect()
-//                    client.sendData()
+                    val scope = CoroutineScope(Dispatchers.Default)
+                    if(!client.isConnected){
+                        scope.launch {
+                            client.discoverAndConnect()
+                        }
+                    }
+                    scope.launch {
+                        sendData(
+                            context = context,
+                            client = TODO(),
+                            scoutingType = "match"
+                        )
+                    }
                 }
             ) {
                 Text("Export")

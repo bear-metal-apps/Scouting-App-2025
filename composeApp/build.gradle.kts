@@ -27,7 +27,7 @@ kotlin {
     androidTarget {
         compilations.all {
             kotlinOptions {
-                jvmTarget = "1.8"
+                jvmTarget = "21"
             }
         }
     }
@@ -67,7 +67,7 @@ kotlin {
             implementation(libs.json)
             implementation(libs.gson)
             implementation(libs.bumble.appyx.navigation)
-            implementation("org.tahomarobotics.scouting:koala:1.0-SNAPSHOT")
+            implementation(libs.koala)
             api(libs.backstack)
         }
     }
@@ -99,6 +99,9 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
             excludes += "/META-INF/LICENSE.md"
             excludes += "/META-INF/NOTICE.md"
+            excludes += "/META-INF/INDEX.LIST"
+            excludes += "/META-INF/native-image/native-image.properties"
+            excludes += "/META-INF/native-image/reflect-config.json"
             pickFirst("META-INF/NOTICE.md")
         }
 
@@ -109,8 +112,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
 }
 dependencies {

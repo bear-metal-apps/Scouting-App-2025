@@ -12,9 +12,6 @@ import org.json.JSONException
 import org.json.JSONObject
 import org.tahomarobotics.scouting.Client
 import java.io.*
-import java.net.InetSocketAddress
-import java.net.Socket
-import java.net.SocketException
 import java.nio.ByteBuffer
 
 fun createFile(context: Context) {
@@ -95,27 +92,17 @@ fun deleteFile(context: Context){
     file.delete()
 }
 
-fun sendData(context: Context, client: Client) {
+/**
+ *@param scoutingType should be "match", "strat", or "pit"
+ */
+fun sendData(context: Context, client: Client, scoutingType: String) {
+    exportScoutData(context)
 
-//    exportScoutData(context)
-//
-//    val jsonObject = getJsonFromMatchHash()
-//    val socket = Socket()
-//    try {
-//        socket.connect(InetSocketAddress(ipAddress, 45482), 5000)
-//        socket.getOutputStream().writer().use { writer ->
-//            writer.write(jsonObject.toString(1) + "\n")
-//            writer.flush() // Ensure data is sent immediately
-//        }
-//
-//        Log.i("Client", "Message Sent: ${jsonObject.toString(1)}")
-//    } catch (e: IOException) {
-//        e.printStackTrace()
-//    } catch (_: SocketException) {
-//
-//    } finally {
-//        socket.close()
-//    }
+    val jsonObject = getJsonFromMatchHash()
+
+    client.sendData(jsonObject.toString(1), scoutingType)
+
+    Log.i("Client", "Message Sent: ${jsonObject.toString(1)}")
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
