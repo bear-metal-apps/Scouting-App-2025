@@ -36,6 +36,7 @@ import nodes.match
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import org.json.JSONException
+import org.tahomarobotics.scouting.Client
 import sendData
 import sendDataUSB
 import setTeam
@@ -323,15 +324,21 @@ actual class MainMenu actual constructor(
                 colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
                 onClick = {
                     val scope = CoroutineScope(Dispatchers.Default)
-                    if(!client.isConnected){
-                        scope.launch {
-                            client.discoverAndConnect()
+                    scope.launch {
+                        if (client == null)
+                            client = Client()
+
+                        if (!client!!.isConnected) {
+                            client!!.discoverAndConnect()
                         }
                     }
                     scope.launch {
+                        while (client == null || client?.isConnected != true) {
+
+                        }
                         sendData(
                             context = context,
-                            client = TODO(),
+                            client = client!!,
                             scoutingType = "match"
                         )
                     }
