@@ -13,6 +13,7 @@ import com.bumble.appyx.navigation.node.Node
 import com.bumble.appyx.navigation.node.ParentNode
 import com.bumble.appyx.utils.multiplatform.Parcelable
 import com.bumble.appyx.utils.multiplatform.Parcelize
+import com.google.gson.JsonObject
 import compKey
 import pages.AutoTeleSelectorMenu
 import java.lang.Integer.parseInt
@@ -158,61 +159,58 @@ fun createOutput(team: MutableIntState, robotStartPosition: MutableIntState): St
     }
 
     if (notes.value.isEmpty()){ notes.value = "No Comments"}
-
     notes.value = notes.value.replace(":","")
-    return(
-            """
-            {
-                "match":${match.value},
-                "team":${team.intValue},
-                "comp":"$compKey",
-                "scoutName":"${scoutName.value}",
-                "robotStartPosition":${robotStartPosition.intValue},
-                "autoFeederCollection":${autoFeederCollection.intValue},
-                "coral3Collected":${stateToInt(coral3Collected.value)},
-                "coral2Collected":${stateToInt(coral2Collected.value)},
-                "coral1Collected":${stateToInt(coral1Collected.value)},
-                "algae3Collected":${stateToInt(algae3Collected.value)},
-                "algae2Collected":${stateToInt(algae2Collected.value)},
-                "algae1Collected":${stateToInt(algae1Collected.value)},
-                "algaeProcessed":${algaeProcessed.intValue},
-                "algaeRemoved":${algaeRemoved.intValue},
-                "autoCoralLevel4Scored":${autoCoralLevel4Scored.intValue},
-                "autoCoralLevel3Scored":${autoCoralLevel3Scored.intValue},
-                "autoCoralLevel2Scored":${autoCoralLevel2Scored.intValue},
-                "autoCoralLevel1Scored":${autoCoralLevel1Scored.intValue},
-                "autoCoralLevel4Missed":${autoCoralLevel4Missed.intValue},
-                "autoCoralLevel3Missed":${autoCoralLevel3Missed.intValue},
-                "autoCoralLevel2Missed":${autoCoralLevel2Missed.intValue},
-                "autoCoralLevel1Missed":${autoCoralLevel1Missed.intValue},
-                "autoNetScored":${autoNetScored.intValue},
-                "autoNetMissed":${autoNetMissed.intValue},
-                "autoStop":${autoStop.intValue},
-                "teleNet":${teleNet.intValue},
-                "teleNetMissed":${teleNetMissed.intValue},
-                "teleLFour":${teleLFour.intValue},
-                "teleLThree":${teleLThree.intValue},
-                "teleLThreeAlgae":${teleLThreeAlgae.intValue},
-                "teleLTwo":${teleLTwo.intValue},
-                "teleLTwoAlgae":${teleLTwoAlgae.intValue},
-                "teleLOne":${teleLOne.intValue},
-                "teleProcessed":${teleProcessed.intValue},
-                "teleLFourMissed":${teleLFourMissed.intValue},
-                "teleLThreeMissed":${teleLThreeMissed.intValue},
-                "teleLTwoMissed":${teleLTwoMissed.intValue},
-                "teleLOneMissed":${teleLOneMissed.intValue},
-                "lostComms":${lostComms.intValue},
-                "playedDefense":${playedDefense.value},
-                "aDeep":${aDeep.value},
-                "bDeep":${bDeep.value},
-                "cDeep":${cDeep.value},
-                "aClimb":${stateToInt(aClimb.value)},
-                "bClimb":${stateToInt(bClimb.value)},
-                "cClimb":${stateToInt(cClimb.value)},
-                "notes":"${notes.value}"
+    
+    val jsonObject = JsonObject().apply {
+        addProperty("match", match.value)
+        addProperty("team", team.intValue)
+        addProperty("comp", compKey)
+        addProperty("scoutName", scoutName.value)
+        addProperty("robotStartPosition", robotStartPosition.intValue)
+        addProperty("autoFeederCollection", autoFeederCollection.intValue)
+        addProperty("coral3Collected", stateToInt(coral3Collected.value))
+        addProperty("coral2Collected", stateToInt(coral2Collected.value))
+        addProperty("coral1Collected", stateToInt(coral1Collected.value))
+        addProperty("algae3Collected", stateToInt(algae3Collected.value))
+        addProperty("algae2Collected", stateToInt(algae2Collected.value))
+        addProperty("algae1Collected", stateToInt(algae1Collected.value))
+        addProperty("algaeProcessed", algaeProcessed.intValue)
+        addProperty("algaeRemoved", algaeRemoved.intValue)
+        addProperty("autoCoralLevel4Scored", autoCoralLevel4Scored.intValue)
+        addProperty("autoCoralLevel3Scored", autoCoralLevel3Scored.intValue)
+        addProperty("autoCoralLevel2Scored", autoCoralLevel2Scored.intValue)
+        addProperty("autoCoralLevel1Scored", autoCoralLevel1Scored.intValue)
+        addProperty("autoCoralLevel4Missed", autoCoralLevel4Missed.intValue)
+        addProperty("autoCoralLevel3Missed", autoCoralLevel3Missed.intValue)
+        addProperty("autoCoralLevel2Missed", autoCoralLevel2Missed.intValue)
+        addProperty("autoCoralLevel1Missed", autoCoralLevel1Missed.intValue)
+        addProperty("autoNetScored", autoNetScored.intValue)
+        addProperty("autoNetMissed", autoNetMissed.intValue)
+        addProperty("autoStop", autoStop.intValue)
+        addProperty("teleNet", teleNet.intValue)
+        addProperty("teleNetMissed", teleNetMissed.intValue)
+        addProperty("teleLFour", teleLFour.intValue)
+        addProperty("teleLThree", teleLThree.intValue)
+        addProperty("teleLThreeAlgae", teleLThreeAlgae.intValue)
+        addProperty("teleLTwo", teleLTwo.intValue)
+        addProperty("teleLTwoAlgae", teleLTwoAlgae.intValue)
+        addProperty("teleLOne", teleLOne.intValue)
+        addProperty("teleProcessed", teleProcessed.intValue)
+        addProperty("teleLFourMissed", teleLFourMissed.intValue)
+        addProperty("teleLThreeMissed", teleLThreeMissed.intValue)
+        addProperty("teleLTwoMissed", teleLTwoMissed.intValue)
+        addProperty("teleLOneMissed", teleLOneMissed.intValue)
+        addProperty("lostComms", lostComms.intValue)
+        addProperty("playedDefense", playedDefense.value)
+        addProperty("aDeep", aDeep.value)
+        addProperty("bDeep", bDeep.value)
+        addProperty("cDeep", cDeep.value)
+        addProperty("aClimb", stateToInt(aClimb.value))
+        addProperty("bClimb", stateToInt(bClimb.value))
+        addProperty("cClimb", stateToInt(cClimb.value))
+        addProperty("notes", notes.value)
             }
-            """.trimIndent()
-    )
+    return jsonObject.toString()
 }
 
 fun loadData(match: Int, team: MutableIntState, robotStartPosition: MutableIntState) {
