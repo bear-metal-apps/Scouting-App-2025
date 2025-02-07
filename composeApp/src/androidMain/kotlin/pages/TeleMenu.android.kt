@@ -24,15 +24,13 @@ import nodes.*
 import java.lang.Integer.parseInt
 
 @Composable
-actual fun TeleMenu (
+actual fun TeleMenu(
     backStack: BackStack<AutoTeleSelectorNode.NavTarget>,
     mainMenuBackStack: BackStack<RootNode.NavTarget>,
-
-    selectAuto: MutableState<Boolean>,
-
     match: MutableState<String>,
+
     team: MutableIntState,
-    robotStartPosition: MutableIntState,
+    robotStartPosition: MutableIntState
 ) {
     val scrollState = rememberScrollState(0)
     val isScrollEnabled = remember { mutableStateOf(true) }
@@ -144,37 +142,6 @@ actual fun TeleMenu (
                     value = teleNetMissed,
                     alignment = Alignment.BottomCenter,
                     modifier = Modifier.fillMaxWidth().fillMaxHeight(1 / 2f)
-                )
-            }
-            OutlinedButton(
-                border = BorderStroke(2.dp, color = Color.Yellow),
-                shape = CircleShape,
-                colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
-                onClick = {
-                    backStack.push(AutoTeleSelectorNode.NavTarget.EndGameScouting)
-                    selectAuto.value = true
-                },
-                modifier = Modifier
-            ) {
-                Text(
-                    text = "EndGame",
-                    color = Color.Yellow,
-                    fontSize = 35.sp
-                )
-            }
-
-            OutlinedButton(
-                border = BorderStroke(2.dp, color = Color.Yellow),
-                shape = CircleShape,
-                colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
-                onClick = {
-                    bob()
-                },
-                modifier = Modifier
-            ) {
-                Text(
-                    text = "Back",
-                    color = Color.Yellow
                 )
             }
         }

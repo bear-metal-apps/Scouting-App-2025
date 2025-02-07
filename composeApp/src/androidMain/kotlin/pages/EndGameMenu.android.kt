@@ -27,25 +27,24 @@ import nodes.*
 import java.lang.Integer.parseInt
 
 
+
 @Composable
 actual fun EndGameMenu(
     backStack: BackStack<AutoTeleSelectorNode.NavTarget>,
     mainMenuBackStack: BackStack<RootNode.NavTarget>,
-    selectAuto: MutableState<Boolean>,
     match: MutableState<String>,
     team: MutableIntState,
     robotStartPosition: MutableIntState
 ) {
-    val scrollState = rememberScrollState(0)
+    rememberScrollState(0)
     val isScrollEnabled = remember{ mutableStateOf(true) }
     val isKeyboardOpen by keyboardAsState()
     val context = LocalContext.current
 
-//    fun bob() {
-//        mainMenuBackStack.pop()
-//        teamDataArray[robotStartPosition.intValue]?.set(parseInt(match.value), createOutput(team, robotStartPosition))
-//        exportScoutData(context)
-//    }
+    fun bob() {
+        mainMenuBackStack.pop()
+        teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
+    }
 
     if(!isKeyboardOpen){
         isScrollEnabled.value = true

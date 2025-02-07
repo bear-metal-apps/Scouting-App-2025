@@ -28,9 +28,6 @@ import java.lang.Integer.parseInt
 actual fun AutoMenu(
     backStack: BackStack<AutoTeleSelectorNode.NavTarget>,
     mainMenuBackStack: BackStack<RootNode.NavTarget>,
-
-    selectAuto: MutableState<Boolean>,
-
     match: MutableState<String>,
     team: MutableIntState,
     robotStartPosition: MutableIntState
@@ -291,46 +288,5 @@ actual fun AutoMenu(
             }
 
         }
-
-        Row (
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth()
-        ) {
-
-            OutlinedButton(
-                border = BorderStroke(2.dp, color = Color.Yellow),
-                shape = CircleShape,
-                colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
-                onClick = {
-                    backStack.push(AutoTeleSelectorNode.NavTarget.EndGameScouting)
-                    selectAuto.value = true
-                },
-                modifier = Modifier
-            ) {
-                Text(
-                    text = "EndGame",
-                    color = Color.Yellow,
-                    fontSize = 35.sp
-                )
-            }
-
-            OutlinedButton(
-                border = BorderStroke(2.dp, color = Color.Yellow),
-                shape = CircleShape,
-                colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
-                onClick = {
-                    bob()
-                },
-                modifier = Modifier
-            ) {
-                Text(
-                    text = "Back",
-                    color = Color.Yellow
-                )
-            }
-
-        }
-
     }
 }
