@@ -12,6 +12,8 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bumble.appyx.components.backstack.BackStack
+import com.bumble.appyx.components.backstack.operation.pop
+import composables.InternetErrorAlert
 import defaultPrimaryVariant
 import exportScoutData
 import getCurrentTheme
@@ -36,12 +38,12 @@ actual fun AutoTeleSelectorMenu(
     var teamNumAsText by remember { mutableStateOf(team.intValue.toString()) }
 
     when {
-//        openError.value -> {
-//            InternetErrorAlert {
-//                openError.value = false
-//                mainMenuBackStack.pop()
-//            }
-//        }
+        openError.value -> {
+            InternetErrorAlert {
+                openError.value = false
+                mainMenuBackStack.pop()
+            }
+        }
     }
 
     when (robotStartPosition.intValue){
@@ -106,7 +108,7 @@ actual fun AutoTeleSelectorMenu(
                 ),
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
-//                    .padding(horizontal = 25.dp)
+                    .padding(horizontal = 25.dp)
                     .width(125.dp),
                 textStyle = TextStyle.Default.copy(fontSize = 31.sp),
                 singleLine = true,
@@ -130,16 +132,16 @@ actual fun AutoTeleSelectorMenu(
                 onValueChange = { value ->
                     val temp = value.filter { it.isDigit() }
                     match.value = temp.slice(0..<temp.length.coerceAtMost(5))
-//                    if (match.value != "") {
-//                        loadData(parseInt(nodes.match.value), team, robotStartPosition)
-//                        teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
-//                        exportScoutData(context)
-//                    }
-//                    try {
-//                        setTeam(team, nodes.match, robotStartPosition.intValue)
-//                    } catch (e: JSONException) {
-//                        openError.value = true
-//                    }
+                    if (match.value != "") {
+                        loadData(parseInt(nodes.match.value), team, robotStartPosition)
+                        teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
+                        exportScoutData(context)
+                    }
+                    try {
+                        setTeam(team, nodes.match, robotStartPosition.intValue)
+                    } catch (e: JSONException) {
+                        openError.value = true
+                    }
                     teamNumAsText = team.intValue.toString()
                 },
                 modifier = Modifier.fillMaxWidth(),

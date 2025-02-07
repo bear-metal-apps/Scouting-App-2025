@@ -322,7 +322,7 @@ actual class MainMenu actual constructor(
                 colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
                 onClick = {
                     serverDialogOpen = true
-                    //deviceListOpen = true
+//                    deviceListOpen = true
                 }
             ) {
                 Text("Export")

@@ -39,10 +39,10 @@ actual fun LoginMenu(
     var deleteData by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val tbaMatches = listOf(
-        "2024wabon",
-        "2024wasam",
-        "2024orsal",
-        "2024pncmp",
+        "2025wasno",
+        "2025wabon",
+        "2025waahs",
+        "2025pncmp",
         "2024hop"
 
     )
@@ -101,20 +101,20 @@ actual fun LoginMenu(
             }
             DropdownMenu(expanded = compDD, onDismissRequest = { compDD = false; },modifier= Modifier.background(color = getCurrentTheme().onSurface)) {
                 DropdownMenuItem(
-                    onClick = { comp.value = "Bonney Lake"; compDD = false; compKey = tbaMatches[0]},
+                    onClick = { comp.value = "Glacier Peak"; compDD = false; compKey = tbaMatches[0]},
+                    text = { Text(text = "Glacier Peak", color = getCurrentTheme().onPrimary,modifier= Modifier.background(color = getCurrentTheme().onSurface)) }
+                )
+                DropdownMenuItem(
+                    onClick = { comp.value = "Bonney Lake"; compDD = false; compKey = tbaMatches[1]},
                     text = { Text(text = "Bonney Lake", color = getCurrentTheme().onPrimary,modifier= Modifier.background(color = getCurrentTheme().onSurface)) }
                 )
                 DropdownMenuItem(
-                    onClick = { comp.value = "Lake Sammamish"; compDD = false; compKey = tbaMatches[1]},
-                    text = { Text(text = "Lake Sammamish", color = getCurrentTheme().onPrimary,modifier= Modifier.background(color = getCurrentTheme().onSurface)) }
+                    onClick = { comp.value = "Auburn"; compDD = false; compKey = tbaMatches[2]},
+                    text ={ Text(text = "Auburn", color = getCurrentTheme().onPrimary,modifier= Modifier.background(color = getCurrentTheme().onSurface)) }
                 )
                 DropdownMenuItem(
-                    onClick = { comp.value = "Salem"; compDD = false; compKey = tbaMatches[2]},
-                    text ={ Text(text = "Salem", color = getCurrentTheme().onPrimary,modifier= Modifier.background(color = getCurrentTheme().onSurface)) }
-                )
-                DropdownMenuItem(
-                    onClick = { comp.value = "Portland"; compDD = false; compKey = tbaMatches[3] },
-                    text = { Text(text = "DCMP", color = getCurrentTheme().onPrimary, modifier = Modifier.background(color = getCurrentTheme().onSurface)) }
+                    onClick = { comp.value = "Cheney"; compDD = false; compKey = tbaMatches[3] },
+                    text = { Text(text = "Cheney", color = getCurrentTheme().onPrimary, modifier = Modifier.background(color = getCurrentTheme().onSurface)) }
                 )
                 DropdownMenuItem(
                     onClick = { comp.value = "Houston"; compDD = false; compKey = tbaMatches[4]},

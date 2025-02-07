@@ -136,12 +136,12 @@ actual fun setTeam(
         val redAlliance = ((it["alliances"] as JSONObject)["red"] as JSONObject)["team_keys"] as JSONArray
         val blueAlliance = ((it["alliances"] as JSONObject)["blue"] as JSONObject)["team_keys"] as JSONArray
         val teamKey = when(robotStartPosition) {
-            0->redAlliance[0]
-            1->redAlliance[1]
-            2->redAlliance[2]
-            3->blueAlliance[0]
-            4->blueAlliance[1]
-            5->blueAlliance[2]
+            0 -> redAlliance[0]
+            1 -> redAlliance[1]
+            2 -> redAlliance[2]
+            3 -> blueAlliance[0]
+            4 -> blueAlliance[1]
+            5 -> blueAlliance[2]
             else -> {""}
         }
         teamNum.intValue = parseInt((teamKey as String).slice(3..<teamKey.length))
