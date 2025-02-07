@@ -342,6 +342,8 @@ actual class MainMenu actual constructor(
                             scoutingType = "match"
                         )
                     }
+                    serverDialogOpen = true
+//                    deviceListOpen = true
                 }
             ) {
                 Text("Export")
