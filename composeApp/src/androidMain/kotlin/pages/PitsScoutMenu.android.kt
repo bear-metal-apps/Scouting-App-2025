@@ -37,12 +37,12 @@ import com.bumble.appyx.navigation.node.Node
 import composables.Profile
 import composables.download
 import defaultOnPrimary
-import defaultPrimaryVariant
 import getCurrentTheme
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import org.tahomarobotics.scouting.ComposeFileProvider
 import java.io.File
+import java.lang.Integer.parseInt
 
 @Suppress("VARIABLE_WITH_REDUNDANT_INITIALIZER")
 actual class PitsScoutMenu actual constructor(
@@ -74,12 +74,29 @@ actual class PitsScoutMenu actual constructor(
         val numOfPitsPeople by remember { mutableIntStateOf(6) }
         var scoutedTeamName by remember { mutableStateOf("") }
         var scoutedTeamNumber by remember { mutableStateOf("") }
+
         var driveType by remember { mutableStateOf("") }
         var motorType by remember { mutableStateOf("") }
         var auto by remember { mutableStateOf("") }
-        var collectPrefDD by remember { mutableStateOf(false) }
+        var width by remember { mutableIntStateOf(0) }
+        var length by remember { mutableIntStateOf(0) }
+        var weight by remember { mutableStateOf(0) }
+        var l4 by remember { mutableStateOf(false) }
+        var l3 by remember { mutableStateOf(false) }
+        var l2 by remember { mutableStateOf(false) }
+        var l1 by remember { mutableStateOf(false) }
+        var algaeBarge by remember { mutableStateOf(false) }
+        var algaeProcessed by remember { mutableStateOf(false) }
+        var algaeRemoval by remember { mutableStateOf(false) }
+        var cycleTime by remember { mutableStateOf(0) }
+        var rigidity by remember { mutableStateOf("") }
+        var coralHigh by remember { mutableStateOf(false) }
+        var coralLow by remember { mutableStateOf(false) }
+        var algae by remember { mutableStateOf(false) }
+        var defense by remember { mutableStateOf(false) }
         var collectPreference by remember { mutableStateOf("None Selected") }
-        var concerns by remember { mutableStateOf("") }
+        var comments by remember { mutableStateOf("") }
+
         var photoAmount by remember { mutableIntStateOf(0) }
         val scrollState = rememberScrollState(0)
         val isScrollEnabled by remember { mutableStateOf(true) }
@@ -90,6 +107,7 @@ actual class PitsScoutMenu actual constructor(
 
         var dropDownExpanded by remember { mutableStateOf(false) }
         var dropDown2Expanded by remember { mutableStateOf(false) }
+        var collectPrefDD by remember { mutableStateOf(false) }
 
         Column(
             modifier = Modifier
@@ -187,6 +205,100 @@ actual class PitsScoutMenu actual constructor(
             Spacer(modifier = Modifier.height(7.5.dp))
             HorizontalDivider(color = Color.Yellow, thickness = 2.dp)
             Spacer(modifier = Modifier.height(7.5.dp))
+
+            OutlinedButton(
+                border = BorderStroke(2.dp, color = Color.Yellow),
+                shape = RoundedCornerShape(10.dp),
+                modifier = Modifier.padding(5.dp).padding(start = 5.dp),
+                onClick = {
+
+                    when (PackageManager.PERMISSION_GRANTED) {
+                        ContextCompat.checkSelfPermission(
+                            context,
+                            Manifest.permission.CAMERA
+                        ) -> {
+                            if (photoAmount < 3) {//moved up
+                                var uri = Uri.EMPTY
+
+                                uri = ComposeFileProvider.getImageUri(
+                                    context,
+                                    "photo_$photoAmount"
+                                )
+                                imageUri = uri
+                                cameraLauncher.launch(uri)
+
+                                photoArray.add(photoAmount, uri)
+                                photoAmount++
+                                hasImage = false
+                            }
+                        }
+
+                        else -> {
+                            launcher.launch(Manifest.permission.CAMERA)
+                        }
+                    }
+                }
+            ) {
+                Row {
+                    Image(
+                        painter = painterResource("KillCam.png"),
+                        contentDescription = "Camera",
+                        modifier = Modifier.fillMaxHeight()
+                    )
+                    Column {
+                        Text(
+                            text = "Take Picture",
+                            color = defaultOnPrimary
+                        )
+                        Text(
+                            text = "*Ask Permission First",
+                            color = Color.Gray,
+                            fontSize = 10.sp,
+                        )
+                    }
+                }
+            }
+            Row(modifier = Modifier.horizontalScroll(ScrollState(0))) {
+                if (hasImage) {//helps update Box
+                    photoArray.forEach {
+                        Box {
+                            AsyncImage(
+                                model = it,
+                                contentDescription = "Robot image",
+                                contentScale = ContentScale.Fit,
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .clip(RoundedCornerShape(7.5.dp))
+                                    .size(height = 200.dp, width = 300.dp)
+                            )
+                            TextButton(
+                                onClick = {
+                                    photoArray.remove(it)
+                                    photoAmount--
+                                },
+                                modifier = Modifier
+                                    .scale(0.25f)
+                                    .align(Alignment.BottomStart)
+                            ) {
+                                AsyncImage(
+                                    model = trashCan,
+                                    contentDescription = "Delete",
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+            if (photoAmount >= 1) {
+                Box(modifier = Modifier.fillMaxWidth()) {
+                    Text(
+                        text = "Amount of Photos: $photoAmount",
+                        color = Color.Gray,
+                        modifier = Modifier.align(Alignment.CenterEnd)
+                    )
+                }
+            }
+
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -202,6 +314,7 @@ actual class PitsScoutMenu actual constructor(
                 ExposedDropdownMenuBox(
                     modifier = modifier
                         .width(200.dp)
+                        .padding(15.dp)
                         .align(Alignment.CenterEnd),
                     expanded = dropDownExpanded,
                     onExpandedChange = { it ->
@@ -233,12 +346,84 @@ actual class PitsScoutMenu actual constructor(
                         DropdownMenuItem(
                             {
                                 Text(
-                                    text = "Swivel",
+                                    text = "Swerve",
                                     color = Color.White
                                 )
                             },
                             onClick = {
-                                driveType = "Swivel"
+                                driveType = "Swerve"
+                                dropDownExpanded = false
+                            }
+                        )
+
+                        HorizontalDivider(
+                            color = getCurrentTheme().onSurface,
+                            thickness = 3.dp
+                        )
+
+                        DropdownMenuItem(
+                            {
+                                Text(
+                                    text = "Tank",
+                                    color = Color.White
+                                )
+                            },
+                            onClick = {
+                                driveType = "Tank"
+                                dropDownExpanded = false
+                            }
+                        )
+
+                        HorizontalDivider(
+                            color = getCurrentTheme().onSurface,
+                            thickness = 3.dp
+                        )
+
+                        DropdownMenuItem(
+                            {
+                                Text(
+                                    text = "Mecanum",
+                                    color = Color.White
+                                )
+                            },
+                            onClick = {
+                                driveType = "Mecanum"
+                                dropDownExpanded = false
+                            }
+                        )
+
+                        HorizontalDivider(
+                            color = getCurrentTheme().onSurface,
+                            thickness = 3.dp
+                        )
+
+                        DropdownMenuItem(
+                            {
+                                Text(
+                                    text = "Omni",
+                                    color = Color.White
+                                )
+                            },
+                            onClick = {
+                                driveType = "Omni"
+                                dropDownExpanded = false
+                            }
+                        )
+
+                        HorizontalDivider(
+                            color = getCurrentTheme().onSurface,
+                            thickness = 3.dp
+                        )
+
+                        DropdownMenuItem(
+                            {
+                                Text(
+                                    text = "H-Drive",
+                                    color = Color.White
+                                )
+                            },
+                            onClick = {
+                                driveType = "H-Drive"
                                 dropDownExpanded = false
                             }
                         )
@@ -266,6 +451,7 @@ actual class PitsScoutMenu actual constructor(
                     ExposedDropdownMenuBox(
                         modifier = modifier
                             .width(200.dp)
+                            .padding(15.dp)
                             .align(Alignment.CenterEnd),
                         expanded = dropDown2Expanded,
                         onExpandedChange = { it ->
@@ -311,6 +497,42 @@ actual class PitsScoutMenu actual constructor(
                                 color = getCurrentTheme().onSurface,
                                 thickness = 3.dp
                             )
+
+                            DropdownMenuItem(
+                                {
+                                    Text(
+                                        text = "Spark",
+                                        color = Color.White
+                                    )
+                                },
+                                onClick = {
+                                    motorType = "Spark"
+                                    dropDown2Expanded = false
+                                }
+                            )
+
+                            HorizontalDivider(
+                                color = getCurrentTheme().onSurface,
+                                thickness = 3.dp
+                            )
+
+                            DropdownMenuItem(
+                                {
+                                    Text(
+                                        text = "Neo",
+                                        color = Color.White
+                                    )
+                                },
+                                onClick = {
+                                    motorType = "Neo"
+                                    dropDown2Expanded = false
+                                }
+                            )
+
+                            HorizontalDivider(
+                                color = getCurrentTheme().onSurface,
+                                thickness = 3.dp
+                            )
                         }
                     }
                 }
@@ -338,103 +560,69 @@ actual class PitsScoutMenu actual constructor(
                             .align(Alignment.CenterEnd)
                     )
                 }
-                OutlinedButton(
-                    border = BorderStroke(2.dp, color = Color.Yellow),
-                    shape = RoundedCornerShape(10.dp),
-                    modifier = Modifier.padding(5.dp),
-                    onClick = {
 
-                        when (PackageManager.PERMISSION_GRANTED) {
-                            ContextCompat.checkSelfPermission(
-                                context,
-                                Manifest.permission.CAMERA
-                            ) -> {
-                                if (photoAmount < 3) {//moved up
-                                    var uri = Uri.EMPTY
-
-                                    uri = ComposeFileProvider.getImageUri(
-                                        context,
-                                        "photo_$photoAmount"
-                                    )
-                                    imageUri = uri
-                                    cameraLauncher.launch(uri)
-
-                                    photoArray.add(photoAmount, uri)
-                                    photoAmount++
-                                    hasImage = false
-                                }
-                            }
-
-                            else -> {
-                                launcher.launch(Manifest.permission.CAMERA)
-                            }
-                        }
-                    }
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(10.dp, 2.5.dp)
+                        .border(BorderStroke(2.dp, Color.Yellow), shape = RoundedCornerShape(5.dp))
                 ) {
-                    Row {
-                        Image(
-                            painter = painterResource("KillCam.png"),
-                            contentDescription = "Camera",
-                            modifier = Modifier.fillMaxHeight()
-                        )
-                        Column {
+                    Text(
+                        text = "Frame Perimeter:",
+                        modifier = Modifier
+                            .padding(15.dp)
+                            .align(Alignment.CenterStart)
+                    )
+                    Row (
+                        modifier = Modifier.align(Alignment.CenterEnd)
+                    ) {
+                        Row (
+                            modifier = Modifier.align(Alignment.CenterVertically)
+                        ) {
                             Text(
-                                text = "Take Picture",
-                                color = defaultOnPrimary
+                                text = "Width",
+                                modifier = Modifier.align(Alignment.CenterVertically)
                             )
+                            TextField(
+                                value = width.toString(),
+                                onValueChange = {
+                                    width = parseInt(it)
+                                },
+                                colors = TextFieldDefaults.colors(
+                                    focusedContainerColor = Color.Transparent,
+                                    focusedTextColor = Color.White
+                                ),
+                                modifier = Modifier
+                                    .padding(top = 15.dp, bottom = 15.dp, start = 5.dp, end = 20.dp)
+                                    .width(width = 75.dp)
+                            )
+                        }
+
+                        Row (
+                            modifier = Modifier.align(Alignment.CenterVertically)
+                        ) {
                             Text(
-                                text = "*Ask Permission First",
-                                color = Color.Gray,
-                                fontSize = 10.sp,
+                                text = "Length",
+                                modifier = Modifier.align(Alignment.CenterVertically)
+                            )
+                            TextField(
+                                value = length.toString(),
+                                onValueChange = { length = parseInt(it) },
+                                colors = TextFieldDefaults.colors(
+                                    focusedContainerColor = Color.Transparent,
+                                    focusedTextColor = Color.White
+                                ),
+                                modifier = Modifier
+                                    .padding(top = 15.dp, bottom = 15.dp, start = 5.dp, end = 15.dp)
+                                    .width(width = 75.dp)
                             )
                         }
                     }
                 }
-                Row(modifier = Modifier.horizontalScroll(ScrollState(0))) {
-                    if (hasImage) {//helps update Box
-                        photoArray.forEach {
-                            Box {
-                                AsyncImage(
-                                    model = it,
-                                    contentDescription = "Robot image",
-                                    contentScale = ContentScale.Fit,
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .clip(RoundedCornerShape(7.5.dp))
-                                        .size(height = 200.dp, width = 300.dp)
-                                )
-                                TextButton(
-                                    onClick = {
-                                        photoArray.remove(it)
-                                        photoAmount--
-                                    },
-                                    modifier = Modifier
-                                        .scale(0.25f)
-                                        .align(Alignment.BottomStart)
-                                ) {
-                                    AsyncImage(
-                                        model = trashCan,
-                                        contentDescription = "Delete",
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
-                if (photoAmount >= 1) {
-                    Box(modifier = Modifier.fillMaxWidth()) {
-                        Text(
-                            text = "Amount of Photos: $photoAmount",
-                            color = Color.Gray,
-                            modifier = Modifier.align(Alignment.CenterEnd)
-                        )
-                    }
-                }
-                HorizontalDivider(
-                    color = defaultPrimaryVariant,
-                    thickness = 2.dp,
-                    modifier = Modifier.clip(CircleShape)
-                )
+
+                Spacer(modifier = Modifier.height(7.5.dp))
+                HorizontalDivider(color = Color.Yellow, thickness = 2.dp)
+
                 OutlinedButton(
                     onClick = {
                         collectPrefDD = true
@@ -486,8 +674,8 @@ actual class PitsScoutMenu actual constructor(
                     modifier = Modifier.align(Alignment.CenterHorizontally)
                 )
                 OutlinedTextField(
-                    value = concerns,
-                    onValueChange = { concerns = it },
+                    value = comments,
+                    onValueChange = { comments = it },
                     colors = TextFieldDefaults.colors(
                         focusedContainerColor = Color(6, 9, 13),
                         unfocusedContainerColor = Color(6, 9, 13),
@@ -539,7 +727,7 @@ actual class PitsScoutMenu actual constructor(
                             motorType,
                             auto,
                             collectPreference,
-                            concerns,
+                            comments,
                             scoutName.value,
                             Modifier.padding(10.dp)
                         )
