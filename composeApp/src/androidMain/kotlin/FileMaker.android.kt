@@ -6,6 +6,7 @@ import android.hardware.usb.UsbRequest
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import nodes.jsonObject
 import nodes.teamDataArray
 import org.json.JSONArray
 import org.json.JSONException
@@ -98,11 +99,11 @@ fun deleteFile(context: Context){
 fun sendData(context: Context, client: Client, scoutingType: String) {
     exportScoutData(context)
 
-    val jsonObject = getJsonFromMatchHash()
+    val jsonObject = jsonObject
 
-    client.sendData(jsonObject.toString(1), scoutingType)
+    client.sendData(jsonObject.toString(), scoutingType)
 
-    Log.i("Client", "Message Sent: ${jsonObject.toString(1)}")
+    Log.i("Client", "Message Sent: ${jsonObject.toString()}")
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
