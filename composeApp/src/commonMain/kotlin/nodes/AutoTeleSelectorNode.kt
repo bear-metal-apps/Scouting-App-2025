@@ -1,7 +1,10 @@
 package nodes
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableIntState
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.state.ToggleableState
 import com.bumble.appyx.components.backstack.BackStack
@@ -15,18 +18,9 @@ import com.bumble.appyx.utils.multiplatform.Parcelable
 import com.bumble.appyx.utils.multiplatform.Parcelize
 import com.google.gson.JsonObject
 import compKey
-import org.json.JSONObject
-import pages.AutoTeleSelectorMenu
-import java.lang.Integer.parseInt
-import java.util.Objects
-
-
-
-import org.bridj.util.Tuple
-import pages.AutoTeleSelectorMenuTop
 import pages.AutoTeleSelectorMenuBottom
-import java.util.Stack
-import javax.swing.undo.UndoManager
+import pages.AutoTeleSelectorMenuTop
+import java.util.*
 
 class AutoTeleSelectorNode(
     buildContext: BuildContext,
@@ -101,7 +95,7 @@ class TeamMatchKey(
     }
 
     override fun toString(): String {
-        return "${match}, ${team}"
+        return "${match}, $team"
     }
 
 var undoList = Stack<Array<Any>>()
