@@ -14,13 +14,20 @@ plugins {
 repositories {
     google()
     mavenCentral()
+    maven {
+        url = uri("https://maven.pkg.github.com/betterbearmetalcode/koala")
+        credentials {
+            username = System.getenv("GITHUB_USERNAME")
+            password = System.getenv("GITHUB_TOKEN")
+        }
+    }
 }
 
 kotlin {
     androidTarget {
         compilations.all {
             kotlinOptions {
-                jvmTarget = "1.8"
+                jvmTarget = "17"
             }
         }
     }
@@ -60,6 +67,7 @@ kotlin {
             implementation(libs.json)
             implementation(libs.gson)
             implementation(libs.bumble.appyx.navigation)
+            implementation(libs.koala)
             api(libs.backstack)
         }
     }
@@ -75,8 +83,8 @@ android {
 
     defaultConfig {
         applicationId = "org.tahomarobotics.scouting"
-        minSdk = libs.versions.android.minSdk.get().toInt()
-        targetSdk = libs.versions.android.targetSdk.get().toInt()
+        minSdk = 28
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
     }
@@ -91,6 +99,9 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
             excludes += "/META-INF/LICENSE.md"
             excludes += "/META-INF/NOTICE.md"
+            excludes += "/META-INF/INDEX.LIST"
+            excludes += "/META-INF/native-image/native-image.properties"
+            excludes += "/META-INF/native-image/reflect-config.json"
             pickFirst("META-INF/NOTICE.md")
         }
 
@@ -101,12 +112,14 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        isCoreLibraryDesugaringEnabled = true
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 }
 dependencies {
     implementation(libs.androidx.core)
+    coreLibraryDesugaring(libs.desugar.jdk.libs)
 }
 
 compose.desktop {

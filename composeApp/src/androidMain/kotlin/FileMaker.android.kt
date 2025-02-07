@@ -6,16 +6,14 @@ import android.hardware.usb.UsbRequest
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import nodes.jsonObject
 import nodes.teamDataArray
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
+import org.tahomarobotics.scouting.Client
 import java.io.*
-import java.net.InetSocketAddress
-import java.net.Socket
-import java.net.SocketException
 import java.nio.ByteBuffer
-
 
 fun createFile(context: Context) {
     val file = File(context.filesDir, "match_data.json")
@@ -95,27 +93,17 @@ fun deleteFile(context: Context){
     file.delete()
 }
 
-fun sendData(context: Context, ipAddress: String) {
+/**
+ *@param scoutingType should be "match", "strat", or "pit"
+ */
+fun sendData(context: Context, client: Client, scoutingType: String) {
+    exportScoutData(context)
 
-//    exportScoutData(context)
-//
-//    val jsonObject = getJsonFromMatchHash()
-//    val socket = Socket()
-//    try {
-//        socket.connect(InetSocketAddress(ipAddress, 45482), 5000)
-//        socket.getOutputStream().writer().use { writer ->
-//            writer.write(jsonObject.toString(1) + "\n")
-//            writer.flush() // Ensure data is sent immediately
-//        }
-//
-//        Log.i("Client", "Message Sent: ${jsonObject.toString(1)}")
-//    } catch (e: IOException) {
-//        e.printStackTrace()
-//    } catch (_: SocketException) {
-//
-//    } finally {
-//        socket.close()
-//    }
+    val jsonObject = jsonObject
+
+    client.sendData(jsonObject.toString(), scoutingType)
+
+    Log.i("Client", "Message Sent: ${jsonObject.toString()}")
 }
 
 @RequiresApi(Build.VERSION_CODES.O)

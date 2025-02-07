@@ -1,3 +1,4 @@
+import nodes.jsonObject
 import org.json.JSONObject
 import java.io.File
 import java.io.FileInputStream
@@ -36,9 +37,9 @@ fun exportScoutData() {
     val file = File("$homeDir/Documents/match_scouting_data.json")
     file.delete()
     file.createNewFile()
-    val jsonObject = getJsonFromMatchHash()
+    val jsonObject = jsonObject
     val writer = FileWriter(file)
-    writer.write(jsonObject.toString(1))
+    writer.write(jsonObject.toString())
     writer.close()
 }
 fun deleteFile(){
