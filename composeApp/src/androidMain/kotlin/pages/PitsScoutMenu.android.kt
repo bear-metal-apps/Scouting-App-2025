@@ -38,6 +38,7 @@ import composables.Profile
 import composables.download
 import defaultOnPrimary
 import defaultPrimaryVariant
+import getCurrentTheme
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import org.tahomarobotics.scouting.ComposeFileProvider
@@ -51,7 +52,7 @@ actual class PitsScoutMenu actual constructor(
     private var scoutName: MutableState<String>
 ) : Node(buildContext = buildContext) {
 
-    @OptIn(ExperimentalResourceApi::class)
+    @OptIn(ExperimentalResourceApi::class, ExperimentalMaterial3Api::class)
     @SuppressLint("NewApi")
     @RequiresApi(Build.VERSION_CODES.P)
     @Composable
@@ -65,10 +66,10 @@ actual class PitsScoutMenu actual constructor(
         var imageUri by remember { mutableStateOf<Uri?>(null) }
         val cameraLauncher = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.TakePicture(),
-            onResult = {hasImage = it }
+            onResult = { hasImage = it }
         )
         val photoArray = remember { mutableStateListOf(Uri.EMPTY) }
-        var downloadActive by remember{mutableStateOf(false)}
+        var downloadActive by remember { mutableStateOf(false) }
         var pitsPersonDD by remember { mutableStateOf(false) }
         val numOfPitsPeople by remember { mutableIntStateOf(6) }
         var scoutedTeamName by remember { mutableStateOf("") }
@@ -76,22 +77,30 @@ actual class PitsScoutMenu actual constructor(
         var driveType by remember { mutableStateOf("") }
         var motorType by remember { mutableStateOf("") }
         var auto by remember { mutableStateOf("") }
-        var collectPrefDD by remember{ mutableStateOf(false)}
+        var collectPrefDD by remember { mutableStateOf(false) }
         var collectPreference by remember { mutableStateOf("None Selected") }
         var concerns by remember { mutableStateOf("") }
         var photoAmount by remember { mutableIntStateOf(0) }
         val scrollState = rememberScrollState(0)
-        val isScrollEnabled by remember{ mutableStateOf(true)}
-        var robotCard by remember {mutableStateOf(false)}
+        val isScrollEnabled by remember { mutableStateOf(true) }
+        var robotCard by remember { mutableStateOf(false) }
         val context = LocalContext.current
         val trashCan = ImageRequest.Builder(context).data(File("trash.png")).build()
         val cam = ImageRequest.Builder(context).data(File("KillCam.png")).build()
-        Column(modifier = Modifier
-            .verticalScroll(state = scrollState, enabled = isScrollEnabled)
-            .padding(5.dp)) {
-            Box( modifier = Modifier
-                .offset(20.dp, 15.dp)
-                .fillMaxWidth()) {
+
+        var dropDownExpanded by remember { mutableStateOf(false) }
+        var dropDown2Expanded by remember { mutableStateOf(false) }
+
+        Column(
+            modifier = Modifier
+                .verticalScroll(state = scrollState, enabled = isScrollEnabled)
+                .padding(5.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .offset(20.dp, 15.dp)
+                    .fillMaxWidth()
+            ) {
                 Text(
                     text = "Pits",
                     fontSize = 50.sp,
@@ -109,10 +118,12 @@ actual class PitsScoutMenu actual constructor(
                         //color = defaultOnPrimary,
                     )
                 }
-                Box(modifier = Modifier
-                    .align(Alignment.CenterEnd)
-                    .padding(15.dp)
-                    .offset(0.dp, 15.dp)) {
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.CenterEnd)
+                        .padding(15.dp)
+                        .offset(0.dp, 15.dp)
+                ) {
                     DropdownMenu(
                         expanded = pitsPersonDD,
                         onDismissRequest = { pitsPersonDD = false },
@@ -121,280 +132,419 @@ actual class PitsScoutMenu actual constructor(
                             .clip(RoundedCornerShape(7.5.dp))
 
                     ) {
-                        for(x in 1..numOfPitsPeople){
+                        for (x in 1..numOfPitsPeople) {
                             DropdownMenuItem(
                                 onClick = {
                                     pitsPersonDD = false
                                     pitsPerson.value = "P$x"
                                 },
-                                text ={
-                                    Text("P$x",color = defaultOnPrimary)
+                                text = {
+                                    Text("P$x", color = defaultOnPrimary)
                                 }
                             )
                         }
                     }
                 }
             }
-            Row{
+            Row {
                 Text(
-                    text="Team Name: ",
+                    text = "Team Name: ",
                     fontSize = 20.sp,
                     color = defaultOnPrimary
                 )
                 OutlinedTextField(
                     value = scoutedTeamName,
-                    onValueChange ={ scoutedTeamName = it},
+                    onValueChange = { scoutedTeamName = it },
                     textStyle = TextStyle.Default.copy(fontSize = 20.sp),
-                    colors = TextFieldDefaults.colors(focusedContainerColor = Color(6,9,13), unfocusedContainerColor = Color(6,9,13) ,focusedTextColor = defaultOnPrimary, unfocusedTextColor = defaultOnPrimary),
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color(6, 9, 13),
+                        unfocusedContainerColor = Color(6, 9, 13),
+                        focusedTextColor = defaultOnPrimary,
+                        unfocusedTextColor = defaultOnPrimary
+                    ),
                     shape = RoundedCornerShape(15.dp),
-                    modifier = Modifier.size(85.dp,60.dp)
+                    modifier = Modifier.size(85.dp, 60.dp)
                 )
                 Text(
-                    text="Team Number: ",
+                    text = "Team Number: ",
                     fontSize = 20.sp,
                     color = defaultOnPrimary,
                 )
                 OutlinedTextField(
                     value = scoutedTeamNumber,
-                    onValueChange ={ scoutedTeamNumber = it},
+                    onValueChange = { scoutedTeamNumber = it },
                     textStyle = TextStyle.Default.copy(fontSize = 20.sp),
-                    colors = TextFieldDefaults.colors(focusedContainerColor = Color(6,9,13), unfocusedContainerColor = Color(6,9,13) ,focusedTextColor = defaultOnPrimary, unfocusedTextColor = defaultOnPrimary),
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color(6, 9, 13),
+                        unfocusedContainerColor = Color(6, 9, 13),
+                        focusedTextColor = defaultOnPrimary,
+                        unfocusedTextColor = defaultOnPrimary
+                    ),
                     shape = RoundedCornerShape(15.dp),
-                    modifier = Modifier.size(85.dp,60.dp)
+                    modifier = Modifier.size(85.dp, 60.dp)
                 )
             }
             Spacer(modifier = Modifier.height(7.5.dp))
             HorizontalDivider(color = Color.Yellow, thickness = 2.dp)
             Spacer(modifier = Modifier.height(7.5.dp))
-            Box(modifier = Modifier
-                .fillMaxWidth()
-                .padding(10.dp, 2.5.dp)
-                .border(BorderStroke(2.dp, Color.Yellow), shape = RoundedCornerShape(20.dp))) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(10.dp, 2.5.dp)
+                    .border(BorderStroke(2.dp, Color.Yellow), shape = RoundedCornerShape(5.dp))
+            ) {
                 Text(
                     text = "Drive Type:  ",
                     modifier = Modifier
                         .padding(15.dp)
                         .align(Alignment.CenterStart)
                 )
-                TextField(
-                    value = driveType,
-                    onValueChange = {driveType = it},
-                    colors = TextFieldDefaults.colors(focusedContainerColor = Color.Transparent, focusedTextColor = Color.White),
-                    modifier = Modifier
-                        .padding(15.dp)
-                        .align(Alignment.CenterEnd)
-                )
-            }
-            Box(modifier = Modifier
-                .fillMaxWidth()
-                .padding(10.dp, 2.5.dp)
-                .border(BorderStroke(2.dp, Color.Yellow), shape = RoundedCornerShape(20.dp))) {
-                Text(
-                    text = "Motor Type:  ",
-                    modifier = Modifier
-                        .padding(15.dp)
-                        .align(Alignment.CenterStart)
-                )
-                TextField(
-                    value = motorType,
-                    onValueChange = {motorType = it},
-                    colors = TextFieldDefaults.colors(focusedContainerColor = Color.Transparent, focusedTextColor = Color.White),
-                    modifier = Modifier
-                        .padding(15.dp)
-                        .align(Alignment.CenterEnd)
-                )
-            }
-            Box(modifier = Modifier
-                .fillMaxWidth()
-                .padding(10.dp, 2.5.dp)
-                .border(BorderStroke(2.dp, Color.Yellow), shape = RoundedCornerShape(20.dp))) {
-                Text(
-                    text = "Auto:  ",
-                    modifier = Modifier
-                        .padding(15.dp)
-                        .align(Alignment.CenterStart)
-                )
-                TextField(
-                    value = auto,
-                    onValueChange = {auto = it},
-                    colors = TextFieldDefaults.colors(focusedContainerColor = Color.Transparent, focusedTextColor = Color.White),
-                    modifier = Modifier
-                        .padding(15.dp)
-                        .align(Alignment.CenterEnd)
-                )
-            }
-            OutlinedButton(
-                border = BorderStroke(2.dp, color = Color.Yellow),
-                shape = RoundedCornerShape(10.dp),
-                modifier = Modifier.padding(5.dp),
-                onClick = {
-
-                    when (PackageManager.PERMISSION_GRANTED) {
-                        ContextCompat.checkSelfPermission(
-                            context,
-                            Manifest.permission.CAMERA
-                        ) -> {
-                            if (photoAmount < 3) {//moved up
-                                var uri = Uri.EMPTY
-
-                                uri = ComposeFileProvider.getImageUri(context, "photo_$photoAmount")
-                                imageUri = uri
-                                cameraLauncher.launch(uri)
-
-                                photoArray.add(photoAmount, uri)
-                                photoAmount++
-                                hasImage = false
-                            }
-                        }
-                        else -> {
-                            launcher.launch(Manifest.permission.CAMERA)
-                        }
+                ExposedDropdownMenuBox(
+                    modifier = modifier
+                        .width(200.dp)
+                        .align(Alignment.CenterEnd),
+                    expanded = dropDownExpanded,
+                    onExpandedChange = { it ->
+                        dropDownExpanded = it
                     }
-                }
-            ) {
-                Row {
-                    Image(
-                        painter = painterResource("KillCam.png"),
-                        contentDescription = "Camera",
-                        modifier = Modifier.fillMaxHeight()
-                    )
-                    Column {
-                        Text(
-                            text = "Take Picture",
-                            color = defaultOnPrimary
-                        )
-                        Text(
-                            text = "*Ask Permission First",
-                            color = Color.Gray,
-                            fontSize = 10.sp,
-                        )
-                    }
-                }
-            }
-            Row(modifier = Modifier.horizontalScroll(ScrollState(0))) {
-                if(hasImage){//helps update Box
-                    photoArray.forEach {
-                        Box {
-                            AsyncImage(
-                                model = it,
-                                contentDescription = "Robot image",
-                                contentScale = ContentScale.Fit,
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .clip(RoundedCornerShape(7.5.dp))
-                                    .size(height = 200.dp, width = 300.dp)
-                            )
-                            TextButton(
-                                onClick = {
-                                    photoArray.remove(it)
-                                    photoAmount--
-                                },
-                                modifier = Modifier
-                                    .scale(0.25f)
-                                    .align(Alignment.BottomStart)
-                            ) {
-                                AsyncImage(
-                                    model = trashCan,
-                                    contentDescription = "Delete",
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-            if (photoAmount >= 1){
-                Box(modifier = Modifier.fillMaxWidth()){
-                    Text(text = "Amount of Photos: $photoAmount",color = Color.Gray ,modifier = Modifier.align(Alignment.CenterEnd))
-                }
-            }
-            HorizontalDivider(color = defaultPrimaryVariant, thickness = 2.dp, modifier = Modifier.clip(CircleShape))
-            OutlinedButton(
-                onClick = {
-                    collectPrefDD = true
-                },
-                border = BorderStroke(2.dp, color = Color.Yellow),
-                shape = CircleShape
-            ){
-                Text(
-                    text ="Collection Preference: $collectPreference",
-                    fontSize = 15.sp,
-                    color = defaultOnPrimary
-                )
-            }
-            Box(modifier=Modifier.padding(15.dp,0.dp)) {
-                DropdownMenu(
-                    expanded = collectPrefDD,
-                    onDismissRequest = { collectPrefDD = false },
-                    modifier = Modifier
-                        .background(color = Color(15, 15, 15))
-                        .clip(RoundedCornerShape(7.5.dp))
                 ) {
-                    DropdownMenuItem(
-                        onClick = {
-                            collectPrefDD = false
-                            collectPreference = "OverTheBumper"
+                    TextField(
+                        modifier = modifier
+                            .menuAnchor(),
+                        value = driveType,
+                        onValueChange = {},
+                        readOnly = true,
+                        trailingIcon = {
+                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = dropDownExpanded)
                         },
-                        text ={ Text("Over The Bumper",color = defaultOnPrimary) }
+                        textStyle = TextStyle(color = Color.White)
                     )
-                    DropdownMenuItem(
-                        onClick = {
-                            collectPrefDD = false
-                            collectPreference = "UnderTheBumper"
-                        },
-                        text ={ Text("Under The Bumper",color = defaultOnPrimary) }
-                    )
-                    DropdownMenuItem(
-                        onClick = {
-                            collectPrefDD = false
-                            collectPreference = "from the Feeder Station"
-                        },
-                        text = { Text("Feeder Station",color = defaultOnPrimary) }
-                    )
+                    ExposedDropdownMenu(
+                        expanded = dropDownExpanded,
+                        onDismissRequest = {
+                            dropDownExpanded = false
+                        }
+                    ) {
+                        HorizontalDivider(
+                            color = getCurrentTheme().onSurface,
+                            thickness = 3.dp
+                        )
+
+                        DropdownMenuItem(
+                            {
+                                Text(
+                                    text = "Swivel",
+                                    color = Color.White
+                                )
+                            },
+                            onClick = {
+                                driveType = "Swivel"
+                                dropDownExpanded = false
+                            }
+                        )
+
+                        HorizontalDivider(
+                            color = getCurrentTheme().onSurface,
+                            thickness = 3.dp
+                        )
+                    }
+//                    colors = TextFieldDefaults.colors(focusedContainerColor = Color.Transparent, focusedTextColor = Color.White),
                 }
             }
-
-            Text(
-                text ="Comments:",
-                fontSize = 30.sp,
-                modifier = Modifier.align(Alignment.CenterHorizontally)
-            )
-            OutlinedTextField(
-                value = concerns,
-                onValueChange ={ concerns = it},
-                colors = TextFieldDefaults.colors(focusedContainerColor = Color(6,9,13), unfocusedContainerColor = Color(6,9,13) ,focusedTextColor = defaultOnPrimary, unfocusedTextColor = defaultOnPrimary),
-                shape = RoundedCornerShape(15.dp),
-                modifier = Modifier
-                    .fillMaxWidth(9f / 10f)
-                    .align(Alignment.CenterHorizontally)
-                    .height(90.dp)
-            )
-            Row {
-                OutlinedButton(onClick = {
-                    if (photoArray.size >= 1) {
-                        robotCard = true
-                    }
-                }) { Text(text = "Submit", color = defaultOnPrimary) }
-                OutlinedButton(onClick = { robotCard = false }) { Text(text = "Close", color = defaultOnPrimary) }
-                OutlinedButton(onClick = { downloadActive = true }) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(10.dp, 2.5.dp)
+                        .border(BorderStroke(2.dp, Color.Yellow), shape = RoundedCornerShape(5.dp))
+                ) {
                     Text(
-                        text = "Download",
+                        text = "Motor Type:  ",
+                        modifier = Modifier
+                            .padding(15.dp)
+                            .align(Alignment.CenterStart)
+                    )
+                    ExposedDropdownMenuBox(
+                        modifier = modifier
+                            .width(200.dp)
+                            .align(Alignment.CenterEnd),
+                        expanded = dropDown2Expanded,
+                        onExpandedChange = { it ->
+                            dropDown2Expanded = it
+                        }
+                    ) {
+                        TextField(
+                            modifier = modifier
+                                .menuAnchor(),
+                            value = motorType,
+                            onValueChange = {},
+                            readOnly = true,
+                            trailingIcon = {
+                                ExposedDropdownMenuDefaults.TrailingIcon(expanded = dropDown2Expanded)
+                            },
+                            textStyle = TextStyle(color = Color.White)
+                        )
+                        ExposedDropdownMenu(
+                            expanded = dropDown2Expanded,
+                            onDismissRequest = {
+                                dropDown2Expanded = false
+                            }
+                        ) {
+                            HorizontalDivider(
+                                color = getCurrentTheme().onSurface,
+                                thickness = 3.dp
+                            )
+
+                            DropdownMenuItem(
+                                {
+                                    Text(
+                                        text = "Motor",
+                                        color = Color.White
+                                    )
+                                },
+                                onClick = {
+                                    motorType = "Motor"
+                                    dropDown2Expanded = false
+                                }
+                            )
+
+                            HorizontalDivider(
+                                color = getCurrentTheme().onSurface,
+                                thickness = 3.dp
+                            )
+                        }
+                    }
+                }
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(10.dp, 2.5.dp)
+                        .border(BorderStroke(2.dp, Color.Yellow), shape = RoundedCornerShape(5.dp))
+                ) {
+                    Text(
+                        text = "Auto:  ",
+                        modifier = Modifier
+                            .padding(15.dp)
+                            .align(Alignment.CenterStart)
+                    )
+                    TextField(
+                        value = auto,
+                        onValueChange = { auto = it },
+                        colors = TextFieldDefaults.colors(
+                            focusedContainerColor = Color.Transparent,
+                            focusedTextColor = Color.White
+                        ),
+                        modifier = Modifier
+                            .padding(15.dp)
+                            .align(Alignment.CenterEnd)
+                    )
+                }
+                OutlinedButton(
+                    border = BorderStroke(2.dp, color = Color.Yellow),
+                    shape = RoundedCornerShape(10.dp),
+                    modifier = Modifier.padding(5.dp),
+                    onClick = {
+
+                        when (PackageManager.PERMISSION_GRANTED) {
+                            ContextCompat.checkSelfPermission(
+                                context,
+                                Manifest.permission.CAMERA
+                            ) -> {
+                                if (photoAmount < 3) {//moved up
+                                    var uri = Uri.EMPTY
+
+                                    uri = ComposeFileProvider.getImageUri(
+                                        context,
+                                        "photo_$photoAmount"
+                                    )
+                                    imageUri = uri
+                                    cameraLauncher.launch(uri)
+
+                                    photoArray.add(photoAmount, uri)
+                                    photoAmount++
+                                    hasImage = false
+                                }
+                            }
+
+                            else -> {
+                                launcher.launch(Manifest.permission.CAMERA)
+                            }
+                        }
+                    }
+                ) {
+                    Row {
+                        Image(
+                            painter = painterResource("KillCam.png"),
+                            contentDescription = "Camera",
+                            modifier = Modifier.fillMaxHeight()
+                        )
+                        Column {
+                            Text(
+                                text = "Take Picture",
+                                color = defaultOnPrimary
+                            )
+                            Text(
+                                text = "*Ask Permission First",
+                                color = Color.Gray,
+                                fontSize = 10.sp,
+                            )
+                        }
+                    }
+                }
+                Row(modifier = Modifier.horizontalScroll(ScrollState(0))) {
+                    if (hasImage) {//helps update Box
+                        photoArray.forEach {
+                            Box {
+                                AsyncImage(
+                                    model = it,
+                                    contentDescription = "Robot image",
+                                    contentScale = ContentScale.Fit,
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .clip(RoundedCornerShape(7.5.dp))
+                                        .size(height = 200.dp, width = 300.dp)
+                                )
+                                TextButton(
+                                    onClick = {
+                                        photoArray.remove(it)
+                                        photoAmount--
+                                    },
+                                    modifier = Modifier
+                                        .scale(0.25f)
+                                        .align(Alignment.BottomStart)
+                                ) {
+                                    AsyncImage(
+                                        model = trashCan,
+                                        contentDescription = "Delete",
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+                if (photoAmount >= 1) {
+                    Box(modifier = Modifier.fillMaxWidth()) {
+                        Text(
+                            text = "Amount of Photos: $photoAmount",
+                            color = Color.Gray,
+                            modifier = Modifier.align(Alignment.CenterEnd)
+                        )
+                    }
+                }
+                HorizontalDivider(
+                    color = defaultPrimaryVariant,
+                    thickness = 2.dp,
+                    modifier = Modifier.clip(CircleShape)
+                )
+                OutlinedButton(
+                    onClick = {
+                        collectPrefDD = true
+                    },
+                    border = BorderStroke(2.dp, color = Color.Yellow),
+                    shape = CircleShape
+                ) {
+                    Text(
+                        text = "Collection Preference: $collectPreference",
+                        fontSize = 15.sp,
                         color = defaultOnPrimary
                     )
                 }
-                OutlinedButton(onClick = { backStack.push(RootNode.NavTarget.MainMenu) }) {
-                    Text(text = "Back", color = defaultOnPrimary)
+                Box(modifier = Modifier.padding(15.dp, 0.dp)) {
+                    DropdownMenu(
+                        expanded = collectPrefDD,
+                        onDismissRequest = { collectPrefDD = false },
+                        modifier = Modifier
+                            .background(color = Color(15, 15, 15))
+                            .clip(RoundedCornerShape(7.5.dp))
+                    ) {
+                        DropdownMenuItem(
+                            onClick = {
+                                collectPrefDD = false
+                                collectPreference = "OverTheBumper"
+                            },
+                            text = { Text("Over The Bumper", color = defaultOnPrimary) }
+                        )
+                        DropdownMenuItem(
+                            onClick = {
+                                collectPrefDD = false
+                                collectPreference = "UnderTheBumper"
+                            },
+                            text = { Text("Under The Bumper", color = defaultOnPrimary) }
+                        )
+                        DropdownMenuItem(
+                            onClick = {
+                                collectPrefDD = false
+                                collectPreference = "from the Feeder Station"
+                            },
+                            text = { Text("Feeder Station", color = defaultOnPrimary) }
+                        )
+                    }
                 }
-                if (downloadActive) {
-                    download(context, photoArray, scoutedTeamNumber, photoAmount)
-                    downloadActive = false
+
+                Text(
+                    text = "Comments:",
+                    fontSize = 30.sp,
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                )
+                OutlinedTextField(
+                    value = concerns,
+                    onValueChange = { concerns = it },
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color(6, 9, 13),
+                        unfocusedContainerColor = Color(6, 9, 13),
+                        focusedTextColor = defaultOnPrimary,
+                        unfocusedTextColor = defaultOnPrimary
+                    ),
+                    shape = RoundedCornerShape(15.dp),
+                    modifier = Modifier
+                        .fillMaxWidth(9f / 10f)
+                        .align(Alignment.CenterHorizontally)
+                        .height(90.dp)
+                )
+                Row {
+                    OutlinedButton(onClick = {
+                        if (photoArray.size >= 1) {
+                            robotCard = true
+                        }
+                    }) { Text(text = "Submit", color = defaultOnPrimary) }
+                    OutlinedButton(onClick = { robotCard = false }) {
+                        Text(
+                            text = "Close",
+                            color = defaultOnPrimary
+                        )
+                    }
+                    OutlinedButton(onClick = { downloadActive = true }) {
+                        Text(
+                            text = "Download",
+                            color = defaultOnPrimary
+                        )
+                    }
+                    OutlinedButton(onClick = { backStack.push(RootNode.NavTarget.MainMenu) }) {
+                        Text(text = "Back", color = defaultOnPrimary)
+                    }
+                    if (downloadActive) {
+                        download(context, photoArray, scoutedTeamNumber, photoAmount)
+                        downloadActive = false
+                    }
                 }
-            }
-            if(robotCard){
-                Box(modifier = Modifier.padding(5.dp).border(BorderStroke(2.dp,Color.Yellow),RoundedCornerShape(15.dp))) {
-                    Profile(
-                        photoArray,  scoutedTeamName, scoutedTeamNumber, driveType, motorType, auto, collectPreference, concerns, scoutName.value, Modifier.padding(10.dp))
+                if (robotCard) {
+                    Box(
+                        modifier = Modifier.padding(5.dp)
+                            .border(BorderStroke(2.dp, Color.Yellow), RoundedCornerShape(15.dp))
+                    ) {
+                        Profile(
+                            photoArray,
+                            scoutedTeamName,
+                            scoutedTeamNumber,
+                            driveType,
+                            motorType,
+                            auto,
+                            collectPreference,
+                            concerns,
+                            scoutName.value,
+                            Modifier.padding(10.dp)
+                        )
+                    }
                 }
             }
         }
     }
-}
