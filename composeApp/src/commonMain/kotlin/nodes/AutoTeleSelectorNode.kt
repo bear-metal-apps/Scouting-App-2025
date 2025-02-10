@@ -165,7 +165,7 @@ fun createOutput(team: MutableIntState, robotStartPosition: MutableIntState): St
 
     if (notes.value.isEmpty()){ notes.value = "No Comments"}
     notes.value = notes.value.replace(":","")
-    
+
     jsonObject = JsonObject().apply {
         addProperty("match", match.value)
         addProperty("team", team.intValue)

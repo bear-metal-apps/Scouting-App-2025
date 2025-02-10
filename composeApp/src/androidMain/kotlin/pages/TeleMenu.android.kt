@@ -16,6 +16,8 @@ import androidx.compose.ui.unit.sp
 import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.components.backstack.operation.pop
 import com.bumble.appyx.components.backstack.operation.push
+import composables.CheckBox
+import composables.EnumerableValue
 import composables.EnumerableValue
 import defaultSecondary
 import exportScoutData
@@ -33,10 +35,9 @@ actual fun TeleMenu(
     robotStartPosition: MutableIntState
 ) {
     val scrollState = rememberScrollState(0)
-    val isScrollEnabled = remember { mutableStateOf(true) }
+    val isScrollEnabled = remember{ mutableStateOf(true) }
     val isKeyboardOpen by keyboardAsState()
     val context = LocalContext.current
-
     fun bob() {
         backStack.pop()
         teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
@@ -46,102 +47,162 @@ actual fun TeleMenu(
         isScrollEnabled.value = true
     }
     Column(
-        Modifier
-            .padding(20.dp)
-            .fillMaxWidth()
-            .verticalScroll(state = scrollState, enabled = isScrollEnabled.value)
-    ) {
-        Row(modifier = Modifier.fillMaxWidth()) {
-            Column(
-                modifier = Modifier.fillMaxWidth(3 / 4f)
+    ){
+        Row (
+            modifier = Modifier
+                .weight(10f)
+                .fillMaxWidth()
+        ) {
+            Column (
+                modifier = Modifier
+                    .weight(2f)
+                    .fillMaxHeight()
             ) {
-                Row(modifier = Modifier.fillMaxWidth()) {
+                Row(
+                    modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight()
+                ) {
                     EnumerableValue(
-                        "L4 scored",
-                        teleLFour,
+                        label = "Score L4",
+                        value = teleLFour,
                         alignment = Alignment.CenterEnd,
-                        modifier = Modifier.fillMaxWidth(1 / 2f)
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxWidth()
                     )
                     EnumerableValue(
-                        "L4 missed",
-                        teleLFourMissed,
+                        label = "Miss L4",
+                        value = teleLFourMissed,
                         alignment = Alignment.CenterEnd,
-                        modifier = Modifier.fillMaxWidth(1 / 2f)
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxWidth()
                     )
                 }
-                Row(modifier = Modifier.fillMaxWidth()) {
+                Row(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                ){
                     EnumerableValue(
-                        "L3 Algae",
-                        teleLThreeAlgae,
-                        alignment = Alignment.BottomEnd,
-                        modifier = Modifier.fillMaxWidth(2 / 8f)
+                        label = "Algae L3",
+                        value = teleLThreeAlgae,
+                        alignment = Alignment.CenterEnd,
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxWidth()
                     )
                     EnumerableValue(
-                        "L3 scored",
-                        teleLThree,
-                        alignment = Alignment.CenterEnd,
-                        modifier = Modifier.fillMaxWidth(3 / 8f)
-                    )
+                    label = "Score L3",
+                    value = teleLThree,
+                    alignment = Alignment.CenterEnd,
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                )
                     EnumerableValue(
-                        "L3 missed",
-                        teleLThreeMissed,
+                        label = "Miss L3",
+                        value = teleLThreeMissed,
                         alignment = Alignment.CenterEnd,
-                        modifier = Modifier.fillMaxWidth(3 / 8f)
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxWidth()
                     )
                 }
-                Row(modifier = Modifier.fillMaxWidth()) {
+
+                Row(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                ){
                     EnumerableValue(
-                        "L2 Algae",
-                        teleLTwoAlgae,
-                        alignment = Alignment.BottomEnd,
-                        modifier = Modifier.fillMaxWidth(2 / 8f)
+                        label = "Algae L2",
+                        value = teleLTwoAlgae,
+                        alignment = Alignment.CenterEnd,
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxWidth()
                     )
                     EnumerableValue(
-                        "L2 scored",
-                        teleLTwo,
+                        label = "Score L2",
+                        value = teleLTwo,
                         alignment = Alignment.CenterEnd,
-                        modifier = Modifier.fillMaxWidth(3 / 8f)
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxWidth()
                     )
                     EnumerableValue(
-                        "L2 missed",
-                        teleLTwoMissed,
+                        label = "Miss L2",
+                        value = teleLTwoMissed,
                         alignment = Alignment.CenterEnd,
-                        modifier = Modifier.fillMaxWidth(3 / 8f)
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxWidth()
                     )
                 }
-                Row(modifier = Modifier.fillMaxWidth()) {
+
+                Row(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                ){
                     EnumerableValue(
-                        "L1 scored",
-                        teleLOne,
+                        label = "Score L1",
+                        value = teleLOne,
                         alignment = Alignment.CenterEnd,
-                        modifier = Modifier.fillMaxWidth(1 / 2f)
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxWidth()
                     )
                     EnumerableValue(
-                        "L1 missed",
-                        teleLOneMissed,
+                        label = "Miss L1",
+                        value = teleLOneMissed,
                         alignment = Alignment.CenterEnd,
-                        modifier = Modifier.fillMaxWidth(1 / 2f)
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxWidth()
                     )
                 }
                 EnumerableValue(
-                    "Processed",
-                    teleProcessed,
+                    label = "Algae Processed",
+                    value = teleProcessed,
                     alignment = Alignment.CenterEnd,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
                 )
             }
-            Column(modifier = Modifier.fillMaxWidth(1 / 4f)) {
+
+            Column (
+                modifier = Modifier
+                    .weight(0.5f)
+                    .fillMaxWidth()
+            ) {
+
                 EnumerableValue(
-                    label = "Net Scored",
-                    value = teleNet,
-                    alignment = Alignment.BottomCenter,
-                    modifier = Modifier.fillMaxWidth().fillMaxHeight(1 / 2f)
-                )
-                EnumerableValue(
-                    label = "Net Missed",
+                    label = "Net Miss",
                     value = teleNetMissed,
-                    alignment = Alignment.BottomCenter,
-                    modifier = Modifier.fillMaxWidth().fillMaxHeight(1 / 2f)
+                    alignment = Alignment.BottomEnd,
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                )
+
+                EnumerableValue(
+                    label = "Net Score",
+                    value = teleNet,
+                    alignment = Alignment.BottomEnd,
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                )
+                CheckBox(
+                    label = "lost Comms",
+                    ifChecked = lostComms,
+                    modifier = Modifier
+                        .weight(0.25f)
+                        .fillMaxWidth()
                 )
             }
         }
