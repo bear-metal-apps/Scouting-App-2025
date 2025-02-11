@@ -2,6 +2,7 @@
 
 package pages
 
+import Underline
 import nodes.RootNode
 import android.Manifest
 import android.annotation.SuppressLint
@@ -15,16 +16,21 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
@@ -42,6 +48,8 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import org.tahomarobotics.scouting.ComposeFileProvider
 import java.io.File
+import java.lang.Double
+import java.lang.Double.parseDouble
 import java.lang.Integer.parseInt
 
 @Suppress("VARIABLE_WITH_REDUNDANT_INITIALIZER")
@@ -78,9 +86,9 @@ actual class PitsScoutMenu actual constructor(
         var driveType by remember { mutableStateOf("") }
         var motorType by remember { mutableStateOf("") }
         var auto by remember { mutableStateOf("") }
-        var width by remember { mutableIntStateOf(0) }
-        var length by remember { mutableIntStateOf(0) }
-        var weight by remember { mutableStateOf(0) }
+        var width by remember { mutableStateOf("") }
+        var length by remember { mutableStateOf("") }
+        var weight by remember { mutableStateOf("") }
         var l4 by remember { mutableStateOf(false) }
         var l3 by remember { mutableStateOf(false) }
         var l2 by remember { mutableStateOf(false) }
@@ -88,7 +96,7 @@ actual class PitsScoutMenu actual constructor(
         var algaeBarge by remember { mutableStateOf(false) }
         var algaeProcessed by remember { mutableStateOf(false) }
         var algaeRemoval by remember { mutableStateOf(false) }
-        var cycleTime by remember { mutableStateOf(0) }
+        var cycleTime by remember { mutableStateOf("") }
         var rigidity by remember { mutableStateOf("") }
         var coralHigh by remember { mutableStateOf(false) }
         var coralLow by remember { mutableStateOf(false) }
@@ -584,14 +592,15 @@ actual class PitsScoutMenu actual constructor(
                                 modifier = Modifier.align(Alignment.CenterVertically)
                             )
                             TextField(
-                                value = width.toString(),
+                                value = width,
                                 onValueChange = {
-                                    width = parseInt(it)
+                                    width = it
                                 },
                                 colors = TextFieldDefaults.colors(
                                     focusedContainerColor = Color.Transparent,
                                     focusedTextColor = Color.White
                                 ),
+                                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
                                 modifier = Modifier
                                     .padding(top = 15.dp, bottom = 15.dp, start = 5.dp, end = 20.dp)
                                     .width(width = 75.dp)
@@ -606,12 +615,13 @@ actual class PitsScoutMenu actual constructor(
                                 modifier = Modifier.align(Alignment.CenterVertically)
                             )
                             TextField(
-                                value = length.toString(),
-                                onValueChange = { length = parseInt(it) },
+                                value = length,
+                                onValueChange = { length = it },
                                 colors = TextFieldDefaults.colors(
                                     focusedContainerColor = Color.Transparent,
                                     focusedTextColor = Color.White
                                 ),
+                                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
                                 modifier = Modifier
                                     .padding(top = 15.dp, bottom = 15.dp, start = 5.dp, end = 15.dp)
                                     .width(width = 75.dp)
@@ -620,8 +630,204 @@ actual class PitsScoutMenu actual constructor(
                     }
                 }
 
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(10.dp, 2.5.dp)
+                        .border(BorderStroke(2.dp, Color.Yellow), shape = RoundedCornerShape(5.dp))
+                ) {
+                    Text(
+                        text = "Weight (pounds):",
+                        modifier = Modifier
+                            .padding(15.dp)
+                            .align(Alignment.CenterStart)
+                    )
+                    TextField(
+                        value = weight,
+                        onValueChange = { weight = it },
+                        colors = TextFieldDefaults.colors(
+                            focusedContainerColor = Color.Transparent,
+                            focusedTextColor = Color.White
+                        ),
+                        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                        modifier = Modifier
+                            .padding(15.dp)
+                            .align(Alignment.CenterEnd)
+                    )
+                }
+
                 Spacer(modifier = Modifier.height(7.5.dp))
                 HorizontalDivider(color = Color.Yellow, thickness = 2.dp)
+                Spacer(modifier = Modifier.height(7.5.dp))
+
+                Text(
+                    text = "Scoring",
+                    fontSize = 30.sp,
+                    modifier = Modifier.align(Alignment.Start)
+                )
+
+                Underline(
+                    modifier = Modifier,
+                    end = Offset(160f, 1.5f),
+                    color = Color.White,
+                    thickness = 3.dp
+                )
+
+                Spacer(modifier = Modifier.height(7.5.dp))
+
+                Text(
+                    text = "Coral",
+                    fontSize = 20.sp,
+                    modifier = Modifier.align(Alignment.Start)
+                )
+
+                Row (
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = "L4",
+                        modifier = Modifier.align(Alignment.CenterVertically)
+                    )
+                    Checkbox(
+                        checked = l4,
+                        onCheckedChange = {
+                            l4 = it
+                        },
+                        modifier = Modifier.padding(end = 30.dp)
+                    )
+                    Text(
+                        text = "L3",
+                        modifier = Modifier.align(Alignment.CenterVertically)
+                    )
+                    Checkbox(
+                        checked = l3,
+                        onCheckedChange = {
+                            l3 = it
+                        },
+                        modifier = Modifier.padding(end = 30.dp)
+                    )
+                    Text(
+                        text = "L2",
+                        modifier = Modifier.align(Alignment.CenterVertically)
+                    )
+                    Checkbox(
+                        checked = l2,
+                        onCheckedChange = {
+                            l2 = it
+                        },
+                        modifier = Modifier.padding(end = 30.dp)
+                    )
+                    Text(
+                        text = "L1",
+                        modifier = Modifier.align(Alignment.CenterVertically)
+                    )
+                    Checkbox(
+                        checked = l1,
+                        onCheckedChange = {
+                            l1 = it
+                        }
+                    )
+                }
+
+                Text(
+                    text = "Algae",
+                    fontSize = 20.sp,
+                    modifier = Modifier.align(Alignment.Start)
+                )
+
+                Row(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = "Barge",
+                        modifier = Modifier.align(Alignment.CenterVertically)
+                    )
+                    Checkbox(
+                        checked = algaeBarge,
+                        onCheckedChange = {
+                            algaeBarge = it
+                        },
+                        modifier = Modifier.padding(end = 30.dp)
+                    )
+                    Text(
+                        text = "L4",
+                        modifier = Modifier.align(Alignment.CenterVertically)
+                    )
+                    Checkbox(
+                        checked = l4,
+                        onCheckedChange = {
+                            l4 = it
+                        },
+                        modifier = Modifier.padding(end = 30.dp)
+                    )
+                    Text(
+                        text = "L4",
+                        modifier = Modifier.align(Alignment.CenterVertically)
+                    )
+                    Checkbox(
+                        checked = l4,
+                        onCheckedChange = {
+                            l4 = it
+                        },
+                        modifier = Modifier.padding(end = 30.dp)
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(7.5.dp))
+                HorizontalDivider(color = Color.Yellow, thickness = 2.dp)
+                Spacer(modifier = Modifier.height(7.5.dp))
+
+                Text(
+                    text = "Preferred Performance",
+                    fontSize = 30.sp,
+                    modifier = Modifier.align(Alignment.Start)
+                )
+
+                Underline(
+                    modifier = Modifier,
+                    end = Offset(475f, 1.5f),
+                    color = Color.White,
+                    thickness = 3.dp
+                )
+
+                Spacer(modifier = Modifier.height(7.5.dp))
+
+                Text(
+                    text = "Coral",
+                    fontSize = 20.sp,
+                    modifier = Modifier.align(Alignment.Start)
+                )
+
+                Spacer(modifier = Modifier.height(7.5.dp))
+
+                Text(
+                    text = "Other",
+                    fontSize = 20.sp,
+                    modifier = Modifier.align(Alignment.Start)
+                )
+
+                Spacer(modifier = Modifier.height(7.5.dp))
+                HorizontalDivider(color = Color.Yellow, thickness = 2.dp)
+                Spacer(modifier = Modifier.height(7.5.dp))
+
+                Text(
+                    text = "Other",
+                    fontSize = 30.sp,
+                    modifier = Modifier.align(Alignment.Start)
+                )
+
+                Underline(
+                    modifier = Modifier,
+                    end = Offset(110f, 1.5f),
+                    color = Color.White,
+                    thickness = 3.dp
+                )
+
+                Spacer(modifier = Modifier.height(7.5.dp))
+
+                Spacer(modifier = Modifier.height(7.5.dp))
+                HorizontalDivider(color = Color.Yellow, thickness = 2.dp)
+                Spacer(modifier = Modifier.height(7.5.dp))
 
                 OutlinedButton(
                     onClick = {
