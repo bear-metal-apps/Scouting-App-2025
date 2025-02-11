@@ -97,11 +97,9 @@ class TeamMatchKey(
     override fun toString(): String {
         return "${match}, $team"
     }
-
+}
 var undoList = Stack<Array<Any>>()
 var redoList = Stack<Array<Any>>()
-}
-
 var jsonObject : JsonObject = JsonObject()
 
 val match = mutableStateOf("1")

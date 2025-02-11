@@ -229,13 +229,14 @@ actual fun AutoTeleSelectorMenuBottom(
 
     fun bob() {
         mainMenuBackStack.pop()
-        matchScoutArray.putIfAbsent(robotStartPosition.intValue, HashMap())
-        matchScoutArray[robotStartPosition.intValue]?.set(
-            parseInt(match.value),
-            createOutput(team, robotStartPosition)
-        )
+        teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
         exportScoutData(context)
     }
+//fun bob() {
+//        mainMenuBackStack.pop()
+//        teamDataArray[robotStartPosition.intValue]?.set(parseInt(match.value), createOutput(team, robotStartPosition))
+//        exportScoutData(context)
+//    }
     Row(Modifier.fillMaxWidth()) {
         OutlinedButton(
             border = BorderStroke(1.dp, color = Color.Yellow),
@@ -326,19 +327,12 @@ actual fun AutoTeleSelectorMenuBottom(
                     }
 
                     "Endgame" -> {
-                        matchScoutArray.putIfAbsent(robotStartPosition.intValue, HashMap())
-                        matchScoutArray[robotStartPosition.intValue]?.set(
-                            parseInt(match.value),
-                            createOutput(team, robotStartPosition)
-                        )
+                        teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
+                        println(teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)])
                         match.value = (parseInt(match.value) + 1).toString()
                         reset()
-                        teleNotes.value = ""
-                        exportScoutData(context)
+                        backStack.push(AutoTeleSelectorNode.NavTarget.AutoScouting)
                         loadData(parseInt(match.value), team, robotStartPosition)
-                        backStack.pop()
-                        setTeam(team, match, robotStartPosition.intValue)
-                        pageIndex = 0
                     }
                 }
 
@@ -359,14 +353,11 @@ actual fun AutoTeleSelectorMenuBottom(
                 backStack.pop()
 
                 if(pageIndex == 0){
-                    matchScoutArray.putIfAbsent(robotStartPosition.intValue, HashMap())
-                    matchScoutArray[robotStartPosition.intValue]?.set(
-                        parseInt(match.value),
-                        createOutput(team, robotStartPosition)
-                    )
-                    match.value = (parseInt(match.value) - 1).toString()
+                    teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
+                    println(teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)])
+                    match.value = (parseInt(match.value) + 1).toString()
                     reset()
-                    teleNotes.value = ""
+                    backStack.push(AutoTeleSelectorNode.NavTarget.AutoScouting)
                     exportScoutData(context)
                     loadData(parseInt(match.value), team, robotStartPosition)
                     setTeam(team, match, robotStartPosition.intValue)

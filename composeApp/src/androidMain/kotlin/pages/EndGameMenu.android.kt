@@ -67,9 +67,9 @@ actual fun EndGameMenu(
                     fontSize = 24.sp
                 )
                 Checkbox(
-                    checked = playedD.value,
+                    checked = playedDefense.value,
                     onCheckedChange ={
-                        playedD.value = !playedD.value
+                        playedDefense.value = !playedDefense.value
                     },
                     modifier = Modifier,
                 )
