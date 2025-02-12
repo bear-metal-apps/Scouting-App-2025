@@ -40,6 +40,31 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import org.tahomarobotics.scouting.ComposeFileProvider
 import java.io.File
+import nodes.PitsNode.*
+import nodes.algaeBarge
+import nodes.algaePreferred
+import nodes.algaeProcess
+import nodes.algaeRemoval
+import nodes.auto
+import nodes.collectPreference
+import nodes.comments
+import nodes.coralHigh
+import nodes.coralLow
+import nodes.cycleTime
+import nodes.defensePreferred
+import nodes.driveType
+import nodes.l1
+import nodes.l2
+import nodes.l3
+import nodes.l4
+import nodes.length
+import nodes.motorType
+import nodes.photoArray
+import nodes.rigidity
+import nodes.scoutedTeamName
+import nodes.scoutedTeamNumber
+import nodes.weight
+import nodes.width
 
 @Suppress("VARIABLE_WITH_REDUNDANT_INITIALIZER")
 @Composable
@@ -63,32 +88,6 @@ actual fun PitsScoutMenu(
         var downloadActive by remember { mutableStateOf(false) }
 
         var pitsPersonDD by remember { mutableStateOf(false) }
-        var scoutedTeamName by remember { mutableStateOf("") }
-
-
-        var scoutedTeamNumber by remember { mutableStateOf("") }
-        val photoArray = remember { mutableStateListOf(Uri.EMPTY) }
-        var driveType by remember { mutableStateOf("") }
-        var motorType by remember { mutableStateOf("") }
-        var auto by remember { mutableStateOf("") }
-        var width by remember { mutableStateOf("") }
-        var length by remember { mutableStateOf("") }
-        var weight by remember { mutableStateOf("") }
-        var l4 by remember { mutableStateOf(false) }
-        var l3 by remember { mutableStateOf(false) }
-        var l2 by remember { mutableStateOf(false) }
-        var l1 by remember { mutableStateOf(false) }
-        var algaeBarge by remember { mutableStateOf(false) }
-        var algaeProcessed by remember { mutableStateOf(false) }
-        var algaeRemoval by remember { mutableStateOf(false) }
-        var cycleTime by remember { mutableStateOf("") }
-        var rigidity by remember { mutableStateOf("") }
-        var coralHigh by remember { mutableStateOf(false) }
-        var coralLow by remember { mutableStateOf(false) }
-        var algaePreferred by remember { mutableStateOf(false) }
-        var defensePreferred by remember { mutableStateOf(false) }
-        var collectPreference by remember { mutableStateOf("None Selected") }
-        var comments by remember { mutableStateOf("") }
 
         var photoAmount by remember { mutableIntStateOf(0) }
         val scrollState = rememberScrollState(0)
@@ -164,8 +163,8 @@ actual fun PitsScoutMenu(
                     color = defaultOnPrimary
                 )
                 OutlinedTextField(
-                    value = scoutedTeamName,
-                    onValueChange = { scoutedTeamName = it },
+                    value = scoutedTeamName.value,
+                    onValueChange = { scoutedTeamName.value = it },
                     textStyle = TextStyle.Default.copy(fontSize = 20.sp),
                     colors = TextFieldDefaults.colors(
                         focusedContainerColor = Color(6, 9, 13),
@@ -182,8 +181,8 @@ actual fun PitsScoutMenu(
                     color = defaultOnPrimary,
                 )
                 OutlinedTextField(
-                    value = scoutedTeamNumber,
-                    onValueChange = { scoutedTeamNumber = it },
+                    value = scoutedTeamNumber.value,
+                    onValueChange = { scoutedTeamNumber.value = it },
                     textStyle = TextStyle.Default.copy(fontSize = 20.sp),
                     colors = TextFieldDefaults.colors(
                         focusedContainerColor = Color(6, 9, 13),
@@ -220,7 +219,7 @@ actual fun PitsScoutMenu(
                                 imageUri = uri
                                 cameraLauncher.launch(uri)
 
-                                photoArray.add(photoAmount, uri)
+                                photoArray.add(photoAmount, uri.toString())
                                 photoAmount++
                                 hasImage = false
                             }
@@ -317,7 +316,7 @@ actual fun PitsScoutMenu(
                     TextField(
                         modifier = Modifier
                             .menuAnchor(),
-                        value = driveType,
+                        value = driveType.value,
                         onValueChange = {},
                         readOnly = true,
                         trailingIcon = {
@@ -344,7 +343,7 @@ actual fun PitsScoutMenu(
                                 )
                             },
                             onClick = {
-                                driveType = "Swerve"
+                                driveType.value = "Swerve"
                                 dropDownExpanded = false
                             }
                         )
@@ -362,7 +361,7 @@ actual fun PitsScoutMenu(
                                 )
                             },
                             onClick = {
-                                driveType = "Tank"
+                                driveType.value = "Tank"
                                 dropDownExpanded = false
                             }
                         )
@@ -380,7 +379,7 @@ actual fun PitsScoutMenu(
                                 )
                             },
                             onClick = {
-                                driveType = "Mecanum"
+                                driveType.value = "Mecanum"
                                 dropDownExpanded = false
                             }
                         )
@@ -398,7 +397,7 @@ actual fun PitsScoutMenu(
                                 )
                             },
                             onClick = {
-                                driveType = "Omni"
+                                driveType.value = "Omni"
                                 dropDownExpanded = false
                             }
                         )
@@ -416,7 +415,7 @@ actual fun PitsScoutMenu(
                                 )
                             },
                             onClick = {
-                                driveType = "H-Drive"
+                                driveType.value = "H-Drive"
                                 dropDownExpanded = false
                             }
                         )
@@ -454,7 +453,7 @@ actual fun PitsScoutMenu(
                         TextField(
                             modifier = Modifier
                                 .menuAnchor(),
-                            value = motorType,
+                            value = motorType.value,
                             onValueChange = {},
                             readOnly = true,
                             trailingIcon = {
@@ -481,7 +480,7 @@ actual fun PitsScoutMenu(
                                     )
                                 },
                                 onClick = {
-                                    motorType = "Motor"
+                                    motorType.value = "Motor"
                                     dropDown2Expanded = false
                                 }
                             )
@@ -499,7 +498,7 @@ actual fun PitsScoutMenu(
                                     )
                                 },
                                 onClick = {
-                                    motorType = "Spark"
+                                    motorType.value = "Spark"
                                     dropDown2Expanded = false
                                 }
                             )
@@ -517,7 +516,7 @@ actual fun PitsScoutMenu(
                                     )
                                 },
                                 onClick = {
-                                    motorType = "Neo"
+                                    motorType.value = "Neo"
                                     dropDown2Expanded = false
                                 }
                             )
@@ -542,8 +541,8 @@ actual fun PitsScoutMenu(
                             .align(Alignment.CenterStart)
                     )
                     TextField(
-                        value = auto,
-                        onValueChange = { auto = it },
+                        value = auto.value,
+                        onValueChange = { auto.value = it },
                         colors = TextFieldDefaults.colors(
                             focusedContainerColor = Color.Transparent,
                             focusedTextColor = Color.White
@@ -577,9 +576,9 @@ actual fun PitsScoutMenu(
                                 modifier = Modifier.align(Alignment.CenterVertically)
                             )
                             TextField(
-                                value = width,
+                                value = width.value,
                                 onValueChange = {
-                                    width = it
+                                    width.value = it
                                 },
                                 colors = TextFieldDefaults.colors(
                                     focusedContainerColor = Color.Transparent,
@@ -600,8 +599,8 @@ actual fun PitsScoutMenu(
                                 modifier = Modifier.align(Alignment.CenterVertically)
                             )
                             TextField(
-                                value = length,
-                                onValueChange = { length = it },
+                                value = length.value,
+                                onValueChange = { length.value = it },
                                 colors = TextFieldDefaults.colors(
                                     focusedContainerColor = Color.Transparent,
                                     focusedTextColor = Color.White
@@ -628,8 +627,8 @@ actual fun PitsScoutMenu(
                             .align(Alignment.CenterStart)
                     )
                     TextField(
-                        value = weight,
-                        onValueChange = { weight = it },
+                        value = weight.value,
+                        onValueChange = { weight.value = it },
                         colors = TextFieldDefaults.colors(
                             focusedContainerColor = Color.Transparent,
                             focusedTextColor = Color.White
@@ -675,9 +674,9 @@ actual fun PitsScoutMenu(
                             modifier = Modifier.align(Alignment.CenterVertically)
                         )
                         Checkbox(
-                            checked = l4,
+                            checked = l4.value,
                             onCheckedChange = {
-                                l4 = it
+                                l4.value = it
                             },
                             modifier = Modifier.padding(end = 30.dp)
                         )
@@ -686,9 +685,9 @@ actual fun PitsScoutMenu(
                             modifier = Modifier.align(Alignment.CenterVertically)
                         )
                         Checkbox(
-                            checked = l3,
+                            checked = l3.value,
                             onCheckedChange = {
-                                l3 = it
+                                l3.value = it
                             },
                             modifier = Modifier.padding(end = 30.dp)
                         )
@@ -697,9 +696,9 @@ actual fun PitsScoutMenu(
                             modifier = Modifier.align(Alignment.CenterVertically)
                         )
                         Checkbox(
-                            checked = l2,
+                            checked = l2.value,
                             onCheckedChange = {
-                                l2 = it
+                                l2.value = it
                             },
                             modifier = Modifier.padding(end = 30.dp)
                         )
@@ -708,9 +707,9 @@ actual fun PitsScoutMenu(
                             modifier = Modifier.align(Alignment.CenterVertically)
                         )
                         Checkbox(
-                            checked = l1,
+                            checked = l1.value,
                             onCheckedChange = {
-                                l1 = it
+                                l1.value = it
                             }
                         )
                     }
@@ -736,9 +735,9 @@ actual fun PitsScoutMenu(
                             modifier = Modifier.align(Alignment.CenterVertically)
                         )
                         Checkbox(
-                            checked = algaeBarge,
+                            checked = algaeBarge.value,
                             onCheckedChange = {
-                                algaeBarge = it
+                                algaeBarge.value = it
                             },
                             modifier = Modifier.padding(end = 30.dp)
                         )
@@ -747,9 +746,9 @@ actual fun PitsScoutMenu(
                             modifier = Modifier.align(Alignment.CenterVertically)
                         )
                         Checkbox(
-                            checked = algaeProcessed,
+                            checked = algaeProcess.value,
                             onCheckedChange = {
-                                algaeProcessed = it
+                                algaeProcess.value = it
                             },
                             modifier = Modifier.padding(end = 30.dp)
                         )
@@ -758,9 +757,9 @@ actual fun PitsScoutMenu(
                             modifier = Modifier.align(Alignment.CenterVertically)
                         )
                         Checkbox(
-                            checked = algaeRemoval,
+                            checked = algaeRemoval.value,
                             onCheckedChange = {
-                                algaeRemoval = it
+                                algaeRemoval.value = it
                             }
                         )
                     }
@@ -797,9 +796,9 @@ actual fun PitsScoutMenu(
                             modifier = Modifier.align(Alignment.CenterVertically)
                         )
                         Checkbox(
-                            checked = coralHigh,
+                            checked = coralHigh.value,
                             onCheckedChange = {
-                                coralHigh = it
+                                coralHigh.value = it
                             },
                             modifier = Modifier.padding(end = 30.dp)
                         )
@@ -808,9 +807,9 @@ actual fun PitsScoutMenu(
                             modifier = Modifier.align(Alignment.CenterVertically)
                         )
                         Checkbox(
-                            checked = coralLow,
+                            checked = coralLow.value,
                             onCheckedChange = {
-                                coralLow = it
+                                coralLow.value = it
                             }
                         )
                     }
@@ -836,9 +835,9 @@ actual fun PitsScoutMenu(
                             modifier = Modifier.align(Alignment.CenterVertically)
                         )
                         Checkbox(
-                            checked = algaePreferred,
+                            checked = algaePreferred.value,
                             onCheckedChange = {
-                                algaePreferred = it
+                                algaePreferred.value = it
                             },
                             modifier = Modifier.padding(end = 30.dp)
                         )
@@ -847,9 +846,9 @@ actual fun PitsScoutMenu(
                             modifier = Modifier.align(Alignment.CenterVertically)
                         )
                         Checkbox(
-                            checked = defensePreferred,
+                            checked = defensePreferred.value,
                             onCheckedChange = {
-                                defensePreferred = it
+                                defensePreferred.value = it
                             }
                         )
                     }
@@ -872,8 +871,8 @@ actual fun PitsScoutMenu(
                             .align(Alignment.CenterStart)
                     )
                     TextField(
-                        value = cycleTime,
-                        onValueChange = { cycleTime = it },
+                        value = cycleTime.value,
+                        onValueChange = { cycleTime.value = it },
                         colors = TextFieldDefaults.colors(
                             focusedContainerColor = Color.Transparent,
                             focusedTextColor = Color.White
@@ -900,8 +899,8 @@ actual fun PitsScoutMenu(
                                 .align(Alignment.Start)
                         )
                         OutlinedTextField(
-                            value = rigidity,
-                            onValueChange = { rigidity = it },
+                            value = rigidity.value,
+                            onValueChange = { rigidity.value = it },
                             colors = TextFieldDefaults.colors(
                                 focusedContainerColor = Color(6, 9, 13),
                                 unfocusedContainerColor = Color(6, 9, 13),
@@ -926,7 +925,7 @@ actual fun PitsScoutMenu(
                     shape = CircleShape
                 ) {
                     Text(
-                        text = "Collection Preference: $collectPreference",
+                        text = "Collection Preference: ${collectPreference.value}",
                         fontSize = 15.sp,
                         color = defaultOnPrimary
                     )
@@ -942,21 +941,21 @@ actual fun PitsScoutMenu(
                         DropdownMenuItem(
                             onClick = {
                                 collectPrefDD = false
-                                collectPreference = "OverTheBumper"
+                                collectPreference.value = "OverTheBumper"
                             },
                             text = { Text("Over The Bumper", color = defaultOnPrimary) }
                         )
                         DropdownMenuItem(
                             onClick = {
                                 collectPrefDD = false
-                                collectPreference = "UnderTheBumper"
+                                collectPreference.value = "UnderTheBumper"
                             },
                             text = { Text("Under The Bumper", color = defaultOnPrimary) }
                         )
                         DropdownMenuItem(
                             onClick = {
                                 collectPrefDD = false
-                                collectPreference = "from the Feeder Station"
+                                collectPreference.value = "from the Feeder Station"
                             },
                             text = { Text("Feeder Station", color = defaultOnPrimary) }
                         )
@@ -969,8 +968,8 @@ actual fun PitsScoutMenu(
                     modifier = Modifier.align(Alignment.CenterHorizontally)
                 )
                 OutlinedTextField(
-                    value = comments,
-                    onValueChange = { comments = it },
+                    value = comments.value,
+                    onValueChange = { comments.value = it },
                     colors = TextFieldDefaults.colors(
                         focusedContainerColor = Color(6, 9, 13),
                         unfocusedContainerColor = Color(6, 9, 13),
@@ -1005,7 +1004,15 @@ actual fun PitsScoutMenu(
                         Text(text = "Back", color = defaultOnPrimary)
                     }
                     if (downloadActive) {
-                        download(context, photoArray, scoutedTeamNumber, photoAmount)
+                        var array : MutableList<String> = mutableListOf()
+                        snapshotFlow {
+                            array = photoArray.toList().toMutableList()
+                            for((index, value) in array.withIndex()) {
+                                array[index] = Uri.parse(array[index]).toString()
+                            }
+                        }
+
+                        download(context, photoArray, scoutedTeamNumber.value, photoAmount)
                         downloadActive = false
                     }
                 }
