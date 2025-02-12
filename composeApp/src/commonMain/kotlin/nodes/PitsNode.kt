@@ -7,17 +7,22 @@ import androidx.compose.ui.Modifier
 import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.navigation.modality.BuildContext
 import com.bumble.appyx.navigation.node.Node
-import pages.LoginMenu
+import pages.PitsScoutMenu
 
-class LoginNode(
+class PitsNode(
     buildContext: BuildContext,
     private val backStack: BackStack<RootNode.NavTarget>,
-    private val scoutName: MutableState<String>,
-    private val comp:  MutableState<String>,
-    private val numOfPitsPeople : MutableIntState
+    private val pitsPerson: MutableState<String>,
+    private val NumOfPitsPeople: MutableIntState
 ) : Node(buildContext) {
+
     @Composable
     override fun View(modifier: Modifier) {
-        LoginMenu(backStack, scoutName, comp, numOfPitsPeople)
+        PitsScoutMenu(
+            backStack,
+            pitsPerson,
+            scoutName,
+            NumOfPitsPeople
+        )
     }
 }

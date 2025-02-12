@@ -1,17 +1,15 @@
 @file:Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
+@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalResourceApi::class)
 
 package pages
 
 import Underline
 import nodes.RootNode
 import android.Manifest
-import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -38,8 +36,6 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.components.backstack.operation.push
-import com.bumble.appyx.navigation.modality.BuildContext
-import com.bumble.appyx.navigation.node.Node
 import composables.Profile
 import composables.download
 import defaultOnPrimary
@@ -53,18 +49,13 @@ import java.lang.Double.parseDouble
 import java.lang.Integer.parseInt
 
 @Suppress("VARIABLE_WITH_REDUNDANT_INITIALIZER")
-actual class PitsScoutMenu actual constructor(
-    buildContext: BuildContext,
-    private val backStack: BackStack<RootNode.NavTarget>,
-    private var pitsPerson: MutableState<String>,
-    private var scoutName: MutableState<String>
-) : Node(buildContext = buildContext) {
-
-    @OptIn(ExperimentalResourceApi::class, ExperimentalMaterial3Api::class)
-    @SuppressLint("NewApi")
-    @RequiresApi(Build.VERSION_CODES.P)
-    @Composable
-    actual override fun View(modifier: Modifier) {
+@Composable
+actual fun PitsScoutMenu(
+    backStack: BackStack<RootNode.NavTarget>,
+    pitsPerson: MutableState<String>,
+    scoutName: MutableState<String>,
+    numOfPitsPeople: MutableIntState
+) {
         val launcher = rememberLauncherForActivityResult(
             ActivityResultContracts.RequestPermission()
         ) { _: Boolean ->
@@ -76,13 +67,14 @@ actual class PitsScoutMenu actual constructor(
             contract = ActivityResultContracts.TakePicture(),
             onResult = { hasImage = it }
         )
-        val photoArray = remember { mutableStateListOf(Uri.EMPTY) }
         var downloadActive by remember { mutableStateOf(false) }
-        var pitsPersonDD by remember { mutableStateOf(false) }
-        val numOfPitsPeople by remember { mutableIntStateOf(6) }
-        var scoutedTeamName by remember { mutableStateOf("") }
-        var scoutedTeamNumber by remember { mutableStateOf("") }
 
+        var pitsPersonDD by remember { mutableStateOf(false) }
+        var scoutedTeamName by remember { mutableStateOf("") }
+
+
+        var scoutedTeamNumber by remember { mutableStateOf("") }
+        val photoArray = remember { mutableStateListOf(Uri.EMPTY) }
         var driveType by remember { mutableStateOf("") }
         var motorType by remember { mutableStateOf("") }
         var auto by remember { mutableStateOf("") }
@@ -158,7 +150,7 @@ actual class PitsScoutMenu actual constructor(
                             .clip(RoundedCornerShape(7.5.dp))
 
                     ) {
-                        for (x in 1..numOfPitsPeople) {
+                        for (x in 1..numOfPitsPeople.intValue) {
                             DropdownMenuItem(
                                 onClick = {
                                     pitsPersonDD = false
@@ -320,7 +312,7 @@ actual class PitsScoutMenu actual constructor(
                         .align(Alignment.CenterStart)
                 )
                 ExposedDropdownMenuBox(
-                    modifier = modifier
+                    modifier = Modifier
                         .width(200.dp)
                         .padding(15.dp)
                         .align(Alignment.CenterEnd),
@@ -330,7 +322,7 @@ actual class PitsScoutMenu actual constructor(
                     }
                 ) {
                     TextField(
-                        modifier = modifier
+                        modifier = Modifier
                             .menuAnchor(),
                         value = driveType,
                         onValueChange = {},
@@ -340,7 +332,7 @@ actual class PitsScoutMenu actual constructor(
                         },
                         textStyle = TextStyle(color = Color.White)
                     )
-                    ExposedDropdownMenu(
+                    DropdownMenu(
                         expanded = dropDownExpanded,
                         onDismissRequest = {
                             dropDownExpanded = false
@@ -457,7 +449,7 @@ actual class PitsScoutMenu actual constructor(
                             .align(Alignment.CenterStart)
                     )
                     ExposedDropdownMenuBox(
-                        modifier = modifier
+                        modifier = Modifier
                             .width(200.dp)
                             .padding(15.dp)
                             .align(Alignment.CenterEnd),
@@ -467,7 +459,7 @@ actual class PitsScoutMenu actual constructor(
                         }
                     ) {
                         TextField(
-                            modifier = modifier
+                            modifier = Modifier
                                 .menuAnchor(),
                             value = motorType,
                             onValueChange = {},
@@ -941,4 +933,3 @@ actual class PitsScoutMenu actual constructor(
                 }
             }
         }
-    }

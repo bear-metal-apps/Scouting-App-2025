@@ -16,6 +16,7 @@ import com.bumble.appyx.utils.multiplatform.Parcelable
 import com.bumble.appyx.utils.multiplatform.Parcelize
 import org.tahomarobotics.scouting.Client
 import pages.*
+import java.lang.Integer.parseInt
 
 
 class RootNode(
@@ -53,17 +54,15 @@ class RootNode(
 
     override fun resolve(interactionTarget: NavTarget, buildContext: BuildContext): Node =
         when (interactionTarget) {
-            NavTarget.LoginPage -> LoginNode(buildContext, backStack, scoutName, comp)
+            NavTarget.LoginPage -> LoginNode(buildContext, backStack, scoutName, comp, numOfPitsPeople)
             NavTarget.MainMenu -> MainMenu(buildContext, backStack, robotStartPosition,scoutName, comp, team)
             NavTarget.MatchScouting -> AutoTeleSelectorNode(buildContext,robotStartPosition, team, backStack)
-            NavTarget.PitsScouting -> PitsScoutMenu(buildContext,backStack,pitsPerson,scoutName)
+            NavTarget.PitsScouting -> PitsNode(buildContext,backStack,pitsPerson, numOfPitsPeople)
         }
 
     @Composable
     override fun View(modifier: Modifier) {
-
         Column {
-
             AppyxComponent(
                 appyxComponent = backStack,
                 modifier = Modifier.weight(0.9f)
@@ -73,6 +72,22 @@ class RootNode(
     }
 }
 
+var numOfPitsPeople = mutableIntStateOf(0)
 var scoutName =  mutableStateOf("")
 val teamDataArray : HashMap<TeamMatchKey, String> = hashMapOf<TeamMatchKey, String>()
 var client : Client? = null
+
+
+public fun String.betterParseInt(): Int{
+    for(index in this.indices){
+        if (this[index] < '0' || this[index] > '9') {
+            this.replace("${this[index]}"," ")
+        }
+    }
+    if (this != ""){
+        return parseInt(this.replace(" ",""))
+    }else{
+        return 0
+    }
+
+}

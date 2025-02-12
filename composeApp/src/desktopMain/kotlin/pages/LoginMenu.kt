@@ -32,7 +32,8 @@ import java.io.File
 actual fun LoginMenu(
     backStack: BackStack<RootNode.NavTarget>,
     scoutName: MutableState<String>,
-    comp: MutableState<String>
+    comp: MutableState<String>,
+    numOfPitsPeople: MutableIntState
 ) {
     val logo = File("Logo.png")
     var compDD by remember { mutableStateOf(false) }
