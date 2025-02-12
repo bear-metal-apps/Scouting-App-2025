@@ -3,7 +3,6 @@
 
 package pages
 
-import Underline
 import nodes.RootNode
 import android.Manifest
 import android.content.pm.PackageManager
@@ -21,13 +20,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -44,9 +40,6 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import org.tahomarobotics.scouting.ComposeFileProvider
 import java.io.File
-import java.lang.Double
-import java.lang.Double.parseDouble
-import java.lang.Integer.parseInt
 
 @Suppress("VARIABLE_WITH_REDUNDANT_INITIALIZER")
 @Composable
@@ -92,8 +85,8 @@ actual fun PitsScoutMenu(
         var rigidity by remember { mutableStateOf("") }
         var coralHigh by remember { mutableStateOf(false) }
         var coralLow by remember { mutableStateOf(false) }
-        var algae by remember { mutableStateOf(false) }
-        var defense by remember { mutableStateOf(false) }
+        var algaePreferred by remember { mutableStateOf(false) }
+        var defensePreferred by remember { mutableStateOf(false) }
         var collectPreference by remember { mutableStateOf("None Selected") }
         var comments by remember { mutableStateOf("") }
 
@@ -580,7 +573,7 @@ actual fun PitsScoutMenu(
                             modifier = Modifier.align(Alignment.CenterVertically)
                         ) {
                             Text(
-                                text = "Width",
+                                text = "Width:",
                                 modifier = Modifier.align(Alignment.CenterVertically)
                             )
                             TextField(
@@ -603,7 +596,7 @@ actual fun PitsScoutMenu(
                             modifier = Modifier.align(Alignment.CenterVertically)
                         ) {
                             Text(
-                                text = "Length",
+                                text = "Length:",
                                 modifier = Modifier.align(Alignment.CenterVertically)
                             )
                             TextField(
@@ -644,6 +637,7 @@ actual fun PitsScoutMenu(
                         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
                         modifier = Modifier
                             .padding(15.dp)
+                            .width(width = 75.dp)
                             .align(Alignment.CenterEnd)
                     )
                 }
@@ -653,116 +647,123 @@ actual fun PitsScoutMenu(
                 Spacer(modifier = Modifier.height(7.5.dp))
 
                 Text(
-                    text = "Scoring",
-                    fontSize = 30.sp,
-                    modifier = Modifier.align(Alignment.Start)
+                    text = "Scoring Abilities",
+                    fontSize = 25.sp,
+                    modifier = Modifier
+                        .align(Alignment.Start)
+                        .padding(start = 15.dp)
                 )
 
-                Underline(
-                    modifier = Modifier,
-                    end = Offset(160f, 1.5f),
-                    color = Color.White,
-                    thickness = 3.dp
-                )
-
-                Spacer(modifier = Modifier.height(7.5.dp))
-
-                Text(
-                    text = "Coral",
-                    fontSize = 20.sp,
-                    modifier = Modifier.align(Alignment.Start)
-                )
-
-                Row (
-                    modifier = Modifier.fillMaxWidth()
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(10.dp, 2.5.dp)
+                        .border(BorderStroke(2.dp, Color.Yellow), shape = RoundedCornerShape(5.dp))
                 ) {
                     Text(
-                        text = "L4",
-                        modifier = Modifier.align(Alignment.CenterVertically)
+                        text = "Coral: ",
+                        modifier = Modifier
+                            .padding(15.dp)
+                            .align(Alignment.CenterStart)
                     )
-                    Checkbox(
-                        checked = l4,
-                        onCheckedChange = {
-                            l4 = it
-                        },
-                        modifier = Modifier.padding(end = 30.dp)
-                    )
-                    Text(
-                        text = "L3",
-                        modifier = Modifier.align(Alignment.CenterVertically)
-                    )
-                    Checkbox(
-                        checked = l3,
-                        onCheckedChange = {
-                            l3 = it
-                        },
-                        modifier = Modifier.padding(end = 30.dp)
-                    )
-                    Text(
-                        text = "L2",
-                        modifier = Modifier.align(Alignment.CenterVertically)
-                    )
-                    Checkbox(
-                        checked = l2,
-                        onCheckedChange = {
-                            l2 = it
-                        },
-                        modifier = Modifier.padding(end = 30.dp)
-                    )
-                    Text(
-                        text = "L1",
-                        modifier = Modifier.align(Alignment.CenterVertically)
-                    )
-                    Checkbox(
-                        checked = l1,
-                        onCheckedChange = {
-                            l1 = it
-                        }
-                    )
+                    Row(
+                        modifier = Modifier
+                            .align(Alignment.CenterEnd)
+                    ) {
+                        Text(
+                            text = "L4",
+                            modifier = Modifier.align(Alignment.CenterVertically)
+                        )
+                        Checkbox(
+                            checked = l4,
+                            onCheckedChange = {
+                                l4 = it
+                            },
+                            modifier = Modifier.padding(end = 30.dp)
+                        )
+                        Text(
+                            text = "L3",
+                            modifier = Modifier.align(Alignment.CenterVertically)
+                        )
+                        Checkbox(
+                            checked = l3,
+                            onCheckedChange = {
+                                l3 = it
+                            },
+                            modifier = Modifier.padding(end = 30.dp)
+                        )
+                        Text(
+                            text = "L2",
+                            modifier = Modifier.align(Alignment.CenterVertically)
+                        )
+                        Checkbox(
+                            checked = l2,
+                            onCheckedChange = {
+                                l2 = it
+                            },
+                            modifier = Modifier.padding(end = 30.dp)
+                        )
+                        Text(
+                            text = "L1",
+                            modifier = Modifier.align(Alignment.CenterVertically)
+                        )
+                        Checkbox(
+                            checked = l1,
+                            onCheckedChange = {
+                                l1 = it
+                            }
+                        )
+                    }
                 }
 
-                Text(
-                    text = "Algae",
-                    fontSize = 20.sp,
-                    modifier = Modifier.align(Alignment.Start)
-                )
-
-                Row(
-                    modifier = Modifier.fillMaxWidth()
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(10.dp, 2.5.dp)
+                        .border(BorderStroke(2.dp, Color.Yellow), shape = RoundedCornerShape(5.dp))
                 ) {
                     Text(
-                        text = "Barge",
-                        modifier = Modifier.align(Alignment.CenterVertically)
+                        text = "Algae:",
+                        modifier = Modifier
+                            .padding(15.dp)
+                            .align(Alignment.CenterStart)
                     )
-                    Checkbox(
-                        checked = algaeBarge,
-                        onCheckedChange = {
-                            algaeBarge = it
-                        },
-                        modifier = Modifier.padding(end = 30.dp)
-                    )
-                    Text(
-                        text = "L4",
-                        modifier = Modifier.align(Alignment.CenterVertically)
-                    )
-                    Checkbox(
-                        checked = l4,
-                        onCheckedChange = {
-                            l4 = it
-                        },
-                        modifier = Modifier.padding(end = 30.dp)
-                    )
-                    Text(
-                        text = "L4",
-                        modifier = Modifier.align(Alignment.CenterVertically)
-                    )
-                    Checkbox(
-                        checked = l4,
-                        onCheckedChange = {
-                            l4 = it
-                        },
-                        modifier = Modifier.padding(end = 30.dp)
-                    )
+                    Row(
+                        modifier = Modifier.align(Alignment.CenterEnd)
+                    ) {
+                        Text(
+                            text = "Barge",
+                            modifier = Modifier.align(Alignment.CenterVertically)
+                        )
+                        Checkbox(
+                            checked = algaeBarge,
+                            onCheckedChange = {
+                                algaeBarge = it
+                            },
+                            modifier = Modifier.padding(end = 30.dp)
+                        )
+                        Text(
+                            text = "Processed",
+                            modifier = Modifier.align(Alignment.CenterVertically)
+                        )
+                        Checkbox(
+                            checked = algaeProcessed,
+                            onCheckedChange = {
+                                algaeProcessed = it
+                            },
+                            modifier = Modifier.padding(end = 30.dp)
+                        )
+                        Text(
+                            text = "Removal",
+                            modifier = Modifier.align(Alignment.CenterVertically)
+                        )
+                        Checkbox(
+                            checked = algaeRemoval,
+                            onCheckedChange = {
+                                algaeRemoval = it
+                            }
+                        )
+                    }
                 }
 
                 Spacer(modifier = Modifier.height(7.5.dp))
@@ -771,55 +772,151 @@ actual fun PitsScoutMenu(
 
                 Text(
                     text = "Preferred Performance",
-                    fontSize = 30.sp,
-                    modifier = Modifier.align(Alignment.Start)
+                    fontSize = 25.sp,
+                    modifier = Modifier
+                        .align(Alignment.Start)
+                        .padding(start = 15.dp)
                 )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(10.dp, 2.5.dp)
+                        .border(BorderStroke(2.dp, Color.Yellow), shape = RoundedCornerShape(5.dp))
+                ) {
+                    Text(
+                        text = "Coral: ",
+                        modifier = Modifier
+                            .padding(15.dp)
+                            .align(Alignment.CenterStart)
+                    )
+                    Row(
+                        modifier = Modifier.align(Alignment.CenterEnd)
+                    ) {
+                        Text(
+                            text = "High",
+                            modifier = Modifier.align(Alignment.CenterVertically)
+                        )
+                        Checkbox(
+                            checked = coralHigh,
+                            onCheckedChange = {
+                                coralHigh = it
+                            },
+                            modifier = Modifier.padding(end = 30.dp)
+                        )
+                        Text(
+                            text = "Low",
+                            modifier = Modifier.align(Alignment.CenterVertically)
+                        )
+                        Checkbox(
+                            checked = coralLow,
+                            onCheckedChange = {
+                                coralLow = it
+                            }
+                        )
+                    }
+                }
 
-                Underline(
-                    modifier = Modifier,
-                    end = Offset(475f, 1.5f),
-                    color = Color.White,
-                    thickness = 3.dp
-                )
-
-                Spacer(modifier = Modifier.height(7.5.dp))
-
-                Text(
-                    text = "Coral",
-                    fontSize = 20.sp,
-                    modifier = Modifier.align(Alignment.Start)
-                )
-
-                Spacer(modifier = Modifier.height(7.5.dp))
-
-                Text(
-                    text = "Other",
-                    fontSize = 20.sp,
-                    modifier = Modifier.align(Alignment.Start)
-                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(10.dp, 2.5.dp)
+                        .border(BorderStroke(2.dp, Color.Yellow), shape = RoundedCornerShape(5.dp))
+                ) {
+                    Text(
+                        text = "Other: ",
+                        modifier = Modifier
+                            .padding(15.dp)
+                            .align(Alignment.CenterStart)
+                    )
+                    Row(
+                        modifier = Modifier.align(Alignment.CenterEnd)
+                    ) {
+                        Text(
+                            text = "Algae",
+                            modifier = Modifier.align(Alignment.CenterVertically)
+                        )
+                        Checkbox(
+                            checked = algaePreferred,
+                            onCheckedChange = {
+                                algaePreferred = it
+                            },
+                            modifier = Modifier.padding(end = 30.dp)
+                        )
+                        Text(
+                            text = "Defense",
+                            modifier = Modifier.align(Alignment.CenterVertically)
+                        )
+                        Checkbox(
+                            checked = defensePreferred,
+                            onCheckedChange = {
+                                defensePreferred = it
+                            }
+                        )
+                    }
+                }
 
                 Spacer(modifier = Modifier.height(7.5.dp))
                 HorizontalDivider(color = Color.Yellow, thickness = 2.dp)
                 Spacer(modifier = Modifier.height(7.5.dp))
 
-                Text(
-                    text = "Other",
-                    fontSize = 30.sp,
-                    modifier = Modifier.align(Alignment.Start)
-                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(10.dp, 2.5.dp)
+                        .border(BorderStroke(2.dp, Color.Yellow), shape = RoundedCornerShape(5.dp))
+                ) {
+                    Text(
+                        text = "Cycle Time (seconds): ",
+                        modifier = Modifier
+                            .padding(15.dp)
+                            .align(Alignment.CenterStart)
+                    )
+                    TextField(
+                        value = cycleTime,
+                        onValueChange = { cycleTime = it },
+                        colors = TextFieldDefaults.colors(
+                            focusedContainerColor = Color.Transparent,
+                            focusedTextColor = Color.White
+                        ),
+                        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                        modifier = Modifier
+                            .padding(15.dp)
+                            .width(width = 75.dp)
+                            .align(Alignment.CenterEnd)
+                    )
+                }
 
-                Underline(
-                    modifier = Modifier,
-                    end = Offset(110f, 1.5f),
-                    color = Color.White,
-                    thickness = 3.dp
-                )
-
-                Spacer(modifier = Modifier.height(7.5.dp))
-
-                Spacer(modifier = Modifier.height(7.5.dp))
-                HorizontalDivider(color = Color.Yellow, thickness = 2.dp)
-                Spacer(modifier = Modifier.height(7.5.dp))
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(10.dp, 2.5.dp)
+                        .border(BorderStroke(2.dp, Color.Yellow), shape = RoundedCornerShape(5.dp))
+                ) {
+                    Column {
+                        Text(
+                            text = "Rigidity",
+                            modifier = Modifier
+                                .padding(start = 15.dp, top = 10.dp, bottom = 5.dp)
+                                .align(Alignment.Start)
+                        )
+                        OutlinedTextField(
+                            value = rigidity,
+                            onValueChange = { rigidity = it },
+                            colors = TextFieldDefaults.colors(
+                                focusedContainerColor = Color(6, 9, 13),
+                                unfocusedContainerColor = Color(6, 9, 13),
+                                focusedTextColor = defaultOnPrimary,
+                                unfocusedTextColor = defaultOnPrimary
+                            ),
+                            shape = RoundedCornerShape(15.dp),
+                            modifier = Modifier
+                                .fillMaxWidth(9f / 10f)
+                                .align(Alignment.End)
+                                .padding(start = 10.dp, bottom = 15.dp)
+                                .height(60.dp)
+                        )
+                    }
+                }
 
                 OutlinedButton(
                     onClick = {
