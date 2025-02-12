@@ -1012,28 +1012,28 @@ actual fun PitsScoutMenu(
                             }
                         }
 
-                        download(context, photoArray, scoutedTeamNumber.value, photoAmount)
+//                        download(context, photoArray, scoutedTeamNumber.value, photoAmount)
                         downloadActive = false
                     }
                 }
-                if (robotCard) {
-                    Box(
-                        modifier = Modifier.padding(5.dp)
-                            .border(BorderStroke(2.dp, Color.Yellow), RoundedCornerShape(15.dp))
-                    ) {
-                        Profile(
-                            photoArray,
-                            scoutedTeamName,
-                            scoutedTeamNumber,
-                            driveType,
-                            motorType,
-                            auto,
-                            collectPreference,
-                            comments,
-                            scoutName.value,
-                            Modifier.padding(10.dp)
-                        )
-                    }
-                }
+//                if (robotCard) {
+//                    Box(
+//                        modifier = Modifier.padding(5.dp)
+//                            .border(BorderStroke(2.dp, Color.Yellow), RoundedCornerShape(15.dp))
+//                    ) {
+//                        Profile(
+//                            photoArray,
+//                            scoutedTeamName,
+//                            scoutedTeamNumber,
+//                            driveType,
+//                            motorType,
+//                            auto,
+//                            collectPreference,
+//                            comments,
+//                            scoutName.value,
+//                            Modifier.padding(10.dp)
+//                        )
+//                    }
+//                }
             }
         }

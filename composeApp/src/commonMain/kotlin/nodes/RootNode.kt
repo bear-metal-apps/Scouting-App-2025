@@ -72,22 +72,33 @@ class RootNode(
     }
 }
 
-var numOfPitsPeople = mutableIntStateOf(0)
+var numOfPitsPeople = mutableIntStateOf(1234567890)
 var scoutName =  mutableStateOf("")
 val teamDataArray : HashMap<TeamMatchKey, String> = hashMapOf<TeamMatchKey, String>()
 var client : Client? = null
 
 
-public fun String.betterParseInt(): Int{
-    for(index in this.indices){
-        if (this[index] < '0' || this[index] > '9') {
-            this.replace("${this[index]}"," ")
+/**
+ * @return int 0 if string has 0 ints and the first 10 digits of an int
+ * @author The coolest GPT lead with red hair during the 2024-2025 season
+ * *IMPORTANT* - when using it does NOT remove "/n" so you should set it to be a single line
+ */
+fun String.betterParseInt(): Int{
+    var stringBuilder = StringBuilder()
+    for(c in this) {
+        try {
+            parseInt(c.toString())
+            stringBuilder.append(parseInt(c.toString()))
+        }catch (e: NumberFormatException){
+            //Remove from original string
         }
     }
-    if (this != ""){
-        return parseInt(this.replace(" ",""))
+    if (stringBuilder.length >= 10){
+        stringBuilder.deleteCharAt(stringBuilder.lastIndex)
+    }
+    if (stringBuilder.toString().isNotEmpty()){
+        return parseInt(stringBuilder.toString())
     }else{
         return 0
     }
-
 }

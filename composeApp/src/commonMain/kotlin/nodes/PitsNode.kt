@@ -57,3 +57,30 @@ var algaePreferred = mutableStateOf(false)
 var defensePreferred = mutableStateOf(false)
 var collectPreference = mutableStateOf("None Selected")
 var comments = mutableStateOf("")
+
+fun pitsReset(){
+    scoutedTeamName.value = ""
+    scoutedTeamNumber.value = ""
+    photoArray.clear()
+    driveType.value = ""
+    motorType.value = ""
+    auto.value = ""
+    width.value = ""
+    length.value = ""
+    weight.value = ""
+    l4.value = false
+    l3.value = false
+    l2.value = false
+    l1.value = false
+    algaeBarge.value = false
+    algaeProcess.value = false
+    algaeRemoval.value = false
+    cycleTime.value = ""
+    rigidity.value = ""
+    coralHigh.value = false
+    coralLow.value = false
+    algaePreferred.value = false
+    defensePreferred.value = false
+    collectPreference.value = "None Selected"
+    comments.value = ""
+}
