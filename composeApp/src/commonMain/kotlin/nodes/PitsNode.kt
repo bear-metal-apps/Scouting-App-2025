@@ -9,12 +9,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.state.ToggleableState
 import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.navigation.modality.BuildContext
 import com.bumble.appyx.navigation.node.Node
-import com.google.gson.JsonObject
-import compKey
 import pages.PitsScoutMenu
 
 class PitsNode(
@@ -123,4 +120,31 @@ fun createPitsOutput(team: MutableIntState): String {
         addProperty("notes", notes.value)
     }
     return jsonObject.toString()
+}
+
+fun pitsReset(){
+    scoutedTeamName.value = ""
+    scoutedTeamNumber.value = ""
+    photoArray.clear()
+    driveType.value = ""
+    motorType.value = ""
+    auto.value = ""
+    width.value = ""
+    length.value = ""
+    weight.value = ""
+    l4.value = false
+    l3.value = false
+    l2.value = false
+    l1.value = false
+    algaeBarge.value = false
+    algaeProcess.value = false
+    algaeRemoval.value = false
+    cycleTime.value = ""
+    rigidity.value = ""
+    coralHigh.value = false
+    coralLow.value = false
+    algaePreferred.value = false
+    defensePreferred.value = false
+    collectPreference.value = "None Selected"
+    comments.value = ""
 }

@@ -25,6 +25,7 @@ import defaultPrimaryVariant
 import deleteFile
 import getCurrentTheme
 import nodes.RootNode
+import nodes.betterParseInt
 import nodes.teamDataArray
 import nodes.reset
 import java.io.File
@@ -190,6 +191,7 @@ actual fun LoginMenu(
             OutlinedTextField(
                 value = if(numOfPitsPeople.value == 0){""}else{numOfPitsPeople.value.toString()},
                 onValueChange = {
+                    numOfPitsPeople.value = it.betterParseInt()
                                 },
                 colors = OutlinedTextFieldDefaults.colors(
                     unfocusedContainerColor = getCurrentTheme().background,
@@ -202,10 +204,13 @@ actual fun LoginMenu(
                 ),
                 placeholder = { Text("Number of People on Pits") },
                 shape = RoundedCornerShape(15.dp),
+                singleLine = true,
                 keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+
+                
                 modifier = Modifier
                     .padding(top = 15.dp, bottom = 15.dp, start = 5.dp, end = 15.dp)
-                    .width(width = 175.dp)
+                    .width(width = 275.dp)
             )
         }
     }

@@ -989,7 +989,6 @@ actual fun PitsScoutMenu(
                         if (photoArray.size >= 1) {
                             robotCard = true
                         }
-
                     }) { Text(text = "Submit", color = defaultOnPrimary) }
                     OutlinedButton(onClick = { robotCard = false }) {
                         Text(
@@ -1007,35 +1006,36 @@ actual fun PitsScoutMenu(
                         Text(text = "Back", color = defaultOnPrimary)
                     }
                     if (downloadActive) {
+                        var array : MutableList<String> = mutableListOf()
                         snapshotFlow {
-                            photoArray.forEach { array += Uri.EMPTY }
-                            for((index) in array.withIndex()) {
-                                array[index] = Uri.parse(photoArray[index])
+                            array = photoArray.toList().toMutableList()
+                            for((index, value) in array.withIndex()) {
+                                array[index] = Uri.parse(array[index]).toString()
                             }
                         }
 
-                        download(context, array, scoutedTeamNumber.value, photoAmount)
+                        download(context, photoArray, scoutedTeamNumber.value, photoAmount)
                         downloadActive = false
                     }
                 }
-                if (robotCard) {
-                    Box(
-                        modifier = Modifier.padding(5.dp)
-                            .border(BorderStroke(2.dp, Color.Yellow), RoundedCornerShape(15.dp))
-                    ) {
-                        Profile(
-                            array,
-                            scoutedTeamName.value,
-                            scoutedTeamNumber.value,
-                            driveType.value,
-                            motorType.value,
-                            auto.value,
-                            collectPreference.value,
-                            comments.value,
-                            scoutName.value,
-                            Modifier.padding(10.dp)
-                        )
-                    }
-                }
+//                if (robotCard) {
+//                    Box(
+//                        modifier = Modifier.padding(5.dp)
+//                            .border(BorderStroke(2.dp, Color.Yellow), RoundedCornerShape(15.dp))
+//                    ) {
+//                        Profile(
+//                            photoArray,
+//                            scoutedTeamName,
+//                            scoutedTeamNumber,
+//                            driveType,
+//                            motorType,
+//                            auto,
+//                            collectPreference,
+//                            comments,
+//                            scoutName.value,
+//                            Modifier.padding(10.dp)
+//                        )
+//                    }
+//                }
             }
         }
