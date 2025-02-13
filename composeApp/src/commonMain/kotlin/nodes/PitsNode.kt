@@ -9,9 +9,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.state.ToggleableState
 import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.navigation.modality.BuildContext
 import com.bumble.appyx.navigation.node.Node
+import com.google.gson.JsonObject
+import compKey
 import pages.PitsScoutMenu
 
 class PitsNode(
@@ -57,3 +60,67 @@ var algaePreferred = mutableStateOf(false)
 var defensePreferred = mutableStateOf(false)
 var collectPreference = mutableStateOf("None Selected")
 var comments = mutableStateOf("")
+
+val pitsTeamDataArray : HashMap<Int, String> = hashMapOf<Int, String>()
+
+fun createPitsOutput(team: MutableIntState): String {
+
+    fun stateToInt(state: ToggleableState) = when (state) {
+        ToggleableState.Off -> 0
+        ToggleableState.Indeterminate -> 1
+        ToggleableState.On -> 2
+    }
+
+    if (comments.value.isEmpty()){ notes.value = "No Comments"}
+    comments.value = notes.value.replace(":","")
+
+    jsonObject = JsonObject().apply {
+        addProperty("team", team.intValue)
+        addProperty("comp", compKey)
+        addProperty("scoutName", scoutName.value)
+//        addProperty("robotStartPosition", robotStartPosition.intValue)
+        addProperty("autoFeederCollection", autoFeederCollection.intValue)
+        addProperty("coral3Collected", stateToInt(coral3Collected.value))
+        addProperty("coral2Collected", stateToInt(coral2Collected.value))
+        addProperty("coral1Collected", stateToInt(coral1Collected.value))
+        addProperty("algae3Collected", stateToInt(algae3Collected.value))
+        addProperty("algae2Collected", stateToInt(algae2Collected.value))
+        addProperty("algae1Collected", stateToInt(algae1Collected.value))
+        addProperty("algaeProcessed", algaeProcessed.intValue)
+        addProperty("algaeRemoved", algaeRemoved.intValue)
+        addProperty("autoCoralLevel4Scored", autoCoralLevel4Scored.intValue)
+        addProperty("autoCoralLevel3Scored", autoCoralLevel3Scored.intValue)
+        addProperty("autoCoralLevel2Scored", autoCoralLevel2Scored.intValue)
+        addProperty("autoCoralLevel1Scored", autoCoralLevel1Scored.intValue)
+        addProperty("autoCoralLevel4Missed", autoCoralLevel4Missed.intValue)
+        addProperty("autoCoralLevel3Missed", autoCoralLevel3Missed.intValue)
+        addProperty("autoCoralLevel2Missed", autoCoralLevel2Missed.intValue)
+        addProperty("autoCoralLevel1Missed", autoCoralLevel1Missed.intValue)
+        addProperty("autoNetScored", autoNetScored.intValue)
+        addProperty("autoNetMissed", autoNetMissed.intValue)
+        addProperty("autoStop", autoStop.intValue)
+        addProperty("teleNet", teleNet.intValue)
+        addProperty("teleNetMissed", teleNetMissed.intValue)
+        addProperty("teleLFour", teleLFour.intValue)
+        addProperty("teleLThree", teleLThree.intValue)
+        addProperty("teleLThreeAlgae", teleLThreeAlgae.intValue)
+        addProperty("teleLTwo", teleLTwo.intValue)
+        addProperty("teleLTwoAlgae", teleLTwoAlgae.intValue)
+        addProperty("teleLOne", teleLOne.intValue)
+        addProperty("teleProcessed", teleProcessed.intValue)
+        addProperty("teleLFourMissed", teleLFourMissed.intValue)
+        addProperty("teleLThreeMissed", teleLThreeMissed.intValue)
+        addProperty("teleLTwoMissed", teleLTwoMissed.intValue)
+        addProperty("teleLOneMissed", teleLOneMissed.intValue)
+        addProperty("lostComms", lostComms.intValue)
+        addProperty("playedDefense", playedDefense.value)
+        addProperty("aDeep", aDeep.value)
+        addProperty("bDeep", bDeep.value)
+        addProperty("cDeep", cDeep.value)
+        addProperty("aClimb", stateToInt(aClimb.value))
+        addProperty("bClimb", stateToInt(bClimb.value))
+        addProperty("cClimb", stateToInt(cClimb.value))
+        addProperty("notes", notes.value)
+    }
+    return jsonObject.toString()
+}

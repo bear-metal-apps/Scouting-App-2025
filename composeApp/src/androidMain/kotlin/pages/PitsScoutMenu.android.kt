@@ -16,6 +16,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -85,6 +86,7 @@ actual fun PitsScoutMenu(
             contract = ActivityResultContracts.TakePicture(),
             onResult = { hasImage = it }
         )
+        var array : SnapshotStateList<Uri> = SnapshotStateList()
         var downloadActive by remember { mutableStateOf(false) }
 
         var pitsPersonDD by remember { mutableStateOf(false) }
@@ -987,6 +989,7 @@ actual fun PitsScoutMenu(
                         if (photoArray.size >= 1) {
                             robotCard = true
                         }
+
                     }) { Text(text = "Submit", color = defaultOnPrimary) }
                     OutlinedButton(onClick = { robotCard = false }) {
                         Text(
@@ -1004,15 +1007,14 @@ actual fun PitsScoutMenu(
                         Text(text = "Back", color = defaultOnPrimary)
                     }
                     if (downloadActive) {
-                        var array : MutableList<String> = mutableListOf()
                         snapshotFlow {
-                            array = photoArray.toList().toMutableList()
-                            for((index, value) in array.withIndex()) {
-                                array[index] = Uri.parse(array[index]).toString()
+                            photoArray.forEach { array += Uri.EMPTY }
+                            for((index) in array.withIndex()) {
+                                array[index] = Uri.parse(photoArray[index])
                             }
                         }
 
-                        download(context, photoArray, scoutedTeamNumber.value, photoAmount)
+                        download(context, array, scoutedTeamNumber.value, photoAmount)
                         downloadActive = false
                     }
                 }
@@ -1022,14 +1024,14 @@ actual fun PitsScoutMenu(
                             .border(BorderStroke(2.dp, Color.Yellow), RoundedCornerShape(15.dp))
                     ) {
                         Profile(
-                            photoArray,
-                            scoutedTeamName,
-                            scoutedTeamNumber,
-                            driveType,
-                            motorType,
-                            auto,
-                            collectPreference,
-                            comments,
+                            array,
+                            scoutedTeamName.value,
+                            scoutedTeamNumber.value,
+                            driveType.value,
+                            motorType.value,
+                            auto.value,
+                            collectPreference.value,
+                            comments.value,
                             scoutName.value,
                             Modifier.padding(10.dp)
                         )
