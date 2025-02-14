@@ -11,6 +11,8 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -35,13 +37,17 @@ import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.components.backstack.operation.push
 import composables.Profile
 import composables.download
+import defaultError
 import defaultOnPrimary
+import defaultPrimaryVariant
 import getCurrentTheme
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import org.tahomarobotics.scouting.ComposeFileProvider
 import java.io.File
 import nodes.PitsNode.*
+import nodes.TeamMatchKey
 import nodes.algaeBarge
 import nodes.algaePreferred
 import nodes.algaeProcess
@@ -51,6 +57,8 @@ import nodes.collectPreference
 import nodes.comments
 import nodes.coralHigh
 import nodes.coralLow
+import nodes.createOutput
+import nodes.createPitsOutput
 import nodes.cycleTime
 import nodes.defensePreferred
 import nodes.driveType
@@ -61,12 +69,18 @@ import nodes.l4
 import nodes.length
 import nodes.motorType
 import nodes.photoArray
+import nodes.pitsReset
+import nodes.pitsTeamDataArray
+import nodes.reset
 import nodes.rigidity
 import nodes.scoutedTeamName
 import nodes.scoutedTeamNumber
+import nodes.teamDataArray
 import nodes.weight
 import nodes.width
+import java.lang.Integer.parseInt
 
+@OptIn(ExperimentalResourceApi::class)
 @Suppress("VARIABLE_WITH_REDUNDANT_INITIALIZER")
 @Composable
 actual fun PitsScoutMenu(
@@ -90,9 +104,12 @@ actual fun PitsScoutMenu(
         var downloadActive by remember { mutableStateOf(false) }
 
         var pitsPersonDD by remember { mutableStateOf(false) }
+        var teamNumRequirement by remember { mutableStateOf(false) }
 
         var photoAmount by remember { mutableIntStateOf(0) }
-        val scrollState = rememberScrollState(0)
+        var scrollState = rememberScrollState(0)
+        val listState = rememberLazyListState()
+        val coroutineScope = rememberCoroutineScope()
         val isScrollEnabled by remember { mutableStateOf(true) }
         var robotCard by remember { mutableStateOf(false) }
         val context = LocalContext.current
@@ -103,6 +120,12 @@ actual fun PitsScoutMenu(
         var dropDown2Expanded by remember { mutableStateOf(false) }
         var collectPrefDD by remember { mutableStateOf(false) }
 
+        LazyColumn(
+            state = listState,
+            modifier = Modifier.height(0.dp)
+        ) {
+
+        }
         Column(
             modifier = Modifier
                 .verticalScroll(state = scrollState, enabled = isScrollEnabled)
@@ -995,8 +1018,19 @@ actual fun PitsScoutMenu(
                 )
                 Row {
                     OutlinedButton(onClick = {
-                        if (photoArray.size >= 1) {
-                            robotCard = true
+                        if(scoutedTeamNumber.value == "") {
+                            teamNumRequirement = true
+                        } else {
+                            if (photoArray.size >= 1) {
+                                robotCard = true
+                            }
+                            pitsTeamDataArray[parseInt(scoutedTeamNumber.value)] = createPitsOutput(mutableIntStateOf(parseInt(scoutedTeamNumber.value)))
+                            println(pitsTeamDataArray[parseInt(scoutedTeamNumber.value)])
+                            pitsReset()
+
+                            coroutineScope.launch {
+                                listState.scrollToItem(0)
+                            }
                         }
                     }) { Text(text = "Submit", color = defaultOnPrimary) }
                     OutlinedButton(onClick = { robotCard = false }) {
@@ -1046,4 +1080,29 @@ actual fun PitsScoutMenu(
 //                    }
 //                }
             }
+
+            if(teamNumRequirement) {
+                BasicAlertDialog(
+                    onDismissRequest = { teamNumRequirement = false },
+                    modifier = Modifier.clip(
+                        RoundedCornerShape(5.dp)
+                    ).border(BorderStroke(3.dp, defaultPrimaryVariant), RoundedCornerShape(5.dp))
+
+                ) {
+                    Column {
+                        Text(text = "A valid team number must be provided.")
+                        Box(modifier = Modifier.fillMaxWidth(8f / 10f)) {
+                            Button(
+                                onClick = {
+                                    teamNumRequirement = false
+                                },
+                                modifier = Modifier.align(Alignment.Center)
+                            ) {
+                                Text(text = "Ok", color = defaultError)
+                            }
+                        }
+                    }
+                }
+            }
+
         }
