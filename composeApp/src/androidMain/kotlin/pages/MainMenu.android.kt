@@ -143,11 +143,11 @@ actual class MainMenu actual constructor(
                         DropdownMenuItem(
                             onClick = {
                                 robotStartPosition.intValue = 0; backStack.push(RootNode.NavTarget.MatchScouting)
-//                                try {
-//                                    setTeam(team, match, robotStartPosition.intValue)
-//                                } catch (e: JSONException) {
-//                                    openError.value = true
-//                                }
+                                try {
+                                    setTeam(team, match, robotStartPosition.intValue)
+                                } catch (e: JSONException) {
+                                    openError.value = true
+                                }
                             },
                             modifier = Modifier
                                 .border(BorderStroke(color = Color.Yellow, width = 3.dp))
@@ -158,11 +158,11 @@ actual class MainMenu actual constructor(
                         DropdownMenuItem(
                             onClick = {
                                 robotStartPosition.intValue = 3; backStack.push(RootNode.NavTarget.MatchScouting)
-//                                try {
-//                                    setTeam(team, match, robotStartPosition.intValue)
-//                                } catch (e: JSONException) {
-//                                    openError.value = true
-//                                }
+                                try {
+                                    setTeam(team, match, robotStartPosition.intValue)
+                                } catch (e: JSONException) {
+                                    openError.value = true
+                                }
                             },
                             modifier = Modifier
                                 .border(BorderStroke(color = Color.Yellow, width = 3.dp))
@@ -175,11 +175,11 @@ actual class MainMenu actual constructor(
                         DropdownMenuItem(
                             onClick = {
                                 robotStartPosition.intValue = 1; backStack.push(RootNode.NavTarget.MatchScouting)
-//                                try {
-//                                    setTeam(team, match, robotStartPosition.intValue)
-//                                } catch (e: JSONException) {
-//                                    openError.value = true
-//                                }
+                                try {
+                                    setTeam(team, match, robotStartPosition.intValue)
+                                } catch (e: JSONException) {
+                                    openError.value = true
+                                }
                             },
                             modifier = Modifier
                                 .border(BorderStroke(color = Color.Yellow, width = 3.dp))
@@ -190,11 +190,11 @@ actual class MainMenu actual constructor(
                         DropdownMenuItem(
                             onClick = {
                                 robotStartPosition.intValue = 4; backStack.push(RootNode.NavTarget.MatchScouting)
-//                                try {
-//                                    setTeam(team, match, robotStartPosition.intValue)
-//                                } catch (e: JSONException) {
-//                                    openError.value = true
-//                                }
+                                try {
+                                    setTeam(team, match, robotStartPosition.intValue)
+                                } catch (e: JSONException) {
+                                    openError.value = true
+                                }
                             },
                             modifier = Modifier
                                 .border(BorderStroke(color = Color.Yellow, width = 3.dp))
@@ -207,11 +207,11 @@ actual class MainMenu actual constructor(
                         DropdownMenuItem(
                             onClick = {
                                 robotStartPosition.intValue = 2; backStack.push(RootNode.NavTarget.MatchScouting)
-//                                try {
-//                                    setTeam(team, match, robotStartPosition.intValue)
-//                                } catch (e: JSONException) {
-//                                    openError.value = true
-//                                }
+                                try {
+                                    setTeam(team, match, robotStartPosition.intValue)
+                                } catch (e: JSONException) {
+                                    openError.value = true
+                                }
                             },
                             modifier = Modifier
                                 .border(BorderStroke(color = Color.Yellow, width = 3.dp))
@@ -222,11 +222,11 @@ actual class MainMenu actual constructor(
                         DropdownMenuItem(
                             onClick = {
                                 robotStartPosition.intValue = 5; backStack.push(RootNode.NavTarget.MatchScouting)
-//                                try {
-//                                    setTeam(team, match, robotStartPosition.intValue)
-//                                } catch (e: JSONException) {
-//                                    openError.value = true
-//                                }
+                                try {
+                                    setTeam(team, match, robotStartPosition.intValue)
+                                } catch (e: JSONException) {
+                                    openError.value = true
+                                }
                             },
                             modifier = Modifier
                                 .border(BorderStroke(color = Color.Yellow, width = 3.dp))

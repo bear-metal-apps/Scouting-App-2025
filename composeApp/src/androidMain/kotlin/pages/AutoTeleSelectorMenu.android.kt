@@ -33,12 +33,14 @@ import setTeam
 import java.lang.Integer.parseInt
 import java.util.EmptyStackException
 
-@RequiresApi(Build.VERSION_CODES.R)
+//@RequiresApi(Build.VERSION_CODES.R)
 @Composable
 actual fun AutoTeleSelectorMenuTop(
     match: MutableState<String>,
     team: MutableIntState,
-    robotStartPosition: MutableIntState
+    robotStartPosition: MutableIntState,
+    backStack: BackStack<AutoTeleSelectorNode.NavTarget>,
+    mainMenuBackStack: BackStack<RootNode.NavTarget>
 ) {
     var positionName by remember { mutableStateOf("") }
     val context = LocalContext.current
@@ -160,6 +162,7 @@ actual fun AutoTeleSelectorMenuTop(
                         openError.value = true
                     }
                     teamNumAsText = team.intValue.toString()
+                    backStack.push(AutoTeleSelectorNode.NavTarget.AutoScouting)
                 },
                 modifier = Modifier.fillMaxWidth(),
                 colors = TextFieldDefaults.colors(
@@ -305,13 +308,6 @@ actual fun AutoTeleSelectorMenuBottom(
                 fontSize = 24.sp
             )
         }
-
-
-
-
-
-
-
         OutlinedButton(
             border = BorderStroke(1.dp, color = Color.Yellow),
             shape = RoundedCornerShape(1.dp),
@@ -333,8 +329,14 @@ actual fun AutoTeleSelectorMenuBottom(
                         println(teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)])
                         match.value = (parseInt(match.value) + 1).toString()
                         reset()
-                        backStack.push(AutoTeleSelectorNode.NavTarget.AutoScouting)
                         loadData(parseInt(match.value), team, robotStartPosition)
+                        try {
+                            setTeam(team, match, robotStartPosition.intValue)
+                        } catch (e: JSONException) {
+                            openError.value = true
+                        }
+                        backStack.push(AutoTeleSelectorNode.NavTarget.AutoScouting)
+                        pageIndex = 0
                     }
                 }
 

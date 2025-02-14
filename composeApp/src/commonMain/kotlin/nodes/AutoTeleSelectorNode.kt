@@ -61,7 +61,7 @@ class AutoTeleSelectorNode(
     @Composable
     override fun View(modifier: Modifier) {
         Column {
-            AutoTeleSelectorMenuTop(match, team, robotStartPosition)
+            AutoTeleSelectorMenuTop(match, team, robotStartPosition,backStack,mainMenuBackStack)
             AppyxComponent(
                 appyxComponent = backStack,
                 modifier = Modifier.weight(0.9f),
