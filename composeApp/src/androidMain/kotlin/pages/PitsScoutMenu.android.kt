@@ -172,7 +172,8 @@ actual fun PitsScoutMenu(
                         focusedContainerColor = Color(6, 9, 13),
                         unfocusedContainerColor = Color(6, 9, 13),
                         focusedTextColor = defaultOnPrimary,
-                        unfocusedTextColor = defaultOnPrimary
+                        unfocusedTextColor = defaultOnPrimary,
+                        cursorColor = Color.Yellow
                     ),
                     shape = RoundedCornerShape(15.dp),
                     modifier = Modifier.size(85.dp, 60.dp)
@@ -190,7 +191,8 @@ actual fun PitsScoutMenu(
                         focusedContainerColor = Color(6, 9, 13),
                         unfocusedContainerColor = Color(6, 9, 13),
                         focusedTextColor = defaultOnPrimary,
-                        unfocusedTextColor = defaultOnPrimary
+                        unfocusedTextColor = defaultOnPrimary,
+                        cursorColor = Color.Yellow
                     ),
                     shape = RoundedCornerShape(15.dp),
                     modifier = Modifier.size(85.dp, 60.dp)
@@ -547,7 +549,8 @@ actual fun PitsScoutMenu(
                         onValueChange = { auto.value = it },
                         colors = TextFieldDefaults.colors(
                             focusedContainerColor = Color.Transparent,
-                            focusedTextColor = Color.White
+                            focusedTextColor = Color.White,
+                            cursorColor = Color.White
                         ),
                         modifier = Modifier
                             .padding(15.dp)
@@ -584,7 +587,8 @@ actual fun PitsScoutMenu(
                                 },
                                 colors = TextFieldDefaults.colors(
                                     focusedContainerColor = Color.Transparent,
-                                    focusedTextColor = Color.White
+                                    focusedTextColor = Color.White,
+                                    cursorColor = Color.Yellow
                                 ),
                                 keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
                                 modifier = Modifier
@@ -605,7 +609,8 @@ actual fun PitsScoutMenu(
                                 onValueChange = { length.value = it },
                                 colors = TextFieldDefaults.colors(
                                     focusedContainerColor = Color.Transparent,
-                                    focusedTextColor = Color.White
+                                    focusedTextColor = Color.White,
+                                    cursorColor = Color.Yellow
                                 ),
                                 keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
                                 modifier = Modifier
@@ -633,7 +638,8 @@ actual fun PitsScoutMenu(
                         onValueChange = { weight.value = it },
                         colors = TextFieldDefaults.colors(
                             focusedContainerColor = Color.Transparent,
-                            focusedTextColor = Color.White
+                            focusedTextColor = Color.White,
+                            cursorColor = Color.Yellow
                         ),
                         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
                         modifier = Modifier
@@ -877,7 +883,8 @@ actual fun PitsScoutMenu(
                         onValueChange = { cycleTime.value = it },
                         colors = TextFieldDefaults.colors(
                             focusedContainerColor = Color.Transparent,
-                            focusedTextColor = Color.White
+                            focusedTextColor = Color.White,
+                            cursorColor = Color.Yellow
                         ),
                         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
                         modifier = Modifier
@@ -907,7 +914,8 @@ actual fun PitsScoutMenu(
                                 focusedContainerColor = Color(6, 9, 13),
                                 unfocusedContainerColor = Color(6, 9, 13),
                                 focusedTextColor = defaultOnPrimary,
-                                unfocusedTextColor = defaultOnPrimary
+                                unfocusedTextColor = defaultOnPrimary,
+                                cursorColor = Color.Yellow
                             ),
                             shape = RoundedCornerShape(15.dp),
                             modifier = Modifier
@@ -976,7 +984,8 @@ actual fun PitsScoutMenu(
                         focusedContainerColor = Color(6, 9, 13),
                         unfocusedContainerColor = Color(6, 9, 13),
                         focusedTextColor = defaultOnPrimary,
-                        unfocusedTextColor = defaultOnPrimary
+                        unfocusedTextColor = defaultOnPrimary,
+                        cursorColor = Color.Yellow
                     ),
                     shape = RoundedCornerShape(15.dp),
                     modifier = Modifier
@@ -1006,15 +1015,14 @@ actual fun PitsScoutMenu(
                         Text(text = "Back", color = defaultOnPrimary)
                     }
                     if (downloadActive) {
-                        var array : MutableList<String> = mutableListOf()
+                        var array : SnapshotStateList<Uri> = SnapshotStateList()
                         snapshotFlow {
-                            array = photoArray.toList().toMutableList()
-                            for((index, value) in array.withIndex()) {
-                                array[index] = Uri.parse(array[index]).toString()
+                            for((index) in photoArray.withIndex()) {
+                                array[index] = Uri.parse(photoArray[index])
                             }
                         }
 
-                        download(context, photoArray, scoutedTeamNumber.value, photoAmount)
+                        download(context, array, scoutedTeamNumber.value, photoAmount)
                         downloadActive = false
                     }
                 }
