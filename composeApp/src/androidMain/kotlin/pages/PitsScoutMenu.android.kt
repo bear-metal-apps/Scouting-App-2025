@@ -1031,9 +1031,6 @@ actual fun PitsScoutMenu(
                             println(pitsTeamDataArray[parseInt(scoutedTeamNumber.value)])
                             pitsReset()
 
-                            backStack.pop()
-                            backStack.push(RootNode.NavTarget.PitsScouting)
-
 //                            coroutineScope.launch {
 //                                listState.scrollToItem(0)
 //                            }
@@ -1059,6 +1056,8 @@ actual fun PitsScoutMenu(
                         snapshotFlow {
                             for((index) in photoArray.withIndex()) {
                                 array[index] = Uri.parse(photoArray[index])
+                                println("String: ${photoArray[index]}")
+                                println("Uri: ${array[index]}")
                             }
                         }
 
