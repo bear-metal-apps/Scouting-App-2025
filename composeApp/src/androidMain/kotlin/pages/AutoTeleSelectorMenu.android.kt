@@ -1,5 +1,7 @@
 package pages
 
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -13,11 +15,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bumble.appyx.components.backstack.BackStack
 import defaultPrimaryVariant
-import exportScoutData
 import getCurrentTheme
 import nodes.*
-import org.json.JSONException
-import setTeam
+import org.jetbrains.compose.resources.load
 import java.lang.Integer.parseInt
 
 @Composable
@@ -34,6 +34,9 @@ actual fun AutoTeleSelectorMenu(
     var positionName by remember { mutableStateOf("") }
     val context = LocalContext.current
     var teamNumAsText by remember { mutableStateOf(team.intValue.toString()) }
+
+    var isTeamInteracted = remember {MutableInteractionSource()}
+    var isMatchInteracted = remember {MutableInteractionSource()}
 
     when {
 //        openError.value -> {
@@ -58,6 +61,20 @@ actual fun AutoTeleSelectorMenu(
         "Tele"
     }
 
+    if(teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] != null) {
+        loadData(parseInt(match.value), team, robotStartPosition)
+    } else {
+        teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
+    }
+
+    // Saves data before changing team or match number
+//    if((isTeamInteracted.collectIsFocusedAsState().value || isMatchInteracted.collectIsFocusedAsState().value)) {
+//        println("saving data")
+//        println(match.value)
+//        // This line below sets the data for match 1 to what the current variables are.
+//        teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
+//        println(teamDataArray)
+//    }
 
     Column {
         HorizontalDivider(color = defaultPrimaryVariant, thickness = 4.dp)
@@ -93,10 +110,12 @@ actual fun AutoTeleSelectorMenu(
                     val filteredText = value.filter { it.isDigit() }
                     teamNumAsText =
                         filteredText.slice(0..<filteredText.length.coerceAtMost(5))//WHY IS FILTER NOT FILTERING
-                    if (teamNumAsText.isNotEmpty() || teamNumAsText.contains(','))
-                        team.intValue = parseInt(teamNumAsText)
-                    println(createOutput(team, robotStartPosition))
+                    team.intValue = parseInt(teamNumAsText)
+                    if (filteredText.isNotEmpty() && !filteredText.contains(','))
+                        loadData(parseInt(match.value), team, robotStartPosition)
+//                    println(createOutput(team, robotStartPosition))
                 },
+                interactionSource = isTeamInteracted,
                 colors = TextFieldDefaults.colors(
                     unfocusedContainerColor = getCurrentTheme().background,
                     unfocusedTextColor = getCurrentTheme().onPrimary,
@@ -129,7 +148,11 @@ actual fun AutoTeleSelectorMenu(
                 value = match.value,
                 onValueChange = { value ->
                     val temp = value.filter { it.isDigit() }
-                    match.value = temp.slice(0..<temp.length.coerceAtMost(5))
+                    if(temp.isNotEmpty()) {
+                        match.value = temp.slice(0..<temp.length.coerceAtMost(5))
+                        loadData(parseInt(match.value), team, robotStartPosition)
+                        println(teamDataArray)
+                    }
 //                    if (match.value != "") {
 //                        loadData(parseInt(nodes.match.value), team, robotStartPosition)
 //                        teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
@@ -140,8 +163,8 @@ actual fun AutoTeleSelectorMenu(
 //                    } catch (e: JSONException) {
 //                        openError.value = true
 //                    }
-                    teamNumAsText = team.intValue.toString()
                 },
+                interactionSource = isMatchInteracted,
                 modifier = Modifier.fillMaxWidth(),
                 colors = TextFieldDefaults.colors(
                     unfocusedContainerColor = getCurrentTheme().background,
