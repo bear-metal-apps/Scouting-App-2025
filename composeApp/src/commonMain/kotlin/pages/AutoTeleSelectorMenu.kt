@@ -13,13 +13,17 @@ expect fun AutoTeleSelectorMenuTop(
     match: MutableState<String>,
     team: MutableIntState,
     robotStartPosition: MutableIntState,
+    pageIndex : MutableIntState
 )
+
+
 
 @Composable
 expect fun AutoTeleSelectorMenuBottom(
     robotStartPosition: MutableIntState,
     team: MutableIntState,
-    selectPage: MutableState<String>,
+    pageIndex: MutableIntState,
     backStack: BackStack<AutoTeleSelectorNode.NavTarget>,
-    mainMenuBackStack: BackStack<RootNode.NavTarget>
+    mainMenuBackStack: BackStack<RootNode.NavTarget>,
+    mainMenuDialog: MutableState<Boolean>
 )

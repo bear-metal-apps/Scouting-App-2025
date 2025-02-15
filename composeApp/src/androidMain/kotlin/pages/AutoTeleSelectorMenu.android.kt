@@ -1,16 +1,18 @@
 package pages
 
+import android.app.Dialog
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text2.input.UndoState
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -36,11 +38,13 @@ import java.util.EmptyStackException
 actual fun AutoTeleSelectorMenuTop(
     match: MutableState<String>,
     team: MutableIntState,
-    robotStartPosition: MutableIntState
+    robotStartPosition: MutableIntState,
+    pageIndex : MutableIntState
 ) {
     var positionName by remember { mutableStateOf("") }
     val context = LocalContext.current
     var teamNumAsText by remember { mutableStateOf(team.intValue.toString()) }
+    var pageName = mutableListOf("A","T","E")
 
     when {
 //        openError.value -> {
@@ -77,7 +81,7 @@ actual fun AutoTeleSelectorMenuTop(
         }
     }
     Column() {
-        HorizontalDivider(color = defaultPrimaryVariant, thickness = 4.dp)
+        HorizontalDivider(color = getCurrentTheme().primaryVariant, thickness = 4.dp)
 
 
         Row(
@@ -95,7 +99,7 @@ actual fun AutoTeleSelectorMenuTop(
             )
 
             VerticalDivider(
-                color = defaultPrimaryVariant,
+                color = getCurrentTheme().primaryVariant,
                 thickness = 3.dp
             )
             val textColor = if (positionName.lowercase().contains("b")) {
@@ -130,7 +134,7 @@ actual fun AutoTeleSelectorMenuTop(
             )
 
             VerticalDivider(
-                color = defaultPrimaryVariant,
+                color = getCurrentTheme().primaryVariant,
                 thickness = 3.dp
             )
 
@@ -147,19 +151,20 @@ actual fun AutoTeleSelectorMenuTop(
                 onValueChange = { value ->
                     val temp = value.filter { it.isDigit() }
                     match.value = temp.slice(0..<temp.length.coerceAtMost(5))
-//                    if (match.value != "") {
-//                        loadData(parseInt(nodes.match.value), team, robotStartPosition)
-//                        teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
-//                        exportScoutData(context)
-//                    }
-//                    try {
-//                        setTeam(team, nodes.match, robotStartPosition.intValue)
-//                    } catch (e: JSONException) {
-//                        openError.value = true
-//                    }
+                    if (match.value != "") {
+                        reset()
+                        loadData(parseInt(nodes.match.value), team, robotStartPosition)
+                        teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
+                        exportScoutData(context)
+                    }
+                    try {
+                        setTeam(team, nodes.match, robotStartPosition.intValue)
+                    } catch (e: JSONException) {
+                        openError.value = true
+                    }
                     teamNumAsText = team.intValue.toString()
                 },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(1/2f),
                 colors = TextFieldDefaults.colors(
                     unfocusedContainerColor = getCurrentTheme().background,
                     unfocusedTextColor = getCurrentTheme().onPrimary,
@@ -170,9 +175,19 @@ actual fun AutoTeleSelectorMenuTop(
                 singleLine = true,
                 textStyle = TextStyle.Default.copy(fontSize = 28.sp)
             )
-
+            VerticalDivider(
+                color = getCurrentTheme().primaryVariant,
+                thickness = 3.dp
+            )
+            Text(
+                text = pageName[pageIndex.value],
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+                    .padding(start = 25.dp),
+                fontSize = 28.sp
+            )
         }
-        HorizontalDivider(color = defaultPrimaryVariant, thickness = 3.dp)
+        HorizontalDivider(color = getCurrentTheme().primaryVariant, thickness = 3.dp)
     }
 }
 
@@ -186,19 +201,16 @@ actual fun AutoTeleSelectorMenuTop(
 
 
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 actual fun AutoTeleSelectorMenuBottom(
     robotStartPosition: MutableIntState,
     team: MutableIntState,
-
-    selectPage: MutableState<String>,
+    pageIndex: MutableIntState,
     backStack: BackStack<AutoTeleSelectorNode.NavTarget>,
     mainMenuBackStack: BackStack<RootNode.NavTarget>,
+    mainMenuDialog: MutableState<Boolean>
 ) {
-    var pageName = mutableListOf("Auto","Tele","End","Next")
-    var pageIndex by remember { mutableStateOf(0) }
-    val context = LocalContext.current
     var backgroundColor = remember { mutableStateOf(Color.Black) }
     var textColor = remember { mutableStateOf(Color.White) }
     fun getColors(state: ToggleableState) = when(state){
@@ -226,24 +238,14 @@ actual fun AutoTeleSelectorMenuBottom(
         ToggleableState.Indeterminate -> ToggleableState.On
         ToggleableState.On -> ToggleableState.Off
     }
-
-    fun bob() {
-        mainMenuBackStack.pop()
-        teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
-        exportScoutData(context)
-    }
-//fun bob() {
-//        mainMenuBackStack.pop()
-//        teamDataArray[robotStartPosition.intValue]?.set(parseInt(match.value), createOutput(team, robotStartPosition))
-//        exportScoutData(context)
-//    }
     Row(Modifier.fillMaxWidth()) {
+        Row(modifier = Modifier.fillMaxWidth(2 / 8f)){
         OutlinedButton(
             border = BorderStroke(1.dp, color = Color.Yellow),
             shape = RoundedCornerShape(1.dp),
             colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
             onClick = {
-                val action : Array<Any> = try {
+                val action: Array<Any> = try {
                     undoList.pop()
                 } catch (e: EmptyStackException) {
                     arrayOf("empty")
@@ -253,20 +255,31 @@ actual fun AutoTeleSelectorMenuBottom(
                         (action[1] as MutableIntState).value = action[2] as Int
                         redoList.push(arrayOf(action[0], action[1], action[2] as Int + 1))
                     }
+
                     "tristate" -> {
                         (action[1] as MutableState<ToggleableState>).value = action[2] as ToggleableState
                         (action[3] as MutableState<Color>).value = action[4] as Color
                         (action[5] as MutableState<Color>).value = action[6] as Color
-                        redoList.push(arrayOf(action[0], action[1], getNewState((action[1] as MutableState<ToggleableState>).value), action[3], action[4], action[5], action[6]))
+                        redoList.push(
+                            arrayOf(
+                                action[0],
+                                action[1],
+                                getNewState((action[1] as MutableState<ToggleableState>).value),
+                                action[3],
+                                action[4],
+                                action[5],
+                                action[6]
+                            )
+                        )
                     }
                 }
             },
-            modifier = Modifier.fillMaxWidth(1/5f)
+            modifier = Modifier.fillMaxWidth(1 / 2f)
         ) {
             Text(
-                "Undo",
+                "U",
                 color = Color.Yellow,
-                fontSize = 24.sp
+                fontSize = 23.sp
             )
         }
         OutlinedButton(
@@ -274,7 +287,7 @@ actual fun AutoTeleSelectorMenuBottom(
             shape = RoundedCornerShape(1.dp),
             colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
             onClick = {
-                val action : Array<Any> = try {
+                val action: Array<Any> = try {
                     redoList.pop()
                 } catch (e: EmptyStackException) {
                     arrayOf("empty")
@@ -282,12 +295,23 @@ actual fun AutoTeleSelectorMenuBottom(
                 when ((action[0] as String).lowercase()) {
                     "number" -> {
                         (action[1] as MutableIntState).value = action[2] as Int
-                        undoList.push(arrayOf(action[0], action[1], action[2] as Int-1))
+                        undoList.push(arrayOf(action[0], action[1], action[2] as Int - 1))
                     }
+
                     "tristate" -> {
                         var temp = getOldState((action[1] as MutableState<ToggleableState>).value)
                         getColors(temp)
-                        undoList.push(arrayOf("tristate", action[1], temp, action[3], backgroundColor.value, action[5], textColor.value))
+                        undoList.push(
+                            arrayOf(
+                                "tristate",
+                                action[1],
+                                temp,
+                                action[3],
+                                backgroundColor.value,
+                                action[5],
+                                textColor.value
+                            )
+                        )
                         (action[3] as MutableState<Color>).value = backgroundColor.value
                         (action[5] as MutableState<Color>).value = textColor.value
 
@@ -295,54 +319,48 @@ actual fun AutoTeleSelectorMenuBottom(
                 }
 
             },
-            modifier = Modifier.fillMaxWidth(1/4f)
+            modifier = Modifier.fillMaxWidth()
         ) {
             Text(
-                "Redo",
+                "R",
                 color = Color.Yellow,
-                fontSize = 24.sp
+                fontSize = 23.sp
             )
         }
-
-
-
-
-
-
-
+    }
         OutlinedButton(
             border = BorderStroke(1.dp, color = Color.Yellow),
             shape = RoundedCornerShape(1.dp),
             colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
             onClick = {
-                when (pageName[pageIndex]) {
-                    "Auto" -> {
-                        backStack.push(AutoTeleSelectorNode.NavTarget.TeleScouting)
-                        pageIndex++
-                    }
-
-                    "Tele" -> {
-                        backStack.push(AutoTeleSelectorNode.NavTarget.EndGameScouting)
-                        pageIndex++
-                    }
-
-                    "Endgame" -> {
-                        teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
-                        println(teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)])
-                        match.value = (parseInt(match.value) + 1).toString()
-                        reset()
-                        backStack.push(AutoTeleSelectorNode.NavTarget.AutoScouting)
-                        loadData(parseInt(match.value), team, robotStartPosition)
-                    }
-                }
+                backStack.push(AutoTeleSelectorNode.NavTarget.AutoScouting)
+                pageIndex.value = 0
+                teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
+            },
+            modifier = Modifier.fillMaxWidth(1/4f)
+        ) {
+            Text(
+                text = "Auto",
+                color = Color.Yellow,
+                fontSize = 23.sp
+            )
+        }
+        OutlinedButton(
+            border = BorderStroke(1.dp, color = Color.Yellow),
+            shape = RoundedCornerShape(1.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
+            onClick = {
+                backStack.push(AutoTeleSelectorNode.NavTarget.TeleScouting)
+                pageIndex.value = 1
+                teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
 
             },
             modifier = Modifier.fillMaxWidth(1/3f)
         ) {
             Text(
-                text = pageName[pageIndex+1],
+                text = "Tele",
                 color = Color.Yellow,
-                fontSize = 24.sp
+                fontSize = 23.sp
             )
         }
         OutlinedButton(
@@ -350,42 +368,33 @@ actual fun AutoTeleSelectorMenuBottom(
             shape = RoundedCornerShape(1.dp),
             colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
             onClick = {
-                backStack.pop()
-
-                if(pageIndex == 0){
-                    teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
-                    println(teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)])
-                    match.value = (parseInt(match.value) + 1).toString()
-                    reset()
-                    backStack.push(AutoTeleSelectorNode.NavTarget.AutoScouting)
-                    exportScoutData(context)
-                    loadData(parseInt(match.value), team, robotStartPosition)
-                    setTeam(team, match, robotStartPosition.intValue)
-                }else{
-                    pageIndex--
-                }
+                backStack.push(AutoTeleSelectorNode.NavTarget.EndGameScouting)
+                pageIndex.value = 2
+                teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
             },
-            modifier = Modifier.fillMaxWidth(1/2f)
+            modifier = Modifier.fillMaxWidth(8/16f)
         ) {
             Text(
-                text = "Back",
+                text = "End",
                 color = Color.Yellow,
-                fontSize = 24.sp
+                fontSize = 23.sp
             )
         }
+
         OutlinedButton(
             border = BorderStroke(1.dp, color = Color.Yellow),
             shape = RoundedCornerShape(1.dp),
             colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
             onClick = {
-                bob()
+                mainMenuDialog.value = true
             },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(
                 text = "Main",
+                maxLines = 1,
                 color = Color.Yellow,
-                fontSize = 24.sp
+                fontSize = 23.sp
             )
         }
     }

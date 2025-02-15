@@ -92,24 +92,5 @@ actual fun EndGameMenu(
             ) {
                 Text("Next Match", fontSize = 20.sp)
             }
-
-            OutlinedButton(
-                border = BorderStroke(2.dp, color = Color.Yellow),
-                shape = CircleShape,
-                colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
-                onClick = {
-                    if(parseInt(match.value) != 1) {
-                        match.value = (parseInt(match.value) - 1).toString()
-                    }
-                    loadData(parseInt(match.value), team, robotStartPosition)
-                    backStack.pop()
-                },
-                modifier = Modifier.align(Alignment.End)
-            ) {
-                Text(
-                    text = "Back",
-                    color = Color.Yellow
-                )
-            }
         }
 }

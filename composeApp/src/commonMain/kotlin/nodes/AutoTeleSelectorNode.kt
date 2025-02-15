@@ -1,14 +1,12 @@
 package nodes
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableIntState
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.state.ToggleableState
 import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.components.backstack.BackStackModel
+import com.bumble.appyx.components.backstack.operation.pop
 import com.bumble.appyx.components.backstack.ui.fader.BackStackFader
 import com.bumble.appyx.navigation.composable.AppyxComponent
 import com.bumble.appyx.navigation.modality.BuildContext
@@ -18,9 +16,12 @@ import com.bumble.appyx.utils.multiplatform.Parcelable
 import com.bumble.appyx.utils.multiplatform.Parcelize
 import com.google.gson.JsonObject
 import compKey
+import composables.MainMenuAlertDialog
 import pages.AutoTeleSelectorMenuBottom
 import pages.AutoTeleSelectorMenuTop
+import java.lang.Integer.parseInt
 import java.util.*
+import java.util.Stack
 
 class AutoTeleSelectorNode(
     buildContext: BuildContext,
@@ -61,12 +62,19 @@ class AutoTeleSelectorNode(
     @Composable
     override fun View(modifier: Modifier) {
         Column {
-            AutoTeleSelectorMenuTop(match, team, robotStartPosition)
+            var mainMenuDialog = mutableStateOf(false)
+            var pageIndex = mutableIntStateOf(0)
+            AutoTeleSelectorMenuTop(match, team, robotStartPosition, pageIndex)
+            MainMenuAlertDialog(mainMenuDialog,
+                bob = {
+                        mainMenuBackStack.pop()
+                        teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
+                })
             AppyxComponent(
                 appyxComponent = backStack,
                 modifier = Modifier.weight(0.9f),
             )
-            AutoTeleSelectorMenuBottom(robotStartPosition,team,selectAuto,backStack,mainMenuBackStack)
+            AutoTeleSelectorMenuBottom(robotStartPosition,team,pageIndex,backStack,mainMenuBackStack,mainMenuDialog)
         }
     }
 }

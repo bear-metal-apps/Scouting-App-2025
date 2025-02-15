@@ -113,6 +113,14 @@ actual fun AutoTeleSelectorMenuTop(
     }
 }
 
+@Composable
+actual fun AutoTeleSelectorMenuTop(
+    match: MutableState<String>,
+    team: MutableIntState,
+    robotStartPosition: MutableIntState,
+    pageIndex: MutableIntState
+) {
+}
 
 @Composable
 actual fun AutoTeleSelectorMenuBottom(
@@ -120,14 +128,18 @@ actual fun AutoTeleSelectorMenuBottom(
     team: MutableIntState,
     selectPage: MutableState<String>,
     backStack: BackStack<AutoTeleSelectorNode.NavTarget>,
-    mainMenuBackStack: BackStack<RootNode.NavTarget>
+    mainMenuBackStack: BackStack<RootNode.NavTarget>,
+    mainMenuDialog: MutableState<Boolean>
 ) {
 }
 
 @Composable
-actual fun AutoTeleSelectorMenuTop(
-    match: MutableState<String>,
+actual fun AutoTeleSelectorMenuBottom(
+    robotStartPosition: MutableIntState,
     team: MutableIntState,
-    robotStartPosition: MutableIntState
+    pageIndex: MutableIntState,
+    backStack: BackStack<AutoTeleSelectorNode.NavTarget>,
+    mainMenuBackStack: BackStack<RootNode.NavTarget>,
+    mainMenuDialog: MutableState<Boolean>
 ) {
 }
