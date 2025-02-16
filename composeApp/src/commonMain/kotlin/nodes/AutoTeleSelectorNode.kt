@@ -1,6 +1,7 @@
 package nodes
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.state.ToggleableState
@@ -55,9 +56,32 @@ class AutoTeleSelectorNode(
 
     override fun resolve(interactionTarget: NavTarget, buildContext: BuildContext): Node =
         when (interactionTarget) {
-            NavTarget.AutoScouting -> AutoNode(buildContext, backStack, mainMenuBackStack, match, team, robotStartPosition)
-            NavTarget.TeleScouting -> TeleNode(buildContext, backStack, mainMenuBackStack, match, team, robotStartPosition)
-            NavTarget.EndGameScouting -> EndgameNode(buildContext,backStack, mainMenuBackStack, match, team, robotStartPosition )
+            NavTarget.AutoScouting -> AutoNode(
+                buildContext,
+                backStack,
+                mainMenuBackStack,
+                match,
+                team,
+                robotStartPosition
+            )
+
+            NavTarget.TeleScouting -> TeleNode(
+                buildContext,
+                backStack,
+                mainMenuBackStack,
+                match,
+                team,
+                robotStartPosition
+            )
+
+            NavTarget.EndGameScouting -> EndgameNode(
+                buildContext,
+                backStack,
+                mainMenuBackStack,
+                match,
+                team,
+                robotStartPosition
+            )
         }
 
     @Composable
@@ -66,16 +90,25 @@ class AutoTeleSelectorNode(
             var mainMenuDialog = mutableStateOf(false)
             var pageIndex = mutableIntStateOf(0)
             AutoTeleSelectorMenuTop(match, team, robotStartPosition, pageIndex)
-            MainMenuAlertDialog(mainMenuDialog,
+            MainMenuAlertDialog(
+                mainMenuDialog,
                 bob = {
-                        mainMenuBackStack.pop()
-                        teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
+                    mainMenuBackStack.pop()
+                    teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] =
+                        createOutput(team, robotStartPosition)
                 })
             AppyxComponent(
                 appyxComponent = backStack,
                 modifier = Modifier.weight(0.9f),
             )
-            AutoTeleSelectorMenuBottom(robotStartPosition,team,pageIndex,backStack,mainMenuBackStack,mainMenuDialog)
+            AutoTeleSelectorMenuBottom(
+                robotStartPosition,
+                team,
+                pageIndex,
+                backStack,
+                mainMenuBackStack,
+                mainMenuDialog
+            )
         }
     }
 }
@@ -107,23 +140,20 @@ class TeamMatchKey(
         return "${match}, $team"
     }
 }
+
 var undoList = Stack<Array<Any>>()
 var redoList = Stack<Array<Any>>()
-var jsonObject : JsonObject = JsonObject()
+var jsonObject: JsonObject = JsonObject()
 
 val match = mutableStateOf("1")
 
 var tempMatch = match.value
-var tempTeam : Int = 0
+var tempTeam: Int = 0
 
 //CHECKED
 var autoFeederCollection = mutableIntStateOf(0)
-var coral3Collected = mutableStateOf(ToggleableState.Off)
-var coral2Collected = mutableStateOf(ToggleableState.Off)
-var coral1Collected = mutableStateOf(ToggleableState.Off)
-var algae3Collected = mutableStateOf(ToggleableState.Off)
-var algae2Collected = mutableStateOf(ToggleableState.Off)
-var algae1Collected = mutableStateOf(ToggleableState.Off)
+var groundCollectionCoral = mutableStateOf(ToggleableState.Off)
+var groundCollectionAlgae = mutableStateOf(ToggleableState.Off)
 var algaeProcessed = mutableIntStateOf(0)
 var algaeRemoved = mutableIntStateOf(0)
 var autoCoralLevel4Scored = mutableIntStateOf(0)
@@ -143,10 +173,9 @@ val teleNet = mutableIntStateOf(0)
 val teleNetMissed = mutableIntStateOf(0)
 val teleLFour = mutableIntStateOf(0)
 val teleLThree = mutableIntStateOf(0)
-val teleLThreeAlgae = mutableIntStateOf(0)
 val teleLTwo = mutableIntStateOf(0)
-val teleLTwoAlgae = mutableIntStateOf(0)
 val teleLOne = mutableIntStateOf(0)
+val teleReefAlgaeCollected = mutableStateOf(0)
 val teleProcessed = mutableIntStateOf(0)
 val teleLFourMissed = mutableIntStateOf(0)
 val teleLThreeMissed = mutableIntStateOf(0)
@@ -173,60 +202,77 @@ fun createOutput(team: MutableIntState, robotStartPosition: MutableIntState): St
         ToggleableState.On -> 2
     }
 
-    if (notes.value.isEmpty()){ notes.value = "No Comments"}
-    notes.value = notes.value.replace(":","")
+    if (notes.value.isEmpty()) {
+        notes.value = "No Comments"
+    }
+    notes.value = notes.value.replace(":", "")
 
     jsonObject = JsonObject().apply {
-        addProperty("match", match.value)
-        addProperty("team", team.intValue)
-        addProperty("comp", compKey)
-        addProperty("scoutName", scoutName.value)
-        addProperty("robotStartPosition", robotStartPosition.intValue)
-        addProperty("autoFeederCollection", autoFeederCollection.intValue)
-        addProperty("coral3Collected", stateToInt(coral3Collected.value))
-        addProperty("coral2Collected", stateToInt(coral2Collected.value))
-        addProperty("coral1Collected", stateToInt(coral1Collected.value))
-        addProperty("algae3Collected", stateToInt(algae3Collected.value))
-        addProperty("algae2Collected", stateToInt(algae2Collected.value))
-        addProperty("algae1Collected", stateToInt(algae1Collected.value))
-        addProperty("algaeProcessed", algaeProcessed.intValue)
-        addProperty("algaeRemoved", algaeRemoved.intValue)
-        addProperty("autoCoralLevel4Scored", autoCoralLevel4Scored.intValue)
-        addProperty("autoCoralLevel3Scored", autoCoralLevel3Scored.intValue)
-        addProperty("autoCoralLevel2Scored", autoCoralLevel2Scored.intValue)
-        addProperty("autoCoralLevel1Scored", autoCoralLevel1Scored.intValue)
-        addProperty("autoCoralLevel4Missed", autoCoralLevel4Missed.intValue)
-        addProperty("autoCoralLevel3Missed", autoCoralLevel3Missed.intValue)
-        addProperty("autoCoralLevel2Missed", autoCoralLevel2Missed.intValue)
-        addProperty("autoCoralLevel1Missed", autoCoralLevel1Missed.intValue)
-        addProperty("autoNetScored", autoNetScored.intValue)
-        addProperty("autoNetMissed", autoNetMissed.intValue)
-        addProperty("autoStop", autoStop.intValue)
-        addProperty("teleNet", teleNet.intValue)
-        addProperty("teleNetMissed", teleNetMissed.intValue)
-        addProperty("teleLFour", teleLFour.intValue)
-        addProperty("teleLThree", teleLThree.intValue)
-        addProperty("teleLThreeAlgae", teleLThreeAlgae.intValue)
-        addProperty("teleLTwo", teleLTwo.intValue)
-        addProperty("teleLTwoAlgae", teleLTwoAlgae.intValue)
-        addProperty("teleLOne", teleLOne.intValue)
-        addProperty("teleProcessed", teleProcessed.intValue)
-        addProperty("teleLFourMissed", teleLFourMissed.intValue)
-        addProperty("teleLThreeMissed", teleLThreeMissed.intValue)
-        addProperty("teleLTwoMissed", teleLTwoMissed.intValue)
-        addProperty("teleLOneMissed", teleLOneMissed.intValue)
-        addProperty("lostComms", lostComms.intValue)
-        addProperty("playedDefense", playedDefense.value)
-        addProperty("aDeep", aDeep.value)
-        addProperty("bDeep", bDeep.value)
-        addProperty("cDeep", cDeep.value)
-        addProperty("aClimb", stateToInt(aClimb.value))
-        addProperty("bClimb", stateToInt(bClimb.value))
-        addProperty("cClimb", stateToInt(cClimb.value))
+        addProperty("team_key", "frc" + team.intValue.toString())
+        addProperty("event_key", compKey)
+        addProperty("match_num", match.value)
+        addProperty("scout_name", scoutName.value)
         addProperty("notes", notes.value)
+        addProperty("robot_start_position", robotStartPosition.intValue)
+        add("auto", JsonObject().apply {
+            addProperty("stop", autoStop.intValue)
+            add("algae", JsonObject().apply {
+                addProperty("ground_collection", stateToInt(groundCollectionAlgae.value))
+                addProperty("removed", algaeRemoved.intValue)
+                addProperty("processed", algaeProcessed.intValue)
+                addProperty("feeder", autoFeederCollection.intValue)
+            })
+            add("coral", JsonObject().apply {
+                addProperty("ground_collection", stateToInt(groundCollectionCoral.value))
+                addProperty("reef_level1", autoCoralLevel4Scored.intValue)
+                addProperty("reef_level2", autoCoralLevel3Scored.intValue)
+                addProperty("reef_level3", autoCoralLevel2Scored.intValue)
+                addProperty("reef_level4", autoCoralLevel1Scored.intValue)
+                addProperty("reef_level1_missed", autoCoralLevel4Missed.intValue)
+                addProperty("reef_level2_missed", autoCoralLevel3Missed.intValue)
+                addProperty("reef_level3_missed", autoCoralLevel2Missed.intValue)
+                addProperty("reef_level4_missed", autoCoralLevel1Missed.intValue)
+            })
+            add("net", JsonObject().apply {
+                addProperty("scored", autoNetScored.intValue)
+                addProperty("missed", autoNetMissed.intValue)
+            })
+        })
+        add("tele", JsonObject().apply {
+            addProperty("lost_comms", lostComms.intValue)
+            addProperty("played_defense", playedDefense.value)
+            add("algae", JsonObject().apply {
+                addProperty("reef_collected", teleReefAlgaeCollected.value)
+                addProperty("processed", teleProcessed.intValue)
+            })
+            add("coral", JsonObject().apply {
+                addProperty("reef_level1", teleLOne.intValue)
+                addProperty("reef_level2", teleLTwo.intValue)
+                addProperty("reef_level3", teleLThree.intValue)
+                addProperty("reef_level4", teleLFour.intValue)
+                addProperty("reef_level1_missed", teleLOneMissed.intValue)
+                addProperty("reef_level2_missed", teleLTwoMissed.intValue)
+                addProperty("reef_level3_missed", teleLThreeMissed.intValue)
+                addProperty("reef_level4_missed", teleLFourMissed.intValue)
+
+            })
+            add("net", JsonObject().apply {
+                addProperty("scored", teleNet.intValue)
+                addProperty("missed", teleNetMissed.intValue)
+            })
+        })
+        add("endgame", JsonObject().apply {
+            addProperty("aDeep", aDeep.value)
+            addProperty("bDeep", bDeep.value)
+            addProperty("cDeep", cDeep.value)
+            addProperty("aClimb", stateToInt(aClimb.value))
+            addProperty("bClimb", stateToInt(bClimb.value))
+            addProperty("cClimb", stateToInt(cClimb.value))
+        })
     }
     return jsonObject.toString()
 }
+
 
 fun loadData(match: Int, team: MutableIntState, robotStartPosition: MutableIntState) {
 
@@ -239,55 +285,65 @@ fun loadData(match: Int, team: MutableIntState, robotStartPosition: MutableIntSt
 
     val gson = Gson()
 
-    if(teamDataArray[TeamMatchKey(match, team.value)] != null) {
+    if (teamDataArray[TeamMatchKey(match, team.value)] != null) {
 
         jsonObject = gson.fromJson(teamDataArray[TeamMatchKey(match, team.value)].toString(), JsonObject::class.java)
 
-        team.intValue = jsonObject.get("team").asInt
-        compKey = jsonObject.get("comp").asString
-        scoutName.value = jsonObject.get("scoutName").asString
-        robotStartPosition.intValue = jsonObject.get("robotStartPosition").asInt
-        autoFeederCollection.intValue = jsonObject.get("autoFeederCollection").asInt
-        coral3Collected.value = intToState(jsonObject.get("coral3Collected").asInt)
-        coral2Collected.value = intToState(jsonObject.get("coral2Collected").asInt)
-        coral1Collected.value = intToState(jsonObject.get("coral1Collected").asInt)
-        algae3Collected.value = intToState(jsonObject.get("algae3Collected").asInt)
-        algae2Collected.value = intToState(jsonObject.get("algae2Collected").asInt)
-        algae1Collected.value = intToState(jsonObject.get("algae1Collected").asInt)
-        algaeProcessed.intValue = jsonObject.get("algaeProcessed").asInt
-        algaeRemoved.intValue = jsonObject.get("algaeRemoved").asInt
-        autoCoralLevel4Scored.intValue = jsonObject.get("autoCoralLevel4Scored").asInt
-        autoCoralLevel3Scored.intValue = jsonObject.get("autoCoralLevel3Scored").asInt
-        autoCoralLevel2Scored.intValue = jsonObject.get("autoCoralLevel2Scored").asInt
-        autoCoralLevel1Scored.intValue = jsonObject.get("autoCoralLevel1Scored").asInt
-        autoCoralLevel4Missed.intValue = jsonObject.get("autoCoralLevel4Missed").asInt
-        autoCoralLevel3Missed.intValue = jsonObject.get("autoCoralLevel3Missed").asInt
-        autoCoralLevel2Missed.intValue = jsonObject.get("autoCoralLevel2Missed").asInt
-        autoCoralLevel1Missed.intValue = jsonObject.get("autoCoralLevel1Missed").asInt
-        autoNetScored.intValue = jsonObject.get("autoNetScored").asInt
-        autoNetMissed.intValue = jsonObject.get("autoNetMissed").asInt
-        autoStop.intValue = jsonObject.get("autoStop").asInt
-        teleNet.intValue = jsonObject.get("teleNet").asInt
-        teleNetMissed.intValue = jsonObject.get("teleNetMissed").asInt
-        teleLFour.intValue = jsonObject.get("teleLFour").asInt
-        teleLThree.intValue = jsonObject.get("teleLThree").asInt
-        teleLThreeAlgae.intValue = jsonObject.get("teleLThreeAlgae").asInt
-        teleLTwo.intValue = jsonObject.get("teleLTwo").asInt
-        teleLTwoAlgae.intValue = jsonObject.get("teleLTwoAlgae").asInt
-        teleLOne.intValue = jsonObject.get("teleLOne").asInt
-        teleProcessed.intValue = jsonObject.get("teleProcessed").asInt
-        teleLFourMissed.intValue = jsonObject.get("teleLFourMissed").asInt
-        teleLThreeMissed.intValue = jsonObject.get("teleLThreeMissed").asInt
-        teleLTwoMissed.intValue = jsonObject.get("teleLTwoMissed").asInt
-        teleLOneMissed.intValue = jsonObject.get("teleLOneMissed").asInt
-        lostComms.intValue = jsonObject.get("lostComms").asInt
-        playedDefense.value = jsonObject.get("playedDefense").asBoolean
-        aDeep.value = jsonObject.get("aDeep").asBoolean
-        bDeep.value = jsonObject.get("bDeep").asBoolean
-        cDeep.value = jsonObject.get("cDeep").asBoolean
-        aClimb.value = intToState(jsonObject.get("aClimb").asInt)
-        bClimb.value = intToState(jsonObject.get("bClimb").asInt)
-        cClimb.value = intToState(jsonObject.get("cClimb").asInt)
+        team.intValue = jsonObject.get("team_key").asInt
+        compKey = jsonObject.get("event_key").asString
+        scoutName.value = jsonObject.get("scout_name").asString
+        robotStartPosition.intValue = jsonObject.get("robot_start_position").asInt
+        autoFeederCollection.intValue = jsonObject.getAsJsonObject("auto").getAsJsonObject("algae").get("feeder").asInt
+        groundCollectionAlgae.value =
+            intToState(jsonObject.getAsJsonObject("auto").getAsJsonObject("algae").get("ground_collection").asInt)
+        groundCollectionCoral.value =
+            intToState(jsonObject.getAsJsonObject("auto").getAsJsonObject("coral").get("ground_collection").asInt)
+        algaeProcessed.intValue = jsonObject.getAsJsonObject("auto").getAsJsonObject("algae").get("processed").asInt
+        algaeRemoved.intValue = jsonObject.getAsJsonObject("auto").getAsJsonObject("algae").get("removed").asInt
+        autoCoralLevel4Scored.intValue =
+            jsonObject.getAsJsonObject("auto").getAsJsonObject("coral").get("reef_level1").asInt
+        autoCoralLevel3Scored.intValue =
+            jsonObject.getAsJsonObject("auto").getAsJsonObject("coral").get("reef_level2").asInt
+        autoCoralLevel2Scored.intValue =
+            jsonObject.getAsJsonObject("auto").getAsJsonObject("coral").get("reef_level3").asInt
+        autoCoralLevel1Scored.intValue =
+            jsonObject.getAsJsonObject("auto").getAsJsonObject("coral").get("reef_level4").asInt
+        autoCoralLevel4Missed.intValue =
+            jsonObject.getAsJsonObject("auto").getAsJsonObject("coral").get("reef_level1_missed").asInt
+        autoCoralLevel3Missed.intValue =
+            jsonObject.getAsJsonObject("auto").getAsJsonObject("coral").get("reef_level2_missed").asInt
+        autoCoralLevel2Missed.intValue =
+            jsonObject.getAsJsonObject("auto").getAsJsonObject("coral").get("reef_level3_missed").asInt
+        autoCoralLevel1Missed.intValue =
+            jsonObject.getAsJsonObject("auto").getAsJsonObject("coral").get("reef_level4_missed").asInt
+        autoNetScored.intValue = jsonObject.getAsJsonObject("auto").getAsJsonObject("net").get("scored").asInt
+        autoNetMissed.intValue = jsonObject.getAsJsonObject("auto").getAsJsonObject("net").get("missed").asInt
+        autoStop.intValue = jsonObject.getAsJsonObject("auto").get("stop").asInt
+        teleNet.intValue = jsonObject.getAsJsonObject("tele").getAsJsonObject("net").get("scored").asInt
+        teleNetMissed.intValue = jsonObject.getAsJsonObject("tele").getAsJsonObject("net").get("missed").asInt
+        teleLFour.intValue = jsonObject.getAsJsonObject("tele").getAsJsonObject("coral").get("reef_level4").asInt
+        teleLThree.intValue = jsonObject.getAsJsonObject("tele").getAsJsonObject("coral").get("reef_level3").asInt
+        teleLTwo.intValue = jsonObject.getAsJsonObject("tele").getAsJsonObject("coral").get("reef_level2").asInt
+        teleLOne.intValue = jsonObject.getAsJsonObject("tele").getAsJsonObject("coral").get("reef_level1").asInt
+        teleReefAlgaeCollected.value =
+            jsonObject.getAsJsonObject("tele").getAsJsonObject("algae").get("reef_collected").asInt
+        teleProcessed.intValue = jsonObject.getAsJsonObject("tele").getAsJsonObject("algae").get("processed").asInt
+        teleLFourMissed.intValue =
+            jsonObject.getAsJsonObject("tele").getAsJsonObject("coral").get("reef_level4_missed").asInt
+        teleLThreeMissed.intValue =
+            jsonObject.getAsJsonObject("tele").getAsJsonObject("coral").get("reef_level3_missed").asInt
+        teleLTwoMissed.intValue =
+            jsonObject.getAsJsonObject("tele").getAsJsonObject("coral").get("reef_level2_missed").asInt
+        teleLOneMissed.intValue =
+            jsonObject.getAsJsonObject("tele").getAsJsonObject("coral").get("reef_level1_missed").asInt
+        lostComms.intValue = jsonObject.getAsJsonObject("tele").get("lost_comms").asInt
+        playedDefense.value = jsonObject.getAsJsonObject("tele").get("played_defense").asBoolean
+        aDeep.value = jsonObject.getAsJsonObject("endgame").get("aDeep").asBoolean
+        bDeep.value = jsonObject.getAsJsonObject("endgame").get("bDeep").asBoolean
+        cDeep.value = jsonObject.getAsJsonObject("endgame").get("cDeep").asBoolean
+        aClimb.value = intToState(jsonObject.getAsJsonObject("endgame").get("aClimb").asInt)
+        bClimb.value = intToState(jsonObject.getAsJsonObject("endgame").get("bClimb").asInt)
+        cClimb.value = intToState(jsonObject.getAsJsonObject("endgame").get("cClimb").asInt)
         notes.value = jsonObject.get("notes").asString
     } else {
         reset()
@@ -295,15 +351,11 @@ fun loadData(match: Int, team: MutableIntState, robotStartPosition: MutableIntSt
     }
 }
 
-fun reset(){
+fun reset() {
 
     autoFeederCollection.intValue = 0
-    coral3Collected.value = ToggleableState.Off
-    coral2Collected.value = ToggleableState.Off
-    coral1Collected.value = ToggleableState.Off
-    algae3Collected.value = ToggleableState.Off
-    algae2Collected.value = ToggleableState.Off
-    algae1Collected.value = ToggleableState.Off
+    groundCollectionCoral.value = ToggleableState.Off
+    groundCollectionAlgae.value = ToggleableState.Off
     algaeProcessed.intValue = 0
     algaeRemoved.intValue = 0
     autoCoralLevel4Scored.intValue = 0
@@ -321,10 +373,9 @@ fun reset(){
     teleNetMissed.intValue = 0
     teleLFour.intValue = 0
     teleLThree.intValue = 0
-    teleLThreeAlgae.intValue = 0
     teleLTwo.intValue = 0
-    teleLTwoAlgae.intValue = 0
     teleLOne.intValue = 0
+    teleReefAlgaeCollected.value = 0
     teleProcessed.intValue = 0
     teleLFourMissed.intValue = 0
     teleLThreeMissed.intValue = 0
