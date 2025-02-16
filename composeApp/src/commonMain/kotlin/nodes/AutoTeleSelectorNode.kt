@@ -104,6 +104,9 @@ var jsonObject : JsonObject = JsonObject()
 
 val match = mutableStateOf("1")
 
+var tempMatch = match.value
+var tempTeam : Int = 0
+
 //CHECKED
 var autoFeederCollection = mutableIntStateOf(0)
 var coral3Collected = mutableStateOf(ToggleableState.Off)
@@ -212,7 +215,7 @@ fun createOutput(team: MutableIntState, robotStartPosition: MutableIntState): St
         addProperty("bClimb", stateToInt(bClimb.value))
         addProperty("cClimb", stateToInt(cClimb.value))
         addProperty("notes", notes.value)
-            }
+    }
     return jsonObject.toString()
 }
 
@@ -225,6 +228,7 @@ fun loadData(match: Int, team: MutableIntState, robotStartPosition: MutableIntSt
         else -> ToggleableState.Off
     }
 
+    //THE ASSIGNMENT OPERATORS BELOW DO NOT ASSIGN VALUES TO THE CORRECT ONES
     if(teamDataArray[TeamMatchKey(match, team.value)] != null) {
         println("Getting data for match $match")
         team.intValue = jsonObject.get("team").asInt
@@ -233,6 +237,7 @@ fun loadData(match: Int, team: MutableIntState, robotStartPosition: MutableIntSt
         robotStartPosition.intValue = jsonObject.get("robotStartPosition").asInt
         autoFeederCollection.intValue = jsonObject.get("autoFeederCollection").asInt
         coral3Collected.value = intToState(jsonObject.get("coral3Collected").asInt)
+        println(intToState(jsonObject.get("coral3Collected").asInt).toString())
         coral2Collected.value = intToState(jsonObject.get("coral2Collected").asInt)
         coral1Collected.value = intToState(jsonObject.get("coral1Collected").asInt)
         algae3Collected.value = intToState(jsonObject.get("algae3Collected").asInt)
@@ -274,8 +279,9 @@ fun loadData(match: Int, team: MutableIntState, robotStartPosition: MutableIntSt
         cClimb.value = intToState(jsonObject.get("cClimb").asInt)
         notes.value = jsonObject.get("notes").asString
     } else {
-        teamDataArray[TeamMatchKey(match, team.intValue)] = createOutput(team, robotStartPosition)
         reset()
+        teamDataArray[TeamMatchKey(match, team.intValue)] = createOutput(team, robotStartPosition)
+        println("stored new match in hashmap")
     }
 }
 

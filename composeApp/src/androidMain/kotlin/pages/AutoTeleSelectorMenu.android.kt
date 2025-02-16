@@ -35,8 +35,15 @@ actual fun AutoTeleSelectorMenu(
     val context = LocalContext.current
     var teamNumAsText by remember { mutableStateOf(team.intValue.toString()) }
 
-    var isTeamInteracted = remember {MutableInteractionSource()}
-    var isMatchInteracted = remember {MutableInteractionSource()}
+    val isTeamInteracted = remember {MutableInteractionSource()}
+    val isMatchInteracted = remember {MutableInteractionSource()}
+
+    var first by remember { mutableStateOf(true) }
+
+    if(first) {
+        tempTeam = team.intValue
+        tempMatch = match.value
+    }
 
     when {
 //        openError.value -> {
@@ -62,9 +69,12 @@ actual fun AutoTeleSelectorMenu(
     }
 
     if(teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] != null) {
+        teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
         loadData(parseInt(match.value), team, robotStartPosition)
+        println("loaded")
     } else {
         teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
+//        println("saved")
     }
 
     // Saves data before changing team or match number
@@ -78,7 +88,6 @@ actual fun AutoTeleSelectorMenu(
 
     Column {
         HorizontalDivider(color = defaultPrimaryVariant, thickness = 4.dp)
-
 
         Row(
             Modifier
@@ -147,12 +156,18 @@ actual fun AutoTeleSelectorMenu(
             TextField(
                 value = match.value,
                 onValueChange = { value ->
+                    teamDataArray[TeamMatchKey(parseInt(tempMatch), tempTeam)] = createOutput(
+                        mutableIntStateOf(tempTeam), robotStartPosition)
+
                     val temp = value.filter { it.isDigit() }
                     if(temp.isNotEmpty()) {
                         match.value = temp.slice(0..<temp.length.coerceAtMost(5))
+//                        teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
                         loadData(parseInt(match.value), team, robotStartPosition)
+                        println("switched to ${match.value}")
                         println(teamDataArray)
                     }
+                    tempMatch = match.value
 //                    if (match.value != "") {
 //                        loadData(parseInt(nodes.match.value), team, robotStartPosition)
 //                        teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
