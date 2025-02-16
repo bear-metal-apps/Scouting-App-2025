@@ -40,6 +40,7 @@ actual fun AutoTeleSelectorMenu(
 
     var first by remember { mutableStateOf(true) }
 
+    // When the user first opens the app, the tempTeam and tempMatch variables are assigned to the current match and team so they can be saved when the user changes the match or team!
     if(first) {
         tempTeam = team.intValue
         tempMatch = match.value
@@ -71,20 +72,9 @@ actual fun AutoTeleSelectorMenu(
     if(teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] != null) {
         teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
         loadData(parseInt(match.value), team, robotStartPosition)
-        println("loaded")
     } else {
         teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
-//        println("saved")
     }
-
-    // Saves data before changing team or match number
-//    if((isTeamInteracted.collectIsFocusedAsState().value || isMatchInteracted.collectIsFocusedAsState().value)) {
-//        println("saving data")
-//        println(match.value)
-//        // This line below sets the data for match 1 to what the current variables are.
-//        teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
-//        println(teamDataArray)
-//    }
 
     Column {
         HorizontalDivider(color = defaultPrimaryVariant, thickness = 4.dp)
@@ -116,13 +106,17 @@ actual fun AutoTeleSelectorMenu(
             TextField(
                 value = team.intValue.toString(),
                 onValueChange = { value ->
+                    teamDataArray[TeamMatchKey(parseInt(tempMatch), tempTeam)] = createOutput(
+                        mutableIntStateOf(tempTeam), robotStartPosition)
+
                     val filteredText = value.filter { it.isDigit() }
-                    teamNumAsText =
-                        filteredText.slice(0..<filteredText.length.coerceAtMost(5))//WHY IS FILTER NOT FILTERING
-                    team.intValue = parseInt(teamNumAsText)
                     if (filteredText.isNotEmpty() && !filteredText.contains(','))
+                        teamNumAsText =
+                            filteredText.slice(0..<filteredText.length.coerceAtMost(5))//WHY IS FILTER NOT FILTERING
+                        team.intValue = parseInt(teamNumAsText)
                         loadData(parseInt(match.value), team, robotStartPosition)
-//                    println(createOutput(team, robotStartPosition))
+
+                    tempTeam = team.intValue
                 },
                 interactionSource = isTeamInteracted,
                 colors = TextFieldDefaults.colors(
@@ -164,20 +158,9 @@ actual fun AutoTeleSelectorMenu(
                         match.value = temp.slice(0..<temp.length.coerceAtMost(5))
 //                        teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
                         loadData(parseInt(match.value), team, robotStartPosition)
-                        println("switched to ${match.value}")
-                        println(teamDataArray)
                     }
+
                     tempMatch = match.value
-//                    if (match.value != "") {
-//                        loadData(parseInt(nodes.match.value), team, robotStartPosition)
-//                        teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
-//                        exportScoutData(context)
-//                    }
-//                    try {
-//                        setTeam(team, nodes.match, robotStartPosition.intValue)
-//                    } catch (e: JSONException) {
-//                        openError.value = true
-//                    }
                 },
                 interactionSource = isMatchInteracted,
                 modifier = Modifier.fillMaxWidth(),

@@ -13,6 +13,7 @@ import com.bumble.appyx.navigation.node.Node
 import com.bumble.appyx.navigation.node.ParentNode
 import com.bumble.appyx.utils.multiplatform.Parcelable
 import com.bumble.appyx.utils.multiplatform.Parcelize
+import com.google.gson.Gson
 import com.google.gson.JsonObject
 import compKey
 import org.json.JSONObject
@@ -228,16 +229,18 @@ fun loadData(match: Int, team: MutableIntState, robotStartPosition: MutableIntSt
         else -> ToggleableState.Off
     }
 
-    //THE ASSIGNMENT OPERATORS BELOW DO NOT ASSIGN VALUES TO THE CORRECT ONES
+    val gson = Gson()
+
     if(teamDataArray[TeamMatchKey(match, team.value)] != null) {
-        println("Getting data for match $match")
+
+        jsonObject = gson.fromJson(teamDataArray[TeamMatchKey(match, team.value)].toString(), JsonObject::class.java)
+
         team.intValue = jsonObject.get("team").asInt
         compKey = jsonObject.get("comp").asString
         scoutName.value = jsonObject.get("scoutName").asString
         robotStartPosition.intValue = jsonObject.get("robotStartPosition").asInt
         autoFeederCollection.intValue = jsonObject.get("autoFeederCollection").asInt
         coral3Collected.value = intToState(jsonObject.get("coral3Collected").asInt)
-        println(intToState(jsonObject.get("coral3Collected").asInt).toString())
         coral2Collected.value = intToState(jsonObject.get("coral2Collected").asInt)
         coral1Collected.value = intToState(jsonObject.get("coral1Collected").asInt)
         algae3Collected.value = intToState(jsonObject.get("algae3Collected").asInt)
@@ -281,7 +284,6 @@ fun loadData(match: Int, team: MutableIntState, robotStartPosition: MutableIntSt
     } else {
         reset()
         teamDataArray[TeamMatchKey(match, team.intValue)] = createOutput(team, robotStartPosition)
-        println("stored new match in hashmap")
     }
 }
 
