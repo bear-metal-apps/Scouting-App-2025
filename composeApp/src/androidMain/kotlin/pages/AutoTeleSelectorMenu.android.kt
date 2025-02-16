@@ -6,6 +6,9 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.border
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -28,8 +31,8 @@ import defaultSecondary
 import exportScoutData
 import getCurrentTheme
 import nodes.*
+import org.jetbrains.compose.resources.load
 import org.json.JSONException
-import setTeam
 import java.lang.Integer.parseInt
 import java.util.EmptyStackException
 
@@ -45,6 +48,24 @@ actual fun AutoTeleSelectorMenuTop(
     val context = LocalContext.current
     var teamNumAsText by remember { mutableStateOf(team.intValue.toString()) }
     var pageName = mutableListOf("A","T","E")
+
+    val isTeamInteracted = remember { MutableInteractionSource() }
+    val isMatchInteracted = remember {MutableInteractionSource()}
+
+    var first by remember { mutableStateOf(true) }
+
+    // When the user first opens the app, the tempTeam and tempMatch variables are assigned to the current match and team so they can be saved when the user changes the match or team!
+    if(first) {
+        tempTeam = team.intValue
+        tempMatch = match.value
+    }
+
+    if(teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] != null) {
+        teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
+        loadData(parseInt(match.value), team, robotStartPosition)
+    } else {
+        teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
+    }
 
     when {
 //        openError.value -> {
@@ -83,7 +104,6 @@ actual fun AutoTeleSelectorMenuTop(
     Column() {
         HorizontalDivider(color = getCurrentTheme().primaryVariant, thickness = 4.dp)
 
-
         Row(
             Modifier
                 .align(Alignment.CenterHorizontally)
@@ -111,13 +131,19 @@ actual fun AutoTeleSelectorMenuTop(
             TextField(
                 value = team.intValue.toString(),
                 onValueChange = { value ->
+                    teamDataArray[TeamMatchKey(parseInt(tempMatch), tempTeam)] = createOutput(
+                        mutableIntStateOf(tempTeam), robotStartPosition)
+
                     val filteredText = value.filter { it.isDigit() }
-                    teamNumAsText =
-                        filteredText.slice(0..<filteredText.length.coerceAtMost(5))//WHY IS FILTER NOT FILTERING
-                    if (teamNumAsText.isNotEmpty() || teamNumAsText.contains(','))
+                    if (filteredText.isNotEmpty() && !filteredText.contains(','))
+                        teamNumAsText =
+                            filteredText.slice(0..<filteredText.length.coerceAtMost(5))//WHY IS FILTER NOT FILTERING
                         team.intValue = parseInt(teamNumAsText)
-                    println(createOutput(team, robotStartPosition))
+                        loadData(parseInt(match.value), team, robotStartPosition)
+
+                    tempTeam = team.intValue
                 },
+                interactionSource = isTeamInteracted,
                 colors = TextFieldDefaults.colors(
                     unfocusedContainerColor = getCurrentTheme().background,
                     unfocusedTextColor = getCurrentTheme().onPrimary,
@@ -149,21 +175,33 @@ actual fun AutoTeleSelectorMenuTop(
             TextField(
                 value = match.value,
                 onValueChange = { value ->
+                    teamDataArray[TeamMatchKey(parseInt(tempMatch), tempTeam)] = createOutput(
+                        mutableIntStateOf(tempTeam), robotStartPosition)
+
                     val temp = value.filter { it.isDigit() }
-                    match.value = temp.slice(0..<temp.length.coerceAtMost(5))
-                    if (match.value != "") {
-                        reset()
-                        loadData(parseInt(nodes.match.value), team, robotStartPosition)
-                        teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
-                        exportScoutData(context)
+                    if(temp.isNotEmpty()) {
+                        match.value = temp.slice(0..<temp.length.coerceAtMost(5))
+//                        teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
+                        loadData(parseInt(match.value), team, robotStartPosition)
                     }
-                    try {
-                        setTeam(team, nodes.match, robotStartPosition.intValue)
-                    } catch (e: JSONException) {
-                        openError.value = true
-                    }
-                    teamNumAsText = team.intValue.toString()
+
+                    tempMatch = match.value
+
+                    //BENS CODE
+//                    if (match.value != "") {
+//                        reset()
+//                        loadData(parseInt(nodes.match.value), team, robotStartPosition)
+//                        teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
+//                        exportScoutData(context)
+//                    }
+//                    try {
+//                        setTeam(team, nodes.match, robotStartPosition.intValue)
+//                    } catch (e: JSONException) {
+//                        openError.value = true
+//                    }
+//                    teamNumAsText = team.intValue.toString()
                 },
+                interactionSource = isMatchInteracted,
                 modifier = Modifier.fillMaxWidth(1/2f),
                 colors = TextFieldDefaults.colors(
                     unfocusedContainerColor = getCurrentTheme().background,

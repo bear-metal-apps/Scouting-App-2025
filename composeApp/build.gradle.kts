@@ -14,13 +14,7 @@ plugins {
 repositories {
     google()
     mavenCentral()
-    maven {
-        url = uri("https://maven.pkg.github.com/betterbearmetalcode/koala")
-        credentials {
-            username = System.getenv("GITHUB_USERNAME")
-            password = System.getenv("GITHUB_TOKEN")
-        }
-    }
+    maven("https://jitpack.io")
 }
 
 kotlin {

@@ -14,6 +14,7 @@ import com.bumble.appyx.navigation.node.Node
 import com.bumble.appyx.navigation.node.ParentNode
 import com.bumble.appyx.utils.multiplatform.Parcelable
 import com.bumble.appyx.utils.multiplatform.Parcelize
+import com.google.gson.Gson
 import com.google.gson.JsonObject
 import compKey
 import composables.MainMenuAlertDialog
@@ -111,6 +112,9 @@ var redoList = Stack<Array<Any>>()
 var jsonObject : JsonObject = JsonObject()
 
 val match = mutableStateOf("1")
+
+var tempMatch = match.value
+var tempTeam : Int = 0
 
 //CHECKED
 var autoFeederCollection = mutableIntStateOf(0)
@@ -220,7 +224,7 @@ fun createOutput(team: MutableIntState, robotStartPosition: MutableIntState): St
         addProperty("bClimb", stateToInt(bClimb.value))
         addProperty("cClimb", stateToInt(cClimb.value))
         addProperty("notes", notes.value)
-            }
+    }
     return jsonObject.toString()
 }
 
@@ -233,38 +237,12 @@ fun loadData(match: Int, team: MutableIntState, robotStartPosition: MutableIntSt
         else -> ToggleableState.Off
     }
 
-//    //Null possibility will most likely never happen.
-//    if((teamDataArray[TeamMatchKey(match, team.value)]?.split("\n")) == null) {
-//        print("null")
-//    }
-//
-//    val list : MutableList<String> =
-//        ((teamDataArray[TeamMatchKey(match, team.value)]?.split("\n"))?.toMutableList()?: createOutput(team, robotStartPosition).split("\n").toMutableList()).toMutableList()
-//
-//    println(list)
-//
-//    list.withIndex().forEach { (index, it) ->
-//        var firstIndex: Int
-//        for ((letterIndex, letter) in it.withIndex()) {
-//            if (letter == ':') {
-//                if(list[index].get(letterIndex+1).toString() == "\"") {
-//                    firstIndex = letterIndex + 2
-//                    list[index] = it.substring(firstIndex, it.length - 2)
-//                } else {
-//                    firstIndex = letterIndex + 1
-//                    list[index] = it.substring(firstIndex, it.length - 1)
-//                }
-//            }
-//        }
-//    }
-//    list.removeAt(0)
-//    if(list.lastIndex == 47) { //TODO: IMPROVE THIS
-//        list.removeAt(list.lastIndex)
-//    }
-//
-//    println(list)
+    val gson = Gson()
 
     if(teamDataArray[TeamMatchKey(match, team.value)] != null) {
+
+        jsonObject = gson.fromJson(teamDataArray[TeamMatchKey(match, team.value)].toString(), JsonObject::class.java)
+
         team.intValue = jsonObject.get("team").asInt
         compKey = jsonObject.get("comp").asString
         scoutName.value = jsonObject.get("scoutName").asString
@@ -312,14 +290,13 @@ fun loadData(match: Int, team: MutableIntState, robotStartPosition: MutableIntSt
         cClimb.value = intToState(jsonObject.get("cClimb").asInt)
         notes.value = jsonObject.get("notes").asString
     } else {
-        println("match is null!")
+        reset()
+        teamDataArray[TeamMatchKey(match, team.intValue)] = createOutput(team, robotStartPosition)
     }
 }
 
 fun reset(){
 
-    compKey = ""
-    scoutName.value = ""
     autoFeederCollection.intValue = 0
     coral3Collected.value = ToggleableState.Off
     coral2Collected.value = ToggleableState.Off
