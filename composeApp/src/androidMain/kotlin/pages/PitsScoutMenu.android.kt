@@ -5,6 +5,7 @@ package pages
 
 import nodes.RootNode
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -34,6 +35,7 @@ import androidx.core.content.ContextCompat
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.bumble.appyx.components.backstack.BackStack
+import com.bumble.appyx.components.backstack.operation.pop
 import com.bumble.appyx.components.backstack.operation.push
 import composables.Profile
 import composables.download
@@ -80,6 +82,7 @@ import nodes.weight
 import nodes.width
 import java.lang.Integer.parseInt
 
+@SuppressLint("NewApi")
 @OptIn(ExperimentalResourceApi::class)
 @Suppress("VARIABLE_WITH_REDUNDANT_INITIALIZER")
 @Composable
@@ -108,8 +111,8 @@ actual fun PitsScoutMenu(
 
         var photoAmount by remember { mutableIntStateOf(0) }
         var scrollState = rememberScrollState(0)
-        val listState = rememberLazyListState()
-        val coroutineScope = rememberCoroutineScope()
+//        val listState = rememberLazyListState()
+//        val coroutineScope = rememberCoroutineScope()
         val isScrollEnabled by remember { mutableStateOf(true) }
         var robotCard by remember { mutableStateOf(false) }
         val context = LocalContext.current
@@ -120,12 +123,12 @@ actual fun PitsScoutMenu(
         var dropDown2Expanded by remember { mutableStateOf(false) }
         var collectPrefDD by remember { mutableStateOf(false) }
 
-        LazyColumn(
-            state = listState,
-            modifier = Modifier.height(0.dp)
-        ) {
-
-        }
+//        LazyColumn(
+//            state = listState,
+//            modifier = Modifier.height(0.dp)
+//        ) {
+//
+//        }
         Column(
             modifier = Modifier
                 .verticalScroll(state = scrollState, enabled = isScrollEnabled)
@@ -989,9 +992,9 @@ actual fun PitsScoutMenu(
                             println(pitsTeamDataArray[parseInt(scoutedTeamNumber.value)])
                             pitsReset()
 
-                            coroutineScope.launch {
-                                listState.scrollToItem(0)
-                            }
+//                            coroutineScope.launch {
+//                                listState.scrollToItem(0)
+//                            }
                         }
                     }) { Text(text = "Submit", color = defaultOnPrimary) }
                     OutlinedButton(onClick = { robotCard = false }) {
@@ -1014,6 +1017,8 @@ actual fun PitsScoutMenu(
                         snapshotFlow {
                             for((index) in photoArray.withIndex()) {
                                 array[index] = Uri.parse(photoArray[index])
+                                println("String: ${photoArray[index]}")
+                                println("Uri: ${array[index]}")
                             }
                         }
 
