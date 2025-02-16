@@ -6,8 +6,6 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.border
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -33,6 +31,7 @@ import getCurrentTheme
 import nodes.*
 import org.jetbrains.compose.resources.load
 import org.json.JSONException
+import setTeam
 import java.lang.Integer.parseInt
 import java.util.EmptyStackException
 
@@ -48,9 +47,6 @@ actual fun AutoTeleSelectorMenuTop(
     val context = LocalContext.current
     var teamNumAsText by remember { mutableStateOf(team.intValue.toString()) }
     var pageName = mutableListOf("A","T","E")
-
-    val isTeamInteracted = remember { MutableInteractionSource() }
-    val isMatchInteracted = remember {MutableInteractionSource()}
 
     var first by remember { mutableStateOf(true) }
 
@@ -143,7 +139,6 @@ actual fun AutoTeleSelectorMenuTop(
 
                     tempTeam = team.intValue
                 },
-                interactionSource = isTeamInteracted,
                 colors = TextFieldDefaults.colors(
                     unfocusedContainerColor = getCurrentTheme().background,
                     unfocusedTextColor = getCurrentTheme().onPrimary,
@@ -183,25 +178,20 @@ actual fun AutoTeleSelectorMenuTop(
                         match.value = temp.slice(0..<temp.length.coerceAtMost(5))
 //                        teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
                         loadData(parseInt(match.value), team, robotStartPosition)
+                        teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
+                        exportScoutData(context) // Does nothing
+
+                        try {
+                            setTeam(team, nodes.match, robotStartPosition.intValue)
+                        } catch (e: JSONException) {
+                            openError.value = true
+                        }
+
                     }
 
                     tempMatch = match.value
 
-                    //BENS CODE
-//                    if (match.value != "") {
-//                        reset()
-//                        loadData(parseInt(nodes.match.value), team, robotStartPosition)
-//                        teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
-//                        exportScoutData(context)
-//                    }
-//                    try {
-//                        setTeam(team, nodes.match, robotStartPosition.intValue)
-//                    } catch (e: JSONException) {
-//                        openError.value = true
-//                    }
-//                    teamNumAsText = team.intValue.toString()
                 },
-                interactionSource = isMatchInteracted,
                 modifier = Modifier.fillMaxWidth(1/2f),
                 colors = TextFieldDefaults.colors(
                     unfocusedContainerColor = getCurrentTheme().background,
