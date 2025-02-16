@@ -1,10 +1,8 @@
 package pages
 
-import android.content.Context
+ import android.content.Context
 import android.hardware.usb.UsbManager
-import android.os.Build
 import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -32,14 +30,11 @@ import kotlinx.coroutines.launch
 import matchData
 import nodes.RootNode
 import nodes.client
-import nodes.match
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
-import org.json.JSONException
 import org.tahomarobotics.scouting.Client
 import sendData
 import sendDataUSB
-import setTeam
 import sync
 import teamData
 
@@ -52,7 +47,6 @@ actual class MainMenu actual constructor(
     private val team: MutableIntState
 ) : Node(buildContext = buildContext) {
 
-    @RequiresApi(Build.VERSION_CODES.O)
     @OptIn(ExperimentalResourceApi::class, ExperimentalMaterial3Api::class)
     @Composable
     actual override fun View(modifier: Modifier) {
@@ -91,9 +85,14 @@ actual class MainMenu actual constructor(
                 }
             }
             Box(modifier = Modifier.fillMaxWidth()) {
-                OutlinedButton(onClick = {backStack.push(RootNode.NavTarget.LoginPage)},modifier = Modifier
+                OutlinedButton(
+                    onClick = {
+                        backStack.push(RootNode.NavTarget.LoginPage)
+                              },
+                    modifier = Modifier
                     .scale(0.75f)
-                    .align(Alignment.CenterStart)) {
+                    .align(Alignment.CenterStart)
+                ) {
                     Text(text = "Login", color = getCurrentTheme().onPrimary)
                 }
 
@@ -102,6 +101,18 @@ actual class MainMenu actual constructor(
                     fontSize = 25.sp,
                     modifier = Modifier.align(Alignment.Center)
                 )
+
+                OutlinedButton(
+                        onClick = {
+                    backStack.push(RootNode.NavTarget.Settings)
+                           },
+                modifier = Modifier
+                    .scale(0.75f)
+                    .align(Alignment.CenterEnd)
+                        ) {
+                    Text(text = "Settings", color = getCurrentTheme().onPrimary)
+                }
+
             }
             HorizontalDivider(color = getCurrentTheme().onSurface, thickness = 2.dp)
             Text(text="Hello ${scoutName.value}",color = getCurrentTheme().onPrimary,modifier = Modifier.align(Alignment.CenterHorizontally))

@@ -1,18 +1,15 @@
 package pages
 
-import android.app.Dialog
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -21,17 +18,14 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bumble.appyx.components.backstack.BackStack
-import com.bumble.appyx.components.backstack.operation.pop
 import com.bumble.appyx.components.backstack.operation.push
-import defaultPrimaryVariant
-import defaultSecondary
 import exportScoutData
 import getCurrentTheme
 import nodes.*
 import org.json.JSONException
 import setTeam
 import java.lang.Integer.parseInt
-import java.util.EmptyStackException
+import java.util.*
 
 @RequiresApi(Build.VERSION_CODES.R)
 @Composable
@@ -243,7 +237,7 @@ actual fun AutoTeleSelectorMenuBottom(
         OutlinedButton(
             border = BorderStroke(1.dp, color = Color.Yellow),
             shape = RoundedCornerShape(1.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
+            colors = ButtonDefaults.buttonColors(containerColor = getCurrentTheme().secondary),
             onClick = {
                 val action: Array<Any> = try {
                     undoList.pop()
@@ -285,7 +279,7 @@ actual fun AutoTeleSelectorMenuBottom(
         OutlinedButton(
             border = BorderStroke(1.dp, color = Color.Yellow),
             shape = RoundedCornerShape(1.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
+            colors = ButtonDefaults.buttonColors(containerColor = getCurrentTheme().secondary),
             onClick = {
                 val action: Array<Any> = try {
                     redoList.pop()
@@ -331,7 +325,7 @@ actual fun AutoTeleSelectorMenuBottom(
         OutlinedButton(
             border = BorderStroke(1.dp, color = Color.Yellow),
             shape = RoundedCornerShape(1.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
+            colors = ButtonDefaults.buttonColors(containerColor = getCurrentTheme().secondary),
             onClick = {
                 backStack.push(AutoTeleSelectorNode.NavTarget.AutoScouting)
                 pageIndex.value = 0
@@ -348,7 +342,7 @@ actual fun AutoTeleSelectorMenuBottom(
         OutlinedButton(
             border = BorderStroke(1.dp, color = Color.Yellow),
             shape = RoundedCornerShape(1.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
+            colors = ButtonDefaults.buttonColors(containerColor = getCurrentTheme().secondary),
             onClick = {
                 backStack.push(AutoTeleSelectorNode.NavTarget.TeleScouting)
                 pageIndex.value = 1
@@ -366,7 +360,7 @@ actual fun AutoTeleSelectorMenuBottom(
         OutlinedButton(
             border = BorderStroke(1.dp, color = Color.Yellow),
             shape = RoundedCornerShape(1.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
+            colors = ButtonDefaults.buttonColors(containerColor = getCurrentTheme().secondary),
             onClick = {
                 backStack.push(AutoTeleSelectorNode.NavTarget.EndGameScouting)
                 pageIndex.value = 2
@@ -384,7 +378,7 @@ actual fun AutoTeleSelectorMenuBottom(
         OutlinedButton(
             border = BorderStroke(1.dp, color = Color.Yellow),
             shape = RoundedCornerShape(1.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
+            colors = ButtonDefaults.buttonColors(containerColor = getCurrentTheme().secondary),
             onClick = {
                 mainMenuDialog.value = true
             },

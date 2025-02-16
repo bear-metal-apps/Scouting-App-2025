@@ -25,6 +25,7 @@ import java.util.Stack
 
 class AutoTeleSelectorNode(
     buildContext: BuildContext,
+    private var pageIndex : MutableIntState,
     private var robotStartPosition: MutableIntState,
     private val team: MutableIntState,
     private val mainMenuBackStack: BackStack<RootNode.NavTarget>,
@@ -56,14 +57,13 @@ class AutoTeleSelectorNode(
         when (interactionTarget) {
             NavTarget.AutoScouting -> AutoNode(buildContext, backStack, mainMenuBackStack, match, team, robotStartPosition)
             NavTarget.TeleScouting -> TeleNode(buildContext, backStack, mainMenuBackStack, match, team, robotStartPosition)
-            NavTarget.EndGameScouting -> EndgameNode(buildContext,backStack, mainMenuBackStack, match, team, robotStartPosition )
+            NavTarget.EndGameScouting -> EndgameNode(buildContext,backStack, mainMenuBackStack, match, team, pageIndex, robotStartPosition )
         }
 
     @Composable
     override fun View(modifier: Modifier) {
         Column {
             var mainMenuDialog = mutableStateOf(false)
-            var pageIndex = mutableIntStateOf(0)
             AutoTeleSelectorMenuTop(match, team, robotStartPosition, pageIndex)
             MainMenuAlertDialog(mainMenuDialog,
                 bob = {

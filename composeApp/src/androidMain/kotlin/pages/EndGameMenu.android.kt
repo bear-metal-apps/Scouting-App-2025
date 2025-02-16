@@ -36,6 +36,7 @@ actual fun EndGameMenu(
     mainMenuBackStack: BackStack<RootNode.NavTarget>,
     match: MutableState<String>,
     team: MutableIntState,
+    pageIndex: MutableIntState,
     robotStartPosition: MutableIntState
 ) {
     rememberScrollState(0)
@@ -87,6 +88,8 @@ actual fun EndGameMenu(
                     match.value = (parseInt(match.value) + 1).toString()
                     reset()
                     backStack.push(AutoTeleSelectorNode.NavTarget.AutoScouting)
+                    pageIndex.value = 0
+
                 },
                 modifier = Modifier.align(Alignment.CenterHorizontally).padding(top = 10.dp)
             ) {

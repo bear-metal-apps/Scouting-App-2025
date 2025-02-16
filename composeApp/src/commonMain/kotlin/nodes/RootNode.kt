@@ -34,6 +34,7 @@ class RootNode(
     private var team = mutableIntStateOf(1)
     private var robotStartPosition = mutableIntStateOf(0)
     private var pitsPerson = mutableStateOf("P1")
+    private var pageIndex = mutableIntStateOf(0)
     var comp = mutableStateOf("")
 
 
@@ -49,14 +50,18 @@ class RootNode(
 
         @Parcelize
         data object LoginPage : NavTarget()
+
+        @Parcelize
+        data object  Settings : NavTarget()
     }
 
     override fun resolve(interactionTarget: NavTarget, buildContext: BuildContext): Node =
         when (interactionTarget) {
             NavTarget.LoginPage -> LoginNode(buildContext, backStack, scoutName, comp)
             NavTarget.MainMenu -> MainMenu(buildContext, backStack, robotStartPosition,scoutName, comp, team)
-            NavTarget.MatchScouting -> AutoTeleSelectorNode(buildContext,robotStartPosition, team, backStack)
+            NavTarget.MatchScouting -> AutoTeleSelectorNode(buildContext, pageIndex,robotStartPosition, team, backStack)
             NavTarget.PitsScouting -> PitsScoutMenu(buildContext,backStack,pitsPerson,scoutName)
+            NavTarget.Settings -> SettingsNode(buildContext, backStack)
         }
 
     @Composable

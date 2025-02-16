@@ -16,3 +16,14 @@ actual fun EndGameMenu(
     robotStartPosition: MutableIntState
 ) {
 }
+
+@Composable
+actual fun EndGameMenu(
+    backStack: BackStack<AutoTeleSelectorNode.NavTarget>,
+    mainMenuBackStack: BackStack<RootNode.NavTarget>,
+    match: MutableState<String>,
+    team: MutableIntState,
+    pageIndex: MutableIntState,
+    robotStartPosition: MutableIntState
+) {
+}
