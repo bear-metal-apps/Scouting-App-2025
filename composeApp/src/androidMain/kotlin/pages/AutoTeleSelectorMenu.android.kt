@@ -301,6 +301,9 @@ actual fun AutoTeleSelectorMenuBottom(
                         )
                     }
                 }
+
+                teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
+
             },
             modifier = Modifier.fillMaxWidth(1 / 2f)
         ) {
@@ -346,6 +349,8 @@ actual fun AutoTeleSelectorMenuBottom(
                     }
                 }
 
+                teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
+
             },
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -381,7 +386,6 @@ actual fun AutoTeleSelectorMenuBottom(
                 backStack.push(AutoTeleSelectorNode.NavTarget.TeleScouting)
                 pageIndex.value = 1
                 teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
-
             },
             modifier = Modifier.fillMaxWidth(1/3f)
         ) {
@@ -414,6 +418,7 @@ actual fun AutoTeleSelectorMenuBottom(
             shape = RoundedCornerShape(1.dp),
             colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
             onClick = {
+                teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
                 mainMenuDialog.value = true
             },
             modifier = Modifier.fillMaxWidth()
