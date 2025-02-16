@@ -141,45 +141,6 @@ actual fun PitsScoutMenu(
                     fontSize = 50.sp,
                     //color = defaultOnPrimary,
                 )
-                TextButton(
-                    onClick = { pitsPersonDD = true },
-                    modifier = Modifier
-                        .align(Alignment.CenterEnd)
-                        .padding(15.dp)
-                ) {
-                    Text(
-                        text = pitsPerson.value,
-                        fontSize = 40.sp,
-                        //color = defaultOnPrimary,
-                    )
-                }
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.CenterEnd)
-                        .padding(15.dp)
-                        .offset(0.dp, 15.dp)
-                ) {
-                    DropdownMenu(
-                        expanded = pitsPersonDD,
-                        onDismissRequest = { pitsPersonDD = false },
-                        modifier = Modifier
-                            .background(color = Color(15, 15, 15))
-                            .clip(RoundedCornerShape(7.5.dp))
-
-                    ) {
-                        for (x in 1..numOfPitsPeople.intValue) {
-                            DropdownMenuItem(
-                                onClick = {
-                                    pitsPersonDD = false
-                                    pitsPerson.value = "P$x"
-                                },
-                                text = {
-                                    Text("P$x", color = defaultOnPrimary)
-                                }
-                            )
-                        }
-                    }
-                }
             }
             Row {
                 Text(

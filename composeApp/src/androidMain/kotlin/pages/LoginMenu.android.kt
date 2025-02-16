@@ -188,30 +188,6 @@ actual fun LoginMenu(
                     }
                 }
             }
-            OutlinedTextField(
-                value = if(numOfPitsPeople.value == 0){""}else{numOfPitsPeople.value.toString()},
-                onValueChange = {
-                    numOfPitsPeople.value = it.betterParseInt()
-                                },
-                colors = OutlinedTextFieldDefaults.colors(
-                    unfocusedContainerColor = getCurrentTheme().background,
-                    unfocusedTextColor = getCurrentTheme().onPrimary,
-                    focusedContainerColor = getCurrentTheme().background,
-                    focusedTextColor = getCurrentTheme().onPrimary,
-                    cursorColor = getCurrentTheme().onSecondary,
-                    focusedBorderColor = Color.Cyan,
-                    unfocusedBorderColor = getCurrentTheme().secondary
-                ),
-                placeholder = { Text("Number of People on Pits") },
-                shape = RoundedCornerShape(15.dp),
-                singleLine = true,
-                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-
-                
-                modifier = Modifier
-                    .padding(top = 15.dp, bottom = 15.dp, start = 5.dp, end = 15.dp)
-                    .width(width = 275.dp)
-            )
         }
     }
 }
