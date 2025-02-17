@@ -47,10 +47,6 @@ actual fun TeleMenu(
         isScrollEnabled.value = true
     }
 
-//    if(saveData.value) {
-//        println("save")
-//    }
-
     Column(
     ){
         Row (

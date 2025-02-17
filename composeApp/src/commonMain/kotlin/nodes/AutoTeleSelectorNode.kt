@@ -170,8 +170,6 @@ var notes = mutableStateOf("")
 
 fun createOutput(team: MutableIntState, robotStartPosition: MutableIntState): String {
 
-    println("saved data!")
-
     fun stateToInt(state: ToggleableState) = when (state) {
         ToggleableState.Off -> 0
         ToggleableState.Indeterminate -> 1

@@ -47,10 +47,6 @@ actual fun AutoMenu(
         isScrollEnabled.value = true
     }
 
-//    if(saveData.value) {
-//        println("save")
-//    }
-
 //    val flippingAuto = remember { mutableStateOf(false)}
 //    val rotateAuto = remember { mutableStateOf(false)}
 
