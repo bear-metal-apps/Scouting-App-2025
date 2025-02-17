@@ -56,15 +56,59 @@ actual fun EndGameMenu(
                 .fillMaxWidth()
                 .verticalScroll(rememberScrollState())
         ) {
-            Row(Modifier.padding(bottom = 50.dp, top = 20.dp).align(Alignment.CenterHorizontally)) {
-                Cage("Center Barge", aClimb, aDeep, bClimb, cClimb, Modifier.fillMaxSize())
-                Cage("Middle", bClimb, bDeep, aClimb, cClimb, Modifier.fillMaxSize())
-                Cage("Outer Edge", cClimb, cDeep, aClimb, bClimb, Modifier.fillMaxSize())
+            Spacer(Modifier.height(20.dp))
+            Column (
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            ) {
+                Row(){
+                    Text(
+                        text = "Park:",
+                        fontSize = 24.sp,
+                        modifier = Modifier.align(Alignment.CenterVertically)
+                    )
+                    Checkbox(
+                        checked = park.value,
+                        onCheckedChange ={
+                            park.value = !park.value
+                        },
+                        modifier = Modifier.align(Alignment.CenterVertically),
+                    )
+                }
+                Row(){
+                    Text(
+                        text = "Deep:",
+                        fontSize = 24.sp,
+                        modifier = Modifier.align(Alignment.CenterVertically)
+                    )
+                    Checkbox(
+                        checked = deep.value,
+                        onCheckedChange ={
+                            deep.value = !deep.value
+                        },
+                        modifier = Modifier.align(Alignment.CenterVertically),
+                    )
+                }
+                Row(){
+                    Text(
+                        text = "Shallow:",
+                        fontSize = 24.sp,
+                        modifier = Modifier.align(Alignment.CenterVertically)
+                    )
+                    Checkbox(
+                        checked = shallow.value,
+                        onCheckedChange ={
+                            shallow.value = !shallow.value
+                        },
+                        modifier = Modifier.align(Alignment.CenterVertically),
+                    )
+                }
             }
+            Spacer(Modifier.height(20.dp))
             Row(){
                 Text(
                     text = "Played Defense:",
-                    fontSize = 24.sp
+                    fontSize = 24.sp,
+                    modifier = Modifier.align(Alignment.CenterVertically)
                 )
                 Checkbox(
                     checked = playedDefense.value,
@@ -73,11 +117,11 @@ actual fun EndGameMenu(
 
                         saveData.value = true
                     },
-                    modifier = Modifier,
+                    modifier = Modifier.align(Alignment.CenterVertically),
                 )
             }
             Comments(notes)
-            Spacer(Modifier.height(4.dp))
+            Spacer(Modifier.height(20.dp))
             OutlinedButton(
                 border = BorderStroke(3.dp, Color.Yellow),
                 shape = RoundedCornerShape(25.dp),
