@@ -112,7 +112,7 @@ var jsonObject : JsonObject = JsonObject()
 
 val match = mutableStateOf("1")
 
-//CHECKED
+// Auto
 var autoFeederCollection = mutableIntStateOf(0)
 var groundCollectionCoral = mutableStateOf(ToggleableState.Off)
 var groundCollectionAlgae = mutableStateOf(ToggleableState.Off)
@@ -130,7 +130,7 @@ var autoNetScored = mutableIntStateOf(0)
 var autoNetMissed = mutableIntStateOf(0)
 val autoStop = mutableIntStateOf(0)
 
-//CHECKED
+// Tele
 val teleNet = mutableIntStateOf(0)
 val teleNetMissed = mutableIntStateOf(0)
 val teleLFour = mutableIntStateOf(0)
@@ -147,13 +147,10 @@ val teleLOneMissed = mutableIntStateOf(0)
 var lostComms = mutableIntStateOf(0)
 var playedDefense = mutableStateOf(false)
 
-//CHECKED
-var aDeep = mutableStateOf(false)
-var bDeep = mutableStateOf(false)
-var cDeep = mutableStateOf(false)
-var aClimb = mutableStateOf(ToggleableState(false))
-var bClimb = mutableStateOf(ToggleableState(false))
-var cClimb = mutableStateOf(ToggleableState(false))
+// Endgame
+var park = mutableStateOf(false)
+var deep = mutableStateOf(false)
+var shallow = mutableStateOf(false)
 var notes = mutableStateOf("")
 
 
@@ -205,12 +202,9 @@ fun createOutput(team: MutableIntState, robotStartPosition: MutableIntState): St
         addProperty("teleLOneMissed", teleLOneMissed.intValue)
         addProperty("lostComms", lostComms.intValue)
         addProperty("playedDefense", playedDefense.value)
-        addProperty("aDeep", aDeep.value)
-        addProperty("bDeep", bDeep.value)
-        addProperty("cDeep", cDeep.value)
-        addProperty("aClimb", stateToInt(aClimb.value))
-        addProperty("bClimb", stateToInt(bClimb.value))
-        addProperty("cClimb", stateToInt(cClimb.value))
+        addProperty("park", park.value)
+        addProperty("deep", deep.value)
+        addProperty("shallow", shallow.value)
         addProperty("notes", notes.value)
             }
     return jsonObject.toString()
@@ -261,12 +255,9 @@ fun loadData(match: Int, team: MutableIntState, robotStartPosition: MutableIntSt
         teleLOneMissed.intValue = jsonObject.get("teleLOneMissed").asInt
         lostComms.intValue = jsonObject.get("lostComms").asInt
         playedDefense.value = jsonObject.get("playedDefense").asBoolean
-        aDeep.value = jsonObject.get("aDeep").asBoolean
-        bDeep.value = jsonObject.get("bDeep").asBoolean
-        cDeep.value = jsonObject.get("cDeep").asBoolean
-        aClimb.value = intToState(jsonObject.get("aClimb").asInt)
-        bClimb.value = intToState(jsonObject.get("bClimb").asInt)
-        cClimb.value = intToState(jsonObject.get("cClimb").asInt)
+        park.value = jsonObject.get("park").asBoolean
+        deep.value = jsonObject.get("deep").asBoolean
+        shallow.value = jsonObject.get("shallow").asBoolean
         notes.value = jsonObject.get("notes").asString
     } else {
         println("match is null!")
@@ -308,12 +299,9 @@ fun reset(){
     teleLOneMissed.intValue = 0
     lostComms.intValue = 0
     playedDefense.value = false
-    aDeep.value = false
-    bDeep.value = false
-    cDeep.value = false
-    aClimb.value = ToggleableState.Off
-    bClimb.value = ToggleableState.Off
-    cClimb.value = ToggleableState.Off
+    park.value = false
+    deep.value = false
+    shallow.value = false
     notes.value = ""
 
 }
