@@ -114,12 +114,8 @@ val match = mutableStateOf("1")
 
 //CHECKED
 var autoFeederCollection = mutableIntStateOf(0)
-var coral3Collected = mutableStateOf(ToggleableState.Off)
-var coral2Collected = mutableStateOf(ToggleableState.Off)
-var coral1Collected = mutableStateOf(ToggleableState.Off)
-var algae3Collected = mutableStateOf(ToggleableState.Off)
-var algae2Collected = mutableStateOf(ToggleableState.Off)
-var algae1Collected = mutableStateOf(ToggleableState.Off)
+var groundCollectionCoral = mutableStateOf(ToggleableState.Off)
+var groundCollectionAlgae = mutableStateOf(ToggleableState.Off)
 var algaeProcessed = mutableIntStateOf(0)
 var algaeRemoved = mutableIntStateOf(0)
 var autoCoralLevel4Scored = mutableIntStateOf(0)
@@ -179,12 +175,8 @@ fun createOutput(team: MutableIntState, robotStartPosition: MutableIntState): St
         addProperty("scoutName", scoutName.value)
         addProperty("robotStartPosition", robotStartPosition.intValue)
         addProperty("autoFeederCollection", autoFeederCollection.intValue)
-        addProperty("coral3Collected", stateToInt(coral3Collected.value))
-        addProperty("coral2Collected", stateToInt(coral2Collected.value))
-        addProperty("coral1Collected", stateToInt(coral1Collected.value))
-        addProperty("algae3Collected", stateToInt(algae3Collected.value))
-        addProperty("algae2Collected", stateToInt(algae2Collected.value))
-        addProperty("algae1Collected", stateToInt(algae1Collected.value))
+        addProperty("groundCollectionAlgae", stateToInt(groundCollectionAlgae.value))
+        addProperty("groundCollectionCoral", stateToInt(groundCollectionCoral.value))
         addProperty("algaeProcessed", algaeProcessed.intValue)
         addProperty("algaeRemoved", algaeRemoved.intValue)
         addProperty("autoCoralLevel4Scored", autoCoralLevel4Scored.intValue)
@@ -233,49 +225,14 @@ fun loadData(match: Int, team: MutableIntState, robotStartPosition: MutableIntSt
         else -> ToggleableState.Off
     }
 
-//    //Null possibility will most likely never happen.
-//    if((teamDataArray[TeamMatchKey(match, team.value)]?.split("\n")) == null) {
-//        print("null")
-//    }
-//
-//    val list : MutableList<String> =
-//        ((teamDataArray[TeamMatchKey(match, team.value)]?.split("\n"))?.toMutableList()?: createOutput(team, robotStartPosition).split("\n").toMutableList()).toMutableList()
-//
-//    println(list)
-//
-//    list.withIndex().forEach { (index, it) ->
-//        var firstIndex: Int
-//        for ((letterIndex, letter) in it.withIndex()) {
-//            if (letter == ':') {
-//                if(list[index].get(letterIndex+1).toString() == "\"") {
-//                    firstIndex = letterIndex + 2
-//                    list[index] = it.substring(firstIndex, it.length - 2)
-//                } else {
-//                    firstIndex = letterIndex + 1
-//                    list[index] = it.substring(firstIndex, it.length - 1)
-//                }
-//            }
-//        }
-//    }
-//    list.removeAt(0)
-//    if(list.lastIndex == 47) { //TODO: IMPROVE THIS
-//        list.removeAt(list.lastIndex)
-//    }
-//
-//    println(list)
-
     if(teamDataArray[TeamMatchKey(match, team.value)] != null) {
         team.intValue = jsonObject.get("team").asInt
         compKey = jsonObject.get("comp").asString
         scoutName.value = jsonObject.get("scoutName").asString
         robotStartPosition.intValue = jsonObject.get("robotStartPosition").asInt
         autoFeederCollection.intValue = jsonObject.get("autoFeederCollection").asInt
-        coral3Collected.value = intToState(jsonObject.get("coral3Collected").asInt)
-        coral2Collected.value = intToState(jsonObject.get("coral2Collected").asInt)
-        coral1Collected.value = intToState(jsonObject.get("coral1Collected").asInt)
-        algae3Collected.value = intToState(jsonObject.get("algae3Collected").asInt)
-        algae2Collected.value = intToState(jsonObject.get("algae2Collected").asInt)
-        algae1Collected.value = intToState(jsonObject.get("algae1Collected").asInt)
+        groundCollectionAlgae.value = intToState(jsonObject.get("groundCollectionAlgae").asInt)
+        groundCollectionCoral.value = intToState(jsonObject.get("groundCollectionCoral").asInt)
         algaeProcessed.intValue = jsonObject.get("algaeProcessed").asInt
         algaeRemoved.intValue = jsonObject.get("algaeRemoved").asInt
         autoCoralLevel4Scored.intValue = jsonObject.get("autoCoralLevel4Scored").asInt
@@ -321,12 +278,8 @@ fun reset(){
     compKey = ""
     scoutName.value = ""
     autoFeederCollection.intValue = 0
-    coral3Collected.value = ToggleableState.Off
-    coral2Collected.value = ToggleableState.Off
-    coral1Collected.value = ToggleableState.Off
-    algae3Collected.value = ToggleableState.Off
-    algae2Collected.value = ToggleableState.Off
-    algae1Collected.value = ToggleableState.Off
+    groundCollectionCoral.value = ToggleableState.Off
+    groundCollectionAlgae.value = ToggleableState.Off
     algaeProcessed.intValue = 0
     algaeRemoved.intValue = 0
     autoCoralLevel4Scored.intValue = 0
