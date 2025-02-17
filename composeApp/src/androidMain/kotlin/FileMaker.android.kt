@@ -6,7 +6,10 @@ import android.hardware.usb.UsbRequest
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import com.google.gson.Gson
+import com.google.gson.JsonObject
 import nodes.jsonObject
+import nodes.pitsTeamDataArray
 import nodes.teamDataArray
 import org.json.JSONArray
 import org.json.JSONException
@@ -96,14 +99,27 @@ fun deleteFile(context: Context){
 /**
  *@param scoutingType should be "match", "strat", or "pit"
  */
-fun sendData(context: Context, client: Client, scoutingType: String) {
+fun sendData(context: Context, client: Client) {
     exportScoutData(context)
 
-    val jsonObject = jsonObject
+    val gson = Gson()
 
-    client.sendData(jsonObject.toString(), scoutingType)
+    teamDataArray.forEach {
+        val jsonObject = gson.fromJson(it.toString(), JsonObject::class.java)
 
-    Log.i("Client", "Message Sent: ${jsonObject.toString()}")
+        client.sendData(jsonObject.toString(), "match")
+
+        Log.i("Client", "Message Sent: ${jsonObject.toString()}")
+    }
+
+    pitsTeamDataArray.forEach {
+        val jsonObject = gson.fromJson(it.toString(), JsonObject::class.java)
+
+        client.sendData(jsonObject.toString(), "pit")
+
+        Log.i("Client", "Message Sent: ${jsonObject.toString()}")
+    }
+
 }
 
 @RequiresApi(Build.VERSION_CODES.O)

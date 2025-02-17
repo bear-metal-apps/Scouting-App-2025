@@ -1,6 +1,7 @@
 package nodes
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import com.bumble.appyx.components.backstack.BackStack
@@ -13,9 +14,10 @@ class LoginNode(
     private val backStack: BackStack<RootNode.NavTarget>,
     private val scoutName: MutableState<String>,
     private val comp:  MutableState<String>,
+    private val numOfPitsPeople : MutableIntState
 ) : Node(buildContext) {
     @Composable
     override fun View(modifier: Modifier) {
-        LoginMenu(backStack, scoutName, comp)
+        LoginMenu(backStack, scoutName, comp, numOfPitsPeople)
     }
 }

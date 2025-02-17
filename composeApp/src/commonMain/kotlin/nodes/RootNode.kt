@@ -16,6 +16,7 @@ import com.bumble.appyx.utils.multiplatform.Parcelable
 import com.bumble.appyx.utils.multiplatform.Parcelize
 import org.tahomarobotics.scouting.Client
 import pages.*
+import java.lang.Integer.parseInt
 
 
 class RootNode(
@@ -53,17 +54,15 @@ class RootNode(
 
     override fun resolve(interactionTarget: NavTarget, buildContext: BuildContext): Node =
         when (interactionTarget) {
-            NavTarget.LoginPage -> LoginNode(buildContext, backStack, scoutName, comp)
+            NavTarget.LoginPage -> LoginNode(buildContext, backStack, scoutName, comp, numOfPitsPeople)
             NavTarget.MainMenu -> MainMenu(buildContext, backStack, robotStartPosition,scoutName, comp, team)
             NavTarget.MatchScouting -> AutoTeleSelectorNode(buildContext,robotStartPosition, team, backStack)
-            NavTarget.PitsScouting -> PitsScoutMenu(buildContext,backStack,pitsPerson,scoutName)
+            NavTarget.PitsScouting -> PitsNode(buildContext,backStack,pitsPerson, numOfPitsPeople)
         }
 
     @Composable
     override fun View(modifier: Modifier) {
-
         Column {
-
             AppyxComponent(
                 appyxComponent = backStack,
                 modifier = Modifier.weight(0.9f)
@@ -73,6 +72,33 @@ class RootNode(
     }
 }
 
+var numOfPitsPeople = mutableIntStateOf(1234567890)
 var scoutName =  mutableStateOf("")
 val teamDataArray : HashMap<TeamMatchKey, String> = hashMapOf<TeamMatchKey, String>()
 var client : Client? = null
+
+
+/**
+ * @return int 0 if string has 0 ints and the first 10 digits of an int
+ * @author The coolest GPT lead with red hair during the 2024-2025 season
+ * *IMPORTANT* - when using it does NOT remove "/n" so you should set it to be a single line
+ */
+fun String.betterParseInt(): Int{
+    var stringBuilder = StringBuilder()
+    for(c in this) {
+        try {
+            parseInt(c.toString())
+            stringBuilder.append(parseInt(c.toString()))
+        }catch (e: NumberFormatException){
+            //Remove from original string
+        }
+    }
+    if (stringBuilder.length >= 10){
+        stringBuilder.deleteCharAt(stringBuilder.lastIndex)
+    }
+    if (stringBuilder.toString().isNotEmpty()){
+        return parseInt(stringBuilder.toString())
+    }else{
+        return 0
+    }
+}

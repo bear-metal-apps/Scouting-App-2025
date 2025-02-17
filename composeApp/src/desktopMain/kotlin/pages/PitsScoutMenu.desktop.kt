@@ -23,7 +23,6 @@ import androidx.compose.ui.unit.sp
 import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.components.backstack.operation.push
 import com.bumble.appyx.navigation.modality.BuildContext
-import com.bumble.appyx.navigation.node.Node
 import com.github.sarxos.webcam.Webcam
 import composables.TriStateCheckBox
 import composables.Profile
@@ -39,18 +38,15 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 import java.lang.Integer.parseInt
 
 @OptIn(ExperimentalResourceApi::class)
-actual class PitsScoutMenu actual constructor(
+@Composable
+actual fun PitsScoutMenu(
     buildContext: BuildContext,
-    private val backStack: BackStack<RootNode.NavTarget>,
-    private var pitsPerson: MutableState<String>,
-    private val ampStrength: MutableState<Boolean>,
-    private val speakerStrength: MutableState<Boolean>,
-    private val climbStrength: MutableState<Boolean>,
-    private val trapStrength: MutableState<Boolean>,
-    private val scoutName: MutableState<String>
-) : Node(buildContext = buildContext) {
+    backStack: BackStack<RootNode.NavTarget>,
+    pitsPerson: MutableState<String>,
+    scoutName: MutableState<String>
+) {
     @Composable
-    actual override fun View(modifier: Modifier) {
+    fun View(modifier: Modifier) {
         val photoArray by remember { mutableStateOf(ArrayList<ImageBitmap>())}
         var pitsPersonDD by remember { mutableStateOf(false) }
         val numOfPitsPeople by remember { mutableStateOf(6) }
@@ -423,4 +419,15 @@ actual class PitsScoutMenu actual constructor(
             }
         }
     }
+}
+
+
+@Suppress("VARIABLE_WITH_REDUNDANT_INITIALIZER")
+@Composable
+actual fun PitsScoutMenu(
+    backStack: BackStack<RootNode.NavTarget>,
+    pitsPerson: MutableState<String>,
+    scoutName: MutableState<String>,
+    numOfPitsPeople: MutableIntState
+) {
 }

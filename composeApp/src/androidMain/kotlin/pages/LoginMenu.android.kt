@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -16,6 +17,7 @@ import androidx.compose.ui.unit.sp
 import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.components.backstack.operation.push
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.KeyboardType
 import compKey
 import defaultError
 import defaultOnPrimary
@@ -23,16 +25,19 @@ import defaultPrimaryVariant
 import deleteFile
 import getCurrentTheme
 import nodes.RootNode
+import nodes.betterParseInt
 import nodes.teamDataArray
 import nodes.reset
 import java.io.File
+import java.lang.Integer.parseInt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 actual fun LoginMenu(
     backStack: BackStack<RootNode.NavTarget>,
     scoutName: MutableState<String>,
-    comp: MutableState<String>
+    comp: MutableState<String>,
+    numOfPitsPeople: MutableIntState
 ) {
     val logo = File("Logo.png")
     var compDD by remember { mutableStateOf(false) }
@@ -135,7 +140,7 @@ actual fun LoginMenu(
                 },
                 border = BorderStroke(color = defaultPrimaryVariant, width = 2.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = getCurrentTheme().primary),
-                modifier = Modifier.align(Alignment.CenterStart)
+                modifier = Modifier.align(Alignment.CenterEnd)
             ) {
                 Text(
                     text = "Submit",
@@ -146,7 +151,7 @@ actual fun LoginMenu(
                 onClick = { deleteData = true },
                 border = BorderStroke(color = defaultPrimaryVariant, width = 2.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = getCurrentTheme().primary),
-                modifier = Modifier.align(Alignment.CenterEnd)
+                modifier = Modifier.align(Alignment.CenterStart)
             ) {
                 Text(
                     text = "Delete Data",

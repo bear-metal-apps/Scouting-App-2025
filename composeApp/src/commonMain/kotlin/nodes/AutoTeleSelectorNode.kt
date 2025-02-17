@@ -23,6 +23,8 @@ import pages.AutoTeleSelectorMenuTop
 import java.lang.Integer.parseInt
 import java.util.*
 import java.util.Stack
+import java.util.Objects
+
 
 class AutoTeleSelectorNode(
     buildContext: BuildContext,
@@ -104,8 +106,9 @@ class TeamMatchKey(
     }
 
     override fun toString(): String {
-        return "${match}, $team"
+        return "${match}, ${team}"
     }
+
 }
 
 var saveData = mutableStateOf(false)
