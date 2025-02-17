@@ -16,6 +16,7 @@ import com.bumble.appyx.navigation.node.Node
 import com.google.gson.JsonObject
 import compKey
 import pages.PitsScoutMenu
+import java.net.URI
 
 class PitsNode(
     buildContext: BuildContext,
@@ -80,7 +81,8 @@ fun createPitsOutput(team: MutableIntState): String {
         addProperty("scoutedTeamNumber", scoutedTeamNumber.value)
         addProperty("scoutName", scoutName.value)
         for((index, value) in photoArray.withIndex()) {
-            addProperty("photo${index+1}", value)
+            addProperty("PHOTO${index+1}", value)
+            println(URI.create(value))
         } // TODO: Convert Uri string to base 64
         addProperty("driveType", driveType.value)
         addProperty("motorType", motorType.value)

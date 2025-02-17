@@ -1056,7 +1056,7 @@ actual fun PitsScoutMenu(
 
                 ) {
                     Column {
-                        Text(text = "A valid team number must be provided.")
+                        Text(text = "A valid team number must be provided.", modifier = Modifier.align(Alignment.CenterHorizontally))
                         Box(modifier = Modifier.fillMaxWidth(8f / 10f)) {
                             Button(
                                 onClick = {
