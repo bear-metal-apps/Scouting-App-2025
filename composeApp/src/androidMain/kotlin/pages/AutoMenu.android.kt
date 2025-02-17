@@ -12,9 +12,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.components.backstack.operation.pop
 import composables.CheckBox
+import composables.EnumerableValue
 import composables.TriStateCheckBox
 //import composables.AutoCheckboxesHorizontal
 //import composables.AutoCheckboxesVertical
@@ -60,7 +62,7 @@ actual fun AutoMenu(
 
             Column (
                 modifier = Modifier
-                    .weight(1f)
+                    .weight(0.5f)
                     .fillMaxHeight()
             ) {
 
@@ -73,82 +75,17 @@ actual fun AutoMenu(
                         .fillMaxWidth()
                 )
 
-                Row (
+                TriStateCheckBox(
+                    label = "Ground Coral",
+                    ifChecked = groundCollectionCoral,
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxWidth()
-                ) {
+                )
 
-                    TriStateCheckBox(
-                        label = "C3",
-                        ifChecked = coral3Collected,
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxSize()
-                    )
-
-                    TriStateCheckBox(
-                        label = "A3",
-                        ifChecked = algae3Collected,
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxSize()
-                    )
-
-                }
-
-                Row (
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth()
-                ) {
-
-                    TriStateCheckBox(
-                        label = "C2",
-                        ifChecked = coral2Collected,
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxSize()
-                    )
-
-                    TriStateCheckBox(
-                        label = "A2",
-                        ifChecked = algae2Collected,
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxSize()
-                    )
-
-                }
-
-                Row (
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth()
-                ) {
-
-                    TriStateCheckBox(
-                        label = "C1",
-                        ifChecked = coral1Collected,
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxSize()
-                    )
-
-                    TriStateCheckBox(
-                        label = "A1",
-                        ifChecked = algae1Collected,
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxSize()
-                    )
-
-                }
-
-                EnumerableValueAuto(
-                    label = "Feeder",
-                    value = autoFeederCollection,
-                    alignment = Alignment.Center,
+                TriStateCheckBox(
+                    label = "Ground Algae",
+                    ifChecked = groundCollectionAlgae,
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxWidth()
@@ -161,15 +98,6 @@ actual fun AutoMenu(
                     .weight(1f)
                     .fillMaxHeight()
             ) {
-
-                EnumerableValueAuto(
-                    label = "Algae Processed",
-                    value = algaeProcessed,
-                    alignment = Alignment.Center,
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth()
-                )
 
                 EnumerableValueAuto(
                     label = "Score L4",
@@ -207,14 +135,6 @@ actual fun AutoMenu(
                         .fillMaxWidth()
                 )
 
-            }
-
-            Column (
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth()
-            ) {
-
                 EnumerableValueAuto(
                     label = "Algae Removed",
                     value = algaeRemoved,
@@ -223,6 +143,14 @@ actual fun AutoMenu(
                         .weight(1f)
                         .fillMaxWidth()
                 )
+
+            }
+
+            Column (
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+            ) {
 
                 EnumerableValueAuto(
                     label = "Miss L4",
@@ -254,6 +182,15 @@ actual fun AutoMenu(
                 EnumerableValueAuto(
                     label = "Miss L1",
                     value = autoCoralLevel1Missed,
+                    alignment = Alignment.Center,
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                )
+
+                EnumerableValueAuto(
+                    label = "Algae Processed",
+                    value = algaeProcessed,
                     alignment = Alignment.Center,
                     modifier = Modifier
                         .weight(1f)
