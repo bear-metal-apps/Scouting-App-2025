@@ -107,6 +107,9 @@ class TeamMatchKey(
         return "${match}, $team"
     }
 }
+
+var saveData = mutableStateOf(false)
+
 var undoList = Stack<Array<Any>>()
 var redoList = Stack<Array<Any>>()
 var jsonObject : JsonObject = JsonObject()
@@ -167,6 +170,8 @@ var notes = mutableStateOf("")
 
 fun createOutput(team: MutableIntState, robotStartPosition: MutableIntState): String {
 
+    println("saved data!")
+
     fun stateToInt(state: ToggleableState) = when (state) {
         ToggleableState.Off -> 0
         ToggleableState.Indeterminate -> 1
@@ -225,6 +230,7 @@ fun createOutput(team: MutableIntState, robotStartPosition: MutableIntState): St
         addProperty("cClimb", stateToInt(cClimb.value))
         addProperty("notes", notes.value)
     }
+
     return jsonObject.toString()
 }
 
@@ -291,7 +297,9 @@ fun loadData(match: Int, team: MutableIntState, robotStartPosition: MutableIntSt
         notes.value = jsonObject.get("notes").asString
     } else {
         reset()
-        teamDataArray[TeamMatchKey(match, team.intValue)] = createOutput(team, robotStartPosition)
+        if(saveData.value) {
+            teamDataArray[TeamMatchKey(match, team.intValue)] = createOutput(team, robotStartPosition)
+        }
     }
 }
 

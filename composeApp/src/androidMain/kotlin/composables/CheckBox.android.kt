@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import getCurrentTheme
 import nodes.autoStop
 import nodes.redoList
+import nodes.saveData
 import nodes.undoList
 
 @Composable
@@ -62,6 +63,8 @@ actual fun TriStateCheckBox(
                 backgroundColor.value = Color.Black
                 textColor.value = Color.White
             }
+
+            saveData.value = true
         },
         modifier = modifier
     ) {

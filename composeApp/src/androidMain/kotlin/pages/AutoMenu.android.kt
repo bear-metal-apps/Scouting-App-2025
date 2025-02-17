@@ -9,6 +9,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.platform.LocalContext
 import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.components.backstack.operation.pop
@@ -44,6 +46,11 @@ actual fun AutoMenu(
     if (!isKeyboardOpen) {
         isScrollEnabled.value = true
     }
+
+//    if(saveData.value) {
+//        println("save")
+//    }
+
 //    val flippingAuto = remember { mutableStateOf(false)}
 //    val rotateAuto = remember { mutableStateOf(false)}
 
@@ -289,6 +296,9 @@ actual fun AutoMenu(
                         .weight(0.5f)
                         .fillMaxWidth()
                 )
+                if(autoStop.value != 0) {
+                    saveData.value = true
+                }
             }
 
         }

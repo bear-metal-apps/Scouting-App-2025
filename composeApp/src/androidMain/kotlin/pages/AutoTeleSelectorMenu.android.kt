@@ -1,5 +1,6 @@
 package pages
 
+import android.annotation.SuppressLint
 import android.app.Dialog
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -35,6 +36,7 @@ import setTeam
 import java.lang.Integer.parseInt
 import java.util.EmptyStackException
 
+@SuppressLint("SuspiciousIndentation")
 @RequiresApi(Build.VERSION_CODES.R)
 @Composable
 actual fun AutoTeleSelectorMenuTop(
@@ -60,7 +62,9 @@ actual fun AutoTeleSelectorMenuTop(
         teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
         loadData(parseInt(match.value), team, robotStartPosition)
     } else {
-        teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
+        if(saveData.value) {
+            teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
+        }
     }
 
     when {
@@ -127,8 +131,12 @@ actual fun AutoTeleSelectorMenuTop(
             TextField(
                 value = team.intValue.toString(),
                 onValueChange = { value ->
-                    teamDataArray[TeamMatchKey(parseInt(tempMatch), tempTeam)] = createOutput(
-                        mutableIntStateOf(tempTeam), robotStartPosition)
+                    if(saveData.value) {
+                        teamDataArray[TeamMatchKey(parseInt(tempMatch), tempTeam)] = createOutput(
+                            mutableIntStateOf(tempTeam), robotStartPosition)
+                    }
+
+                    saveData.value = false
 
                     val filteredText = value.filter { it.isDigit() }
                     if (filteredText.isNotEmpty() && !filteredText.contains(','))
@@ -138,6 +146,7 @@ actual fun AutoTeleSelectorMenuTop(
                         loadData(parseInt(match.value), team, robotStartPosition)
 
                     tempTeam = team.intValue
+
                 },
                 colors = TextFieldDefaults.colors(
                     unfocusedContainerColor = getCurrentTheme().background,
@@ -170,15 +179,18 @@ actual fun AutoTeleSelectorMenuTop(
             TextField(
                 value = match.value,
                 onValueChange = { value ->
-                    teamDataArray[TeamMatchKey(parseInt(tempMatch), tempTeam)] = createOutput(
-                        mutableIntStateOf(tempTeam), robotStartPosition)
+                    if(saveData.value) {
+                        teamDataArray[TeamMatchKey(parseInt(tempMatch), tempTeam)] = createOutput(
+                            mutableIntStateOf(tempTeam), robotStartPosition)
+                    }
+
+                    saveData.value = false
 
                     val temp = value.filter { it.isDigit() }
                     if(temp.isNotEmpty()) {
                         match.value = temp.slice(0..<temp.length.coerceAtMost(5))
-//                        teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
                         loadData(parseInt(match.value), team, robotStartPosition)
-                        teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
+//                        teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
                         exportScoutData(context) // Does nothing
 
                         try {

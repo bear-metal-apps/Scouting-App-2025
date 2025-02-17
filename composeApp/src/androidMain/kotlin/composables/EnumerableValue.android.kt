@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.sp
 import defaultOnPrimary
 import defaultSecondary
 import getCurrentTheme
+import nodes.saveData
 
 @Composable
 actual fun EnumerableValue(label: String, value: MutableIntState, alignment: Alignment, modifier: Modifier) {
@@ -23,6 +24,7 @@ actual fun EnumerableValue(label: String, value: MutableIntState, alignment: Ali
         shape = RoundedCornerShape(0.dp),
         onClick = {
             value.value += 1
+            saveData.value = true
         },
         modifier = modifier
     ) {

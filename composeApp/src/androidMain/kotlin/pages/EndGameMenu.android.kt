@@ -70,6 +70,8 @@ actual fun EndGameMenu(
                     checked = playedDefense.value,
                     onCheckedChange ={
                         playedDefense.value = !playedDefense.value
+
+                        saveData.value = true
                     },
                     modifier = Modifier,
                 )
@@ -82,8 +84,10 @@ actual fun EndGameMenu(
                 contentPadding = PaddingValues(horizontal = 10.dp, vertical = 15.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
                 onClick = {
-                    teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
-                    println(teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)])
+                    if(saveData.value) {
+                        teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
+                        println(teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)])
+                    }
                     match.value = (parseInt(match.value) + 1).toString()
                     reset()
                     backStack.push(AutoTeleSelectorNode.NavTarget.AutoScouting)

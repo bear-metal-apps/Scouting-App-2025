@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.sp
 import getCurrentTheme
 import nodes.redoList
+import nodes.saveData
 import nodes.undoList
 import org.bridj.util.Tuple
 
@@ -34,6 +35,7 @@ actual fun EnumerableValueAuto(
             undoList.push(arrayOf("number" ,value, value.value))
             value.value += 1
             redoList.push(arrayOf("number" ,value, value.value))
+            saveData.value = true
         },
         contentPadding = PaddingValues(5.dp, 5.dp),
         modifier = modifier

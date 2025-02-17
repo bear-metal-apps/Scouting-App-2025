@@ -46,6 +46,11 @@ actual fun TeleMenu(
     if (!isKeyboardOpen) {
         isScrollEnabled.value = true
     }
+
+//    if(saveData.value) {
+//        println("save")
+//    }
+
     Column(
     ){
         Row (
@@ -204,6 +209,9 @@ actual fun TeleMenu(
                         .weight(0.25f)
                         .fillMaxWidth()
                 )
+                if(lostComms.value != 0) {
+                    saveData.value = true
+                }
             }
         }
     }
