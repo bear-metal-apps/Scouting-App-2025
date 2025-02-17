@@ -69,7 +69,9 @@ class AutoTeleSelectorNode(
             MainMenuAlertDialog(mainMenuDialog,
                 bob = {
                         mainMenuBackStack.pop()
-                        teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
+                        if(saveData.value) {
+                            teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
+                        }
                 })
             AppyxComponent(
                 appyxComponent = backStack,
@@ -230,7 +232,7 @@ fun createOutput(team: MutableIntState, robotStartPosition: MutableIntState): St
         addProperty("cClimb", stateToInt(cClimb.value))
         addProperty("notes", notes.value)
     }
-
+    println(jsonObject.toString())
     return jsonObject.toString()
 }
 
