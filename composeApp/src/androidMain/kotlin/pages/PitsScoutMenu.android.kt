@@ -81,8 +81,11 @@ import nodes.teamDataArray
 import nodes.weight
 import nodes.width
 import java.lang.Integer.parseInt
+import android.util.Base64
+import com.google.gson.JsonArray
+import com.google.gson.JsonPrimitive
 
-@SuppressLint("NewApi")
+@SuppressLint("NewApi", "Recycle")
 @OptIn(ExperimentalResourceApi::class)
 @Suppress("VARIABLE_WITH_REDUNDANT_INITIALIZER")
 @Composable
@@ -988,13 +991,33 @@ actual fun PitsScoutMenu(
                             if (photoArray.size >= 1) {
                                 robotCard = true
                             }
+
                             pitsTeamDataArray[parseInt(scoutedTeamNumber.value)] = createPitsOutput(mutableIntStateOf(parseInt(scoutedTeamNumber.value)))
-                            println(pitsTeamDataArray[parseInt(scoutedTeamNumber.value)])
+                            println(pitsTeamDataArray)
                             pitsReset()
+                            photoAmount = 0
+
+//                            try {
+//                                for((index, value) in photoArray.withIndex()) {
+//
+//                                    val bytes = context.contentResolver.openInputStream(Uri.parse(value))?.use { it.readBytes() }
+//
+//                                    bytes?.let {
+//                                        val base64 = Base64.encodeToString(it, Base64.DEFAULT)
+//                                        base64Array.add(base64)
+//                                        println(base64Array)
+////                                        photoArray[index] = base64
+//                                    } ?: throw Exception("Failed to read bytes from URI")
+//
+//                                }
+//                            } catch (e: Exception) {
+//                                //Exception always occurs
+//                            }
 
 //                            coroutineScope.launch {
 //                                listState.scrollToItem(0)
 //                            }
+
                         }
                     }) { Text(text = "Submit", color = defaultOnPrimary) }
                     OutlinedButton(onClick = { robotCard = false }) {

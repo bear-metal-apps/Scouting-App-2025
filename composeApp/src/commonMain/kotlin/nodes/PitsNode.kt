@@ -13,6 +13,8 @@ import androidx.compose.ui.state.ToggleableState
 import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.navigation.modality.BuildContext
 import com.bumble.appyx.navigation.node.Node
+import com.google.gson.Gson
+import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import compKey
 import pages.PitsScoutMenu
@@ -75,15 +77,23 @@ fun createPitsOutput(team: MutableIntState): String {
     if (comments.value.isEmpty()){ notes.value = "No Comments"}
     comments.value = notes.value.replace(":","")
 
+    var gson = Gson()
+
+    if(pitsTeamDataArray[team.intValue] == null) {
+        pitsTeamDataArray[team.intValue] = "{}"
+        jsonObject = gson.fromJson(pitsTeamDataArray[team.intValue].toString(), JsonObject::class.java)
+    } else {
+        jsonObject = gson.fromJson(pitsTeamDataArray[team.intValue].toString(), JsonObject::class.java)
+    }
+
     jsonObject = JsonObject().apply {
         addProperty("comp", compKey)
         addProperty("scoutedTeamName", scoutedTeamName.value)
         addProperty("scoutedTeamNumber", scoutedTeamNumber.value)
         addProperty("scoutName", scoutName.value)
         for((index, value) in photoArray.withIndex()) {
-            addProperty("PHOTO${index+1}", value)
-            println(URI.create(value))
-        } // TODO: Convert Uri string to base 64
+            addProperty("Photo${index+1}", value)
+        }
         addProperty("driveType", driveType.value)
         addProperty("motorType", motorType.value)
         addProperty("auto", auto.value)
@@ -106,6 +116,7 @@ fun createPitsOutput(team: MutableIntState): String {
         addProperty("collectPreference", collectPreference.value)
         addProperty("comments", comments.value)
     }
+    println(gson.toJson(photoArray))
     return jsonObject.toString()
 }
 
@@ -134,4 +145,5 @@ fun pitsReset(){
     defensePreferred.value = false
     collectPreference.value = "None Selected"
     comments.value = ""
+
 }

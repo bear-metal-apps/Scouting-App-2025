@@ -339,7 +339,6 @@ actual class MainMenu actual constructor(
                         sendData(
                             context = context,
                             client = client!!,
-                            scoutingType = "match"
                         )
                     }
                 }
