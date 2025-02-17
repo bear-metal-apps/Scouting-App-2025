@@ -67,6 +67,7 @@ actual fun TeleMenu(
                     EnumerableValue(
                         label = "Score L4",
                         value = teleLFour,
+                        flashColor = Color.Green,
                         alignment = Alignment.CenterEnd,
                         modifier = Modifier
                             .weight(1f)
@@ -75,6 +76,7 @@ actual fun TeleMenu(
                     EnumerableValue(
                         label = "Miss L4",
                         value = teleLFourMissed,
+                        flashColor = Color.Red,
                         alignment = Alignment.CenterEnd,
                         modifier = Modifier
                             .weight(1f)
@@ -89,6 +91,7 @@ actual fun TeleMenu(
                     EnumerableValue(
                         label = "Algae L3",
                         value = teleLThreeAlgae,
+                        flashColor = Color.Green,
                         alignment = Alignment.CenterEnd,
                         modifier = Modifier
                             .weight(1f)
@@ -97,6 +100,7 @@ actual fun TeleMenu(
                     EnumerableValue(
                     label = "Score L3",
                     value = teleLThree,
+                        flashColor = Color.Green,
                     alignment = Alignment.CenterEnd,
                     modifier = Modifier
                         .weight(1f)
@@ -105,6 +109,7 @@ actual fun TeleMenu(
                     EnumerableValue(
                         label = "Miss L3",
                         value = teleLThreeMissed,
+                        flashColor = Color.Red,
                         alignment = Alignment.CenterEnd,
                         modifier = Modifier
                             .weight(1f)
@@ -120,6 +125,7 @@ actual fun TeleMenu(
                     EnumerableValue(
                         label = "Algae L2",
                         value = teleLTwoAlgae,
+                        flashColor = Color.Green,
                         alignment = Alignment.CenterEnd,
                         modifier = Modifier
                             .weight(1f)
@@ -128,6 +134,7 @@ actual fun TeleMenu(
                     EnumerableValue(
                         label = "Score L2",
                         value = teleLTwo,
+                        flashColor = Color.Green,
                         alignment = Alignment.CenterEnd,
                         modifier = Modifier
                             .weight(1f)
@@ -136,6 +143,7 @@ actual fun TeleMenu(
                     EnumerableValue(
                         label = "Miss L2",
                         value = teleLTwoMissed,
+                        flashColor = Color.Red,
                         alignment = Alignment.CenterEnd,
                         modifier = Modifier
                             .weight(1f)
@@ -151,6 +159,7 @@ actual fun TeleMenu(
                     EnumerableValue(
                         label = "Score L1",
                         value = teleLOne,
+                        flashColor = Color.Green,
                         alignment = Alignment.CenterEnd,
                         modifier = Modifier
                             .weight(1f)
@@ -159,6 +168,7 @@ actual fun TeleMenu(
                     EnumerableValue(
                         label = "Miss L1",
                         value = teleLOneMissed,
+                        flashColor = Color.Red,
                         alignment = Alignment.CenterEnd,
                         modifier = Modifier
                             .weight(1f)
@@ -168,6 +178,7 @@ actual fun TeleMenu(
                 EnumerableValue(
                     label = "Algae Processed",
                     value = teleProcessed,
+                    flashColor = Color.Green,
                     alignment = Alignment.CenterEnd,
                     modifier = Modifier
                         .weight(1f)
@@ -184,6 +195,7 @@ actual fun TeleMenu(
                 EnumerableValue(
                     label = "Net Miss",
                     value = teleNetMissed,
+                    flashColor = Color.Red,
                     alignment = Alignment.BottomEnd,
                     modifier = Modifier
                         .weight(1f)
@@ -193,6 +205,7 @@ actual fun TeleMenu(
                 EnumerableValue(
                     label = "Net Score",
                     value = teleNet,
+                    flashColor = Color.Green,
                     alignment = Alignment.BottomEnd,
                     modifier = Modifier
                         .weight(1f)
