@@ -15,6 +15,7 @@ import org.tahomarobotics.scouting.Client
 import java.io.*
 import java.nio.ByteBuffer
 
+// Deletes and recreates the file match_data.json
 fun createFile(context: Context) {
     val file = File(context.filesDir, "match_data.json")
     file.delete()
@@ -25,13 +26,14 @@ fun createFile(context: Context) {
     matchData?.toString(1)?.let { writer.write(it) }
     writer.close()
 
-    val teamFile = File(context.filesDir,"team_data.json")
-    teamFile.delete()
-    teamFile.createNewFile()
-    val teamWriter = FileWriter(teamFile)
-
-    teamData?.toString(1)?.let { teamWriter.write(it) }
-    teamWriter.close()
+    //Going to try just one file for now
+//    val teamFile = File(context.filesDir,"team_data.json")
+//    teamFile.delete()
+//    teamFile.createNewFile()
+//    val teamWriter = FileWriter(teamFile)
+//
+//    teamData?.toString(1)?.let { teamWriter.write(it) }
+//    teamWriter.close()
 }
 
 fun openFile(context: Context) {
