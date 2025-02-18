@@ -23,6 +23,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import exportScoutData
 import getCurrentTheme
+import nodes.saveData
+import nodes.saveDataPopup
 
 @Composable
 actual fun MainMenuAlertDialog(active: MutableState<Boolean>, bob: () -> Unit) {
@@ -42,8 +44,11 @@ actual fun MainMenuAlertDialog(active: MutableState<Boolean>, bob: () -> Unit) {
                 OutlinedButton(
                     onClick = {
                         active.value = false
-                        bob.invoke()
-                        exportScoutData(context) },
+
+                        saveDataPopup.value = true
+
+                        exportScoutData(context) // Does nothing
+                    },
                     border = BorderStroke(2.dp, getCurrentTheme().secondaryVariant),
                     colors = ButtonDefaults.outlinedButtonColors(backgroundColor = getCurrentTheme().secondary, contentColor = getCurrentTheme().onSecondary) ,
                     modifier = Modifier.align(Alignment.BottomStart)

@@ -255,8 +255,6 @@ actual fun AutoTeleSelectorMenuBottom(
     var backgroundColor = remember { mutableStateOf(Color.Black) }
     var textColor = remember { mutableStateOf(Color.White) }
 
-    var saveDataPopup by remember { mutableStateOf(false) }
-
     fun getColors(state: ToggleableState) = when(state){
         ToggleableState.On ->{
             backgroundColor.value = Color(0, 204, 102)
@@ -444,11 +442,8 @@ actual fun AutoTeleSelectorMenuBottom(
             shape = RoundedCornerShape(1.dp),
             colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
             onClick = {
-                if(!saveData.value) {
-
-//                    teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
-                }
                 mainMenuDialog.value = true
+                saveDataSit.value = true
             },
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -461,24 +456,56 @@ actual fun AutoTeleSelectorMenuBottom(
         }
     }
 
-    if(saveDataPopup) {
+    if(saveDataPopup.value) {
         BasicAlertDialog(
-            onDismissRequest = { saveDataPopup = false },
+            onDismissRequest = { saveDataPopup.value = false },
             modifier = Modifier.clip(
                 RoundedCornerShape(5.dp)
             ).border(BorderStroke(3.dp, defaultPrimaryVariant), RoundedCornerShape(5.dp))
 
         ) {
             Column {
-                Text(text = "A valid team number must be provided.", modifier = Modifier.align(Alignment.CenterHorizontally))
+                Text(text = "Save data for team ${team.intValue}, match ${match.value}?", modifier = Modifier.align(Alignment.CenterHorizontally))
                 Box(modifier = Modifier.fillMaxWidth(8f / 10f)) {
-                    Button(
-                        onClick = {
-                            saveDataPopup = false
-                        },
+                    Row (
                         modifier = Modifier.align(Alignment.Center)
                     ) {
-                        Text(text = "Ok", color = defaultError)
+                        Button(
+                            onClick = {
+                                saveDataPopup.value = false
+                                if(saveDataSit.value) {
+                                    teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
+                                    println(teamDataArray)
+                                    mainMenuBackStack.pop()
+                                } else {
+                                    teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
+                                    match.value = (parseInt(match.value) + 1).toString()
+                                    reset()
+                                    backStack.push(AutoTeleSelectorNode.NavTarget.AutoScouting)
+                                    println(teamDataArray)
+                                }
+                            },
+                            modifier = Modifier.align(Alignment.CenterVertically)
+                        ) {
+                            Text(text = "Yes", color = defaultError)
+                        }
+                        Button(
+                            onClick = {
+                                saveDataPopup.value = false
+                                if(saveDataSit.value) {
+                                    println(teamDataArray)
+                                    mainMenuBackStack.pop()
+                                } else {
+                                    match.value = (parseInt(match.value) + 1).toString()
+                                    reset()
+                                    backStack.push(AutoTeleSelectorNode.NavTarget.AutoScouting)
+                                    println(teamDataArray)
+                                }
+                            },
+                            modifier = Modifier.align(Alignment.CenterVertically)
+                        ) {
+                            Text(text = "No", color = defaultError)
+                        }
                     }
                 }
             }

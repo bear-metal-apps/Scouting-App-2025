@@ -111,6 +111,8 @@ class TeamMatchKey(
 }
 
 var saveData = mutableStateOf(false)
+var saveDataPopup = mutableStateOf(false)
+var saveDataSit = mutableStateOf(false) // False = nextMatch, True = MainMenu
 
 var undoList = Stack<Array<Any>>()
 var redoList = Stack<Array<Any>>()
