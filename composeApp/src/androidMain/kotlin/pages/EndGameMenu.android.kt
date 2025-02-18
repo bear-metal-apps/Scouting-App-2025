@@ -23,6 +23,7 @@ import com.bumble.appyx.components.backstack.operation.push
 import composables.Cage
 import composables.CheckBox
 import composables.Comments
+import composables.EndGameCheckBox
 import defaultSecondary
 import keyboardAsState
 import nodes.*
@@ -60,48 +61,9 @@ actual fun EndGameMenu(
             Column (
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             ) {
-                Row(){
-                    Text(
-                        text = "Park:",
-                        fontSize = 24.sp,
-                        modifier = Modifier.align(Alignment.CenterVertically)
-                    )
-                    Checkbox(
-                        checked = park.value,
-                        onCheckedChange ={
-                            park.value = !park.value
-                        },
-                        modifier = Modifier.align(Alignment.CenterVertically),
-                    )
-                }
-                Row(){
-                    Text(
-                        text = "Deep:",
-                        fontSize = 24.sp,
-                        modifier = Modifier.align(Alignment.CenterVertically)
-                    )
-                    Checkbox(
-                        checked = deep.value,
-                        onCheckedChange ={
-                            deep.value = !deep.value
-                        },
-                        modifier = Modifier.align(Alignment.CenterVertically),
-                    )
-                }
-                Row(){
-                    Text(
-                        text = "Shallow:",
-                        fontSize = 24.sp,
-                        modifier = Modifier.align(Alignment.CenterVertically)
-                    )
-                    Checkbox(
-                        checked = shallow.value,
-                        onCheckedChange ={
-                            shallow.value = !shallow.value
-                        },
-                        modifier = Modifier.align(Alignment.CenterVertically),
-                    )
-                }
+                EndGameCheckBox("Park: ", park, shallow, deep, modifier = Modifier)
+                EndGameCheckBox("Shallow: ", shallow, park, deep, modifier = Modifier)
+                EndGameCheckBox("Deep: ", deep, shallow, park, modifier = Modifier)
             }
             Spacer(Modifier.height(20.dp))
             Row(){
