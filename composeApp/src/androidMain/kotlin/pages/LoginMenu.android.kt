@@ -17,11 +17,13 @@ import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.components.backstack.operation.push
 import androidx.compose.ui.graphics.Color
 import compKey
+import createScoutMatchDataFolder
 import defaultError
 import defaultOnPrimary
 import defaultPrimaryVariant
 import deleteFile
 import getCurrentTheme
+import loadMatchDataFiles
 import nodes.RootNode
 import nodes.teamDataArray
 import nodes.reset
@@ -46,6 +48,10 @@ actual fun LoginMenu(
         "2024hop"
 
     )
+
+    createScoutMatchDataFolder(context)
+    loadMatchDataFiles(context)
+
     Column {
 //        AsyncImage(
 //            model = logo,//turn into bitmap

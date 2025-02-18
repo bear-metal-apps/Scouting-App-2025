@@ -2,12 +2,17 @@ import android.content.Context
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import com.google.gson.Gson
+import com.google.gson.JsonObject
+import nodes.TeamMatchKey
 import nodes.jsonObject
+import nodes.teamDataArray
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 import org.tahomarobotics.scouting.Client
 import java.io.*
+import java.lang.Integer.parseInt
 
 var matchFolder : File? = null
 
@@ -16,6 +21,9 @@ fun createScoutMatchDataFolder(context: Context) {
 
     if(!matchFolder!!.exists()) {
         matchFolder!!.mkdirs()
+        println("Made match data folder")
+    } else {
+        println("Match data folder found")
     }
 }
 
@@ -24,22 +32,27 @@ fun createScoutMatchDataFile(context: Context, match: String, team: Int, data: S
     file.delete()
     file.createNewFile()
 
-    val writer = FileWriter(file)
-
     file.writeText(data)
-//    data.let { writer.write(it) }
+
     file.forEachLine {
         try {
-            println(it)
+            println("Saved file Match${match}Team${team}.json: $it")
         } catch (e: Exception) {
             println(e.message)
         }
     }
-    writer.close()
 }
 
-fun loadFileData(context: Context) {
+fun loadMatchDataFiles(context: Context) {
+    val gson = Gson()
 
+    println("loading files...")
+    for((index) in (matchFolder?.listFiles()?.toList()!!.withIndex())) {
+        jsonObject = gson.fromJson(matchFolder?.listFiles()?.toList()?.get(index)?.readText(), JsonObject::class.java)
+        teamDataArray[TeamMatchKey(parseInt(jsonObject.get("match").asString), jsonObject.get("team").asInt)] = jsonObject.toString()
+
+        println(matchFolder?.listFiles()?.toList()?.get(index).toString())
+    }
 }
 
 fun createFile(context: Context) {

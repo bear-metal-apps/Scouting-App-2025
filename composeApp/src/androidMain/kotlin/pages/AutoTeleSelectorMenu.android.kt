@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.sp
 import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.components.backstack.operation.pop
 import com.bumble.appyx.components.backstack.operation.push
+import createScoutMatchDataFile
 import defaultError
 import defaultPrimaryVariant
 import defaultSecondary
@@ -59,9 +60,16 @@ actual fun AutoTeleSelectorMenuTop(
         tempMatch = match.value
     }
 
+    println(first)
+
     if(teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] != null) {
-        teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
-        loadData(parseInt(match.value), team, robotStartPosition)
+        if(first) {
+            loadData(parseInt(match.value), team, robotStartPosition)
+            first = false
+        } else {
+            teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
+//            loadData(parseInt(match.value), team, robotStartPosition)
+        }
     } else {
         if(saveData.value) {
             teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
@@ -254,6 +262,8 @@ actual fun AutoTeleSelectorMenuBottom(
 ) {
     var backgroundColor = remember { mutableStateOf(Color.Black) }
     var textColor = remember { mutableStateOf(Color.White) }
+
+    val context = LocalContext.current
 
     fun getColors(state: ToggleableState) = when(state){
         ToggleableState.On ->{
@@ -472,18 +482,21 @@ actual fun AutoTeleSelectorMenuBottom(
                     ) {
                         Button(
                             onClick = {
-                                saveDataPopup.value = false
                                 if(saveDataSit.value) {
                                     teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
+                                    createScoutMatchDataFile(context, match.value, team.intValue, createOutput(team, robotStartPosition))
                                     println(teamDataArray)
                                     mainMenuBackStack.pop()
                                 } else {
                                     teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
+                                    createScoutMatchDataFile(context, match.value, team.intValue, createOutput(team, robotStartPosition))
                                     match.value = (parseInt(match.value) + 1).toString()
                                     reset()
                                     backStack.push(AutoTeleSelectorNode.NavTarget.AutoScouting)
                                     println(teamDataArray)
                                 }
+                                saveDataPopup.value = false
+                                saveData.value = true
                             },
                             modifier = Modifier.align(Alignment.CenterVertically)
                         ) {
@@ -491,7 +504,6 @@ actual fun AutoTeleSelectorMenuBottom(
                         }
                         Button(
                             onClick = {
-                                saveDataPopup.value = false
                                 if(saveDataSit.value) {
                                     println(teamDataArray)
                                     mainMenuBackStack.pop()
@@ -501,6 +513,7 @@ actual fun AutoTeleSelectorMenuBottom(
                                     backStack.push(AutoTeleSelectorNode.NavTarget.AutoScouting)
                                     println(teamDataArray)
                                 }
+                                saveDataPopup.value = false
                             },
                             modifier = Modifier.align(Alignment.CenterVertically)
                         ) {

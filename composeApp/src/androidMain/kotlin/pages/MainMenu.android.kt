@@ -23,6 +23,7 @@ import com.bumble.appyx.components.backstack.operation.push
 import com.bumble.appyx.navigation.modality.BuildContext
 import com.bumble.appyx.navigation.node.Node
 import compKey
+import createScoutMatchDataFile
 import createScoutMatchDataFolder
 import defaultSecondary
 import getCurrentTheme
@@ -32,8 +33,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import matchData
 import nodes.RootNode
+import nodes.TeamMatchKey
 import nodes.client
+import nodes.createOutput
 import nodes.match
+import nodes.saveData
+import nodes.teamDataArray
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import org.json.JSONException
@@ -43,6 +48,7 @@ import sendDataUSB
 import setTeam
 import sync
 import teamData
+import java.lang.Integer.parseInt
 
 actual class MainMenu actual constructor(
     buildContext: BuildContext,
@@ -72,6 +78,11 @@ actual class MainMenu actual constructor(
 
         val deviceList = manager.deviceList
 
+        if(saveData.value) {
+            teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
+            createScoutMatchDataFile(context, match.value, team.intValue, createOutput(team, robotStartPosition))
+            println("Permanently saved data")
+        }
 
         Column (modifier = Modifier.verticalScroll(ScrollState(0))) {
             DropdownMenu(expanded = deviceListOpen, onDismissRequest = { deviceListOpen = false }) {

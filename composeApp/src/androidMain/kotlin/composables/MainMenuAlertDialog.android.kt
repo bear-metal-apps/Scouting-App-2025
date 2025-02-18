@@ -21,10 +21,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import createScoutMatchDataFile
 import exportScoutData
 import getCurrentTheme
+import nodes.TeamMatchKey
+import nodes.createOutput
+import nodes.match
 import nodes.saveData
 import nodes.saveDataPopup
+import nodes.teamDataArray
+import java.lang.Integer.parseInt
 
 @Composable
 actual fun MainMenuAlertDialog(active: MutableState<Boolean>, bob: () -> Unit) {
@@ -45,9 +51,14 @@ actual fun MainMenuAlertDialog(active: MutableState<Boolean>, bob: () -> Unit) {
                     onClick = {
                         active.value = false
 
-                        saveDataPopup.value = true
+                        if(!saveData.value) {
+                            saveDataPopup.value = true
+                        } else {
+                            active.value = false
+                            bob.invoke()
+                            exportScoutData(context) // Does nothing
+                        }
 
-                        exportScoutData(context) // Does nothing
                     },
                     border = BorderStroke(2.dp, getCurrentTheme().secondaryVariant),
                     colors = ButtonDefaults.outlinedButtonColors(backgroundColor = getCurrentTheme().secondary, contentColor = getCurrentTheme().onSecondary) ,

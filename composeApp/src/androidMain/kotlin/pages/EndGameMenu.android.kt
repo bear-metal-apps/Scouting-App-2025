@@ -109,11 +109,10 @@ actual fun EndGameMenu(
                 colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
                 onClick = {
                     if(saveData.value) {
+                        //Save temp data
                         teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
-//                        println(teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)])
-
+                        //Save permanent data
                         createScoutMatchDataFile(context, match.value, team.intValue, createOutput(team, robotStartPosition))
-
                     } else {
                         saveDataPopup.value = true
                         saveDataSit.value = false
