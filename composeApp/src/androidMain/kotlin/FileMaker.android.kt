@@ -1,39 +1,63 @@
 import android.content.Context
-import android.content.Context.USB_SERVICE
-import android.hardware.usb.UsbConstants.USB_DIR_OUT
-import android.hardware.usb.UsbManager
-import android.hardware.usb.UsbRequest
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import nodes.jsonObject
-import nodes.teamDataArray
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 import org.tahomarobotics.scouting.Client
 import java.io.*
-import java.nio.ByteBuffer
 
-// Deletes and recreates the file match_data.json
-fun createFile(context: Context) {
-    val file = File(context.filesDir, "match_data.json")
+var matchFolder : File? = null
+
+fun createScoutMatchDataFolder(context: Context) {
+    matchFolder = File(context.filesDir, "ScoutMatchDataFolder")
+
+    if(!matchFolder!!.exists()) {
+        matchFolder!!.mkdirs()
+    }
+}
+
+fun createScoutMatchDataFile(context: Context, match: String, team: Int, data: String) {
+    val file = File(matchFolder, "Match${match}Team${team}.json")
     file.delete()
     file.createNewFile()
 
     val writer = FileWriter(file)
 
+    file.writeText(data)
+//    data.let { writer.write(it) }
+    file.forEachLine {
+        try {
+            println(it)
+        } catch (e: Exception) {
+            println(e.message)
+        }
+    }
+    writer.close()
+}
+
+fun loadFileData(context: Context) {
+
+}
+
+fun createFile(context: Context) {
+    val file = File(context.filesDir, "match_data.json")
+    file.delete()
+    file.createNewFile()
+    val writer = FileWriter(file)
+
     matchData?.toString(1)?.let { writer.write(it) }
     writer.close()
 
-    //Going to try just one file for now
-//    val teamFile = File(context.filesDir,"team_data.json")
-//    teamFile.delete()
-//    teamFile.createNewFile()
-//    val teamWriter = FileWriter(teamFile)
-//
-//    teamData?.toString(1)?.let { teamWriter.write(it) }
-//    teamWriter.close()
+    val teamFile = File(context.filesDir,"team_data.json")
+    teamFile.delete()
+    teamFile.createNewFile()
+    val teamWriter = FileWriter(teamFile)
+
+    teamData?.toString(1)?.let { teamWriter.write(it) }
+    teamWriter.close()
 }
 
 fun openFile(context: Context) {

@@ -23,6 +23,7 @@ import com.bumble.appyx.components.backstack.operation.push
 import com.bumble.appyx.navigation.modality.BuildContext
 import com.bumble.appyx.navigation.node.Node
 import compKey
+import createScoutMatchDataFolder
 import defaultSecondary
 import getCurrentTheme
 import getLastSynced
@@ -117,6 +118,8 @@ actual class MainMenu actual constructor(
                     }
 
                     selectedPlacement = true
+
+                    createScoutMatchDataFolder(context)
                 },
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
