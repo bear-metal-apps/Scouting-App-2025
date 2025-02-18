@@ -1,11 +1,16 @@
 import android.content.Context
 import android.content.Context.USB_SERVICE
+import android.graphics.Bitmap
+import android.graphics.ImageDecoder
+import android.graphics.ImageDecoder.decodeBitmap
 import android.hardware.usb.UsbConstants.USB_DIR_OUT
 import android.hardware.usb.UsbManager
 import android.hardware.usb.UsbRequest
+import android.net.Uri
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.compose.ui.platform.LocalContext
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import nodes.jsonObject
@@ -115,7 +120,27 @@ fun sendData(context: Context, client: Client) {
     pitsTeamDataArray.forEach {
         val jsonObject = gson.fromJson(it.toString(), JsonObject::class.java)
 
+        var bitmap: Bitmap? = null
+
+        var i = 1
+        while(true) {
+            try {
+                var bos = ByteArrayOutputStream()
+
+                // Assuming you're inside a Composable function
+                val contentResolver = context.contentResolver
+                bitmap = decodeBitmap(ImageDecoder.createSource(contentResolver, Uri.parse(jsonObject.get("Photo${i}").toString())))
+                bitmap.compress(Bitmap.CompressFormat.PNG,0, bos)
+
+                i++
+            } catch (e: Exception) {
+                break
+            }
+        }
+
         client.sendData(jsonObject.toString(), "pit")
+
+//        client.sendData(bitmap.toString(), "bitmap")
 
         Log.i("Client", "Message Sent: ${jsonObject.toString()}")
     }

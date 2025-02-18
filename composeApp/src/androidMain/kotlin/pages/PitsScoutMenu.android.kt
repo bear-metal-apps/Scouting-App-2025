@@ -12,8 +12,6 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -35,21 +33,16 @@ import androidx.core.content.ContextCompat
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.bumble.appyx.components.backstack.BackStack
-import com.bumble.appyx.components.backstack.operation.pop
 import com.bumble.appyx.components.backstack.operation.push
-import composables.Profile
-import composables.download
+import composables.downloadPitsPhotos
 import defaultError
 import defaultOnPrimary
 import defaultPrimaryVariant
 import getCurrentTheme
-import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import org.tahomarobotics.scouting.ComposeFileProvider
 import java.io.File
-import nodes.PitsNode.*
-import nodes.TeamMatchKey
 import nodes.algaeBarge
 import nodes.algaePreferred
 import nodes.algaeProcess
@@ -59,7 +52,6 @@ import nodes.collectPreference
 import nodes.comments
 import nodes.coralHigh
 import nodes.coralLow
-import nodes.createOutput
 import nodes.createPitsOutput
 import nodes.cycleTime
 import nodes.defensePreferred
@@ -73,17 +65,12 @@ import nodes.motorType
 import nodes.photoArray
 import nodes.pitsReset
 import nodes.pitsTeamDataArray
-import nodes.reset
 import nodes.rigidity
 import nodes.scoutedTeamName
 import nodes.scoutedTeamNumber
-import nodes.teamDataArray
 import nodes.weight
 import nodes.width
 import java.lang.Integer.parseInt
-import android.util.Base64
-import com.google.gson.JsonArray
-import com.google.gson.JsonPrimitive
 
 @SuppressLint("NewApi", "Recycle")
 @OptIn(ExperimentalResourceApi::class)
@@ -1045,7 +1032,7 @@ actual fun PitsScoutMenu(
                             }
                         }
 
-                        download(context, array, scoutedTeamNumber.value, photoAmount)
+                        downloadPitsPhotos(context, array, scoutedTeamNumber.value, photoAmount)
                         downloadActive = false
                     }
                 }
