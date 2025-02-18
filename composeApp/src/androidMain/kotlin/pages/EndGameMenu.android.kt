@@ -3,7 +3,6 @@ package pages
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
@@ -21,7 +20,6 @@ import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.components.backstack.operation.pop
 import com.bumble.appyx.components.backstack.operation.push
 import composables.Cage
-import composables.CheckBox
 import composables.Comments
 import defaultSecondary
 import keyboardAsState
@@ -131,10 +129,10 @@ actual fun EndGameMenu(
                     if(saveData.value) {
                         teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
                         println(teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)])
+                    } else {
+                        saveDataPopup.value = true
+                        saveDataSit.value = false
                     }
-                    match.value = (parseInt(match.value) + 1).toString()
-                    reset()
-                    backStack.push(AutoTeleSelectorNode.NavTarget.AutoScouting)
                 },
                 modifier = Modifier.align(Alignment.CenterHorizontally).padding(top = 10.dp)
             ) {

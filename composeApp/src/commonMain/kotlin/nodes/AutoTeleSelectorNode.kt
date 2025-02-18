@@ -71,7 +71,9 @@ class AutoTeleSelectorNode(
             MainMenuAlertDialog(mainMenuDialog,
                 bob = {
                         mainMenuBackStack.pop()
-                        teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
+                        if(saveData.value) {
+                            teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
+                        }
                 })
             AppyxComponent(
                 appyxComponent = backStack,
@@ -112,6 +114,8 @@ class TeamMatchKey(
 }
 
 var saveData = mutableStateOf(false)
+var saveDataPopup = mutableStateOf(false)
+var saveDataSit = mutableStateOf(false) // False = nextMatch, True = MainMenu
 
 var undoList = Stack<Array<Any>>()
 var redoList = Stack<Array<Any>>()
@@ -217,7 +221,7 @@ fun createOutput(team: MutableIntState, robotStartPosition: MutableIntState): St
         addProperty("shallow", shallow.value)
         addProperty("notes", notes.value)
     }
-
+    println(jsonObject.toString())
     return jsonObject.toString()
 }
 
