@@ -984,23 +984,6 @@ actual fun PitsScoutMenu(
                             pitsReset()
                             photoAmount = 0
 
-//                            try {
-//                                for((index, value) in photoArray.withIndex()) {
-//
-//                                    val bytes = context.contentResolver.openInputStream(Uri.parse(value))?.use { it.readBytes() }
-//
-//                                    bytes?.let {
-//                                        val base64 = Base64.encodeToString(it, Base64.DEFAULT)
-//                                        base64Array.add(base64)
-//                                        println(base64Array)
-////                                        photoArray[index] = base64
-//                                    } ?: throw Exception("Failed to read bytes from URI")
-//
-//                                }
-//                            } catch (e: Exception) {
-//                                //Exception always occurs
-//                            }
-
 //                            coroutineScope.launch {
 //                                listState.scrollToItem(0)
 //                            }
