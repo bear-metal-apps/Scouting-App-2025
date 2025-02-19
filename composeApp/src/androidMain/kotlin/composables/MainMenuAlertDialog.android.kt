@@ -7,27 +7,32 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ButtonColors
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material3.BasicAlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import createScoutMatchDataFile
 import exportScoutData
 import getCurrentTheme
+import nodes.TeamMatchStartKey
+import nodes.createOutput
+import nodes.match
 import nodes.saveData
 import nodes.saveDataPopup
+import nodes.teamDataArray
+import java.lang.Integer.parseInt
 
 @Composable
-actual fun MainMenuAlertDialog(active: MutableState<Boolean>, bob: () -> Unit) {
+actual fun MainMenuAlertDialog(active: MutableState<Boolean>, bob: () -> Unit, team: Int, robotStartPosition: Int) {
     val context = LocalContext.current
     if (active.value) {
         BasicAlertDialog(
@@ -45,9 +50,18 @@ actual fun MainMenuAlertDialog(active: MutableState<Boolean>, bob: () -> Unit) {
                     onClick = {
                         active.value = false
 
-                        saveDataPopup.value = true
+                        if(!saveData.value) {
+                            saveDataPopup.value = true
+                        } else {
+                            active.value = false
 
-                        exportScoutData(context) // Does nothing
+                            teamDataArray[TeamMatchStartKey(parseInt(match.value), team, robotStartPosition)] = createOutput(mutableIntStateOf(team), mutableIntStateOf(robotStartPosition))
+                            createScoutMatchDataFile(context, match.value, team, createOutput(mutableIntStateOf(team), mutableIntStateOf(robotStartPosition))) // permanent save
+
+                            bob.invoke()
+                            exportScoutData(context) // Does nothing
+                        }
+
                     },
                     border = BorderStroke(2.dp, getCurrentTheme().secondaryVariant),
                     colors = ButtonDefaults.outlinedButtonColors(backgroundColor = getCurrentTheme().secondary, contentColor = getCurrentTheme().onSecondary) ,

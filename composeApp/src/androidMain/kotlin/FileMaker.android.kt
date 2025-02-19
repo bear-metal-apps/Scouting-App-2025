@@ -1,13 +1,12 @@
 import android.content.Context
-import android.content.Context.USB_SERVICE
-import android.hardware.usb.UsbConstants.USB_DIR_OUT
-import android.hardware.usb.UsbManager
-import android.hardware.usb.UsbRequest
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import com.google.gson.Gson
 import com.google.gson.JsonObject
+import com.google.gson.Gson
+import com.google.gson.JsonObject
+import nodes.TeamMatchStartKey
 import nodes.jsonObject
 import nodes.pitsTeamDataArray
 import nodes.teamDataArray
@@ -16,13 +15,64 @@ import org.json.JSONException
 import org.json.JSONObject
 import org.tahomarobotics.scouting.Client
 import java.io.*
-import java.nio.ByteBuffer
+import java.lang.Integer.parseInt
+
+var matchFolder : File? = null
+
+fun createScoutMatchDataFolder(context: Context) {
+    matchFolder = File(context.filesDir, "ScoutMatchDataFolder")
+
+    if(!matchFolder!!.exists()) {
+        matchFolder!!.mkdirs()
+        println("Made match data folder")
+    } else {
+        println("Match data folder found")
+    }
+}
+
+fun createScoutMatchDataFile(context: Context, match: String, team: Int, data: String) {
+    val file = File(matchFolder, "Match${match}Team${team}.json")
+    file.delete()
+    file.createNewFile()
+
+    file.writeText(data)
+
+    file.forEachLine {
+        try {
+            println("Saved file Match${match}Team${team}.json: $it")
+        } catch (e: Exception) {
+            println(e.message)
+        }
+    }
+}
+
+fun loadMatchDataFiles(context: Context) {
+    val gson = Gson()
+
+    println("loading files...")
+    for((index) in (matchFolder?.listFiles()?.withIndex()!!)) {
+        jsonObject = gson.fromJson(matchFolder?.listFiles()?.toList()?.get(index)?.readText(), JsonObject::class.java)
+        teamDataArray[TeamMatchStartKey(parseInt(jsonObject.get("match").asString), jsonObject.get("team").asInt, jsonObject.get("robotStartPosition").asInt)] = jsonObject.toString()
+
+        println(matchFolder?.listFiles()?.toList()?.get(index).toString())
+    }
+}
+
+fun deleteScoutMatchData() {
+    repeat(10) {
+        try {
+            for((index) in matchFolder?.listFiles()?.withIndex()!!) {
+                matchFolder?.listFiles()?.get(index)?.deleteRecursively()
+            }
+        } catch (e: IndexOutOfBoundsException) {}
+    }
+    matchFolder?.delete()
+}
 
 fun createFile(context: Context) {
     val file = File(context.filesDir, "match_data.json")
     file.delete()
     file.createNewFile()
-
     val writer = FileWriter(file)
 
     matchData?.toString(1)?.let { writer.write(it) }

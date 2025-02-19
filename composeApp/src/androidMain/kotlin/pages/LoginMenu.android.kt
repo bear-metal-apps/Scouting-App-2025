@@ -19,11 +19,14 @@ import com.bumble.appyx.components.backstack.operation.push
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import compKey
+import createScoutMatchDataFolder
 import defaultError
 import defaultOnPrimary
 import defaultPrimaryVariant
 import deleteFile
+import deleteScoutMatchData
 import getCurrentTheme
+import loadMatchDataFiles
 import nodes.RootNode
 import nodes.betterParseInt
 import nodes.teamDataArray
@@ -51,6 +54,10 @@ actual fun LoginMenu(
         "2024hop"
 
     )
+
+    createScoutMatchDataFolder(context)
+    loadMatchDataFiles(context)
+
     Column {
 //        AsyncImage(
 //            model = logo,//turn into bitmap
@@ -171,7 +178,11 @@ actual fun LoginMenu(
                         Box(modifier = Modifier.fillMaxWidth(8f / 10f)) {
                             Button(
                                 onClick = {
-                                    deleteData = false; teamDataArray.clear(); reset(); deleteFile(context)
+                                    teamDataArray.clear()
+                                    reset()
+                                    deleteFile(context)
+                                    deleteScoutMatchData()
+                                    deleteData = false
                                 },
                                 modifier = Modifier.align(Alignment.CenterStart)
                             ) {

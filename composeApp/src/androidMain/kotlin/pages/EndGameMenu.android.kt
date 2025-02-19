@@ -1,7 +1,14 @@
 package pages
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -9,7 +16,12 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableIntState
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -18,13 +30,28 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.components.backstack.operation.pop
-import com.bumble.appyx.components.backstack.operation.push
 import composables.Cage
 import composables.Comments
 import composables.EndGameCheckBox
+import createScoutMatchDataFile
 import defaultSecondary
 import keyboardAsState
-import nodes.*
+import nodes.AutoTeleSelectorNode
+import nodes.RootNode
+import nodes.TeamMatchStartKey
+import nodes.aClimb
+import nodes.aDeep
+import nodes.bClimb
+import nodes.bDeep
+import nodes.cClimb
+import nodes.cDeep
+import nodes.createOutput
+import nodes.notes
+import nodes.playedDefense
+import nodes.saveData
+import nodes.saveDataPopup
+import nodes.saveDataSit
+import nodes.teamDataArray
 import java.lang.Integer.parseInt
 
 
@@ -44,7 +71,7 @@ actual fun EndGameMenu(
 
     fun bob() {
         mainMenuBackStack.pop()
-        teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
+        teamDataArray[TeamMatchStartKey(parseInt(match.value), team.intValue, robotStartPosition.intValue)] = createOutput(team, robotStartPosition)
     }
 
     if(!isKeyboardOpen){
@@ -89,8 +116,10 @@ actual fun EndGameMenu(
                 colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
                 onClick = {
                     if(saveData.value) {
-                        teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
-                        println(teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)])
+                        //Save temp data
+                        teamDataArray[TeamMatchStartKey(parseInt(match.value), team.intValue, robotStartPosition.intValue)] = createOutput(team, robotStartPosition)
+                        //Save permanent data
+                        createScoutMatchDataFile(context, match.value, team.intValue, createOutput(team, robotStartPosition))
                     } else {
                         saveDataPopup.value = true
                         saveDataSit.value = false

@@ -4,4 +4,4 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 
 @Composable
-expect fun MainMenuAlertDialog(active: MutableState<Boolean>, bob: () -> Unit)
+expect fun MainMenuAlertDialog(active: MutableState<Boolean>, bob: () -> Unit, team: Int, robotStartPosition: Int)

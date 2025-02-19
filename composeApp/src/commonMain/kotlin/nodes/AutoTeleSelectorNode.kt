@@ -20,7 +20,6 @@ import compKey
 import composables.MainMenuAlertDialog
 import pages.AutoTeleSelectorMenuBottom
 import pages.AutoTeleSelectorMenuTop
-import java.lang.Integer.parseInt
 import java.util.*
 import java.util.Stack
 import java.util.Objects
@@ -71,10 +70,9 @@ class AutoTeleSelectorNode(
             MainMenuAlertDialog(mainMenuDialog,
                 bob = {
                         mainMenuBackStack.pop()
-                        if(saveData.value) {
-                            teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
-                        }
-                })
+                },
+                team.intValue,
+                robotStartPosition.intValue)
             AppyxComponent(
                 appyxComponent = backStack,
                 modifier = Modifier.weight(0.9f),
@@ -84,25 +82,27 @@ class AutoTeleSelectorNode(
     }
 }
 
-class TeamMatchKey(
+class TeamMatchStartKey(
     var match: Int,
-    var team: Int
+    var team: Int,
+    var robotStartPosition: Int
 ) {
 
     // Need to override equals() and hashCode() when using an object as a hashMap key:
 
     override fun hashCode(): Int {
-        return Objects.hash(match, team)
+        return Objects.hash(match, team, robotStartPosition)
     }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as TeamMatchKey
+        other as TeamMatchStartKey
 
         if (match != other.match) return false
         if (team != other.team) return false
+        if(robotStartPosition != other.robotStartPosition) return false
 
         return true
     }
@@ -221,7 +221,7 @@ fun createOutput(team: MutableIntState, robotStartPosition: MutableIntState): St
         addProperty("shallow", shallow.value)
         addProperty("notes", notes.value)
     }
-    println(jsonObject.toString())
+//    println(jsonObject.toString())
     return jsonObject.toString()
 }
 
@@ -236,9 +236,9 @@ fun loadData(match: Int, team: MutableIntState, robotStartPosition: MutableIntSt
 
     val gson = Gson()
 
-    if(teamDataArray[TeamMatchKey(match, team.value)] != null) {
+    if(teamDataArray[TeamMatchStartKey(match, team.value, robotStartPosition.intValue)] != null) {
 
-        jsonObject = gson.fromJson(teamDataArray[TeamMatchKey(match, team.value)].toString(), JsonObject::class.java)
+        jsonObject = gson.fromJson(teamDataArray[TeamMatchStartKey(match, team.value, robotStartPosition.intValue)].toString(), JsonObject::class.java)
 
         team.intValue = jsonObject.get("team").asInt
         compKey = jsonObject.get("comp").asString
@@ -280,9 +280,10 @@ fun loadData(match: Int, team: MutableIntState, robotStartPosition: MutableIntSt
         shallow.value = jsonObject.get("shallow").asBoolean
         notes.value = jsonObject.get("notes").asString
     } else {
+        println("match data is null")
         reset()
         if(saveData.value) {
-            teamDataArray[TeamMatchKey(match, team.intValue)] = createOutput(team, robotStartPosition)
+            teamDataArray[TeamMatchStartKey(match, team.intValue, robotStartPosition.intValue)] = createOutput(team, robotStartPosition)
         }
     }
 }
