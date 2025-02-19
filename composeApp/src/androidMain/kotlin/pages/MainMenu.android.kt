@@ -23,7 +23,6 @@ import com.bumble.appyx.components.backstack.operation.push
 import com.bumble.appyx.navigation.modality.BuildContext
 import com.bumble.appyx.navigation.node.Node
 import compKey
-import createScoutMatchDataFile
 import createScoutMatchDataFolder
 import defaultSecondary
 import getCurrentTheme
@@ -33,19 +32,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import matchData
 import nodes.RootNode
-import nodes.TeamMatchKey
 import nodes.client
-import nodes.createOutput
+import nodes.loadData
 import nodes.match
-import nodes.saveData
-import nodes.teamDataArray
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
-import org.json.JSONException
 import org.tahomarobotics.scouting.Client
 import sendData
 import sendDataUSB
-import setTeam
 import sync
 import teamData
 import java.lang.Integer.parseInt
@@ -77,11 +71,6 @@ actual class MainMenu actual constructor(
         var tempCompKey by remember { mutableStateOf(compKey) }
 
         val deviceList = manager.deviceList
-
-        if(saveData.value) {
-            teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition) // temp save
-            createScoutMatchDataFile(context, match.value, team.intValue, createOutput(team, robotStartPosition)) // permanent save
-        }
 
         Column (modifier = Modifier.verticalScroll(ScrollState(0))) {
             DropdownMenu(expanded = deviceListOpen, onDismissRequest = { deviceListOpen = false }) {
@@ -155,7 +144,9 @@ actual class MainMenu actual constructor(
                     Row {
                         DropdownMenuItem(
                             onClick = {
-                                robotStartPosition.intValue = 0; backStack.push(RootNode.NavTarget.MatchScouting)
+                                robotStartPosition.intValue = 0
+                                loadData(parseInt(match.value), team, robotStartPosition)
+                                backStack.push(RootNode.NavTarget.MatchScouting)
 //                                try {
 //                                    setTeam(team, match, robotStartPosition.intValue)
 //                                } catch (e: JSONException) {
@@ -170,7 +161,9 @@ actual class MainMenu actual constructor(
                         )
                         DropdownMenuItem(
                             onClick = {
-                                robotStartPosition.intValue = 3; backStack.push(RootNode.NavTarget.MatchScouting)
+                                robotStartPosition.intValue = 3
+                                loadData(parseInt(match.value), team, robotStartPosition)
+                                backStack.push(RootNode.NavTarget.MatchScouting)
 //                                try {
 //                                    setTeam(team, match, robotStartPosition.intValue)
 //                                } catch (e: JSONException) {
@@ -187,7 +180,9 @@ actual class MainMenu actual constructor(
                     Row {
                         DropdownMenuItem(
                             onClick = {
-                                robotStartPosition.intValue = 1; backStack.push(RootNode.NavTarget.MatchScouting)
+                                robotStartPosition.intValue = 1
+                                loadData(parseInt(match.value), team, robotStartPosition)
+                                backStack.push(RootNode.NavTarget.MatchScouting)
 //                                try {
 //                                    setTeam(team, match, robotStartPosition.intValue)
 //                                } catch (e: JSONException) {
@@ -202,7 +197,9 @@ actual class MainMenu actual constructor(
                         )
                         DropdownMenuItem(
                             onClick = {
-                                robotStartPosition.intValue = 4; backStack.push(RootNode.NavTarget.MatchScouting)
+                                robotStartPosition.intValue = 4
+                                loadData(parseInt(match.value), team, robotStartPosition)
+                                backStack.push(RootNode.NavTarget.MatchScouting)
 //                                try {
 //                                    setTeam(team, match, robotStartPosition.intValue)
 //                                } catch (e: JSONException) {
@@ -219,7 +216,9 @@ actual class MainMenu actual constructor(
                     Row {
                         DropdownMenuItem(
                             onClick = {
-                                robotStartPosition.intValue = 2; backStack.push(RootNode.NavTarget.MatchScouting)
+                                robotStartPosition.intValue = 2
+                                loadData(parseInt(match.value), team, robotStartPosition)
+                                backStack.push(RootNode.NavTarget.MatchScouting)
 //                                try {
 //                                    setTeam(team, match, robotStartPosition.intValue)
 //                                } catch (e: JSONException) {
@@ -234,7 +233,9 @@ actual class MainMenu actual constructor(
                         )
                         DropdownMenuItem(
                             onClick = {
-                                robotStartPosition.intValue = 5; backStack.push(RootNode.NavTarget.MatchScouting)
+                                robotStartPosition.intValue = 5
+                                loadData(parseInt(match.value), team, robotStartPosition)
+                                backStack.push(RootNode.NavTarget.MatchScouting)
 //                                try {
 //                                    setTeam(team, match, robotStartPosition.intValue)
 //                                } catch (e: JSONException) {

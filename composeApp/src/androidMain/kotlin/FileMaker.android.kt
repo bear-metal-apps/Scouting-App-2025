@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import com.google.gson.Gson
 import com.google.gson.JsonObject
-import nodes.TeamMatchKey
+import nodes.TeamMatchStartKey
 import nodes.jsonObject
 import nodes.teamDataArray
 import org.json.JSONArray
@@ -47,17 +47,21 @@ fun loadMatchDataFiles(context: Context) {
     val gson = Gson()
 
     println("loading files...")
-    for((index) in (matchFolder?.listFiles()?.toList()!!.withIndex())) {
+    for((index) in (matchFolder?.listFiles()?.withIndex()!!)) {
         jsonObject = gson.fromJson(matchFolder?.listFiles()?.toList()?.get(index)?.readText(), JsonObject::class.java)
-        teamDataArray[TeamMatchKey(parseInt(jsonObject.get("match").asString), jsonObject.get("team").asInt)] = jsonObject.toString()
+        teamDataArray[TeamMatchStartKey(parseInt(jsonObject.get("match").asString), jsonObject.get("team").asInt, jsonObject.get("robotStartPosition").asInt)] = jsonObject.toString()
 
         println(matchFolder?.listFiles()?.toList()?.get(index).toString())
     }
 }
 
 fun deleteScoutMatchData() {
-    for((index) in matchFolder?.listFiles()?.withIndex()!!) {
-        matchFolder?.listFiles()?.get(index)?.deleteRecursively()
+    repeat(10) {
+        try {
+            for((index) in matchFolder?.listFiles()?.withIndex()!!) {
+                matchFolder?.listFiles()?.get(index)?.deleteRecursively()
+            }
+        } catch (e: IndexOutOfBoundsException) {}
     }
     matchFolder?.delete()
 }

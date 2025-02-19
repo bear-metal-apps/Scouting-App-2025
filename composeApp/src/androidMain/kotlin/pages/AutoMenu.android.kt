@@ -1,16 +1,10 @@
 package pages
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.platform.LocalContext
 import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.components.backstack.operation.pop
@@ -19,8 +13,6 @@ import composables.TriStateCheckBox
 //import composables.AutoCheckboxesHorizontal
 //import composables.AutoCheckboxesVertical
 import composables.EnumerableValueAuto
-import defaultSecondary
-import exportScoutData
 import keyboardAsState
 import nodes.*
 import java.lang.Integer.parseInt
@@ -38,7 +30,7 @@ actual fun AutoMenu(
     val context = LocalContext.current
     fun bob() {
         mainMenuBackStack.pop()
-        teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
+        teamDataArray[TeamMatchStartKey(parseInt(match.value), team.intValue, robotStartPosition.intValue)] = createOutput(team, robotStartPosition)
     }
 
     val isScrollEnabled = remember { mutableStateOf(true) }

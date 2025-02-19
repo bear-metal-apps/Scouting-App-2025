@@ -1,26 +1,15 @@
 package pages
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.components.backstack.operation.pop
-import com.bumble.appyx.components.backstack.operation.push
 import composables.CheckBox
 import composables.EnumerableValue
-import composables.EnumerableValue
-import defaultSecondary
-import exportScoutData
 import keyboardAsState
 import nodes.*
 import java.lang.Integer.parseInt
@@ -40,7 +29,7 @@ actual fun TeleMenu(
     val context = LocalContext.current
     fun bob() {
         backStack.pop()
-        teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
+        teamDataArray[TeamMatchStartKey(parseInt(match.value), team.intValue, robotStartPosition.intValue)] = createOutput(team, robotStartPosition)
     }
 
     if (!isKeyboardOpen) {

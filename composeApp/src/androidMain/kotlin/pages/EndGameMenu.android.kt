@@ -37,7 +37,7 @@ import defaultSecondary
 import keyboardAsState
 import nodes.AutoTeleSelectorNode
 import nodes.RootNode
-import nodes.TeamMatchKey
+import nodes.TeamMatchStartKey
 import nodes.aClimb
 import nodes.aDeep
 import nodes.bClimb
@@ -69,7 +69,7 @@ actual fun EndGameMenu(
 
     fun bob() {
         mainMenuBackStack.pop()
-        teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
+        teamDataArray[TeamMatchStartKey(parseInt(match.value), team.intValue, robotStartPosition.intValue)] = createOutput(team, robotStartPosition)
     }
 
     if(!isKeyboardOpen){
@@ -110,7 +110,7 @@ actual fun EndGameMenu(
                 onClick = {
                     if(saveData.value) {
                         //Save temp data
-                        teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
+                        teamDataArray[TeamMatchStartKey(parseInt(match.value), team.intValue, robotStartPosition.intValue)] = createOutput(team, robotStartPosition)
                         //Save permanent data
                         createScoutMatchDataFile(context, match.value, team.intValue, createOutput(team, robotStartPosition))
                     } else {
