@@ -79,9 +79,8 @@ actual class MainMenu actual constructor(
         val deviceList = manager.deviceList
 
         if(saveData.value) {
-            teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
-            createScoutMatchDataFile(context, match.value, team.intValue, createOutput(team, robotStartPosition))
-            println("Permanently saved data")
+            teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition) // temp save
+            createScoutMatchDataFile(context, match.value, team.intValue, createOutput(team, robotStartPosition)) // permanent save
         }
 
         Column (modifier = Modifier.verticalScroll(ScrollState(0))) {

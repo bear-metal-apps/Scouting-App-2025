@@ -55,6 +55,13 @@ fun loadMatchDataFiles(context: Context) {
     }
 }
 
+fun deleteScoutMatchData() {
+    for((index) in matchFolder?.listFiles()?.withIndex()!!) {
+        matchFolder?.listFiles()?.get(index)?.deleteRecursively()
+    }
+    matchFolder?.delete()
+}
+
 fun createFile(context: Context) {
     val file = File(context.filesDir, "match_data.json")
     file.delete()

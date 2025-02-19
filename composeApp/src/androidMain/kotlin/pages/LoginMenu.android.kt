@@ -22,6 +22,7 @@ import defaultError
 import defaultOnPrimary
 import defaultPrimaryVariant
 import deleteFile
+import deleteScoutMatchData
 import getCurrentTheme
 import loadMatchDataFiles
 import nodes.RootNode
@@ -172,7 +173,11 @@ actual fun LoginMenu(
                         Box(modifier = Modifier.fillMaxWidth(8f / 10f)) {
                             Button(
                                 onClick = {
-                                    deleteData = false; teamDataArray.clear(); reset(); deleteFile(context)
+                                    teamDataArray.clear()
+                                    reset()
+                                    deleteFile(context)
+                                    deleteScoutMatchData()
+                                    deleteData = false
                                 },
                                 modifier = Modifier.align(Alignment.CenterStart)
                             ) {

@@ -60,8 +60,6 @@ actual fun AutoTeleSelectorMenuTop(
         tempMatch = match.value
     }
 
-    println(first)
-
     if(teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] != null) {
         if(first) {
             loadData(parseInt(match.value), team, robotStartPosition)
