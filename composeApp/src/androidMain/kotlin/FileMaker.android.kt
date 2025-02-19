@@ -4,8 +4,6 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import com.google.gson.Gson
 import com.google.gson.JsonObject
-import com.google.gson.Gson
-import com.google.gson.JsonObject
 import nodes.TeamMatchStartKey
 import nodes.jsonObject
 import nodes.pitsTeamDataArray
