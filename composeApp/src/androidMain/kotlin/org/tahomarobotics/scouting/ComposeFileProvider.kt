@@ -10,9 +10,6 @@ class  ComposeFileProvider : FileProvider(
 ) {
     companion object {
         fun getImageUri(context: Context, fileName: String): Uri {
-
-
-
             val directory = File(context.cacheDir, "images")
             directory.mkdirs()
             val file = File.createTempFile(

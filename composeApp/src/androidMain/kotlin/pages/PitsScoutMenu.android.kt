@@ -62,6 +62,7 @@ import nodes.l3
 import nodes.l4
 import nodes.length
 import nodes.motorType
+import nodes.permPhotosList
 import nodes.photoArray
 import nodes.pitsReset
 import nodes.pitsTeamDataArray
@@ -195,12 +196,12 @@ actual fun PitsScoutMenu(
 
                                 uri = ComposeFileProvider.getImageUri(
                                     context,
-                                    "photo_$photoAmount"
+                                    "Photo$photoAmount"
                                 )
                                 imageUri = uri
                                 cameraLauncher.launch(uri)
 
-                                photoArray.add(photoAmount, uri.toString())
+                                photoArray.add(uri.toString())
                                 photoAmount++
                                 hasImage = false
                             }
@@ -980,6 +981,9 @@ actual fun PitsScoutMenu(
                             }
 
                             pitsTeamDataArray[parseInt(scoutedTeamNumber.value)] = createPitsOutput(mutableIntStateOf(parseInt(scoutedTeamNumber.value)))
+                            photoArray.forEach {
+                                permPhotosList.add(it)
+                            }
                             println(pitsTeamDataArray)
                             pitsReset()
                             photoAmount = 0

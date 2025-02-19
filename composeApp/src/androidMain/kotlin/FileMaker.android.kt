@@ -14,6 +14,7 @@ import androidx.compose.ui.platform.LocalContext
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import nodes.jsonObject
+import nodes.permPhotosList
 import nodes.photoArray
 import nodes.pitsTeamDataArray
 import nodes.teamDataArray
@@ -118,12 +119,12 @@ fun sendData(context: Context, client: Client) {
         Log.i("Client", "Message Sent: ${jsonObject.toString()}")
     }
 
-    pitsTeamDataArray.forEach {
-        val jsonObject = gson.fromJson(it.toString(), JsonObject::class.java)
+    pitsTeamDataArray.forEach { (key, value) ->
+        val jsonObject = gson.fromJson(value, JsonObject::class.java)
 
         var bitmap: Bitmap? = null
 
-        var index = 1
+        var index = 0
         while(true) {
             try {
                 val pitsPhotosFolder = File(context.filesDir,"Photos")
@@ -132,7 +133,7 @@ fun sendData(context: Context, client: Client) {
                     pitsPhotosFolder.mkdirs()
                 }
 
-                val file = File(pitsPhotosFolder, "Photo${index+1}.png")
+                val file = File(pitsPhotosFolder, "Photo${index}.png")
                 file.delete()
                 file.createNewFile()
 
@@ -140,7 +141,8 @@ fun sendData(context: Context, client: Client) {
 
                 // Assuming you're inside a Composable function
                 val contentResolver = context.contentResolver
-                val bitmap = decodeBitmap(ImageDecoder.createSource(contentResolver, Uri.parse(photoArray[index])))
+                val uri = Uri.parse(permPhotosList[index])
+                val bitmap = decodeBitmap(ImageDecoder.createSource(contentResolver, uri))
                 bitmap.compress(Bitmap.CompressFormat.PNG,0, bos)
 
                 val byteArray = bos.toByteArray()
@@ -148,9 +150,11 @@ fun sendData(context: Context, client: Client) {
                 file.writeBytes(byteArray)
 
                 client.sendData(file)
+                println("Image sent")
 
                 index++
-            } catch (e: Exception) {
+            } catch (e: IndexOutOfBoundsException) {
+                println("reached")
                 break
             }
         }

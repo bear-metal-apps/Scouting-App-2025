@@ -41,7 +41,7 @@ class PitsNode(
 
 var scoutedTeamName = mutableStateOf("")
 var scoutedTeamNumber = mutableStateOf("")
-val photoArray = mutableStateListOf("")
+val photoArray = mutableListOf("")
 var driveType = mutableStateOf("")
 var motorType = mutableStateOf("")
 var auto = mutableStateOf("")
@@ -63,6 +63,8 @@ var algaePreferred = mutableStateOf(false)
 var defensePreferred = mutableStateOf(false)
 var collectPreference = mutableStateOf("None Selected")
 var comments = mutableStateOf("")
+
+var permPhotosList = mutableListOf<String>()
 
 val pitsTeamDataArray : HashMap<Int, String> = hashMapOf()
 
