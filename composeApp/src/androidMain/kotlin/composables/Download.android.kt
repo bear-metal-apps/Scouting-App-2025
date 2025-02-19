@@ -21,7 +21,9 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
 
-var rootDirectory : File = File("Scouting Data")
+var pitsFolder : File = File("Pits")
+
+var pitsPhotosList : List<File> = listOf()
 
 @RequiresApi(Build.VERSION_CODES.P)
 @Composable
@@ -31,57 +33,40 @@ fun downloadPitsPhotos(
     teamNumber: String,
     photoAmount: Int
 ) {
-//    var file = File(context.cacheDir, "photo_0.jpg")
-//    context.cacheDir
 
-    rootDirectory = File(context.getExternalFilesDir(null),"Scouting Data")
-
-    if(!rootDirectory.exists()){
-        rootDirectory.mkdirs()
-//        rootDirectory.createNewFile()
-    }
-//    rootDirectory.isDirectory
-
-    val pitsFolder = File(rootDirectory,"Pits")
-
+    val pitsFolder = File(context.filesDir,"Pits")
     if(!pitsFolder.exists()){
         pitsFolder.mkdirs()
-//        pitsFolder.createNewFile()
     }
-//    pitsFolder.isDirectory
 
     val pitsPhotosFolder = File(pitsFolder,"Photos")
-
     if(!pitsPhotosFolder.exists()){
         pitsPhotosFolder.mkdirs()
-//        pitsPhotosFolder.createNewFile()
     }
-//    pitsFolder.isDirectory
 
     val teamFolder = File(pitsPhotosFolder,"Team $teamNumber")
     teamFolder.delete()
     teamFolder.mkdirs()
 
-    //var byte = ByteArray(photoArray[0].size)
+    for((index, value) in photoArray.withIndex()) {
+        val file = File(teamFolder, "Photo${index+1}.png")
+        file.delete()
+        file.createNewFile()
 
-//    for((index, value) in photoArray.withIndex()) {
-//        val file = File(teamFolder, "Photo${index+1}.bmp")
-//        file.delete()
-//        file.createNewFile()
+        var bos = ByteArrayOutputStream()
 
-//        var bos = ByteArrayOutputStream()
-//
-//        // Assuming you're inside a Composable function
-//        val contentResolver = LocalContext.current.contentResolver
-//        val bitmap = decodeBitmap(ImageDecoder.createSource(contentResolver, photoArray[0]))
-//        bitmap.compress(Bitmap.CompressFormat.PNG,0, bos)
+        // Assuming you're inside a Composable function
+        val contentResolver = LocalContext.current.contentResolver
+        val bitmap = decodeBitmap(ImageDecoder.createSource(contentResolver, photoArray[0]))
+        bitmap.compress(Bitmap.CompressFormat.PNG,0, bos)
 
-//        val byteArray = bos.toByteArray()
-//
-//        val fileOutputStream = FileOutputStream(file)
-//        fileOutputStream.write(byteArray) // Stores ByteArray that contains the image in the file
-//        fileOutputStream.close()
+        val byteArray = bos.toByteArray()
 
-//    }
+        file.writeBytes(byteArray)
+    }
 
+}
+
+fun syncPitsPhotosList(context: Context) {
+//    pitsFolder.list
 }

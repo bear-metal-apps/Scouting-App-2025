@@ -14,6 +14,7 @@ import androidx.compose.ui.platform.LocalContext
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import nodes.jsonObject
+import nodes.photoArray
 import nodes.pitsTeamDataArray
 import nodes.teamDataArray
 import org.json.JSONArray
@@ -122,25 +123,39 @@ fun sendData(context: Context, client: Client) {
 
         var bitmap: Bitmap? = null
 
-        var i = 1
+        var index = 1
         while(true) {
             try {
+                val pitsPhotosFolder = File(context.filesDir,"Photos")
+
+                if(!pitsPhotosFolder.exists()){
+                    pitsPhotosFolder.mkdirs()
+                }
+
+                val file = File(pitsPhotosFolder, "Photo${index+1}.png")
+                file.delete()
+                file.createNewFile()
+
                 var bos = ByteArrayOutputStream()
 
                 // Assuming you're inside a Composable function
                 val contentResolver = context.contentResolver
-                bitmap = decodeBitmap(ImageDecoder.createSource(contentResolver, Uri.parse(jsonObject.get("Photo${i}").toString())))
+                val bitmap = decodeBitmap(ImageDecoder.createSource(contentResolver, Uri.parse(photoArray[index])))
                 bitmap.compress(Bitmap.CompressFormat.PNG,0, bos)
 
-                i++
+                val byteArray = bos.toByteArray()
+
+                file.writeBytes(byteArray)
+
+                client.sendData(file)
+
+                index++
             } catch (e: Exception) {
                 break
             }
         }
 
         client.sendData(jsonObject.toString(), "pit")
-
-//        client.sendData(bitmap.toString(), "bitmap")
 
         Log.i("Client", "Message Sent: ${jsonObject.toString()}")
     }
