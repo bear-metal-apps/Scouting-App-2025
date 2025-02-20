@@ -5,6 +5,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -458,56 +459,56 @@ actual fun AutoTeleSelectorMenuBottom(
             onDismissRequest = { saveDataPopup.value = false },
             modifier = Modifier.clip(
                 RoundedCornerShape(5.dp)
-            ).border(BorderStroke(3.dp, defaultPrimaryVariant), RoundedCornerShape(5.dp))
-
+            ).border(BorderStroke(3.dp, getCurrentTheme().primaryVariant), RoundedCornerShape(5.dp))
+                .background(getCurrentTheme().secondary)
         ) {
-            Column {
-                Text(text = "Save data for team ${team.intValue}, match ${match.value}?", modifier = Modifier.align(Alignment.CenterHorizontally))
-                Box(modifier = Modifier.fillMaxWidth(8f / 10f)) {
-                    Row (
-                        modifier = Modifier.align(Alignment.Center)
-                    ) {
-                        Button(
-                            onClick = {
-                                if(saveDataSit.value) {
-                                    teamDataArray[TeamMatchStartKey(parseInt(match.value), team.intValue, robotStartPosition.intValue)] = createOutput(team, robotStartPosition)
-                                    createScoutMatchDataFile(context, match.value, team.intValue, createOutput(team, robotStartPosition))
-                                    println(teamDataArray)
-                                    mainMenuBackStack.pop()
-                                } else {
-                                    teamDataArray[TeamMatchStartKey(parseInt(match.value), team.intValue, robotStartPosition.intValue)] = createOutput(team, robotStartPosition)
-                                    createScoutMatchDataFile(context, match.value, team.intValue, createOutput(team, robotStartPosition))
-                                    match.value = (parseInt(match.value) + 1).toString()
-                                    reset()
-                                    backStack.push(AutoTeleSelectorNode.NavTarget.AutoScouting)
-                                    println(teamDataArray)
-                                }
-                                saveDataPopup.value = false
-                                saveData.value = true
-                            },
-                            modifier = Modifier.align(Alignment.CenterVertically)
-                        ) {
-                            Text(text = "Yes", color = defaultError)
+            Box(modifier = Modifier.fillMaxWidth(8f / 10f).padding(5.dp).fillMaxHeight(1/8f)) {
+                Text(text = "Save data for team ${team.intValue}, match ${match.value}?",
+                    modifier = Modifier.padding(5.dp).align(Alignment.TopCenter)
+                )
+                androidx.compose.material.OutlinedButton(
+                    onClick = {
+                        if(saveDataSit.value) {
+                            teamDataArray[TeamMatchStartKey(parseInt(match.value), team.intValue, robotStartPosition.intValue)] = createOutput(team, robotStartPosition)
+                            createScoutMatchDataFile(context, match.value, team.intValue, createOutput(team, robotStartPosition))
+                            println(teamDataArray)
+                            mainMenuBackStack.pop()
+                        } else {
+                            teamDataArray[TeamMatchStartKey(parseInt(match.value), team.intValue, robotStartPosition.intValue)] = createOutput(team, robotStartPosition)
+                            createScoutMatchDataFile(context, match.value, team.intValue, createOutput(team, robotStartPosition))
+                            match.value = (parseInt(match.value) + 1).toString()
+                            reset()
+                            backStack.push(AutoTeleSelectorNode.NavTarget.AutoScouting)
+                            println(teamDataArray)
                         }
-                        Button(
-                            onClick = {
-                                if(saveDataSit.value) {
-                                    println(teamDataArray)
-                                    mainMenuBackStack.pop()
-                                } else {
-                                    match.value = (parseInt(match.value) + 1).toString()
-                                    reset()
-                                    backStack.push(AutoTeleSelectorNode.NavTarget.AutoScouting)
-                                    println(teamDataArray)
-                                }
-                                saveDataPopup.value = false
-                                saveData.value = false
-                            },
-                            modifier = Modifier.align(Alignment.CenterVertically)
-                        ) {
-                            Text(text = "No", color = defaultError)
+                        saveDataPopup.value = false
+                        saveData.value = true
+                    },
+                    border = BorderStroke(2.dp, getCurrentTheme().secondaryVariant),
+                    colors = androidx.compose.material.ButtonDefaults.outlinedButtonColors(backgroundColor = getCurrentTheme().secondary, contentColor = getCurrentTheme().onSecondary),
+                    modifier = Modifier.align(Alignment.BottomStart)
+                ) {
+                    Text(text = "Yes", color = getCurrentTheme().error)
+                }
+                androidx.compose.material.OutlinedButton(
+                    onClick = {
+                        if(saveDataSit.value) {
+                            println(teamDataArray)
+                            mainMenuBackStack.pop()
+                        } else {
+                            match.value = (parseInt(match.value) + 1).toString()
+                            reset()
+                            backStack.push(AutoTeleSelectorNode.NavTarget.AutoScouting)
+                            println(teamDataArray)
                         }
-                    }
+                        saveDataPopup.value = false
+                        saveData.value = false
+                    },
+                    border = BorderStroke(2.dp, getCurrentTheme().secondaryVariant),
+                    colors = androidx.compose.material.ButtonDefaults.outlinedButtonColors(backgroundColor = getCurrentTheme().secondary, contentColor = getCurrentTheme().onSecondary),
+                    modifier = Modifier.align(Alignment.BottomEnd)
+                ) {
+                    Text(text = "No", color = getCurrentTheme().error)
                 }
             }
         }
