@@ -187,6 +187,7 @@ val teleLThree = mutableIntStateOf(0)
 val teleLTwo = mutableIntStateOf(0)
 val teleLOne = mutableIntStateOf(0)
 val teleReefAlgaeCollected = mutableStateOf(0)
+val teleRemoved = mutableIntStateOf(0)
 val teleProcessed = mutableIntStateOf(0)
 val teleLFourMissed = mutableIntStateOf(0)
 val teleLThreeMissed = mutableIntStateOf(0)
@@ -380,6 +381,7 @@ fun reset() {
     teleLTwo.intValue = 0
     teleLOne.intValue = 0
     teleReefAlgaeCollected.value = 0
+    teleRemoved.intValue = 0
     teleProcessed.intValue = 0
     teleLFourMissed.intValue = 0
     teleLThreeMissed.intValue = 0
