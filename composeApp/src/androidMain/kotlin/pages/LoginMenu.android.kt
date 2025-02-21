@@ -55,9 +55,14 @@ actual fun LoginMenu(
 
     )
 
-    createScoutMatchDataFolder(context)
-//    deleteScoutMatchData()
-    loadMatchDataFiles(context)
+    var first by remember { mutableStateOf(true) }
+
+    if(first) {
+        createScoutMatchDataFolder(context)
+        loadMatchDataFiles(context)
+
+        first = false
+    }
 
     Column {
 //        AsyncImage(

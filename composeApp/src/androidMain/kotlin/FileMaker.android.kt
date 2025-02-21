@@ -54,7 +54,6 @@ fun loadMatchDataFiles(context: Context) {
                 matchFolder?.listFiles()?.toList()?.get(index)?.readText(),
                 JsonObject::class.java
             )
-            println(jsonObject.toString())
             teamDataArray[TeamMatchStartKey(
                 parseInt(jsonObject.get("match").asString),
                 jsonObject.get("team").asInt,
@@ -163,7 +162,6 @@ fun sendData(context: Context, client: Client) {
     val gson = Gson()
 
     for((key, value) in teamDataArray.entries) {
-        println("reached")
         val jsonObject = gson.fromJson(value, JsonObject::class.java)
 
         client.sendData(jsonObject.toString(), "match")
