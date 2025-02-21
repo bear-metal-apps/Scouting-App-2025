@@ -11,6 +11,7 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.net.toFile
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import nodes.jsonObject
@@ -127,9 +128,9 @@ fun sendData(context: Context, client: Client) {
         var index = 0
         while(true) {
             try {
-                val file = File(/*???*/, "Photo${index}.jpg")
+                var file = File(Uri.parse(permPhotosList[index]).toString(), "Photo${index}.jpg")
                 file.delete()
-                file.createNewFile()
+                file = Uri.parse(permPhotosList[index]).toFile()
 
                 var bos = ByteArrayOutputStream()
 

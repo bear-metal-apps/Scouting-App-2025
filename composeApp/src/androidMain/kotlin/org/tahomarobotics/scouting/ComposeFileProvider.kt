@@ -9,22 +9,30 @@ class  ComposeFileProvider : FileProvider(
     R.xml.filepaths
 ) {
     companion object {
-        fun getImageUri(context: Context, fileName: String): Uri {
+        fun getImageUri(context: Context, teamNumber: Int, fileName: String): Uri {
             val directory = File(context.cacheDir, "images")
-            directory.mkdirs()
-            val file = File.createTempFile(
-                fileName,
-                ".jpg",
-                directory,
+            if(!directory.exists()) {
+                directory.mkdirs()
+            }
+
+            val teamFile = File(directory, "Pits$teamNumber")
+            if(!teamFile.exists()) {
+                teamFile.mkdirs()
+            }
+
+            val file = File(
+                teamFile, "$fileName.jpg"
             )
+            file.delete()
+            file.createNewFile()
+
             val authority = context.packageName + ".fileprovider"
             return getUriForFile(
                 context,
                 authority,
                 file,
-
             )
         }
 
-        }
     }
+}

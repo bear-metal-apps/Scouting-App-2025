@@ -194,13 +194,12 @@ actual fun PitsScoutMenu(
                             if (photoAmount < 3) {//moved up
                                 var uri = Uri.EMPTY
 
-                                uri = ComposeFileProvider.getImageUri(
-                                    context,
-                                    "Photo$photoAmount"
-                                )
+                                uri = ComposeFileProvider.getImageUri(context, parseInt(scoutedTeamNumber.value), "Photo${permPhotosList.size}")
                                 imageUri = uri
                                 cameraLauncher.launch(uri)
 
+                                val startIndex = uri.toString().indexOf("/", 65)
+//                                println(uri.toString())
                                 photoArray.add(uri.toString())
                                 photoAmount++
                                 hasImage = false
