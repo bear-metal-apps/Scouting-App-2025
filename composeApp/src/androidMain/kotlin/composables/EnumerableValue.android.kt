@@ -15,6 +15,8 @@ import androidx.compose.ui.unit.sp
 import defaultOnPrimary
 import defaultSecondary
 import getCurrentTheme
+import nodes.redoList
+import nodes.undoList
 
 @Composable
 actual fun EnumerableValue(label: String, value: MutableIntState, alignment: Alignment, modifier: Modifier) {
@@ -22,7 +24,9 @@ actual fun EnumerableValue(label: String, value: MutableIntState, alignment: Ali
         border = BorderStroke(2.dp, color = getCurrentTheme().primaryVariant),
         shape = RoundedCornerShape(0.dp),
         onClick = {
+            undoList.push(arrayOf("number" ,value, value.value))
             value.value += 1
+            redoList.push(arrayOf("number" ,value, value.value))
         },
         modifier = modifier
     ) {

@@ -86,14 +86,6 @@ actual fun TeleMenu(
                         .fillMaxHeight()
                 ){
                     EnumerableValue(
-                        label = "Algae L3",
-                        value = teleLThreeAlgae,
-                        alignment = Alignment.CenterEnd,
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxWidth()
-                    )
-                    EnumerableValue(
                     label = "Score L3",
                     value = teleLThree,
                     alignment = Alignment.CenterEnd,
@@ -116,14 +108,6 @@ actual fun TeleMenu(
                         .weight(1f)
                         .fillMaxHeight()
                 ){
-                    EnumerableValue(
-                        label = "Algae L2",
-                        value = teleLTwoAlgae,
-                        alignment = Alignment.CenterEnd,
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxWidth()
-                    )
                     EnumerableValue(
                         label = "Score L2",
                         value = teleLTwo,
@@ -164,14 +148,28 @@ actual fun TeleMenu(
                             .fillMaxWidth()
                     )
                 }
-                EnumerableValue(
-                    label = "Algae Processed",
-                    value = teleProcessed,
-                    alignment = Alignment.CenterEnd,
+                Row(
                     modifier = Modifier
                         .weight(1f)
-                        .fillMaxWidth()
-                )
+                        .fillMaxHeight()
+                ){
+                    EnumerableValue(
+                        label = "Algae Removed",
+                        value = teleRemoved,
+                        alignment = Alignment.CenterEnd,
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxWidth()
+                    )
+                    EnumerableValue(
+                        label = "Algae Processed",
+                        value = teleProcessed,
+                        alignment = Alignment.CenterEnd,
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxWidth()
+                    )
+                }
             }
 
             Column (
