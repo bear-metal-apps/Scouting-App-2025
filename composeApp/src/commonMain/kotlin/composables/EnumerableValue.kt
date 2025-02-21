@@ -10,5 +10,6 @@ expect fun EnumerableValue(
     label: String,
     value: MutableIntState,
     alignment: Alignment,
+    miniMinus: Boolean,
     modifier: Modifier
 )

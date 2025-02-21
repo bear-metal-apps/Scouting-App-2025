@@ -110,6 +110,10 @@ var undoList = Stack<Array<Any>>()
 var redoList = Stack<Array<Any>>()
 var jsonObject : JsonObject = JsonObject()
 
+// Settings Variables
+var miniMinus = mutableStateOf(false)
+
+
 val match = mutableStateOf("1")
 
 //CHECKED
@@ -292,9 +296,9 @@ fun loadData(match: Int, team: MutableIntState, robotStartPosition: MutableIntSt
         teleNetMissed.intValue = jsonObject.get("teleNetMissed").asInt
         teleLFour.intValue = jsonObject.get("teleLFour").asInt
         teleLThree.intValue = jsonObject.get("teleLThree").asInt
-        teleLThreeAlgae.intValue = jsonObject.get("teleLThreeAlgae").asInt
+//        teleLThreeAlgae.intValue = jsonObject.get("teleLThreeAlgae").asInt
         teleLTwo.intValue = jsonObject.get("teleLTwo").asInt
-        teleLTwoAlgae.intValue = jsonObject.get("teleLTwoAlgae").asInt
+//        teleLTwoAlgae.intValue = jsonObject.get("teleLTwoAlgae").asInt
         teleLOne.intValue = jsonObject.get("teleLOne").asInt
         teleProcessed.intValue = jsonObject.get("teleProcessed").asInt
         teleLFourMissed.intValue = jsonObject.get("teleLFourMissed").asInt
@@ -343,10 +347,9 @@ fun reset(){
     teleNetMissed.intValue = 0
     teleLFour.intValue = 0
     teleLThree.intValue = 0
-    teleLThreeAlgae.intValue = 0
     teleLTwo.intValue = 0
-    teleLTwoAlgae.intValue = 0
     teleLOne.intValue = 0
+    teleRemoved.intValue = 0
     teleProcessed.intValue = 0
     teleLFourMissed.intValue = 0
     teleLThreeMissed.intValue = 0

@@ -66,7 +66,8 @@ actual fun TeleMenu(
                     EnumerableValue(
                         label = "Score L4",
                         value = teleLFour,
-                        alignment = Alignment.CenterEnd,
+                        alignment = Alignment.BottomEnd,
+                        miniMinus = miniMinus.value,
                         modifier = Modifier
                             .weight(1f)
                             .fillMaxWidth()
@@ -74,7 +75,8 @@ actual fun TeleMenu(
                     EnumerableValue(
                         label = "Miss L4",
                         value = teleLFourMissed,
-                        alignment = Alignment.CenterEnd,
+                        alignment = Alignment.BottomEnd,
+                        miniMinus = miniMinus.value,
                         modifier = Modifier
                             .weight(1f)
                             .fillMaxWidth()
@@ -88,7 +90,8 @@ actual fun TeleMenu(
                     EnumerableValue(
                     label = "Score L3",
                     value = teleLThree,
-                    alignment = Alignment.CenterEnd,
+                    alignment = Alignment.BottomEnd,
+                        miniMinus = miniMinus.value,
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxWidth()
@@ -96,7 +99,8 @@ actual fun TeleMenu(
                     EnumerableValue(
                         label = "Miss L3",
                         value = teleLThreeMissed,
-                        alignment = Alignment.CenterEnd,
+                        alignment = Alignment.BottomEnd,
+                        miniMinus = miniMinus.value,
                         modifier = Modifier
                             .weight(1f)
                             .fillMaxWidth()
@@ -111,7 +115,8 @@ actual fun TeleMenu(
                     EnumerableValue(
                         label = "Score L2",
                         value = teleLTwo,
-                        alignment = Alignment.CenterEnd,
+                        alignment = Alignment.BottomEnd,
+                        miniMinus = miniMinus.value,
                         modifier = Modifier
                             .weight(1f)
                             .fillMaxWidth()
@@ -119,7 +124,8 @@ actual fun TeleMenu(
                     EnumerableValue(
                         label = "Miss L2",
                         value = teleLTwoMissed,
-                        alignment = Alignment.CenterEnd,
+                        alignment = Alignment.BottomEnd,
+                        miniMinus = miniMinus.value,
                         modifier = Modifier
                             .weight(1f)
                             .fillMaxWidth()
@@ -134,7 +140,8 @@ actual fun TeleMenu(
                     EnumerableValue(
                         label = "Score L1",
                         value = teleLOne,
-                        alignment = Alignment.CenterEnd,
+                        alignment = Alignment.BottomEnd,
+                        miniMinus = miniMinus.value,
                         modifier = Modifier
                             .weight(1f)
                             .fillMaxWidth()
@@ -142,7 +149,8 @@ actual fun TeleMenu(
                     EnumerableValue(
                         label = "Miss L1",
                         value = teleLOneMissed,
-                        alignment = Alignment.CenterEnd,
+                        alignment = Alignment.BottomEnd,
+                        miniMinus = miniMinus.value,
                         modifier = Modifier
                             .weight(1f)
                             .fillMaxWidth()
@@ -156,7 +164,8 @@ actual fun TeleMenu(
                     EnumerableValue(
                         label = "Algae Removed",
                         value = teleRemoved,
-                        alignment = Alignment.CenterEnd,
+                        alignment = Alignment.BottomEnd,
+                        miniMinus = miniMinus.value,
                         modifier = Modifier
                             .weight(1f)
                             .fillMaxWidth()
@@ -164,7 +173,8 @@ actual fun TeleMenu(
                     EnumerableValue(
                         label = "Algae Processed",
                         value = teleProcessed,
-                        alignment = Alignment.CenterEnd,
+                        alignment = Alignment.BottomEnd,
+                        miniMinus = miniMinus.value,
                         modifier = Modifier
                             .weight(1f)
                             .fillMaxWidth()
@@ -182,6 +192,7 @@ actual fun TeleMenu(
                     label = "Net Miss",
                     value = teleNetMissed,
                     alignment = Alignment.BottomEnd,
+                    miniMinus = miniMinus.value,
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxWidth()
@@ -191,6 +202,7 @@ actual fun TeleMenu(
                     label = "Net Score",
                     value = teleNet,
                     alignment = Alignment.BottomEnd,
+                    miniMinus = miniMinus.value,
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxWidth()

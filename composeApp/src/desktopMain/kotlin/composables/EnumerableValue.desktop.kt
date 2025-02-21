@@ -20,6 +20,7 @@ actual fun EnumerableValue(
     label: String,
     value: MutableIntState,
     alignment: Alignment,
+    miniMinus: Boolean,
     modifier: Modifier
 ) {
     Box(modifier = Modifier.fillMaxWidth()) {
@@ -75,5 +76,3 @@ actual fun EnumerableValue(
         }
     }
 }
-
-
