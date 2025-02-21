@@ -41,7 +41,7 @@ class PitsNode(
 
 var scoutedTeamName = mutableStateOf("")
 var scoutedTeamNumber = mutableStateOf("")
-val photoArray = mutableListOf("")
+val photoArray = mutableListOf<String>()
 var driveType = mutableStateOf("")
 var motorType = mutableStateOf("")
 var auto = mutableStateOf("")

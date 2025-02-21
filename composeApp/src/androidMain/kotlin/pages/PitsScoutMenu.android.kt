@@ -40,6 +40,7 @@ import defaultError
 import defaultOnPrimary
 import defaultPrimaryVariant
 import getCurrentTheme
+import kotlinx.coroutines.coroutineScope
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import org.tahomarobotics.scouting.ComposeFileProvider
@@ -206,9 +207,7 @@ actual fun PitsScoutMenu(
                                     permPhotosList.add(uri.toString())
                                     photoAmount++
 
-                                    val startIndex = uri.toString().indexOf("/", 65)
-                                    photoArray[photoAmount-1] = uri.toString().substring(startIndex+1)
-                                    println(uri.toString().substring(startIndex+1))
+                                    photoArray.add(uri.toString())
                                 } catch (e: NumberFormatException) {
                                     teamNumberPopup = true
                                 }
@@ -989,6 +988,19 @@ actual fun PitsScoutMenu(
                             if (photoArray.size >= 1) {
                                 robotCard = true
                             }
+
+                            val addList = mutableListOf<String>()
+                            val removeList = mutableListOf<String>()
+
+                            println("photos:")
+                            photoArray.forEach {
+                                val startIndex = it.indexOf("/", 65)
+                                addList.add(it.substring(startIndex+1))
+                                removeList.add(it)
+                                println(it.substring(startIndex+1))
+                            }
+                            photoArray.addAll(addList)
+                            photoArray.removeAll(removeList)
 
                             pitsTeamDataArray[parseInt(scoutedTeamNumber.value)] = createPitsOutput(mutableIntStateOf(parseInt(scoutedTeamNumber.value)))
                             photoArray.forEach {

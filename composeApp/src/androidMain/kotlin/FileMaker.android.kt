@@ -121,37 +121,30 @@ fun sendData(context: Context, client: Client) {
     }
 
     pitsTeamDataArray.forEach { (key, value) ->
+        println("reached")
         val jsonObject = gson.fromJson(value, JsonObject::class.java)
 
         var bitmap: Bitmap? = null
 
-        var index = 0
-        while(true) {
-            try {
-                var file = File(Uri.parse(permPhotosList[index]).toString(), "Photo${index}.jpg")
-                file.delete()
-                file = Uri.parse(permPhotosList[index]).toFile()
+        for((index) in permPhotosList.withIndex()) {
+            var file = File(Uri.parse(permPhotosList[index]).toString())
+            file.delete()
+            file = Uri.parse(permPhotosList[index]).toFile()
 
-                var bos = ByteArrayOutputStream()
+            var bos = ByteArrayOutputStream()
 
-                // Assuming you're inside a Composable function
-                val contentResolver = context.contentResolver
-                val uri = Uri.parse(permPhotosList[index])
-                val bitmap = decodeBitmap(ImageDecoder.createSource(contentResolver, uri))
-                bitmap.compress(Bitmap.CompressFormat.JPEG,0, bos)
+            // Assuming you're inside a Composable function
+            val contentResolver = context.contentResolver
+            val uri = Uri.parse(permPhotosList[index])
+            val bitmap = decodeBitmap(ImageDecoder.createSource(contentResolver, uri))
+            bitmap.compress(Bitmap.CompressFormat.JPEG,0, bos)
 
-                val byteArray = bos.toByteArray()
+            val byteArray = bos.toByteArray()
 
-                file.writeBytes(byteArray)
+            file.writeBytes(byteArray)
 
-                client.sendData(file)
-                println("Image sent")
-
-                index++
-            } catch (e: IndexOutOfBoundsException) {
-                println("reached")
-                break
-            }
+            client.sendData(file)
+            println("Image sent")
         }
 
         client.sendData(jsonObject.toString(), "pit")
