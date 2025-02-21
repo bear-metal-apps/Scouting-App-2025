@@ -27,6 +27,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.substring
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
@@ -96,6 +97,8 @@ actual fun PitsScoutMenu(
         )
         var array : SnapshotStateList<Uri> = SnapshotStateList()
         var downloadActive by remember { mutableStateOf(false) }
+
+        var teamNumberPopup by remember { mutableStateOf(false) }
 
         var pitsPersonDD by remember { mutableStateOf(false) }
         var teamNumRequirement by remember { mutableStateOf(false) }
@@ -194,14 +197,22 @@ actual fun PitsScoutMenu(
                             if (photoAmount < 3) {//moved up
                                 var uri = Uri.EMPTY
 
-                                uri = ComposeFileProvider.getImageUri(context, parseInt(scoutedTeamNumber.value), "Photo${permPhotosList.size}")
-                                imageUri = uri
-                                cameraLauncher.launch(uri)
+                                try{
+                                    uri = ComposeFileProvider.getImageUri(context, parseInt(scoutedTeamNumber.value), "Photo${permPhotosList.size}")
 
-                                val startIndex = uri.toString().indexOf("/", 65)
-//                                println(uri.toString())
-                                photoArray.add(uri.toString())
-                                photoAmount++
+                                    imageUri = uri
+                                    cameraLauncher.launch(uri)
+
+                                    permPhotosList.add(uri.toString())
+                                    photoAmount++
+
+                                    val startIndex = uri.toString().indexOf("/", 65)
+                                    photoArray[photoAmount-1] = uri.toString().substring(startIndex+1)
+                                    println(uri.toString().substring(startIndex+1))
+                                } catch (e: NumberFormatException) {
+                                    teamNumberPopup = true
+                                }
+
                                 hasImage = false
                             }
                         }
@@ -1062,6 +1073,32 @@ actual fun PitsScoutMenu(
                             ) {
                                 Text(text = "Ok", color = defaultError)
                             }
+                        }
+                    }
+                }
+            }
+
+            if(teamNumberPopup) {
+                BasicAlertDialog(
+                    onDismissRequest = { teamNumberPopup = false },
+                    modifier = Modifier.clip(
+                        RoundedCornerShape(5.dp)
+                    ).border(BorderStroke(3.dp, getCurrentTheme().primaryVariant), RoundedCornerShape(5.dp))
+                        .background(getCurrentTheme().secondary)
+                ) {
+                    Box(modifier = Modifier.fillMaxWidth(8f / 10f).padding(5.dp).fillMaxHeight(1/8f)) {
+                        Text(text = "Please input a valid team number.",
+                            modifier = Modifier.padding(5.dp).align(Alignment.TopCenter)
+                        )
+                        OutlinedButton(
+                            onClick = {
+                                teamNumberPopup = false
+                            },
+                            border = BorderStroke(2.dp, getCurrentTheme().secondaryVariant),
+                            colors = ButtonDefaults.outlinedButtonColors(contentColor = getCurrentTheme().onSecondary, containerColor = getCurrentTheme().secondary) ,
+                            modifier = Modifier.align(Alignment.BottomCenter)
+                        ) {
+                            Text(text = "Ok", color = getCurrentTheme().error)
                         }
                     }
                 }
