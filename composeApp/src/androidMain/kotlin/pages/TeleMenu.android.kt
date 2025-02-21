@@ -160,6 +160,7 @@ actual fun TeleMenu(
                     value = teleProcessed,
                     flashColor = Color.Green,
                     alignment = Alignment.CenterEnd,
+                    miniMinus = miniMinus.value,
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxWidth()

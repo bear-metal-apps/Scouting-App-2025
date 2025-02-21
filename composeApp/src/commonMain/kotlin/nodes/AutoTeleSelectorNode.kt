@@ -156,6 +156,9 @@ var undoList = Stack<Array<Any>>()
 var redoList = Stack<Array<Any>>()
 var jsonObject: JsonObject = JsonObject()
 
+//Settings variables
+val miniMinus = mutableStateOf(false)
+
 val match = mutableStateOf("1")
 
 var tempMatch = match.value

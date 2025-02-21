@@ -20,6 +20,7 @@ actual fun EnumerableValue(
     label: String,
     value: MutableIntState,
     alignment: Alignment,
+    flashColor: Color,
     miniMinus: Boolean,
     modifier: Modifier
 ) {
