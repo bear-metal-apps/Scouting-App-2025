@@ -56,6 +56,7 @@ actual fun LoginMenu(
     )
 
     createScoutMatchDataFolder(context)
+//    deleteScoutMatchData()
     loadMatchDataFiles(context)
 
     Column {

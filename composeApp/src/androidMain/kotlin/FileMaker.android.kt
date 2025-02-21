@@ -49,10 +49,20 @@ fun loadMatchDataFiles(context: Context) {
 
     println("loading files...")
     for((index) in (matchFolder?.listFiles()?.withIndex()!!)) {
-        jsonObject = gson.fromJson(matchFolder?.listFiles()?.toList()?.get(index)?.readText(), JsonObject::class.java)
-        teamDataArray[TeamMatchStartKey(parseInt(jsonObject.get("match").asString), jsonObject.get("team").asInt, jsonObject.get("robotStartPosition").asInt)] = jsonObject.toString()
+        if(gson.fromJson(matchFolder?.listFiles()?.toList()?.get(index)?.readText(), JsonObject::class.java) != null) {
+            jsonObject = gson.fromJson(
+                matchFolder?.listFiles()?.toList()?.get(index)?.readText(),
+                JsonObject::class.java
+            )
+            println(jsonObject.toString())
+            teamDataArray[TeamMatchStartKey(
+                parseInt(jsonObject.get("match").asString),
+                jsonObject.get("team").asInt,
+                jsonObject.get("robotStartPosition").asInt
+            )] = jsonObject.toString()
 
-        println(matchFolder?.listFiles()?.toList()?.get(index).toString())
+            println(matchFolder?.listFiles()?.toList()?.get(index).toString())
+        }
     }
 }
 
@@ -62,9 +72,9 @@ fun deleteScoutMatchData() {
             for((index) in matchFolder?.listFiles()?.withIndex()!!) {
                 matchFolder?.listFiles()?.get(index)?.deleteRecursively()
             }
+            teamDataArray.clear()
         } catch (e: IndexOutOfBoundsException) {}
     }
-    matchFolder?.delete()
 }
 
 fun createFile(context: Context) {
@@ -152,8 +162,9 @@ fun sendData(context: Context, client: Client) {
 
     val gson = Gson()
 
-    teamDataArray.forEach {
-        val jsonObject = gson.fromJson(it.toString(), JsonObject::class.java)
+    for((key, value) in teamDataArray.entries) {
+        println("reached")
+        val jsonObject = gson.fromJson(value, JsonObject::class.java)
 
         client.sendData(jsonObject.toString(), "match")
 

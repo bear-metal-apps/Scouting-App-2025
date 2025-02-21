@@ -80,7 +80,7 @@ actual fun TeleMenu(
                 ){
                     EnumerableValue(
                         label = "Algae L3",
-                        value = teleLThreeAlgae,
+                        value = teleLFour,
                         flashColor = Color.Green,
                         alignment = Alignment.CenterEnd,
                         modifier = Modifier
@@ -114,7 +114,7 @@ actual fun TeleMenu(
                 ){
                     EnumerableValue(
                         label = "Algae L2",
-                        value = teleLTwoAlgae,
+                        value = teleLFour,
                         flashColor = Color.Green,
                         alignment = Alignment.CenterEnd,
                         modifier = Modifier

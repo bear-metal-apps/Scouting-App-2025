@@ -156,7 +156,7 @@ var undoList = Stack<Array<Any>>()
 var redoList = Stack<Array<Any>>()
 var jsonObject: JsonObject = JsonObject()
 
-val match = mutableStateOf("1")
+var match = mutableStateOf("1")
 
 var tempMatch = match.value
 var tempTeam: Int = 0
@@ -204,6 +204,8 @@ var notes = mutableStateOf("")
 
 fun createOutput(team: MutableIntState, robotStartPosition: MutableIntState): String {
 
+    println("saved data")
+
     fun stateToInt(state: ToggleableState) = when (state) {
         ToggleableState.Off -> 0
         ToggleableState.Indeterminate -> 1
@@ -216,12 +218,12 @@ fun createOutput(team: MutableIntState, robotStartPosition: MutableIntState): St
     notes.value = notes.value.replace(":", "")
 
     jsonObject = JsonObject().apply {
-        addProperty("team_key", "frc" + team.intValue.toString())
+        addProperty("team", team.intValue.toString())
         addProperty("event_key", compKey)
-        addProperty("match_num", match.value)
+        addProperty("match", match.value)
         addProperty("scout_name", scoutName.value)
         addProperty("notes", notes.value)
-        addProperty("robot_start_position", robotStartPosition.intValue)
+        addProperty("robotStartPosition", robotStartPosition.intValue)
         add("auto", JsonObject().apply {
             addProperty("stop", autoStop.intValue)
             add("algae", JsonObject().apply {
@@ -232,14 +234,14 @@ fun createOutput(team: MutableIntState, robotStartPosition: MutableIntState): St
             })
             add("coral", JsonObject().apply {
                 addProperty("ground_collection", stateToInt(groundCollectionCoral.value))
-                addProperty("reef_level1", autoCoralLevel4Scored.intValue)
-                addProperty("reef_level2", autoCoralLevel3Scored.intValue)
-                addProperty("reef_level3", autoCoralLevel2Scored.intValue)
-                addProperty("reef_level4", autoCoralLevel1Scored.intValue)
-                addProperty("reef_level1_missed", autoCoralLevel4Missed.intValue)
-                addProperty("reef_level2_missed", autoCoralLevel3Missed.intValue)
-                addProperty("reef_level3_missed", autoCoralLevel2Missed.intValue)
-                addProperty("reef_level4_missed", autoCoralLevel1Missed.intValue)
+                addProperty("reef_level1", autoCoralLevel1Scored.intValue)
+                addProperty("reef_level2", autoCoralLevel2Scored.intValue)
+                addProperty("reef_level3", autoCoralLevel3Scored.intValue)
+                addProperty("reef_level4", autoCoralLevel4Scored.intValue)
+                addProperty("reef_level1_missed", autoCoralLevel1Missed.intValue)
+                addProperty("reef_level2_missed", autoCoralLevel2Missed.intValue)
+                addProperty("reef_level3_missed", autoCoralLevel3Missed.intValue)
+                addProperty("reef_level4_missed", autoCoralLevel4Missed.intValue)
             })
             add("net", JsonObject().apply {
                 addProperty("scored", autoNetScored.intValue)
@@ -294,10 +296,11 @@ fun loadData(match: Int, team: MutableIntState, robotStartPosition: MutableIntSt
 
         jsonObject = gson.fromJson(teamDataArray[TeamMatchStartKey(match, team.value, robotStartPosition.intValue)].toString(), JsonObject::class.java)
 
-        team.intValue = jsonObject.get("team_key").asInt
+        team.intValue = jsonObject.get("team").asInt
         compKey = jsonObject.get("event_key").asString
+//        match.value = parseInt(jsonObject.get("match").asString)
         scoutName.value = jsonObject.get("scout_name").asString
-        robotStartPosition.intValue = jsonObject.get("robot_start_position").asInt
+        robotStartPosition.intValue = jsonObject.get("robotStartPosition").asInt
         autoFeederCollection.intValue = jsonObject.getAsJsonObject("auto").getAsJsonObject("algae").get("feeder").asInt
         groundCollectionAlgae.value =
             intToState(jsonObject.getAsJsonObject("auto").getAsJsonObject("algae").get("ground_collection").asInt)
@@ -306,21 +309,21 @@ fun loadData(match: Int, team: MutableIntState, robotStartPosition: MutableIntSt
         algaeProcessed.intValue = jsonObject.getAsJsonObject("auto").getAsJsonObject("algae").get("processed").asInt
         algaeRemoved.intValue = jsonObject.getAsJsonObject("auto").getAsJsonObject("algae").get("removed").asInt
         autoCoralLevel4Scored.intValue =
-            jsonObject.getAsJsonObject("auto").getAsJsonObject("coral").get("reef_level1").asInt
-        autoCoralLevel3Scored.intValue =
-            jsonObject.getAsJsonObject("auto").getAsJsonObject("coral").get("reef_level2").asInt
-        autoCoralLevel2Scored.intValue =
-            jsonObject.getAsJsonObject("auto").getAsJsonObject("coral").get("reef_level3").asInt
-        autoCoralLevel1Scored.intValue =
             jsonObject.getAsJsonObject("auto").getAsJsonObject("coral").get("reef_level4").asInt
+        autoCoralLevel3Scored.intValue =
+            jsonObject.getAsJsonObject("auto").getAsJsonObject("coral").get("reef_level3").asInt
+        autoCoralLevel2Scored.intValue =
+            jsonObject.getAsJsonObject("auto").getAsJsonObject("coral").get("reef_level2").asInt
+        autoCoralLevel1Scored.intValue =
+            jsonObject.getAsJsonObject("auto").getAsJsonObject("coral").get("reef_level1").asInt
         autoCoralLevel4Missed.intValue =
-            jsonObject.getAsJsonObject("auto").getAsJsonObject("coral").get("reef_level1_missed").asInt
-        autoCoralLevel3Missed.intValue =
-            jsonObject.getAsJsonObject("auto").getAsJsonObject("coral").get("reef_level2_missed").asInt
-        autoCoralLevel2Missed.intValue =
-            jsonObject.getAsJsonObject("auto").getAsJsonObject("coral").get("reef_level3_missed").asInt
-        autoCoralLevel1Missed.intValue =
             jsonObject.getAsJsonObject("auto").getAsJsonObject("coral").get("reef_level4_missed").asInt
+        autoCoralLevel3Missed.intValue =
+            jsonObject.getAsJsonObject("auto").getAsJsonObject("coral").get("reef_level3_missed").asInt
+        autoCoralLevel2Missed.intValue =
+            jsonObject.getAsJsonObject("auto").getAsJsonObject("coral").get("reef_level2_missed").asInt
+        autoCoralLevel1Missed.intValue =
+            jsonObject.getAsJsonObject("auto").getAsJsonObject("coral").get("reef_level1_missed").asInt
         autoNetScored.intValue = jsonObject.getAsJsonObject("auto").getAsJsonObject("net").get("scored").asInt
         autoNetMissed.intValue = jsonObject.getAsJsonObject("auto").getAsJsonObject("net").get("missed").asInt
         autoStop.intValue = jsonObject.getAsJsonObject("auto").get("stop").asInt
