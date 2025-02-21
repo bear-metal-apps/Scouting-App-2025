@@ -127,13 +127,7 @@ fun sendData(context: Context, client: Client) {
         var index = 0
         while(true) {
             try {
-                val pitsPhotosFolder = File(context.filesDir,"Photos")
-
-                if(!pitsPhotosFolder.exists()){
-                    pitsPhotosFolder.mkdirs()
-                }
-
-                val file = File(pitsPhotosFolder, "Photo${index}.png")
+                val file = File(/*???*/, "Photo${index}.jpg")
                 file.delete()
                 file.createNewFile()
 
@@ -143,7 +137,7 @@ fun sendData(context: Context, client: Client) {
                 val contentResolver = context.contentResolver
                 val uri = Uri.parse(permPhotosList[index])
                 val bitmap = decodeBitmap(ImageDecoder.createSource(contentResolver, uri))
-                bitmap.compress(Bitmap.CompressFormat.PNG,0, bos)
+                bitmap.compress(Bitmap.CompressFormat.JPEG,0, bos)
 
                 val byteArray = bos.toByteArray()
 

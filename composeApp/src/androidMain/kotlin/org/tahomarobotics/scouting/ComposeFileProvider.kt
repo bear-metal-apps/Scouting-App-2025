@@ -16,7 +16,6 @@ class  ComposeFileProvider : FileProvider(
                 fileName,
                 ".jpg",
                 directory,
-
             )
             val authority = context.packageName + ".fileprovider"
             return getUriForFile(
