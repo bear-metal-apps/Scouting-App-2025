@@ -18,6 +18,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import coil.compose.AsyncImage
 import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.components.backstack.operation.push
 import com.bumble.appyx.navigation.modality.BuildContext
@@ -306,7 +307,7 @@ actual class MainMenu actual constructor(
                     Box(Modifier.fillMaxWidth(1f/2f)) {
                         Text ("Robot List")
 
-                        Image(
+                        AsyncImage(
                             painterResource(res = teamSyncedResource),
                             contentDescription = "status",
                             modifier = Modifier
@@ -320,7 +321,7 @@ actual class MainMenu actual constructor(
                     Box(Modifier.fillMaxWidth(1f/2f)) {
                         Text ("Match List")
 
-                        Image(
+                        AsyncImage(
                             painterResource(res = matchSyncedResource),
                             contentDescription = "status",
                             modifier = Modifier
@@ -359,24 +360,6 @@ actual class MainMenu actual constructor(
             ) {
                 Text("Export")
             }
-
-            Box(modifier = Modifier.fillMaxSize()){
-                OutlinedButton(
-                    border = BorderStroke(3.dp, Color.Yellow),
-                    shape = RoundedCornerShape(25.dp),
-                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 15.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
-                    onClick = {
-                        setEventCode = true
-                        teamSyncedResource = "crossmark.png"
-                        matchSyncedResource = "crossmark.png"
-                    },
-                    modifier = Modifier.align(Alignment.CenterEnd)
-                ) {
-                    Text("Set custom event key", fontSize = 9.sp)
-                }
-            }
-            Text(tempCompKey)
         }
     }
 }
