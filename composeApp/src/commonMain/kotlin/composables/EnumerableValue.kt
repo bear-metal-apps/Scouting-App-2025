@@ -10,7 +10,8 @@ import androidx.compose.ui.graphics.Color
 expect fun EnumerableValue(
     label: String,
     value: MutableIntState,
-    flashColor: Color,
     alignment: Alignment,
+    flashColor: Color,
+    miniMinus: Boolean,
     modifier: Modifier
 )

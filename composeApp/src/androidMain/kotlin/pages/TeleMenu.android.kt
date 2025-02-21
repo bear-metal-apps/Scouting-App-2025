@@ -58,7 +58,8 @@ actual fun TeleMenu(
                         label = "Score L4",
                         value = teleLFour,
                         flashColor = Color.Green,
-                        alignment = Alignment.CenterEnd,
+                        alignment = Alignment.BottomEnd,
+                        miniMinus = miniMinus.value,
                         modifier = Modifier
                             .weight(1f)
                             .fillMaxWidth()
@@ -67,7 +68,8 @@ actual fun TeleMenu(
                         label = "Miss L4",
                         value = teleLFourMissed,
                         flashColor = Color.Red,
-                        alignment = Alignment.CenterEnd,
+                        alignment = Alignment.BottomEnd,
+                        miniMinus = miniMinus.value,
                         modifier = Modifier
                             .weight(1f)
                             .fillMaxWidth()
@@ -79,19 +81,11 @@ actual fun TeleMenu(
                         .fillMaxHeight()
                 ){
                     EnumerableValue(
-                        label = "Algae L3",
-                        value = teleLFour,
-                        flashColor = Color.Green,
-                        alignment = Alignment.CenterEnd,
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxWidth()
-                    )
-                    EnumerableValue(
                     label = "Score L3",
                     value = teleLThree,
-                        flashColor = Color.Green,
-                    alignment = Alignment.CenterEnd,
+                    flashColor = Color.Green,
+                    alignment = Alignment.BottomEnd,
+                    miniMinus = miniMinus.value,
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxWidth()
@@ -100,7 +94,8 @@ actual fun TeleMenu(
                         label = "Miss L3",
                         value = teleLThreeMissed,
                         flashColor = Color.Red,
-                        alignment = Alignment.CenterEnd,
+                        alignment = Alignment.BottomEnd,
+                        miniMinus = miniMinus.value,
                         modifier = Modifier
                             .weight(1f)
                             .fillMaxWidth()
@@ -113,19 +108,11 @@ actual fun TeleMenu(
                         .fillMaxHeight()
                 ){
                     EnumerableValue(
-                        label = "Algae L2",
-                        value = teleLFour,
-                        flashColor = Color.Green,
-                        alignment = Alignment.CenterEnd,
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxWidth()
-                    )
-                    EnumerableValue(
                         label = "Score L2",
                         value = teleLTwo,
                         flashColor = Color.Green,
-                        alignment = Alignment.CenterEnd,
+                        alignment = Alignment.BottomEnd,
+                        miniMinus = miniMinus.value,
                         modifier = Modifier
                             .weight(1f)
                             .fillMaxWidth()
@@ -134,7 +121,8 @@ actual fun TeleMenu(
                         label = "Miss L2",
                         value = teleLTwoMissed,
                         flashColor = Color.Red,
-                        alignment = Alignment.CenterEnd,
+                        alignment = Alignment.BottomEnd,
+                        miniMinus = miniMinus.value,
                         modifier = Modifier
                             .weight(1f)
                             .fillMaxWidth()
@@ -150,7 +138,8 @@ actual fun TeleMenu(
                         label = "Score L1",
                         value = teleLOne,
                         flashColor = Color.Green,
-                        alignment = Alignment.CenterEnd,
+                        alignment = Alignment.BottomEnd,
+                        miniMinus = miniMinus.value,
                         modifier = Modifier
                             .weight(1f)
                             .fillMaxWidth()
@@ -159,7 +148,8 @@ actual fun TeleMenu(
                         label = "Miss L1",
                         value = teleLOneMissed,
                         flashColor = Color.Red,
-                        alignment = Alignment.CenterEnd,
+                        alignment = Alignment.BottomEnd,
+                        miniMinus = miniMinus.value,
                         modifier = Modifier
                             .weight(1f)
                             .fillMaxWidth()
@@ -170,10 +160,37 @@ actual fun TeleMenu(
                     value = teleProcessed,
                     flashColor = Color.Green,
                     alignment = Alignment.CenterEnd,
+                    miniMinus = miniMinus.value,
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxWidth()
                 )
+                Row(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                ){
+                    EnumerableValue(
+                        label = "Algae Removed",
+                        value = teleRemoved,
+                        flashColor = Color.Blue,
+                        alignment = Alignment.BottomEnd,
+                        miniMinus = miniMinus.value,
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxWidth()
+                    )
+                    EnumerableValue(
+                        label = "Algae Processed",
+                        value = teleProcessed,
+                        flashColor = Color.Blue,
+                        alignment = Alignment.BottomEnd,
+                        miniMinus = miniMinus.value,
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxWidth()
+                    )
+                }
             }
 
             Column (
@@ -187,6 +204,7 @@ actual fun TeleMenu(
                     value = teleNetMissed,
                     flashColor = Color.Red,
                     alignment = Alignment.BottomEnd,
+                    miniMinus = miniMinus.value,
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxWidth()
@@ -197,6 +215,7 @@ actual fun TeleMenu(
                     value = teleNet,
                     flashColor = Color.Green,
                     alignment = Alignment.BottomEnd,
+                    miniMinus = miniMinus.value,
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxWidth()
