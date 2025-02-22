@@ -1,4 +1,7 @@
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.ImageDecoder
+import android.graphics.ImageDecoder.decodeBitmap
 import android.content.Context.USB_SERVICE
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
@@ -14,6 +17,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.core.net.toFile
 import com.google.gson.Gson
 import com.google.gson.JsonObject
+import nodes.TeamMatchStartKey
 import nodes.jsonObject
 import nodes.permPhotosList
 import nodes.photoArray
@@ -28,12 +32,73 @@ import org.tahomarobotics.scouting.ComposeFileProvider
 import java.io.*
 import java.lang.Integer.parseInt
 import java.nio.ByteBuffer
+import java.lang.Integer.parseInt
+
+var matchFolder : File? = null
+
+fun createScoutMatchDataFolder(context: Context) {
+    matchFolder = File(context.filesDir, "ScoutMatchDataFolder")
+
+    if(!matchFolder!!.exists()) {
+        matchFolder!!.mkdirs()
+        println("Made match data folder")
+    } else {
+        println("Match data folder found")
+    }
+}
+
+fun createScoutMatchDataFile(context: Context, match: String, team: Int, data: String) {
+    val file = File(matchFolder, "Match${match}Team${team}.json")
+    file.delete()
+    file.createNewFile()
+
+    file.writeText(data)
+
+    file.forEachLine {
+        try {
+            println("Saved file Match${match}Team${team}.json: $it")
+        } catch (e: Exception) {
+            println(e.message)
+        }
+    }
+}
+
+fun loadMatchDataFiles(context: Context) {
+    val gson = Gson()
+
+    println("loading files...")
+    for((index) in (matchFolder?.listFiles()?.withIndex()!!)) {
+        if(gson.fromJson(matchFolder?.listFiles()?.toList()?.get(index)?.readText(), JsonObject::class.java) != null) {
+            jsonObject = gson.fromJson(
+                matchFolder?.listFiles()?.toList()?.get(index)?.readText(),
+                JsonObject::class.java
+            )
+            teamDataArray[TeamMatchStartKey(
+                parseInt(jsonObject.get("match").asString),
+                jsonObject.get("team").asInt,
+                jsonObject.get("robotStartPosition").asInt
+            )] = jsonObject.toString()
+
+            println(matchFolder?.listFiles()?.toList()?.get(index).toString())
+        }
+    }
+}
+
+fun deleteScoutMatchData() {
+    repeat(10) {
+        try {
+            for((index) in matchFolder?.listFiles()?.withIndex()!!) {
+                matchFolder?.listFiles()?.get(index)?.deleteRecursively()
+            }
+            teamDataArray.clear()
+        } catch (e: IndexOutOfBoundsException) {}
+    }
+}
 
 fun createFile(context: Context) {
     val file = File(context.filesDir, "match_data.json")
     file.delete()
     file.createNewFile()
-
     val writer = FileWriter(file)
 
     matchData?.toString(1)?.let { writer.write(it) }
@@ -116,8 +181,8 @@ fun sendData(context: Context, client: Client) {
 
     val gson = Gson()
 
-    teamDataArray.forEach {
-        val jsonObject = gson.fromJson(it.toString(), JsonObject::class.java)
+    for((key, value) in teamDataArray.entries) {
+        val jsonObject = gson.fromJson(value, JsonObject::class.java)
 
         client.sendData(jsonObject.toString(), "match")
 

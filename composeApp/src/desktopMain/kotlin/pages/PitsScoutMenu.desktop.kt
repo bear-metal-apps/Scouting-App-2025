@@ -24,7 +24,7 @@ import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.components.backstack.operation.push
 import com.bumble.appyx.navigation.modality.BuildContext
 import com.github.sarxos.webcam.Webcam
-import composables.CheckBox
+import composables.TriStateCheckBox
 import composables.Profile
 import composables.download
 import defaultError
@@ -328,10 +328,10 @@ actual fun PitsScoutMenu(
 
             Divider(color = defaultPrimaryVariant, thickness = 2.dp, modifier = Modifier.clip(CircleShape))
 
-            CheckBox("Amp:", ampStrength, modifier = Modifier.scale(1.25f))
-            CheckBox("Speaker:", speakerStrength, modifier = Modifier.scale(1.25f))
-            CheckBox("Climb", climbStrength, modifier = Modifier.scale(1.25f))
-            CheckBox("Trap:", trapStrength, modifier = Modifier.scale(1.25f))
+            TriStateCheckBox("Amp:", ampStrength, modifier = Modifier.scale(1.25f))
+            TriStateCheckBox("Speaker:", speakerStrength, modifier = Modifier.scale(1.25f))
+            TriStateCheckBox("Climb", climbStrength, modifier = Modifier.scale(1.25f))
+            TriStateCheckBox("Trap:", trapStrength, modifier = Modifier.scale(1.25f))
 
 
             OutlinedButton(

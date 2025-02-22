@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.sp
 import defaultBackgroundVariant
 import defaultOnPrimary
 import defaultSecondary
+import nodes.saveData
 
 @Composable
 actual fun Cage(
@@ -39,6 +40,8 @@ actual fun Cage(
     OutlinedButton(
         onClick = {
             isDeep.value = !isDeep.value
+
+            saveData.value = true
         },
         border = BorderStroke(3.dp, Color.Yellow),
         shape = RoundedCornerShape(25.dp),
@@ -61,6 +64,8 @@ actual fun Cage(
 
                     cageChecked1.value = ToggleableState.Off
                     cageChecked2.value = ToggleableState.Off
+
+                    saveData.value = true
                 },
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)

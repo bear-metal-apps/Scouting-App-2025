@@ -45,6 +45,8 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import org.tahomarobotics.scouting.ComposeFileProvider
 import java.io.File
+import nodes.PitsNode.*
+import nodes.TeamMatchStartKey
 import nodes.algaeBarge
 import nodes.algaePreferred
 import nodes.algaeProcess
@@ -140,7 +142,7 @@ actual fun PitsScoutMenu(
                     //color = defaultOnPrimary,
                 )
             }
-            Row {
+            Column {
                 Text(
                     text = "Team Name: ",
                     fontSize = 20.sp,
@@ -158,7 +160,7 @@ actual fun PitsScoutMenu(
                         cursorColor = Color.Yellow
                     ),
                     shape = RoundedCornerShape(15.dp),
-                    modifier = Modifier.size(85.dp, 60.dp)
+                    modifier = Modifier.size(300.dp, 60.dp)
                 )
                 Text(
                     text = "Team Number: ",
@@ -427,7 +429,7 @@ actual fun PitsScoutMenu(
                         .border(BorderStroke(2.dp, Color.Yellow), shape = RoundedCornerShape(5.dp))
                 ) {
                     Text(
-                        text = "Motor Type:  ",
+                        text = "Motor Type for Drive Base:  ",
                         modifier = Modifier
                             .padding(15.dp)
                             .align(Alignment.CenterStart)
@@ -467,12 +469,30 @@ actual fun PitsScoutMenu(
                             DropdownMenuItem(
                                 {
                                     Text(
-                                        text = "Motor",
+                                        text = "Falcon",
                                         color = Color.White
                                     )
                                 },
                                 onClick = {
-                                    motorType.value = "Motor"
+                                    motorType.value = "Falcon"
+                                    dropDown2Expanded = false
+                                }
+                            )
+
+                            HorizontalDivider(
+                                color = getCurrentTheme().onSurface,
+                                thickness = 3.dp
+                            )
+
+                            DropdownMenuItem(
+                                {
+                                    Text(
+                                        text = "Kraken",
+                                        color = Color.White
+                                    )
+                                },
+                                onClick = {
+                                    motorType.value = "Kraken"
                                     dropDown2Expanded = false
                                 }
                             )
@@ -503,12 +523,12 @@ actual fun PitsScoutMenu(
                             DropdownMenuItem(
                                 {
                                     Text(
-                                        text = "Neo",
+                                        text = "Neo Vortex",
                                         color = Color.White
                                     )
                                 },
                                 onClick = {
-                                    motorType.value = "Neo"
+                                    motorType.value = "Neo Vortex"
                                     dropDown2Expanded = false
                                 }
                             )
@@ -517,6 +537,25 @@ actual fun PitsScoutMenu(
                                 color = getCurrentTheme().onSurface,
                                 thickness = 3.dp
                             )
+
+                            DropdownMenuItem(
+                                {
+                                    Text(
+                                        text = "Neo 550",
+                                        color = Color.White
+                                    )
+                                },
+                                onClick = {
+                                    motorType.value = "Neo 550"
+                                    dropDown2Expanded = false
+                                }
+                            )
+
+                            HorizontalDivider(
+                                color = getCurrentTheme().onSurface,
+                                thickness = 3.dp
+                            )
+
                         }
                     }
                 }
@@ -924,7 +963,7 @@ actual fun PitsScoutMenu(
                 ) {
                     Text(
                         text = "Collection Preference: ${collectPreference.value}",
-                        fontSize = 15.sp,
+                        fontSize = 20.sp,
                         color = defaultOnPrimary
                     )
                 }
@@ -942,13 +981,6 @@ actual fun PitsScoutMenu(
                                 collectPreference.value = "OverTheBumper"
                             },
                             text = { Text("Over The Bumper", color = defaultOnPrimary) }
-                        )
-                        DropdownMenuItem(
-                            onClick = {
-                                collectPrefDD = false
-                                collectPreference.value = "UnderTheBumper"
-                            },
-                            text = { Text("Under The Bumper", color = defaultOnPrimary) }
                         )
                         DropdownMenuItem(
                             onClick = {

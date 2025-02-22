@@ -12,7 +12,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
-actual fun CheckBox(
+actual fun TriStateCheckBox(
     label: String,
     ifChecked: MutableState<Boolean>,
     modifier: Modifier

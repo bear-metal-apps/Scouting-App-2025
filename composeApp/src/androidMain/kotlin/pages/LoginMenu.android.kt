@@ -19,11 +19,14 @@ import com.bumble.appyx.components.backstack.operation.push
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import compKey
+import createScoutMatchDataFolder
 import defaultError
 import defaultOnPrimary
 import defaultPrimaryVariant
 import deleteFile
+import deleteScoutMatchData
 import getCurrentTheme
+import loadMatchDataFiles
 import nodes.RootNode
 import nodes.betterParseInt
 import nodes.teamDataArray
@@ -51,6 +54,16 @@ actual fun LoginMenu(
         "2024hop"
 
     )
+
+    var first by remember { mutableStateOf(true) }
+
+    if(first) {
+        createScoutMatchDataFolder(context)
+        loadMatchDataFiles(context)
+
+        first = false
+    }
+
     Column {
 //        AsyncImage(
 //            model = logo,//turn into bitmap
@@ -125,6 +138,23 @@ actual fun LoginMenu(
                     onClick = { comp.value = "Houston"; compDD = false; compKey = tbaMatches[4]},
                     text ={ Text(text = "Houston", color = getCurrentTheme().onPrimary,modifier= Modifier.background(color = getCurrentTheme().onSurface)) }
                 )
+                OutlinedTextField(
+                    value = comp.value,
+                    onValueChange = { comp.value = it
+                        compKey = it},
+                    placeholder = { Text("Custom Competition Key") },
+                    shape = RoundedCornerShape(15.dp),
+                    singleLine = true,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        unfocusedContainerColor = getCurrentTheme().background,
+                        unfocusedTextColor = getCurrentTheme().onPrimary,
+                        focusedContainerColor = getCurrentTheme().background,
+                        focusedTextColor = getCurrentTheme().onPrimary,
+                        cursorColor = getCurrentTheme().onSecondary,
+                        focusedBorderColor = Color.Cyan,
+                        unfocusedBorderColor = getCurrentTheme().secondary
+                    )
+                )
             }
 
         }
@@ -171,7 +201,11 @@ actual fun LoginMenu(
                         Box(modifier = Modifier.fillMaxWidth(8f / 10f)) {
                             Button(
                                 onClick = {
-                                    deleteData = false; teamDataArray.clear(); reset(); deleteFile(context)
+                                    teamDataArray.clear()
+                                    reset()
+                                    deleteFile(context)
+                                    deleteScoutMatchData()
+                                    deleteData = false
                                 },
                                 modifier = Modifier.align(Alignment.CenterStart)
                             ) {

@@ -113,6 +113,7 @@ android {
 }
 dependencies {
     implementation(libs.androidx.core)
+    implementation(libs.androidx.material3.android)
     coreLibraryDesugaring(libs.desugar.jdk.libs)
 }
 

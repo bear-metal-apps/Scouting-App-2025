@@ -16,6 +16,8 @@ import defaultOnBackground
 import defaultOnPrimary
 import defaultPrimaryVariant
 import androidx.compose.ui.graphics.Color
+import nodes.saveData
+
 @Composable
 fun Comments(text: MutableState<String>) {
     Column (
@@ -40,6 +42,7 @@ fun Comments(text: MutableState<String>) {
 //                    isScrollEnabled.value = false
 //                    if (text.value.length > 150)
 //                        text.value = oldText
+                    saveData.value = true
                 },
                 modifier = Modifier
                     .size(400.dp, 75.dp),
