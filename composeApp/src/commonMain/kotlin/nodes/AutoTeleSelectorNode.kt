@@ -82,7 +82,7 @@ class AutoTeleSelectorNode(
                 mainMenuBackStack,
                 match,
                 team,
-                robotStartPosition
+                robotStartPosition,
             )
         }
 
@@ -90,7 +90,7 @@ class AutoTeleSelectorNode(
     override fun View(modifier: Modifier) {
         Column {
             var mainMenuDialog = mutableStateOf(false)
-            AutoTeleSelectorMenuTop(match, team, robotStartPosition, pageIndex)
+            AutoTeleSelectorMenuTop(match, team, robotStartPosition)
             MainMenuAlertDialog(
                 mainMenuDialog,
                 bob = {
@@ -154,6 +154,8 @@ var saveDataSit = mutableStateOf(false) // False = nextMatch, True = MainMenu
 var undoList = Stack<Array<Any>>()
 var redoList = Stack<Array<Any>>()
 var jsonObject: JsonObject = JsonObject()
+
+var pageIndex = mutableIntStateOf(0)
 
 //Settings variables
 val miniMinus = mutableStateOf(false)

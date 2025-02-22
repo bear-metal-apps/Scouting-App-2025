@@ -42,8 +42,7 @@ import java.util.*
 actual fun AutoTeleSelectorMenuTop(
     match: MutableState<String>,
     team: MutableIntState,
-    robotStartPosition: MutableIntState,
-    pageIndex : MutableIntState
+    robotStartPosition: MutableIntState
 ) {
     var positionName by remember { mutableStateOf("") }
     val context = LocalContext.current

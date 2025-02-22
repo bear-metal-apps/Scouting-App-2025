@@ -143,3 +143,11 @@ actual fun AutoTeleSelectorMenuBottom(
     mainMenuDialog: MutableState<Boolean>
 ) {
 }
+
+@Composable
+actual fun AutoTeleSelectorMenuTop(
+    match: MutableState<String>,
+    team: MutableIntState,
+    robotStartPosition: MutableIntState
+) {
+}

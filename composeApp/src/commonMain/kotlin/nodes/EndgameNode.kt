@@ -18,7 +18,6 @@ private val mainMenuBackStack: BackStack<RootNode.NavTarget>,
 
 private val match: MutableState<String>,
 private val team: MutableIntState,
-private val pageIndex: MutableIntState,
 private val robotStartPosition: MutableIntState,
 ) : Node(buildContext) {
 
@@ -30,7 +29,6 @@ private val robotStartPosition: MutableIntState,
 
             match,
             team,
-            pageIndex,
             robotStartPosition
         )
     }
