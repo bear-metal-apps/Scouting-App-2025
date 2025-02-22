@@ -334,7 +334,7 @@ actual class MainMenu actual constructor(
                     }
                     scope.launch {
                         while (client == null || client?.isConnected != true) {
-
+//                            println("client is null or not connected")
                         }
                         sendData(
                             context = context,

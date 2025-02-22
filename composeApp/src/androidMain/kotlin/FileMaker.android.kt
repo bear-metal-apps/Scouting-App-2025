@@ -18,12 +18,15 @@ import nodes.jsonObject
 import nodes.permPhotosList
 import nodes.photoArray
 import nodes.pitsTeamDataArray
+import nodes.scoutedTeamNumber
 import nodes.teamDataArray
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 import org.tahomarobotics.scouting.Client
+import org.tahomarobotics.scouting.ComposeFileProvider
 import java.io.*
+import java.lang.Integer.parseInt
 import java.nio.ByteBuffer
 
 fun createFile(context: Context) {
@@ -108,6 +111,7 @@ fun deleteFile(context: Context){
  *@param scoutingType should be "match", "strat", or "pit"
  */
 fun sendData(context: Context, client: Client) {
+    println("reached beginning of sendData")
     exportScoutData(context)
 
     val gson = Gson()
@@ -120,22 +124,26 @@ fun sendData(context: Context, client: Client) {
         Log.i("Client", "Message Sent: ${jsonObject.toString()}")
     }
 
+    println(pitsTeamDataArray.size)
     pitsTeamDataArray.forEach { (key, value) ->
         println("reached")
         val jsonObject = gson.fromJson(value, JsonObject::class.java)
 
         var bitmap: Bitmap? = null
 
+        println(permPhotosList.toString())
         for((index) in permPhotosList.withIndex()) {
-            var file = File(Uri.parse(permPhotosList[index]).toString())
-            file.delete()
-            file = Uri.parse(permPhotosList[index]).toFile()
+            println("reached2")
+            var file = File(ComposeFileProvider.getImageUri(context, parseInt(jsonObject.get("scoutedTeamNumber").asString), "Photo${index}").toString())
+//            file.delete()
+//            file = Uri.parse(permPhotosList[index]).toFile()
 
             var bos = ByteArrayOutputStream()
 
             // Assuming you're inside a Composable function
             val contentResolver = context.contentResolver
-            val uri = Uri.parse(permPhotosList[index])
+            val uri = /*Uri.parse(permPhotosList[index])*/ComposeFileProvider.getImageUri(context, parseInt(jsonObject.get("scoutedTeamNumber").asString), "Photo${index}")
+            println(uri.toString())
             val bitmap = decodeBitmap(ImageDecoder.createSource(contentResolver, uri))
             bitmap.compress(Bitmap.CompressFormat.JPEG,0, bos)
 

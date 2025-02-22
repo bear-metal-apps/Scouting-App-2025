@@ -200,14 +200,15 @@ actual fun PitsScoutMenu(
 
                                 try{
                                     uri = ComposeFileProvider.getImageUri(context, parseInt(scoutedTeamNumber.value), "Photo${permPhotosList.size}")
+                                    println(uri.toString())
 
                                     imageUri = uri
                                     cameraLauncher.launch(uri)
 
-                                    permPhotosList.add(uri.toString())
                                     photoAmount++
 
                                     photoArray.add(uri.toString())
+                                    permPhotosList.add(uri.toString())
                                 } catch (e: NumberFormatException) {
                                     teamNumberPopup = true
                                 }
@@ -1003,9 +1004,6 @@ actual fun PitsScoutMenu(
                             photoArray.removeAll(removeList)
 
                             pitsTeamDataArray[parseInt(scoutedTeamNumber.value)] = createPitsOutput(mutableIntStateOf(parseInt(scoutedTeamNumber.value)))
-                            photoArray.forEach {
-                                permPhotosList.add(it)
-                            }
                             println(pitsTeamDataArray)
                             pitsReset()
                             photoAmount = 0
