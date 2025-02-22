@@ -4,10 +4,9 @@ import androidx.compose.material.Colors
 import androidx.compose.material.darkColors
 import androidx.compose.ui.graphics.Color
 
-val theme = themeDefault()
+var theme = themeDefault()
 
 fun themeDefault(): Colors {
-
     val theme = darkColors(
         primary = defaultPrimary,
         primaryVariant = defaultPrimaryVariant,
@@ -22,7 +21,6 @@ fun themeDefault(): Colors {
         onSurface = defaultOnSurface,
         onError = defaultOnError
     )
-
     return theme
 }
 

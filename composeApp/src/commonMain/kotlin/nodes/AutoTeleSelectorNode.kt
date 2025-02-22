@@ -90,7 +90,6 @@ class AutoTeleSelectorNode(
     override fun View(modifier: Modifier) {
         Column {
             var mainMenuDialog = mutableStateOf(false)
-            var pageIndex = mutableIntStateOf(0)
             AutoTeleSelectorMenuTop(match, team, robotStartPosition, pageIndex)
             MainMenuAlertDialog(
                 mainMenuDialog,

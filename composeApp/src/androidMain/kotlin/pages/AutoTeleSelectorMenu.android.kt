@@ -34,7 +34,7 @@ import nodes.*
 import org.json.JSONException
 import setTeam
 import java.lang.Integer.parseInt
-import java.util.EmptyStackException
+import java.util.*
 
 @SuppressLint("SuspiciousIndentation")
 @RequiresApi(Build.VERSION_CODES.R)
@@ -283,7 +283,7 @@ actual fun AutoTeleSelectorMenuBottom(
         OutlinedButton(
             border = BorderStroke(1.dp, color = Color.Yellow),
             shape = RoundedCornerShape(1.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
+            colors = ButtonDefaults.buttonColors(containerColor = getCurrentTheme().secondary),
             onClick = {
                 val action: Array<Any> = try {
                     undoList.pop()
@@ -330,7 +330,7 @@ actual fun AutoTeleSelectorMenuBottom(
         OutlinedButton(
             border = BorderStroke(1.dp, color = Color.Yellow),
             shape = RoundedCornerShape(1.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
+            colors = ButtonDefaults.buttonColors(containerColor = getCurrentTheme().secondary),
             onClick = {
                 val action: Array<Any> = try {
                     redoList.pop()
@@ -380,7 +380,7 @@ actual fun AutoTeleSelectorMenuBottom(
         OutlinedButton(
             border = BorderStroke(1.dp, color = Color.Yellow),
             shape = RoundedCornerShape(1.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
+            colors = ButtonDefaults.buttonColors(containerColor = getCurrentTheme().secondary),
             onClick = {
                 backStack.push(AutoTeleSelectorNode.NavTarget.AutoScouting)
                 pageIndex.value = 0
@@ -399,7 +399,7 @@ actual fun AutoTeleSelectorMenuBottom(
         OutlinedButton(
             border = BorderStroke(1.dp, color = Color.Yellow),
             shape = RoundedCornerShape(1.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
+            colors = ButtonDefaults.buttonColors(containerColor = getCurrentTheme().secondary),
             onClick = {
                 backStack.push(AutoTeleSelectorNode.NavTarget.TeleScouting)
                 pageIndex.value = 1
@@ -418,7 +418,7 @@ actual fun AutoTeleSelectorMenuBottom(
         OutlinedButton(
             border = BorderStroke(1.dp, color = Color.Yellow),
             shape = RoundedCornerShape(1.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
+            colors = ButtonDefaults.buttonColors(containerColor = getCurrentTheme().secondary),
             onClick = {
                 backStack.push(AutoTeleSelectorNode.NavTarget.EndGameScouting)
                 pageIndex.value = 2
@@ -438,7 +438,7 @@ actual fun AutoTeleSelectorMenuBottom(
         OutlinedButton(
             border = BorderStroke(1.dp, color = Color.Yellow),
             shape = RoundedCornerShape(1.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
+            colors = ButtonDefaults.buttonColors(containerColor = getCurrentTheme().secondary),
             onClick = {
                 mainMenuDialog.value = true
                 saveDataSit.value = true

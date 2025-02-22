@@ -14,5 +14,6 @@ expect fun EndGameMenu(
 
     match: MutableState<String>,
     team: MutableIntState,
+    pageIndex: MutableIntState,
     robotStartPosition: MutableIntState
 )
