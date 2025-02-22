@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import compKey
 import createScoutMatchDataFolder
+import createScoutPitsDataFolder
 import defaultError
 import defaultOnPrimary
 import defaultPrimaryVariant
@@ -27,6 +28,7 @@ import deleteFile
 import deleteScoutMatchData
 import getCurrentTheme
 import loadMatchDataFiles
+import loadPitsDataFiles
 import nodes.RootNode
 import nodes.betterParseInt
 import nodes.teamDataArray
@@ -60,6 +62,9 @@ actual fun LoginMenu(
     if(first) {
         createScoutMatchDataFolder(context)
         loadMatchDataFiles(context)
+
+        createScoutPitsDataFolder(context)
+        loadPitsDataFiles(context)
 
         first = false
     }

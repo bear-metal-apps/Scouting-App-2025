@@ -3,8 +3,6 @@ import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.graphics.ImageDecoder.decodeBitmap
 import android.content.Context.USB_SERVICE
-import android.graphics.Bitmap
-import android.graphics.ImageDecoder
 import android.graphics.ImageDecoder.decodeBitmap
 import android.hardware.usb.UsbConstants.USB_DIR_OUT
 import android.hardware.usb.UsbManager
@@ -35,6 +33,7 @@ import java.nio.ByteBuffer
 import java.lang.Integer.parseInt
 
 var matchFolder : File? = null
+var pitsFolder: File? = null
 
 fun createScoutMatchDataFolder(context: Context) {
     matchFolder = File(context.filesDir, "ScoutMatchDataFolder")
@@ -46,6 +45,18 @@ fun createScoutMatchDataFolder(context: Context) {
         println("Match data folder found")
     }
 }
+
+fun createScoutPitsDataFolder(context: Context) {
+    pitsFolder = File(context.filesDir, "ScoutPitsDataFolder")
+
+    if(!pitsFolder!!.exists()) {
+        pitsFolder!!.mkdirs()
+        println("Made pits data folder")
+    } else {
+        println("Pits data folder found")
+    }
+}
+
 
 fun createScoutMatchDataFile(context: Context, match: String, team: Int, data: String) {
     val file = File(matchFolder, "Match${match}Team${team}.json")
@@ -63,10 +74,46 @@ fun createScoutMatchDataFile(context: Context, match: String, team: Int, data: S
     }
 }
 
+fun createScoutPitsDataFile(context: Context, team: Int, data: String) {
+    val file = File(pitsFolder, "Team${team}.json")
+    file.delete()
+    file.createNewFile()
+
+    file.writeText(data)
+
+    file.forEachLine {
+        try {
+            println("Saved file Team${team}.json: $it")
+        } catch (e: Exception) {
+            println(e.message)
+        }
+    }
+}
+
+fun createScoutPitsImages(context: Context, data: String) {
+    val file = File(File(context.filesDir, "images"), "imageLocations.json")
+    file.delete()
+    file.createNewFile()
+
+    file.writeText(data)
+
+    file.forEachLine {
+        try {
+            println("Saved file imageLocations.json: $it")
+        } catch (e: Exception) {
+            println(e.message)
+        }
+    }
+
+
+
+}
+
+
 fun loadMatchDataFiles(context: Context) {
     val gson = Gson()
 
-    println("loading files...")
+    println("loading match files...")
     for((index) in (matchFolder?.listFiles()?.withIndex()!!)) {
         if(gson.fromJson(matchFolder?.listFiles()?.toList()?.get(index)?.readText(), JsonObject::class.java) != null) {
             jsonObject = gson.fromJson(
@@ -82,7 +129,47 @@ fun loadMatchDataFiles(context: Context) {
             println(matchFolder?.listFiles()?.toList()?.get(index).toString())
         }
     }
+    if(File(context.filesDir, "images").exists()) {
+        for((index) in (File(context.filesDir, "images").listFiles()?.withIndex())!!) {
+            if(File(context.filesDir, "images").listFiles()?.toList()?.get(index)?.name == "imageLocations.json") {
+                val gson = Gson()
+
+                jsonObject = gson.fromJson(pitsFolder?.listFiles()?.toList()?.get(index)?.readText(), JsonObject::class.java)
+
+//                permPhotosList = jsonObject.get("")
+
+                break
+            }
+        }
+
+    } else {
+        val images = File(context.filesDir, "images")
+        if(!images.exists()) {
+            images.mkdirs()
+        }
+    }
 }
+
+fun loadPitsDataFiles(context: Context) {
+    val gson = Gson()
+
+    println("loading pits files...")
+    for((index) in (pitsFolder?.listFiles()?.withIndex()!!)) {
+        if(gson.fromJson(pitsFolder?.listFiles()?.toList()?.get(index)?.readText(), JsonObject::class.java) != null) {
+            jsonObject = gson.fromJson(
+                pitsFolder?.listFiles()?.toList()?.get(index)?.readText(),
+                JsonObject::class.java
+            )
+            pitsTeamDataArray[
+                jsonObject.get("team").asInt
+            ] = jsonObject.toString()
+
+            println(pitsFolder?.listFiles()?.toList()?.get(index).toString())
+        }
+    }
+
+}
+
 
 fun deleteScoutMatchData() {
     repeat(10) {
@@ -94,6 +181,19 @@ fun deleteScoutMatchData() {
         } catch (e: IndexOutOfBoundsException) {}
     }
 }
+
+fun deleteScoutPitsData() {
+    repeat(10) {
+        try {
+            for((index) in pitsFolder?.listFiles()?.withIndex()!!) {
+                pitsFolder?.listFiles()?.get(index)?.deleteRecursively()
+            }
+            pitsTeamDataArray.clear()
+            permPhotosList.clear()
+        } catch (e: IndexOutOfBoundsException) {}
+    }
+}
+
 
 fun createFile(context: Context) {
     val file = File(context.filesDir, "match_data.json")

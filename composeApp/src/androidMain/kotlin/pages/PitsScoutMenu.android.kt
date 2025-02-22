@@ -60,6 +60,7 @@ import nodes.createPitsOutput
 import nodes.cycleTime
 import nodes.defensePreferred
 import nodes.driveType
+import nodes.jsonObject
 import nodes.l1
 import nodes.l2
 import nodes.l3
@@ -200,7 +201,8 @@ actual fun PitsScoutMenu(
                             if (photoAmount < 3) {//moved up
                                 var uri = Uri.EMPTY
 
-                                try{
+                                try {
+                                    println(scoutedTeamNumber)
                                     uri = ComposeFileProvider.getImageUri(context, parseInt(scoutedTeamNumber.value), "Photo${permPhotosList.size}")
                                     println(uri.toString())
 

@@ -10,7 +10,7 @@ class  ComposeFileProvider : FileProvider(
 ) {
     companion object {
         fun getImageUri(context: Context, teamNumber: Int, fileName: String): Uri {
-            val images = File(context.cacheDir, "images")
+            val images = File(context.filesDir, "images")
             if(!images.exists()) {
                 images.mkdirs()
             }
