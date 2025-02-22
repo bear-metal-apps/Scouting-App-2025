@@ -138,6 +138,23 @@ actual fun LoginMenu(
                     onClick = { comp.value = "Houston"; compDD = false; compKey = tbaMatches[4]},
                     text ={ Text(text = "Houston", color = getCurrentTheme().onPrimary,modifier= Modifier.background(color = getCurrentTheme().onSurface)) }
                 )
+                OutlinedTextField(
+                    value = comp.value,
+                    onValueChange = { comp.value = it
+                        compKey = it},
+                    placeholder = { Text("Custom Competition Key") },
+                    shape = RoundedCornerShape(15.dp),
+                    singleLine = true,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        unfocusedContainerColor = getCurrentTheme().background,
+                        unfocusedTextColor = getCurrentTheme().onPrimary,
+                        focusedContainerColor = getCurrentTheme().background,
+                        focusedTextColor = getCurrentTheme().onPrimary,
+                        cursorColor = getCurrentTheme().onSecondary,
+                        focusedBorderColor = Color.Cyan,
+                        unfocusedBorderColor = getCurrentTheme().secondary
+                    )
+                )
             }
 
         }
