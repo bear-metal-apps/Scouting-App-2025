@@ -3,20 +3,60 @@
 
 package pages
 
-import nodes.RootNode
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.*
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.BasicAlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableIntState
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,7 +67,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.substring
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
@@ -36,17 +75,12 @@ import coil.request.ImageRequest
 import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.components.backstack.operation.push
 import composables.downloadPitsPhotos
+import createScoutPitsDataFile
 import defaultError
 import defaultOnPrimary
 import defaultPrimaryVariant
 import getCurrentTheme
-import kotlinx.coroutines.coroutineScope
-import org.jetbrains.compose.resources.ExperimentalResourceApi
-import org.jetbrains.compose.resources.painterResource
-import org.tahomarobotics.scouting.ComposeFileProvider
-import java.io.File
-import nodes.PitsNode.*
-import nodes.TeamMatchStartKey
+import nodes.RootNode
 import nodes.algaeBarge
 import nodes.algaePreferred
 import nodes.algaeProcess
@@ -60,7 +94,6 @@ import nodes.createPitsOutput
 import nodes.cycleTime
 import nodes.defensePreferred
 import nodes.driveType
-import nodes.jsonObject
 import nodes.l1
 import nodes.l2
 import nodes.l3
@@ -76,6 +109,10 @@ import nodes.scoutedTeamName
 import nodes.scoutedTeamNumber
 import nodes.weight
 import nodes.width
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.painterResource
+import org.tahomarobotics.scouting.ComposeFileProvider
+import java.io.File
 import java.lang.Integer.parseInt
 
 @SuppressLint("NewApi", "Recycle")
@@ -202,9 +239,8 @@ actual fun PitsScoutMenu(
                                 var uri = Uri.EMPTY
 
                                 try {
-                                    println(scoutedTeamNumber)
                                     uri = ComposeFileProvider.getImageUri(context, parseInt(scoutedTeamNumber.value), "Photo${permPhotosList.size}")
-                                    println(uri.toString())
+                                    println("permPhotosList Uri: $uri")
 
                                     imageUri = uri
                                     cameraLauncher.launch(uri)
@@ -212,7 +248,13 @@ actual fun PitsScoutMenu(
                                     photoAmount++
 
                                     photoArray.add(uri.toString())
-                                    permPhotosList.add(uri.toString())
+
+                                    if(permPhotosList.contains(uri.toString())) {
+                                        permPhotosList.remove(uri.toString())
+                                        permPhotosList.add(uri.toString())
+                                    } else {
+                                        permPhotosList.add(uri.toString())
+                                    }
                                 } catch (e: NumberFormatException) {
                                     teamNumberPopup = true
                                 }
@@ -1029,7 +1071,7 @@ actual fun PitsScoutMenu(
 
                             println("photos:")
                             photoArray.forEach {
-                                val startIndex = it.indexOf("/", 65)
+                                val startIndex = it.indexOf("/", 80)
                                 addList.add(it.substring(startIndex+1))
                                 removeList.add(it)
                                 println(it.substring(startIndex+1))
@@ -1039,6 +1081,10 @@ actual fun PitsScoutMenu(
 
                             pitsTeamDataArray[parseInt(scoutedTeamNumber.value)] = createPitsOutput(mutableIntStateOf(parseInt(scoutedTeamNumber.value)))
                             println(pitsTeamDataArray)
+
+                            createScoutPitsDataFile(context, parseInt(scoutedTeamNumber.value), pitsTeamDataArray[parseInt(scoutedTeamNumber.value)]!!)
+//                            createScoutPitsImageLocationsFile(context, pitsImgJsonObj.toString())
+
                             pitsReset()
                             photoAmount = 0
 

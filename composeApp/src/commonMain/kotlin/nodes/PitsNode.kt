@@ -68,6 +68,8 @@ var permPhotosList = mutableListOf<String>()
 
 val pitsTeamDataArray : HashMap<Int, String> = hashMapOf()
 
+var pitsImgJsonObj = JsonArray()
+
 fun createPitsOutput(team: MutableIntState): String {
 
     fun stateToInt(state: ToggleableState) = when (state) {
@@ -88,13 +90,20 @@ fun createPitsOutput(team: MutableIntState): String {
         jsonObject = gson.fromJson(pitsTeamDataArray[team.intValue].toString(), JsonObject::class.java)
     }
 
+    //Adds Uris from permPhotosList to a JsonArray that is permanently stored as a file
+//    pitsImgJsonObj = JsonArray().apply {
+//        for(img in permPhotosList) {
+//            add(img)
+//        }
+//    }
+
     jsonObject = JsonObject().apply {
         addProperty("comp", compKey)
         addProperty("scoutedTeamName", scoutedTeamName.value)
         addProperty("scoutedTeamNumber", scoutedTeamNumber.value)
         addProperty("scoutName", scoutName.value)
         for((index, value) in photoArray.withIndex()) {
-            addProperty("Photo${index+1}", value)
+            addProperty("Photo${index}", value)
         }
         addProperty("driveType", driveType.value)
         addProperty("motorType", motorType.value)

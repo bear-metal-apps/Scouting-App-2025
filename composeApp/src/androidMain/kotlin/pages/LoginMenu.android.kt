@@ -26,11 +26,14 @@ import defaultOnPrimary
 import defaultPrimaryVariant
 import deleteFile
 import deleteScoutMatchData
+import deleteScoutPitsData
 import getCurrentTheme
 import loadMatchDataFiles
 import loadPitsDataFiles
 import nodes.RootNode
 import nodes.betterParseInt
+import nodes.permPhotosList
+import nodes.pitsReset
 import nodes.teamDataArray
 import nodes.reset
 import java.io.File
@@ -207,9 +210,12 @@ actual fun LoginMenu(
                             Button(
                                 onClick = {
                                     teamDataArray.clear()
+                                    permPhotosList.clear()
                                     reset()
+                                    pitsReset()
                                     deleteFile(context)
                                     deleteScoutMatchData()
+                                    deleteScoutPitsData()
                                     deleteData = false
                                 },
                                 modifier = Modifier.align(Alignment.CenterStart)
