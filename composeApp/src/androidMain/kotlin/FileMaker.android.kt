@@ -61,13 +61,13 @@ fun createScoutPitsDataFolder(context: Context) {
         println("Pits data folder found")
     }
 
-    imagesFolder = File(pitsFolder, "ImagesFolder")
+    imagesFolder = File(context.filesDir, "images")
 
     if(!imagesFolder!!.exists()) {
         imagesFolder!!.mkdirs()
-        println("Made images folder")
+        println("Made pits images folder")
     } else {
-        println("Images folder found")
+        println("Pits images folder found")
     }
 
 }
@@ -159,17 +159,17 @@ fun loadPitsDataFiles(context: Context) {
             ] = jsonObject.toString()
 
             println(pitsFolder?.listFiles()?.toList()?.get(index).toString())
+            println(pitsTeamDataArray[
+                jsonObject.get("scoutedTeamNumber").asInt
+            ])
         }
     }
 
     println("Loading pits image paths...")
 
-    for ((outerIndex, value) in imagesFolder?.listFiles()?.toList()?.withIndex()!!) {
-
-        for(value in value.listFiles()!!) {
-            permPhotosList.add(value.path)
-            println(permPhotosList[outerIndex])
-        }
+    for ((outerIndex, value) in imagesFolder?.listFiles()?.withIndex()!!) {
+        permPhotosList.add(value.path)
+        println(permPhotosList[outerIndex])
     }
 }
 
@@ -196,9 +196,6 @@ fun deleteScoutPitsData() {
                 }
             }
             for((index, value) in imagesFolder?.listFiles()?.withIndex()!!) {
-                for((index, value) in value?.listFiles()?.withIndex()!!) {
-                    value.deleteRecursively()
-                }
                 value.deleteRecursively()
             }
         } catch (e: IndexOutOfBoundsException) {}

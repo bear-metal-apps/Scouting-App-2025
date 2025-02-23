@@ -254,12 +254,12 @@ actual fun PitsScoutMenu(
 
                                     photoArray.add(uri.toString())
 
-                                    if(permPhotosList.contains(uri.toString())) {
-                                        permPhotosList.remove(uri.toString())
-                                        permPhotosList.add(uri.toString())
-                                    } else {
-                                        permPhotosList.add(uri.toString())
+                                    for(img in permPhotosList) {
+                                        if(img == uri.toString()) {
+                                            permPhotosList.remove(uri.toString())
+                                        }
                                     }
+                                    permPhotosList.add(uri.toString())
                                 } catch (e: NumberFormatException) {
                                     teamNumberPopup = true
                                 }
@@ -1076,7 +1076,7 @@ actual fun PitsScoutMenu(
 
                             println("photos:")
                             photoArray.forEach {
-                                val startIndex = it.indexOf("/", 80)
+                                val startIndex = it.indexOf("/", 56)
                                 addList.add(it.substring(startIndex+1))
                                 removeList.add(it)
                                 println(it.substring(startIndex+1))
@@ -1085,10 +1085,8 @@ actual fun PitsScoutMenu(
                             photoArray.removeAll(removeList)
 
                             pitsTeamDataArray[parseInt(scoutedTeamNumber.value)] = createPitsOutput(mutableIntStateOf(parseInt(scoutedTeamNumber.value)))
-                            println(pitsTeamDataArray)
 
                             createScoutPitsDataFile(context, parseInt(scoutedTeamNumber.value), pitsTeamDataArray[parseInt(scoutedTeamNumber.value)]!!)
-//                            createScoutPitsImageLocationsFile(context, pitsImgJsonObj.toString())
 
                             pitsReset()
                             photoAmount = 0
