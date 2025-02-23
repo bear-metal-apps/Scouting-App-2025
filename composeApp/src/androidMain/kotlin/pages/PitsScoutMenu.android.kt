@@ -207,7 +207,11 @@ actual fun PitsScoutMenu(
                 )
                 OutlinedTextField(
                     value = scoutedTeamNumber.value,
-                    onValueChange = { scoutedTeamNumber.value = it },
+                    onValueChange = { value ->
+                        val filteredText = value.filter { it.isDigit() }
+                        if (filteredText.isNotEmpty() && !filteredText.contains(','))
+                            scoutedTeamNumber.value = filteredText.slice(0..<filteredText.length.coerceAtMost(5))
+                    },
                     textStyle = TextStyle.Default.copy(fontSize = 20.sp),
                     colors = TextFieldDefaults.colors(
                         focusedContainerColor = Color(6, 9, 13),
@@ -216,8 +220,9 @@ actual fun PitsScoutMenu(
                         unfocusedTextColor = defaultOnPrimary,
                         cursorColor = Color.Yellow
                     ),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     shape = RoundedCornerShape(15.dp),
-                    modifier = Modifier.size(85.dp, 60.dp)
+                    modifier = Modifier.size(120.dp, 60.dp)
                 )
             }
             Spacer(modifier = Modifier.height(7.5.dp))
@@ -1094,18 +1099,6 @@ actual fun PitsScoutMenu(
 
                         }
                     }) { Text(text = "Submit", color = defaultOnPrimary) }
-                    OutlinedButton(onClick = { robotCard = false }) {
-                        Text(
-                            text = "Close",
-                            color = defaultOnPrimary
-                        )
-                    }
-                    OutlinedButton(onClick = { downloadActive = true }) {
-                        Text(
-                            text = "Download",
-                            color = defaultOnPrimary
-                        )
-                    }
                     OutlinedButton(onClick = { backStack.push(RootNode.NavTarget.MainMenu) }) {
                         Text(text = "Back", color = defaultOnPrimary)
                     }
