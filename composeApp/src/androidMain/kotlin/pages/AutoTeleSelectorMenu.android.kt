@@ -52,8 +52,6 @@ actual fun AutoTeleSelectorMenuTop(
 
     var first by remember { mutableStateOf(true) }
 
-//    window.
-
     // When the user first opens the app, the tempTeam and tempMatch variables are assigned to the current match and team so they can be saved when the user changes the match or team!
     if(first) {
         tempTeam = team.intValue
