@@ -25,6 +25,7 @@ kotlinxDatetime = "0.4.1"
 openpdf = "2.0.1"
 qrcodeKotlin = "4.0.6"
 okhttp = "4.12.0"
+reorderable = "2.4.3"
 slf4jNop = "2.1.0-alpha1"
 uiDesktop = "1.5.11"
 material3 = "1.2.0"
@@ -65,6 +66,7 @@ multiplatform = { module = "com.bumble.appyx:multiplatform", version.ref = "bumb
 okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
 openpdf = { module = "com.github.librepdf:openpdf", version.ref = "openpdf" }
 qrcode-kotlin = { module = "io.github.g0dkar:qrcode-kotlin", version.ref = "qrcodeKotlin" }
+reorderable = { module = "sh.calvin.reorderable:reorderable", version.ref = "reorderable" }
 slf4j-nop = { module = "org.slf4j:slf4j-nop", version.ref = "slf4jNop" }
 ui-desktop = { module = "org.jetbrains.compose.ui:ui-desktop", version.ref = "uiDesktop" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3" }

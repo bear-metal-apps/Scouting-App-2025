@@ -2,6 +2,7 @@ package nodes
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.ui.Modifier
 import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.navigation.modality.BuildContext
@@ -19,3 +20,6 @@ class StratNode(
         StratMenu(backStack, scoutName, comp)
     }
 }
+
+var humanNetScored = mutableIntStateOf(0)
+var humanNetMissed = mutableIntStateOf(0)
