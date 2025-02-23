@@ -1,21 +1,44 @@
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.ImageDecoder
+import android.graphics.ImageDecoder.decodeBitmap
+import android.content.Context.USB_SERVICE
+import android.graphics.ImageDecoder.decodeBitmap
+import android.hardware.usb.UsbConstants.USB_DIR_OUT
+import android.hardware.usb.UsbManager
+import android.hardware.usb.UsbRequest
+import android.net.Uri
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.compose.compiler.plugins.kotlin.write
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.net.toFile
 import com.google.gson.Gson
+import com.google.gson.JsonArray
 import com.google.gson.JsonObject
+import com.google.gson.JsonParser
 import nodes.TeamMatchStartKey
 import nodes.jsonObject
+import nodes.permPhotosList
+import nodes.photoArray
 import nodes.pitsTeamDataArray
+import nodes.scoutedTeamNumber
 import nodes.teamDataArray
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 import org.tahomarobotics.scouting.Client
+import org.tahomarobotics.scouting.ComposeFileProvider
 import java.io.*
+import java.lang.Integer.parseInt
+import java.nio.ByteBuffer
 import java.lang.Integer.parseInt
 
 var matchFolder : File? = null
+var pitsFolder: File? = null
+
+var imagesFolder: File? = null
 
 fun createScoutMatchDataFolder(context: Context) {
     matchFolder = File(context.filesDir, "ScoutMatchDataFolder")
@@ -27,6 +50,28 @@ fun createScoutMatchDataFolder(context: Context) {
         println("Match data folder found")
     }
 }
+
+fun createScoutPitsDataFolder(context: Context) {
+    pitsFolder = File(context.filesDir, "ScoutPitsDataFolder")
+
+    if(!pitsFolder!!.exists()) {
+        pitsFolder!!.mkdirs()
+        println("Made pits data folder")
+    } else {
+        println("Pits data folder found")
+    }
+
+    imagesFolder = File(pitsFolder, "ImagesFolder")
+
+    if(!imagesFolder!!.exists()) {
+        imagesFolder!!.mkdirs()
+        println("Made images folder")
+    } else {
+        println("Images folder found")
+    }
+
+}
+
 
 fun createScoutMatchDataFile(context: Context, match: String, team: Int, data: String) {
     val file = File(matchFolder, "Match${match}Team${team}.json")
@@ -44,10 +89,44 @@ fun createScoutMatchDataFile(context: Context, match: String, team: Int, data: S
     }
 }
 
+fun createScoutPitsDataFile(context: Context, team: Int, data: String) {
+    val file = File(pitsFolder, "Team${team}.json")
+    file.delete()
+    file.createNewFile()
+
+    file.writeText(data)
+
+    file.forEachLine {
+        try {
+            println("Saved file Team${team}.json: $it")
+        } catch (e: Exception) {
+            println(e.message)
+        }
+    }
+}
+
+//fun createScoutPitsImageLocationsFile(context: Context, data: String) {
+//    val file = File(imagesFolder, "ImageLocations.json")
+//    file.delete()
+//    file.createNewFile()
+//
+//    file.writeText(data)
+//
+//    file.forEachLine {
+//        try {
+//            println("Saved file ImageLocations.json: $it")
+//        } catch (e: Exception) {
+//            println(e.message)
+//        }
+//    }
+//
+//}
+
+
 fun loadMatchDataFiles(context: Context) {
     val gson = Gson()
 
-    println("loading files...")
+    println("loading match files...")
     for((index) in (matchFolder?.listFiles()?.withIndex()!!)) {
         if(gson.fromJson(matchFolder?.listFiles()?.toList()?.get(index)?.readText(), JsonObject::class.java) != null) {
             jsonObject = gson.fromJson(
@@ -65,6 +144,36 @@ fun loadMatchDataFiles(context: Context) {
     }
 }
 
+fun loadPitsDataFiles(context: Context) {
+    val gson = Gson()
+
+    println("loading pits files...")
+    for((index, value) in (pitsFolder?.listFiles()?.withIndex()!!)) {
+        if(value?.name != "ImagesFolder" && gson.fromJson(pitsFolder?.listFiles()?.toList()?.get(index)?.readText(), JsonObject::class.java) != null) {
+            jsonObject = gson.fromJson(
+                pitsFolder?.listFiles()?.toList()?.get(index)?.readText(),
+                JsonObject::class.java
+            )
+            pitsTeamDataArray[
+                jsonObject.get("scoutedTeamNumber").asInt
+            ] = jsonObject.toString()
+
+            println(pitsFolder?.listFiles()?.toList()?.get(index).toString())
+        }
+    }
+
+    println("Loading pits image paths...")
+
+    for ((outerIndex, value) in imagesFolder?.listFiles()?.toList()?.withIndex()!!) {
+
+        for(value in value.listFiles()!!) {
+            permPhotosList.add(value.path)
+            println(permPhotosList[outerIndex])
+        }
+    }
+}
+
+
 fun deleteScoutMatchData() {
     repeat(10) {
         try {
@@ -75,6 +184,27 @@ fun deleteScoutMatchData() {
         } catch (e: IndexOutOfBoundsException) {}
     }
 }
+
+fun deleteScoutPitsData() {
+    pitsTeamDataArray.clear()
+    permPhotosList.clear()
+    repeat(10) {
+        try {
+            for((index) in pitsFolder?.listFiles()?.withIndex()!!) {
+                if(pitsFolder?.listFiles()?.toList()?.get(index)?.name != "ImagesFolder") {
+                    pitsFolder?.listFiles()?.get(index)?.deleteRecursively()
+                }
+            }
+            for((index, value) in imagesFolder?.listFiles()?.withIndex()!!) {
+                for((index, value) in value?.listFiles()?.withIndex()!!) {
+                    value.deleteRecursively()
+                }
+                value.deleteRecursively()
+            }
+        } catch (e: IndexOutOfBoundsException) {}
+    }
+}
+
 
 fun createFile(context: Context) {
     val file = File(context.filesDir, "match_data.json")
@@ -157,7 +287,8 @@ fun deleteFile(context: Context){
  *@param scoutingType should be "match", "strat", or "pit"
  */
 fun sendData(context: Context, client: Client) {
-    exportScoutData(context)
+    println("reached beginning of sendData")
+    exportScoutData(context) // does nothing
 
     val gson = Gson()
 
@@ -169,12 +300,39 @@ fun sendData(context: Context, client: Client) {
         Log.i("Client", "Message Sent: ${jsonObject.toString()}")
     }
 
-    pitsTeamDataArray.forEach {
-        val jsonObject = gson.fromJson(it.toString(), JsonObject::class.java)
+    for((key, value) in pitsTeamDataArray.entries) {
+
+        val jsonObject = gson.fromJson(value, JsonObject::class.java)
+
+//        var bitmap: Bitmap? = null
+
+//        println(permPhotosList.toString())
+//        for((index) in permPhotosList.withIndex()) {
+//            println("reached2")
+//            var file = File(ComposeFileProvider.getImageUri(context, parseInt(jsonObject.get("scoutedTeamNumber").asString), "Photo${index}").toString())
+////            file.delete()
+////            file = Uri.parse(permPhotosList[index]).toFile()
+//
+//            var bos = ByteArrayOutputStream()
+//
+//            // Assuming you're inside a Composable function
+//            val contentResolver = context.contentResolver
+//            val uri = /*Uri.parse(permPhotosList[index])*/ComposeFileProvider.getImageUri(context, parseInt(jsonObject.get("scoutedTeamNumber").asString), "Photo${index}")
+//            println(uri.toString())
+//            val bitmap = decodeBitmap(ImageDecoder.createSource(contentResolver, uri))
+//            bitmap.compress(Bitmap.CompressFormat.JPEG,0, bos)
+//
+//            val byteArray = bos.toByteArray()
+//
+//            file.writeBytes(byteArray)
+//
+//            client.sendData(file)
+//            println("Image sent")
+//        }
 
         client.sendData(jsonObject.toString(), "pit")
 
-        Log.i("Client", "Message Sent: ${jsonObject.toString()}")
+        Log.i("Client", "Message Sent: ${jsonObject}")
     }
 
 }

@@ -3,22 +3,60 @@
 
 package pages
 
-import nodes.RootNode
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.*
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.BasicAlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableIntState
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,21 +73,14 @@ import androidx.core.content.ContextCompat
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.bumble.appyx.components.backstack.BackStack
-import com.bumble.appyx.components.backstack.operation.pop
 import com.bumble.appyx.components.backstack.operation.push
-import composables.Profile
-import composables.download
+import composables.downloadPitsPhotos
+import createScoutPitsDataFile
 import defaultError
 import defaultOnPrimary
 import defaultPrimaryVariant
 import getCurrentTheme
-import kotlinx.coroutines.launch
-import org.jetbrains.compose.resources.ExperimentalResourceApi
-import org.jetbrains.compose.resources.painterResource
-import org.tahomarobotics.scouting.ComposeFileProvider
-import java.io.File
-import nodes.PitsNode.*
-import nodes.TeamMatchStartKey
+import nodes.RootNode
 import nodes.algaeBarge
 import nodes.algaePreferred
 import nodes.algaeProcess
@@ -59,7 +90,6 @@ import nodes.collectPreference
 import nodes.comments
 import nodes.coralHigh
 import nodes.coralLow
-import nodes.createOutput
 import nodes.createPitsOutput
 import nodes.cycleTime
 import nodes.defensePreferred
@@ -70,20 +100,20 @@ import nodes.l3
 import nodes.l4
 import nodes.length
 import nodes.motorType
+import nodes.permPhotosList
 import nodes.photoArray
 import nodes.pitsReset
 import nodes.pitsTeamDataArray
-import nodes.reset
 import nodes.rigidity
 import nodes.scoutedTeamName
 import nodes.scoutedTeamNumber
-import nodes.teamDataArray
 import nodes.weight
 import nodes.width
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.painterResource
+import org.tahomarobotics.scouting.ComposeFileProvider
+import java.io.File
 import java.lang.Integer.parseInt
-import android.util.Base64
-import com.google.gson.JsonArray
-import com.google.gson.JsonPrimitive
 
 @SuppressLint("NewApi", "Recycle")
 @OptIn(ExperimentalResourceApi::class)
@@ -108,6 +138,8 @@ actual fun PitsScoutMenu(
         )
         var array : SnapshotStateList<Uri> = SnapshotStateList()
         var downloadActive by remember { mutableStateOf(false) }
+
+        var teamNumberPopup by remember { mutableStateOf(false) }
 
         var pitsPersonDD by remember { mutableStateOf(false) }
         var teamNumRequirement by remember { mutableStateOf(false) }
@@ -175,7 +207,11 @@ actual fun PitsScoutMenu(
                 )
                 OutlinedTextField(
                     value = scoutedTeamNumber.value,
-                    onValueChange = { scoutedTeamNumber.value = it },
+                    onValueChange = { value ->
+                        val filteredText = value.filter { it.isDigit() }
+                        if (filteredText.isNotEmpty() && !filteredText.contains(','))
+                            scoutedTeamNumber.value = filteredText.slice(0..<filteredText.length.coerceAtMost(5))
+                    },
                     textStyle = TextStyle.Default.copy(fontSize = 20.sp),
                     colors = TextFieldDefaults.colors(
                         focusedContainerColor = Color(6, 9, 13),
@@ -184,8 +220,9 @@ actual fun PitsScoutMenu(
                         unfocusedTextColor = defaultOnPrimary,
                         cursorColor = Color.Yellow
                     ),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     shape = RoundedCornerShape(15.dp),
-                    modifier = Modifier.size(85.dp, 60.dp)
+                    modifier = Modifier.size(120.dp, 60.dp)
                 )
             }
             Spacer(modifier = Modifier.height(7.5.dp))
@@ -206,15 +243,27 @@ actual fun PitsScoutMenu(
                             if (photoAmount < 3) {//moved up
                                 var uri = Uri.EMPTY
 
-                                uri = ComposeFileProvider.getImageUri(
-                                    context,
-                                    "photo_$photoAmount"
-                                )
-                                imageUri = uri
-                                cameraLauncher.launch(uri)
+                                try {
+                                    uri = ComposeFileProvider.getImageUri(context, parseInt(scoutedTeamNumber.value), "Photo${permPhotosList.size}")
+                                    println("permPhotosList Uri: $uri")
 
-                                photoArray.add(photoAmount, uri.toString())
-                                photoAmount++
+                                    imageUri = uri
+                                    cameraLauncher.launch(uri)
+
+                                    photoAmount++
+
+                                    photoArray.add(uri.toString())
+
+                                    if(permPhotosList.contains(uri.toString())) {
+                                        permPhotosList.remove(uri.toString())
+                                        permPhotosList.add(uri.toString())
+                                    } else {
+                                        permPhotosList.add(uri.toString())
+                                    }
+                                } catch (e: NumberFormatException) {
+                                    teamNumberPopup = true
+                                }
+
                                 hasImage = false
                             }
                         }
@@ -1022,27 +1071,27 @@ actual fun PitsScoutMenu(
                                 robotCard = true
                             }
 
+                            val addList = mutableListOf<String>()
+                            val removeList = mutableListOf<String>()
+
+                            println("photos:")
+                            photoArray.forEach {
+                                val startIndex = it.indexOf("/", 80)
+                                addList.add(it.substring(startIndex+1))
+                                removeList.add(it)
+                                println(it.substring(startIndex+1))
+                            }
+                            photoArray.addAll(addList)
+                            photoArray.removeAll(removeList)
+
                             pitsTeamDataArray[parseInt(scoutedTeamNumber.value)] = createPitsOutput(mutableIntStateOf(parseInt(scoutedTeamNumber.value)))
                             println(pitsTeamDataArray)
+
+                            createScoutPitsDataFile(context, parseInt(scoutedTeamNumber.value), pitsTeamDataArray[parseInt(scoutedTeamNumber.value)]!!)
+//                            createScoutPitsImageLocationsFile(context, pitsImgJsonObj.toString())
+
                             pitsReset()
                             photoAmount = 0
-
-//                            try {
-//                                for((index, value) in photoArray.withIndex()) {
-//
-//                                    val bytes = context.contentResolver.openInputStream(Uri.parse(value))?.use { it.readBytes() }
-//
-//                                    bytes?.let {
-//                                        val base64 = Base64.encodeToString(it, Base64.DEFAULT)
-//                                        base64Array.add(base64)
-//                                        println(base64Array)
-////                                        photoArray[index] = base64
-//                                    } ?: throw Exception("Failed to read bytes from URI")
-//
-//                                }
-//                            } catch (e: Exception) {
-//                                //Exception always occurs
-//                            }
 
 //                            coroutineScope.launch {
 //                                listState.scrollToItem(0)
@@ -1050,18 +1099,6 @@ actual fun PitsScoutMenu(
 
                         }
                     }) { Text(text = "Submit", color = defaultOnPrimary) }
-                    OutlinedButton(onClick = { robotCard = false }) {
-                        Text(
-                            text = "Close",
-                            color = defaultOnPrimary
-                        )
-                    }
-                    OutlinedButton(onClick = { downloadActive = true }) {
-                        Text(
-                            text = "Download",
-                            color = defaultOnPrimary
-                        )
-                    }
                     OutlinedButton(onClick = { backStack.push(RootNode.NavTarget.MainMenu) }) {
                         Text(text = "Back", color = defaultOnPrimary)
                     }
@@ -1075,7 +1112,7 @@ actual fun PitsScoutMenu(
                             }
                         }
 
-                        download(context, array, scoutedTeamNumber.value, photoAmount)
+                        downloadPitsPhotos(context, array, scoutedTeamNumber.value, photoAmount)
                         downloadActive = false
                     }
                 }
@@ -1119,6 +1156,32 @@ actual fun PitsScoutMenu(
                             ) {
                                 Text(text = "Ok", color = defaultError)
                             }
+                        }
+                    }
+                }
+            }
+
+            if(teamNumberPopup) {
+                BasicAlertDialog(
+                    onDismissRequest = { teamNumberPopup = false },
+                    modifier = Modifier.clip(
+                        RoundedCornerShape(5.dp)
+                    ).border(BorderStroke(3.dp, getCurrentTheme().primaryVariant), RoundedCornerShape(5.dp))
+                        .background(getCurrentTheme().secondary)
+                ) {
+                    Box(modifier = Modifier.fillMaxWidth(8f / 10f).padding(5.dp).fillMaxHeight(1/8f)) {
+                        Text(text = "Please input a valid team number.",
+                            modifier = Modifier.padding(5.dp).align(Alignment.TopCenter)
+                        )
+                        OutlinedButton(
+                            onClick = {
+                                teamNumberPopup = false
+                            },
+                            border = BorderStroke(2.dp, getCurrentTheme().secondaryVariant),
+                            colors = ButtonDefaults.outlinedButtonColors(contentColor = getCurrentTheme().onSecondary, containerColor = getCurrentTheme().secondary) ,
+                            modifier = Modifier.align(Alignment.BottomCenter)
+                        ) {
+                            Text(text = "Ok", color = getCurrentTheme().error)
                         }
                     }
                 }
