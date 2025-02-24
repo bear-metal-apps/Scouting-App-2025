@@ -1,41 +1,59 @@
 package pages
 
-import android.graphics.Paint.Align
-import androidx.compose.foundation.BorderStroke
+//import composables.AutoCheckboxesHorizontal
+//import composables.AutoCheckboxesVertical
+import android.annotation.SuppressLint
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableIntState
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.components.backstack.operation.pop
-import com.bumble.appyx.components.backstack.operation.push
 import composables.CheckBox
-//import composables.AutoCheckboxesHorizontal
-//import composables.AutoCheckboxesVertical
 import composables.EnumerableValueAuto
-import defaultOnPrimary
-import defaultSecondary
-import exportScoutData
+import composables.TriStateCheckBox
 import keyboardAsState
-import nodes.*
-import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
+import nodes.AutoTeleSelectorNode
+import nodes.RootNode
+import nodes.TeamMatchStartKey
+import nodes.algaeProcessed
+import nodes.algaeRemoved
+import nodes.autoCoralLevel1Missed
+import nodes.autoCoralLevel1Scored
+import nodes.autoCoralLevel2Missed
+import nodes.autoCoralLevel2Scored
+import nodes.autoCoralLevel3Missed
+import nodes.autoCoralLevel3Scored
+import nodes.autoCoralLevel4Missed
+import nodes.autoCoralLevel4Scored
+import nodes.autoFeederCollection
+import nodes.autoNetMissed
+import nodes.autoNetScored
+import nodes.autoStop
+import nodes.createOutput
+import nodes.groundCollectionAlgae
+import nodes.groundCollectionCoral
+import nodes.saveData
+import nodes.teamDataArray
+import java.lang.Integer.parseInt
 
+@SuppressLint("UnrememberedMutableState")
 @Composable
 actual fun AutoMenu(
     backStack: BackStack<AutoTeleSelectorNode.NavTarget>,
     mainMenuBackStack: BackStack<RootNode.NavTarget>,
-
-    selectAuto: MutableState<Boolean>,
-
     match: MutableState<String>,
     team: MutableIntState,
     robotStartPosition: MutableIntState
@@ -44,27 +62,20 @@ actual fun AutoMenu(
     val context = LocalContext.current
     fun bob() {
         mainMenuBackStack.pop()
-        matchScoutArray.putIfAbsent(robotStartPosition.intValue, HashMap())
-        matchScoutArray[robotStartPosition.intValue]?.set(
-            Integer.parseInt(match.value),
-            createOutput(team, robotStartPosition)
-        )
-        exportScoutData(context)
+        teamDataArray[TeamMatchStartKey(parseInt(match.value), team.intValue, robotStartPosition.intValue)] = createOutput(team, robotStartPosition)
     }
 
-    val scrollState = rememberScrollState(0)
     val isScrollEnabled = remember { mutableStateOf(true) }
     val isKeyboardOpen by keyboardAsState()
     if (!isKeyboardOpen) {
         isScrollEnabled.value = true
     }
+
 //    val flippingAuto = remember { mutableStateOf(false)}
 //    val rotateAuto = remember { mutableStateOf(false)}
 
     Column(
-
     ){
-
         Row (
             modifier = Modifier
                 .weight(10f)
@@ -73,95 +84,31 @@ actual fun AutoMenu(
 
             Column (
                 modifier = Modifier
-                    .weight(1f)
+                    .weight(0.5f)
                     .fillMaxHeight()
             ) {
 
                 EnumerableValueAuto(
                     label = "Feeder",
                     value = autoFeederCollection,
+                    flashColor = Color.Green,
                     alignment = Alignment.Center,
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxWidth()
                 )
 
-                Row (
+                TriStateCheckBox(
+                    label = "Ground Coral",
+                    ifChecked = groundCollectionCoral,
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxWidth()
-                ) {
+                )
 
-                    CheckBox(
-                        label = "C3",
-                        ifChecked = coral3Collected,
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxSize()
-                    )
-
-                    CheckBox(
-                        label = "A3",
-                        ifChecked = algae3Collected,
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxSize()
-                    )
-
-                }
-
-                Row (
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth()
-                ) {
-
-                    CheckBox(
-                        label = "C2",
-                        ifChecked = coral2Collected,
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxSize()
-                    )
-
-                    CheckBox(
-                        label = "A2",
-                        ifChecked = algae2Collected,
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxSize()
-                    )
-
-                }
-
-                Row (
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth()
-                ) {
-
-                    CheckBox(
-                        label = "C1",
-                        ifChecked = coral1Collected,
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxSize()
-                    )
-
-                    CheckBox(
-                        label = "A1",
-                        ifChecked = algae1Collected,
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxSize()
-                    )
-
-                }
-
-                EnumerableValueAuto(
-                    label = "Feeder",
-                    value = autoFeederCollection,
-                    alignment = Alignment.Center,
+                TriStateCheckBox(
+                    label = "Ground Algae",
+                    ifChecked = groundCollectionAlgae,
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxWidth()
@@ -176,17 +123,9 @@ actual fun AutoMenu(
             ) {
 
                 EnumerableValueAuto(
-                    label = "Algae Processed",
-                    value = algaeProcessed,
-                    alignment = Alignment.Center,
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth()
-                )
-
-                EnumerableValueAuto(
                     label = "Score L4",
                     value = autoCoralLevel4Scored,
+                    flashColor = Color.Green,
                     alignment = Alignment.Center,
                     modifier = Modifier
                         .weight(1f)
@@ -196,6 +135,7 @@ actual fun AutoMenu(
                 EnumerableValueAuto(
                     label = "Score L3",
                     value = autoCoralLevel3Scored,
+                    flashColor = Color.Green,
                     alignment = Alignment.Center,
                     modifier = Modifier
                         .weight(1f)
@@ -205,6 +145,7 @@ actual fun AutoMenu(
                 EnumerableValueAuto(
                     label = "Score L2",
                     value = autoCoralLevel2Scored,
+                    flashColor = Color.Green,
                     alignment = Alignment.Center,
                     modifier = Modifier
                         .weight(1f)
@@ -214,6 +155,17 @@ actual fun AutoMenu(
                 EnumerableValueAuto(
                     label = "Score L1",
                     value = autoCoralLevel1Scored,
+                    flashColor = Color.Green,
+                    alignment = Alignment.Center,
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                )
+
+                EnumerableValueAuto(
+                    label = "Algae Removed",
+                    value = algaeRemoved,
+                    flashColor = Color.Green,
                     alignment = Alignment.Center,
                     modifier = Modifier
                         .weight(1f)
@@ -229,17 +181,9 @@ actual fun AutoMenu(
             ) {
 
                 EnumerableValueAuto(
-                    label = "Algae Removed",
-                    value = algaeRemoved,
-                    alignment = Alignment.Center,
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth()
-                )
-
-                EnumerableValueAuto(
                     label = "Miss L4",
                     value = autoCoralLevel4Missed,
+                    flashColor = Color.Red,
                     alignment = Alignment.Center,
                     modifier = Modifier
                         .weight(1f)
@@ -249,6 +193,7 @@ actual fun AutoMenu(
                 EnumerableValueAuto(
                     label = "Miss L3",
                     value = autoCoralLevel3Missed,
+                    flashColor = Color.Red,
                     alignment = Alignment.Center,
                     modifier = Modifier
                         .weight(1f)
@@ -258,6 +203,7 @@ actual fun AutoMenu(
                 EnumerableValueAuto(
                     label = "Miss L2",
                     value = autoCoralLevel2Missed,
+                    flashColor = Color.Red,
                     alignment = Alignment.Center,
                     modifier = Modifier
                         .weight(1f)
@@ -267,6 +213,17 @@ actual fun AutoMenu(
                 EnumerableValueAuto(
                     label = "Miss L1",
                     value = autoCoralLevel1Missed,
+                    flashColor = Color.Red,
+                    alignment = Alignment.Center,
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                )
+
+                EnumerableValueAuto(
+                    label = "Algae Processed",
+                    value = algaeProcessed,
+                    flashColor = Color.Green,
                     alignment = Alignment.Center,
                     modifier = Modifier
                         .weight(1f)
@@ -284,6 +241,7 @@ actual fun AutoMenu(
                 EnumerableValueAuto(
                     label = "Net Missed",
                     value = autoNetMissed,
+                    flashColor = Color.Green,
                     alignment = Alignment.Center,
                     modifier = Modifier
                         .weight(1f)
@@ -293,55 +251,24 @@ actual fun AutoMenu(
                 EnumerableValueAuto(
                     label = "Net Scored",
                     value = autoNetScored,
+                    flashColor = Color.Green,
                     alignment = Alignment.Center,
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxWidth()
                 )
-
+                CheckBox(
+                    label = "A-stop",
+                    ifChecked = autoStop,
+                    modifier = Modifier
+                        .weight(0.5f)
+                        .fillMaxWidth()
+                )
+                if(autoStop.value != 0) {
+                    saveData.value = true
+                }
             }
 
         }
-
-        Row (
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth()
-        ) {
-
-            OutlinedButton(
-                border = BorderStroke(2.dp, color = Color.Yellow),
-                shape = CircleShape,
-                colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
-                onClick = {
-                    backStack.push(AutoTeleSelectorNode.NavTarget.EndGameScouting)
-                    selectAuto.value = true
-                },
-                modifier = Modifier
-            ) {
-                Text(
-                    text = "EndGame",
-                    color = Color.Yellow,
-                    fontSize = 35.sp
-                )
-            }
-
-            OutlinedButton(
-                border = BorderStroke(2.dp, color = Color.Yellow),
-                shape = CircleShape,
-                colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
-                onClick = {
-                    bob()
-                },
-                modifier = Modifier
-            ) {
-                Text(
-                    text = "Back",
-                    color = Color.Yellow
-                )
-            }
-
-        }
-
     }
 }

@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -16,23 +17,35 @@ import androidx.compose.ui.unit.sp
 import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.components.backstack.operation.push
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.KeyboardType
 import compKey
+import createScoutMatchDataFolder
+import createScoutPitsDataFolder
 import defaultError
 import defaultOnPrimary
 import defaultPrimaryVariant
 import deleteFile
+import deleteScoutMatchData
+import deleteScoutPitsData
 import getCurrentTheme
+import loadMatchDataFiles
+import loadPitsDataFiles
 import nodes.RootNode
-import nodes.matchScoutArray
+import nodes.betterParseInt
+import nodes.permPhotosList
+import nodes.pitsReset
+import nodes.teamDataArray
 import nodes.reset
 import java.io.File
+import java.lang.Integer.parseInt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 actual fun LoginMenu(
     backStack: BackStack<RootNode.NavTarget>,
     scoutName: MutableState<String>,
-    comp: MutableState<String>
+    comp: MutableState<String>,
+    numOfPitsPeople: MutableIntState
 ) {
     val logo = File("Logo.png")
     var compDD by remember { mutableStateOf(false) }
@@ -46,6 +59,19 @@ actual fun LoginMenu(
         "2024hop"
 
     )
+
+    var first by remember { mutableStateOf(true) }
+
+    if(first) {
+        createScoutMatchDataFolder(context)
+        loadMatchDataFiles(context)
+
+        createScoutPitsDataFolder(context)
+        loadPitsDataFiles(context)
+
+        first = false
+    }
+
     Column {
 //        AsyncImage(
 //            model = logo,//turn into bitmap
@@ -120,6 +146,23 @@ actual fun LoginMenu(
                     onClick = { comp.value = "Houston"; compDD = false; compKey = tbaMatches[4]},
                     text ={ Text(text = "Houston", color = getCurrentTheme().onPrimary,modifier= Modifier.background(color = getCurrentTheme().onSurface)) }
                 )
+                OutlinedTextField(
+                    value = comp.value,
+                    onValueChange = { comp.value = it
+                        compKey = it},
+                    placeholder = { Text("Custom Competition Key") },
+                    shape = RoundedCornerShape(15.dp),
+                    singleLine = true,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        unfocusedContainerColor = getCurrentTheme().background,
+                        unfocusedTextColor = getCurrentTheme().onPrimary,
+                        focusedContainerColor = getCurrentTheme().background,
+                        focusedTextColor = getCurrentTheme().onPrimary,
+                        cursorColor = getCurrentTheme().onSecondary,
+                        focusedBorderColor = Color.Cyan,
+                        unfocusedBorderColor = getCurrentTheme().secondary
+                    )
+                )
             }
 
         }
@@ -135,7 +178,7 @@ actual fun LoginMenu(
                 },
                 border = BorderStroke(color = defaultPrimaryVariant, width = 2.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = getCurrentTheme().primary),
-                modifier = Modifier.align(Alignment.CenterStart)
+                modifier = Modifier.align(Alignment.CenterEnd)
             ) {
                 Text(
                     text = "Submit",
@@ -146,7 +189,7 @@ actual fun LoginMenu(
                 onClick = { deleteData = true },
                 border = BorderStroke(color = defaultPrimaryVariant, width = 2.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = getCurrentTheme().primary),
-                modifier = Modifier.align(Alignment.CenterEnd)
+                modifier = Modifier.align(Alignment.CenterStart)
             ) {
                 Text(
                     text = "Delete Data",
@@ -166,7 +209,14 @@ actual fun LoginMenu(
                         Box(modifier = Modifier.fillMaxWidth(8f / 10f)) {
                             Button(
                                 onClick = {
-                                    deleteData = false; matchScoutArray.clear(); reset(); deleteFile(context)
+                                    teamDataArray.clear()
+                                    permPhotosList.clear()
+                                    reset()
+                                    pitsReset()
+                                    deleteFile(context)
+                                    deleteScoutMatchData()
+                                    deleteScoutPitsData()
+                                    deleteData = false
                                 },
                                 modifier = Modifier.align(Alignment.CenterStart)
                             ) {

@@ -5,7 +5,7 @@ compiler = "1.5.9"
 compose = "1.6.1"
 compose-plugin = "1.5.11"
 compose-compiler = "1.5.4"
-agp = "8.2.2"
+agp = "8.7.2"
 android-minSdk = "24"
 android-compileSdk = "34"
 android-targetSdk = "34"
@@ -16,8 +16,10 @@ androidx-material = "1.11.0"
 androidx-constraintlayout = "2.1.4"
 androidx-test-junit = "1.1.5"
 androidx-espresso-core = "3.5.1"
+desugar_jdk_libs = "2.1.4"
 gson = "2.10.1"
 json = "20231013"
+koala = "dev-02.20.2025-0324"
 kotlin = "1.9.21"
 junit = "4.13.2"
 kotlinxCoroutinesCore = "1.8.0-RC2"
@@ -36,14 +38,18 @@ cardview = "1.0.0"
 volley = "1.2.1"
 databindingCompiler = "8.2.2"
 uiUnitAndroid = "1.6.1"
+coreVersion = "1.15.0"
+material3Android = "1.3.1"
 
 [libraries]
 androidx-compiler = { module = "androidx.compose.compiler:compiler", version.ref = "compiler" }
 backstack = { module = "com.bumble.appyx:backstack", version.ref = "bumble-appyxNavigation" }
 bumble-appyx-navigation = { module = "com.bumble.appyx:appyx-navigation", version.ref = "bumble-appyxNavigation" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
+desugar_jdk_libs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar_jdk_libs" }
 json = { module = "org.json:json", version.ref = "json" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
+koala = { module = "com.github.betterbearmetalcode:koala", version.ref = "koala" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -78,6 +84,8 @@ core = { group = "com.google.ar", name = "core", version.ref = "core" }
 filament-android = { group = "com.google.ar.sceneform", name = "filament-android", version.ref = "filamentAndroid" }
 androidx-cardview = { group = "androidx.cardview", name = "cardview", version.ref = "cardview" }
 volley = { group = "com.android.volley", name = "volley", version.ref = "volley" }
+androidx-core = { group = "androidx.core", name = "core", version.ref = "coreVersion" }
+androidx-material3-android = { group = "androidx.compose.material3", name = "material3-android", version.ref = "material3Android" }
 
 [plugins]
 jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "compose-plugin" }

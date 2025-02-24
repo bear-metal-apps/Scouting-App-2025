@@ -18,7 +18,6 @@ import java.util.*
  *         or if match data isn't null
  */
 fun sync(refresh: Boolean): Boolean {
-
     val teamError = syncTeams(refresh)
     val matchError = syncMatches(refresh)
     if (teamError && matchError) {

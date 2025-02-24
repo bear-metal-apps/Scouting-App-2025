@@ -1,6 +1,6 @@
 package pages
 
-import android.content.Context
+ import android.content.Context
 import android.hardware.usb.UsbManager
 import android.os.Build
 import android.util.Log
@@ -23,6 +23,7 @@ import com.bumble.appyx.components.backstack.operation.push
 import com.bumble.appyx.navigation.modality.BuildContext
 import com.bumble.appyx.navigation.node.Node
 import compKey
+import createScoutMatchDataFolder
 import defaultSecondary
 import getCurrentTheme
 import getLastSynced
@@ -31,15 +32,19 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import matchData
 import nodes.RootNode
-import nodes.match
+import nodes.client
+ import nodes.loadData
+ import nodes.match
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import org.json.JSONException
+import org.tahomarobotics.scouting.Client
 import sendData
 import sendDataUSB
 import setTeam
 import sync
 import teamData
+import java.lang.Integer.parseInt
 
 actual class MainMenu actual constructor(
     buildContext: BuildContext,
@@ -50,7 +55,6 @@ actual class MainMenu actual constructor(
     private val team: MutableIntState
 ) : Node(buildContext = buildContext) {
 
-    @RequiresApi(Build.VERSION_CODES.O)
     @OptIn(ExperimentalResourceApi::class, ExperimentalMaterial3Api::class)
     @Composable
     actual override fun View(modifier: Modifier) {
@@ -68,7 +72,6 @@ actual class MainMenu actual constructor(
         var tempCompKey by remember { mutableStateOf(compKey) }
 
         val deviceList = manager.deviceList
-
 
         Column (modifier = Modifier.verticalScroll(ScrollState(0))) {
             DropdownMenu(expanded = deviceListOpen, onDismissRequest = { deviceListOpen = false }) {
@@ -89,9 +92,14 @@ actual class MainMenu actual constructor(
                 }
             }
             Box(modifier = Modifier.fillMaxWidth()) {
-                OutlinedButton(onClick = {backStack.push(RootNode.NavTarget.LoginPage)},modifier = Modifier
+                OutlinedButton(
+                    onClick = {
+                        backStack.push(RootNode.NavTarget.LoginPage)
+                              },
+                    modifier = Modifier
                     .scale(0.75f)
-                    .align(Alignment.CenterStart)) {
+                    .align(Alignment.CenterStart)
+                ) {
                     Text(text = "Login", color = getCurrentTheme().onPrimary)
                 }
 
@@ -100,6 +108,18 @@ actual class MainMenu actual constructor(
                     fontSize = 25.sp,
                     modifier = Modifier.align(Alignment.Center)
                 )
+
+                OutlinedButton(
+                        onClick = {
+                    backStack.push(RootNode.NavTarget.Settings)
+                           },
+                modifier = Modifier
+                    .scale(0.75f)
+                    .align(Alignment.CenterEnd)
+                        ) {
+                    Text(text = "Settings", color = getCurrentTheme().onPrimary)
+                }
+
             }
             HorizontalDivider(color = getCurrentTheme().onSurface, thickness = 2.dp)
             Text(text="Hello ${scoutName.value}",color = getCurrentTheme().onPrimary,modifier = Modifier.align(Alignment.CenterHorizontally))
@@ -115,6 +135,8 @@ actual class MainMenu actual constructor(
                     }
 
                     selectedPlacement = true
+
+                    createScoutMatchDataFolder(context)
                 },
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
@@ -140,12 +162,14 @@ actual class MainMenu actual constructor(
                     Row {
                         DropdownMenuItem(
                             onClick = {
-                                robotStartPosition.intValue = 0; backStack.push(RootNode.NavTarget.MatchScouting)
-                                try {
-                                    setTeam(team, match, robotStartPosition.intValue)
-                                } catch (e: JSONException) {
-                                    openError.value = true
-                                }
+                                robotStartPosition.intValue = 0
+                                loadData(parseInt(match.value), team, robotStartPosition)
+                                backStack.push(RootNode.NavTarget.MatchScouting)
+//                                try {
+//                                    setTeam(team, match, robotStartPosition.intValue)
+//                                } catch (e: JSONException) {
+//                                    openError.value = true
+//                                }
                             },
                             modifier = Modifier
                                 .border(BorderStroke(color = Color.Yellow, width = 3.dp))
@@ -155,12 +179,14 @@ actual class MainMenu actual constructor(
                         )
                         DropdownMenuItem(
                             onClick = {
-                                robotStartPosition.intValue = 3; backStack.push(RootNode.NavTarget.MatchScouting)
-                                try {
-                                    setTeam(team, match, robotStartPosition.intValue)
-                                } catch (e: JSONException) {
-                                    openError.value = true
-                                }
+                                robotStartPosition.intValue = 3
+                                loadData(parseInt(match.value), team, robotStartPosition)
+                                backStack.push(RootNode.NavTarget.MatchScouting)
+//                                try {
+//                                    setTeam(team, match, robotStartPosition.intValue)
+//                                } catch (e: JSONException) {
+//                                    openError.value = true
+//                                }
                             },
                             modifier = Modifier
                                 .border(BorderStroke(color = Color.Yellow, width = 3.dp))
@@ -172,12 +198,14 @@ actual class MainMenu actual constructor(
                     Row {
                         DropdownMenuItem(
                             onClick = {
-                                robotStartPosition.intValue = 1; backStack.push(RootNode.NavTarget.MatchScouting)
-                                try {
-                                    setTeam(team, match, robotStartPosition.intValue)
-                                } catch (e: JSONException) {
-                                    openError.value = true
-                                }
+                                robotStartPosition.intValue = 1
+                                loadData(parseInt(match.value), team, robotStartPosition)
+                                backStack.push(RootNode.NavTarget.MatchScouting)
+//                                try {
+//                                    setTeam(team, match, robotStartPosition.intValue)
+//                                } catch (e: JSONException) {
+//                                    openError.value = true
+//                                }
                             },
                             modifier = Modifier
                                 .border(BorderStroke(color = Color.Yellow, width = 3.dp))
@@ -187,12 +215,14 @@ actual class MainMenu actual constructor(
                         )
                         DropdownMenuItem(
                             onClick = {
-                                robotStartPosition.intValue = 4; backStack.push(RootNode.NavTarget.MatchScouting)
-                                try {
-                                    setTeam(team, match, robotStartPosition.intValue)
-                                } catch (e: JSONException) {
-                                    openError.value = true
-                                }
+                                robotStartPosition.intValue = 4
+                                loadData(parseInt(match.value), team, robotStartPosition)
+                                backStack.push(RootNode.NavTarget.MatchScouting)
+//                                try {
+//                                    setTeam(team, match, robotStartPosition.intValue)
+//                                } catch (e: JSONException) {
+//                                    openError.value = true
+//                                }
                             },
                             modifier = Modifier
                                 .border(BorderStroke(color = Color.Yellow, width = 3.dp))
@@ -204,12 +234,14 @@ actual class MainMenu actual constructor(
                     Row {
                         DropdownMenuItem(
                             onClick = {
-                                robotStartPosition.intValue = 2; backStack.push(RootNode.NavTarget.MatchScouting)
-                                try {
-                                    setTeam(team, match, robotStartPosition.intValue)
-                                } catch (e: JSONException) {
-                                    openError.value = true
-                                }
+                                robotStartPosition.intValue = 2
+                                loadData(parseInt(match.value), team, robotStartPosition)
+                                backStack.push(RootNode.NavTarget.MatchScouting)
+//                                try {
+//                                    setTeam(team, match, robotStartPosition.intValue)
+//                                } catch (e: JSONException) {
+//                                    openError.value = true
+//                                }
                             },
                             modifier = Modifier
                                 .border(BorderStroke(color = Color.Yellow, width = 3.dp))
@@ -219,12 +251,14 @@ actual class MainMenu actual constructor(
                         )
                         DropdownMenuItem(
                             onClick = {
-                                robotStartPosition.intValue = 5; backStack.push(RootNode.NavTarget.MatchScouting)
-                                try {
-                                    setTeam(team, match, robotStartPosition.intValue)
-                                } catch (e: JSONException) {
-                                    openError.value = true
-                                }
+                                robotStartPosition.intValue = 5
+                                loadData(parseInt(match.value), team, robotStartPosition)
+                                backStack.push(RootNode.NavTarget.MatchScouting)
+//                                try {
+//                                    setTeam(team, match, robotStartPosition.intValue)
+//                                } catch (e: JSONException) {
+//                                    openError.value = true
+//                                }
                             },
                             modifier = Modifier
                                 .border(BorderStroke(color = Color.Yellow, width = 3.dp))
@@ -341,8 +375,24 @@ actual class MainMenu actual constructor(
                 contentPadding = PaddingValues(horizontal = 10.dp, vertical = 15.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
                 onClick = {
-                    serverDialogOpen = true
-                    //deviceListOpen = true
+                    val scope = CoroutineScope(Dispatchers.Default)
+                    scope.launch {
+                        if (client == null)
+                            client = Client()
+
+                        if (!client!!.isConnected) {
+                            client!!.discoverAndConnect()
+                        }
+                    }
+                    scope.launch {
+                        while (client == null || client?.isConnected != true) {
+//                            println("client is null or not connected")
+                        }
+                        sendData(
+                            context = context,
+                            client = client!!,
+                        )
+                    }
                 }
             ) {
                 Text("Export")
@@ -365,37 +415,6 @@ actual class MainMenu actual constructor(
                 }
             }
             Text(tempCompKey)
-
-            if (serverDialogOpen) {
-                Dialog(
-                    onDismissRequest = {
-                        serverDialogOpen = false
-                        if (ipAddress.value.matches(Regex("^((25[0-5]|(2[0-4]|1\\d|[1-9]|)\\d)\\.?\\b){4}\$"))) {
-                            CoroutineScope(Dispatchers.Default).launch {
-                                sendData(context, ipAddress.value)
-                            }
-                        } else
-                            ipAddressErrorDialog = true
-
-                    }
-                ) {
-                    Column {
-                        Text("Set Device Address", fontSize = 24.sp)
-                        TextField(
-                            ipAddress.value,
-                            onValueChange = { ipAddress.value = it }
-                        )
-                    }
-                }
-            }
-
-            if (ipAddressErrorDialog) {
-                BasicAlertDialog(
-                    onDismissRequest = { ipAddressErrorDialog = false }
-                ) {
-                    Text("Ip Address was entered incorrectly, check address and enter again")
-                }
-            }
         }
     }
 }

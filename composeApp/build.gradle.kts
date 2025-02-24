@@ -1,4 +1,5 @@
 import org.jetbrains.compose.ExperimentalComposeLibrary
+import org.jetbrains.kotlin.psi.psiUtil.canPlaceAfterSimpleNameEntry
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
 plugins {
@@ -6,26 +7,26 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsCompose)
     id("kotlin-parcelize")
+
+//    kotlin("jvm") version "1.9.0" //Trying this right now
 }
-
-
 
 repositories {
     google()
     mavenCentral()
+    maven("https://jitpack.io")
 }
 
 kotlin {
     androidTarget {
         compilations.all {
             kotlinOptions {
-                jvmTarget = "1.8"
+                jvmTarget = "17"
             }
         }
     }
 
     jvm("desktop")
-
 
     sourceSets {
         val desktopMain by getting
@@ -60,6 +61,7 @@ kotlin {
             implementation(libs.json)
             implementation(libs.gson)
             implementation(libs.bumble.appyx.navigation)
+            implementation(libs.koala)
             implementation(libs.reorderable)
             api(libs.backstack)
         }
@@ -76,8 +78,8 @@ android {
 
     defaultConfig {
         applicationId = "org.tahomarobotics.scouting"
-        minSdk = libs.versions.android.minSdk.get().toInt()
-        targetSdk = libs.versions.android.targetSdk.get().toInt()
+        minSdk = 28
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
     }
@@ -92,6 +94,9 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
             excludes += "/META-INF/LICENSE.md"
             excludes += "/META-INF/NOTICE.md"
+            excludes += "/META-INF/INDEX.LIST"
+            excludes += "/META-INF/native-image/native-image.properties"
+            excludes += "/META-INF/native-image/reflect-config.json"
             pickFirst("META-INF/NOTICE.md")
         }
 
@@ -102,9 +107,15 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        isCoreLibraryDesugaringEnabled = true
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
+}
+dependencies {
+    implementation(libs.androidx.core)
+    implementation(libs.androidx.material3.android)
+    coreLibraryDesugaring(libs.desugar.jdk.libs)
 }
 
 compose.desktop {
@@ -117,5 +128,11 @@ compose.desktop {
             packageName = "org.tahomarobotics.scouting"
             packageVersion = "1.0.0"
         }
+    }
+}
+
+configurations.all {
+    resolutionStrategy {
+        force("androidx.core:core:1.13.1")
     }
 }

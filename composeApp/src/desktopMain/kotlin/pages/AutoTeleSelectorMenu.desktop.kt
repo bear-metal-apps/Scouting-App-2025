@@ -24,11 +24,11 @@ import java.lang.Integer.parseInt
 
 
 @Composable
-actual fun AutoTeleSelectorMenu(
+actual fun AutoTeleSelectorMenuTop(
     match: MutableState<String>,
     team: MutableIntState,
     robotStartPosition: MutableIntState,
-    selectAuto: MutableState<Boolean>,
+    selectPage: MutableState<String>,
     backStack: BackStack<AutoTeleSelectorNode.NavTarget>,
     mainMenuBackStack: BackStack<RootNode.NavTarget>
 ) {
@@ -44,11 +44,6 @@ actual fun AutoTeleSelectorMenu(
         3 -> {positionName = "B1"}
         4 -> {positionName = "B2"}
         5 -> {positionName = "B3"}
-    }
-    pageName = if (!selectAuto.value) {
-        "Auto"
-    } else {
-        "Tele"
     }
 
 
@@ -95,7 +90,7 @@ actual fun AutoTeleSelectorMenu(
                 onValueChange = {
                     value ->
                     if(match.value != "") {
-                        matchScoutArray[robotStartPosition.intValue]?.set(parseInt(match.value),
+                        teamDataArray[robotStartPosition.intValue]?.set(parseInt(match.value),
                             createOutput(team, robotStartPosition)
                         )
                         exportScoutData()
@@ -115,44 +110,44 @@ actual fun AutoTeleSelectorMenu(
 
         Divider(color = defaultPrimaryVariant, thickness = 3.dp)
 
-        Box(modifier = Modifier.fillMaxWidth()) {
-
-            Text(
-                text = pageName,
-                fontSize = 30.sp,
-                modifier = Modifier.align(Alignment.CenterStart).offset(x = 15.dp)
-            )
-
-            Row(Modifier.align(Alignment.CenterEnd).offset(x = (-15).dp)) {
-
-                Text("A", fontSize = 25.sp, modifier = Modifier.align(Alignment.CenterVertically))
-
-                Switch(
-                    checked = selectAuto.value,
-                    onCheckedChange = {
-                        selectAuto.value = it
-                        if (!selectAuto.value) {
-                            backStack.pop()
-                        } else
-                            backStack.push(AutoTeleSelectorNode.NavTarget.TeleScouting)
-                    },
-                    colors = SwitchDefaults.colors(
-                        uncheckedTrackColor = Color(50, 50, 50),
-                        uncheckedThumbColor = defaultOnBackground,
-                        uncheckedTrackAlpha = 1f,
-                        checkedTrackColor = Color(50, 50, 50),
-                        checkedThumbColor = defaultOnBackground,
-                        checkedTrackAlpha = 1f
-                    )
-                )
-
-                Text("T", fontSize = 25.sp, modifier = Modifier.align(Alignment.CenterVertically))
-            }
-        }
-        Divider(
-            color = Color.Yellow,
-            thickness = 2.dp
-        )
-
     }
+}
+
+@Composable
+actual fun AutoTeleSelectorMenuTop(
+    match: MutableState<String>,
+    team: MutableIntState,
+    robotStartPosition: MutableIntState,
+    pageIndex: MutableIntState
+) {
+}
+
+@Composable
+actual fun AutoTeleSelectorMenuBottom(
+    robotStartPosition: MutableIntState,
+    team: MutableIntState,
+    selectPage: MutableState<String>,
+    backStack: BackStack<AutoTeleSelectorNode.NavTarget>,
+    mainMenuBackStack: BackStack<RootNode.NavTarget>,
+    mainMenuDialog: MutableState<Boolean>
+) {
+}
+
+@Composable
+actual fun AutoTeleSelectorMenuBottom(
+    robotStartPosition: MutableIntState,
+    team: MutableIntState,
+    pageIndex: MutableIntState,
+    backStack: BackStack<AutoTeleSelectorNode.NavTarget>,
+    mainMenuBackStack: BackStack<RootNode.NavTarget>,
+    mainMenuDialog: MutableState<Boolean>
+) {
+}
+
+@Composable
+actual fun AutoTeleSelectorMenuTop(
+    match: MutableState<String>,
+    team: MutableIntState,
+    robotStartPosition: MutableIntState
+) {
 }

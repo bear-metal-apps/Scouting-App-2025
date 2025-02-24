@@ -1,11 +1,11 @@
+
 import android.content.Context
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.MutableState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import nodes.match
 import okhttp3.Headers
 import org.json.JSONArray
 import org.json.JSONObject
@@ -13,7 +13,6 @@ import java.io.FileNotFoundException
 import java.lang.Integer.parseInt
 import java.time.Instant
 import java.util.*
-import javax.net.ssl.SSLHandshakeException
 
 /**
  * Updates match data
@@ -25,7 +24,6 @@ import javax.net.ssl.SSLHandshakeException
  * @return Returns true if ping is successful,
  *         or if match data isn't null
  */
-@RequiresApi(Build.VERSION_CODES.O)
 suspend fun sync(refresh: Boolean, context: Context): Boolean {
 
     val scope = CoroutineScope(Dispatchers.Default)
@@ -43,7 +41,6 @@ suspend fun sync(refresh: Boolean, context: Context): Boolean {
     return teamError || matchError
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 fun syncTeams(refresh: Boolean, context: Context): Boolean {
     if (!refresh){
         teamData?.let {
@@ -74,7 +71,6 @@ fun syncTeams(refresh: Boolean, context: Context): Boolean {
     return true
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 fun syncMatches(refresh: Boolean, context: Context): Boolean {
     if (!refresh){
         matchData?.let {
