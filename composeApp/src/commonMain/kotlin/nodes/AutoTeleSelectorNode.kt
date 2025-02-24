@@ -280,7 +280,6 @@ fun createOutput(team: MutableIntState, robotStartPosition: MutableIntState): St
             addProperty("park", park.value)
             addProperty("deep", deep.value)
             addProperty("shallow", shallow.value)
-            addProperty("notes", notes.value)
         })
     }
     return jsonObject.toString()
