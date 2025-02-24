@@ -14,9 +14,7 @@ import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
 import androidx.compose.material.icons.rounded.Menu
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -43,6 +41,8 @@ actual fun StratMenu(
     teams: List<Team>,
     isRedAlliance: Boolean
 ) {
+    var mutableMatchNum by remember { mutableStateOf(matchNum) }
+    
     Scaffold(
         bottomBar = {
             BottomAppBar(
@@ -178,7 +178,7 @@ actual fun StratMenu(
                             onClick = { }
                         ) {
                             Text(
-                                text = "Current Match: $matchNum",
+                                text = "Current Match: $mutableMatchNum",
                                 fontSize = 12.sp,
                                 modifier = Modifier.align(Alignment.CenterVertically)
                             )
@@ -197,6 +197,7 @@ actual fun StratMenu(
                                 onClick = {
                                     stratTeamDataArray[teamsAllianceKey(matchNum, isRedAlliance)] = createStratOutput()
                                     updateMatchNum(matchNum - 1)
+                                    mutableMatchNum = matchNum
                                     loadStratData(matchNum, isRedAlliance)
                                 }
                             ) {
@@ -219,6 +220,7 @@ actual fun StratMenu(
                                 onClick = {
                                     stratTeamDataArray[teamsAllianceKey(matchNum, isRedAlliance)] = createStratOutput()
                                     updateMatchNum(matchNum + 1)
+                                    mutableMatchNum = matchNum
                                     loadStratData(matchNum, isRedAlliance)
                                 }
                             ) {
@@ -328,6 +330,7 @@ actual fun StratMenu(
                 onClick = {
                     stratTeamDataArray[teamsAllianceKey(matchNum, isRedAlliance)] = createStratOutput()
                     nextMatch()
+                    mutableMatchNum = matchNum
                     loadStratData(matchNum, isRedAlliance)
                 }
             ) {
