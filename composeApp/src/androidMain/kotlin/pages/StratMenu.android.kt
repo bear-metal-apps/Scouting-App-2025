@@ -6,7 +6,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
@@ -17,7 +19,6 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalView
@@ -50,14 +51,14 @@ actual fun StratMenu(
                     .padding(0.dp)
             ) {
                 Row(Modifier.fillMaxWidth()) {
-                    Text(
-                        text = "Human Net",
-                        fontSize = 12.sp,
-                        color = Color.White,
-                        modifier = Modifier
-                            .rotate(-90f)
-                            .align(Alignment.CenterVertically)
-                    )
+//                    Text(
+//                        text = "Human Net",
+//                        fontSize = 12.sp,
+//                        color = Color.White,
+//                        modifier = Modifier
+//                            .rotate(-90f)
+//                            .align(Alignment.CenterVertically)
+//                    )
                     Column(modifier = Modifier.padding(0.dp)) {
                         OutlinedButton(
                             modifier = Modifier
@@ -271,11 +272,12 @@ actual fun StratMenu(
             }
         }
     ) { paddingValues ->
-
+        val scrollState = rememberScrollState()
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
+                .verticalScroll(scrollState)
         ) {
             teamList(
                 label = "Team Strategy",
@@ -364,7 +366,9 @@ fun teamList(
             )
         }
         LazyColumn(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(230.dp),
             state = lazyListState,
             contentPadding = PaddingValues(8.dp)
         ) {
