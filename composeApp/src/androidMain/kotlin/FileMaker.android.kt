@@ -301,6 +301,10 @@ fun sendPitsData(context: Context, client: Client) {
 
         val jsonObject = gson.fromJson(value, JsonObject::class.java)
 
+        client.sendData(jsonObject.toString(), "pit")
+
+        Log.i("Client", "Message Sent: ${jsonObject}")
+
 //        var bitmap: Bitmap? = null
 
 //        println(permPhotosList.toString())
@@ -326,10 +330,6 @@ fun sendPitsData(context: Context, client: Client) {
 //            client.sendData(file)
 //            println("Image sent")
 //        }
-
-        client.sendData(jsonObject.toString(), "pit")
-
-        Log.i("Client", "Message Sent: ${jsonObject}")
     }
 }
 

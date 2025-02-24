@@ -115,6 +115,9 @@ fun createStratOutput(): String {
         addProperty("isRedAlliance", isRedAlliance)
         addProperty("match", matchNum)
 
+        addProperty("humanNetScored", humanNetScored.intValue)
+        addProperty("humanNetMissed", humanNetMissed.intValue)
+
         addProperty("strategyOrder1", strategyOrder[0].number)
         println(strategyOrder)
         addProperty("strategyOrder2", strategyOrder[1].number)
@@ -150,6 +153,9 @@ fun loadStratData(match: Int, isRed: Boolean) {
 
         isRedAlliance = stratJsonObject.get("isRedAlliance").asBoolean
         matchNum = stratJsonObject.get("match").asInt
+
+        humanNetScored.value = stratJsonObject.get("humanNetScored").asInt
+        humanNetMissed.value = stratJsonObject.get("humanNetMissed").asInt
 
         repeat(3) {
             for(team in currentTeams) {
@@ -190,7 +196,13 @@ fun loadStratData(match: Int, isRed: Boolean) {
         }
 
     } else {
+        stratReset()
         stratTeamDataArray[teamsAllianceKey(match, isRed)] = createStratOutput()
     }
 
+}
+
+fun stratReset() {
+    humanNetMissed.intValue = 0
+    humanNetScored.intValue = 0
 }
