@@ -1,32 +1,36 @@
 package pages
 
-//import composables.AutoCheckboxesHorizontal
-//import composables.AutoCheckboxesVertical
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowLeft
+import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
 import androidx.compose.material.icons.rounded.Menu
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.HapticFeedbackConstantsCompat
 import androidx.core.view.ViewCompat
 import com.bumble.appyx.components.backstack.BackStack
+import com.bumble.appyx.components.backstack.operation.pop
 import defaultOnPrimary
 import defaultSecondary
-import nodes.RootNode
-import nodes.humanNetMissed
-import nodes.humanNetScored
+import nodes.*
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 
@@ -34,31 +38,38 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
 actual fun StratMenu(
     backStack: BackStack<RootNode.NavTarget>,
     scoutName: MutableState<String>,
-    comp: MutableState<String>
+    comp: MutableState<String>,
+    teams: List<Team>,
+    isRedAlliance: Boolean
 ) {
     Scaffold(
         bottomBar = {
             BottomAppBar(
                 modifier = Modifier
                     .height(100.dp)
-                    //.border(BorderStroke(2.dp, Color.Yellow), RectangleShape)
                     .padding(0.dp)
             ) {
-                Row(horizontalArrangement = Arrangement.Center) {
+                Row(Modifier.fillMaxWidth()) {
+                    Text(
+                        text = "Human Net",
+                        fontSize = 12.sp,
+                        color = Color.White,
+                        modifier = Modifier
+                            .rotate(-90f)
+                            .align(Alignment.CenterVertically)
+                    )
                     Column(modifier = Modifier.padding(0.dp)) {
                         OutlinedButton(
                             modifier = Modifier
                                 .width(150.dp)
-                                .fillMaxHeight(1 / 2f),
+                                .fillMaxHeight(0.5f),
                             border = BorderStroke(2.dp, color = Color.Yellow),
                             shape = RectangleShape,
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = defaultSecondary,
                                 contentColor = defaultOnPrimary
                             ),
-                            onClick = {
-                                humanNetScored.value += 1
-                            }
+                            onClick = { humanNetScored.value += 1 }
                         ) {
                             Box(
                                 modifier = Modifier
@@ -87,9 +98,7 @@ actual fun StratMenu(
                                 containerColor = defaultSecondary,
                                 contentColor = defaultOnPrimary
                             ),
-                            onClick = {
-                                humanNetMissed.value += 1
-                            }
+                            onClick = { humanNetMissed.value += 1 }
                         ) {
                             Box(
                                 modifier = Modifier
@@ -113,7 +122,7 @@ actual fun StratMenu(
                         OutlinedButton(
                             modifier = Modifier
                                 .width(50.dp)
-                                .fillMaxHeight(1 / 2f),
+                                .fillMaxHeight(0.5f),
                             border = BorderStroke(2.dp, color = Color.Yellow),
                             shape = RectangleShape,
                             colors = ButtonDefaults.buttonColors(
@@ -122,8 +131,7 @@ actual fun StratMenu(
                             ),
                             onClick = {
                                 humanNetScored.value -= 1
-                                if (humanNetScored.value < 0)
-                                    humanNetScored.value = 0
+                                if (humanNetScored.value < 0) humanNetScored.value = 0
                             }
                         ) {
                             Text(
@@ -144,8 +152,7 @@ actual fun StratMenu(
                             ),
                             onClick = {
                                 humanNetMissed.value -= 1
-                                if (humanNetMissed.value < 0)
-                                    humanNetMissed.value = 0
+                                if (humanNetMissed.value < 0) humanNetMissed.value = 0
                             }
                         ) {
                             Text(
@@ -155,107 +162,247 @@ actual fun StratMenu(
                             )
                         }
                     }
+                    Spacer(modifier = Modifier.weight(1f))
+                    Column(modifier = Modifier.padding(0.dp), horizontalAlignment = Alignment.End) {
+                        OutlinedButton(
+                            modifier = Modifier
+                                .width(150.dp)
+                                .fillMaxHeight(0.5f),
+                            border = BorderStroke(2.dp, color = Color.Yellow),
+                            shape = RectangleShape,
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = defaultSecondary,
+                                contentColor = defaultOnPrimary
+                            ),
+                            onClick = { }
+                        ) {
+                            Text(
+                                text = "Current Match: $matchNum",
+                                fontSize = 12.sp,
+                                modifier = Modifier.align(Alignment.CenterVertically)
+                            )
+                        }
+                        Row {
+                            OutlinedButton(
+                                modifier = Modifier
+                                    .width(75.dp)
+                                    .fillMaxHeight(),
+                                border = BorderStroke(2.dp, color = Color.Yellow),
+                                shape = RectangleShape,
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = defaultSecondary,
+                                    contentColor = defaultOnPrimary
+                                ),
+                                onClick = { updateMatchNum(matchNum - 1) }
+                            ) {
+                                Icon(
+                                    Icons.AutoMirrored.Rounded.KeyboardArrowLeft,
+                                    contentDescription = "Back",
+                                    modifier = Modifier.align(Alignment.CenterVertically)
+                                )
+                            }
+                            OutlinedButton(
+                                modifier = Modifier
+                                    .width(75.dp)
+                                    .fillMaxHeight(),
+                                border = BorderStroke(2.dp, color = Color.Yellow),
+                                shape = RectangleShape,
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = defaultSecondary,
+                                    contentColor = defaultOnPrimary
+                                ),
+                                onClick = { updateMatchNum(matchNum + 1) }
+                            ) {
+                                Icon(
+                                    Icons.AutoMirrored.Rounded.KeyboardArrowRight,
+                                    contentDescription = "Forward",
+                                    modifier = Modifier.align(Alignment.CenterVertically)
+                                )
+                            }
+                        }
+                    }
+                    Column(modifier = Modifier.padding(0.dp), horizontalAlignment = Alignment.End) {
+                        OutlinedButton(
+                            modifier = Modifier
+                                .width(125.dp)
+                                .fillMaxHeight(0.5f),
+                            border = BorderStroke(2.dp, color = Color.Yellow),
+                            shape = RectangleShape,
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = if (isRedAlliance) Color.Red else Color.Blue,
+                                contentColor = defaultOnPrimary
+                            ),
+                            onClick = { }
+                        ) {
+                            Text(
+                                text = "${if (isRedAlliance) "Red" else "Blue"} Alliance",
+                                fontSize = 12.sp,
+                                modifier = Modifier.align(Alignment.CenterVertically)
+                            )
+                        }
+                        OutlinedButton(
+                            modifier = Modifier
+                                .width(125.dp)
+                                .fillMaxHeight(),
+                            border = BorderStroke(2.dp, color = Color.Yellow),
+                            shape = RectangleShape,
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = defaultSecondary,
+                                contentColor = defaultOnPrimary
+                            ),
+                            onClick = { backStack.pop() }
+                        ) {
+                            Text(
+                                text = "Main",
+                                fontSize = 12.sp,
+                                modifier = Modifier.align(Alignment.CenterVertically)
+                            )
+                        }
+                    }
                 }
-
-//                OutlinedButton(
-//                    border = BorderStroke(2.dp, color = Color.Yellow),
-//                    shape = CircleShape,
-//                    colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
-//                    onClick = {
-//                        backStack.push(RootNode.NavTarget.MainMenu)
-//                    },
-//                    modifier = Modifier
-//                ) {
-//                    Text(
-//                        text = "Done",
-//                        color = Color.Yellow,
-//                        fontSize = 35.sp
-//                    )
-//                }
             }
         }
-    ) {
-        var strategyList by remember { mutableStateOf(mutableListOf("Team 0", "Team 1", "Team 2")) }
-        var driveSkillList by remember { mutableStateOf(mutableListOf("Team 0", "Team 1", "Team 2")) }
-        var collectorEfficiencyList by remember { mutableStateOf(mutableListOf("Team 0", "Team 1", "Team 2")) }
-        var connectionList by remember { mutableStateOf(mutableListOf("Team 0", "Team 1", "Team 2")) }
-        
+    ) { paddingValues ->
+
         Column(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
         ) {
-            teamList(strategyList, onListChanged = { strategyList = it.toMutableList(); println(strategyList) })
-            HorizontalDivider()
-            teamList(driveSkillList, onListChanged = { driveSkillList = it.toMutableList(); println(driveSkillList) })
+            teamList(
+                label = "Team Strategy",
+                teams = strategyOrder,
+                onMove = { from, to ->
+                    strategyOrder.apply {
+                        add(to, removeAt(from))
+                    }
+                }
+            )
+            teamList(
+                label = "Driving Skill",
+                teams = drivingSkillOrder,
+                onMove = { from, to ->
+                    drivingSkillOrder.apply {
+                        add(to, removeAt(from))
+                    }
+                }
+            )
+            teamList(
+                label = "Collector Efficiency",
+                teams = collectorOrder,
+                onMove = { from, to ->
+                    collectorOrder.apply {
+                        add(to, removeAt(from))
+                    }
+                }
+            )
+            teamList(
+                label = "Robot Connection",
+                teams = connectionOrder,
+                onMove = { from, to ->
+                    connectionOrder.apply {
+                        add(to, removeAt(from))
+                    }
+                }
+            )
+            OutlinedButton(
+                modifier = Modifier
+                    .padding(8.dp)
+                    .align(Alignment.CenterHorizontally),
+                border = BorderStroke(2.dp, color = Color.Yellow),
+                shape = RoundedCornerShape(100),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = defaultSecondary,
+                    contentColor = defaultOnPrimary
+                ),
+                onClick = { 
+                    nextMatch()
+                }
+            ) {
+                Text(
+                    text = "Next Match",
+                    fontSize = 12.sp,
+                    modifier = Modifier.align(Alignment.CenterVertically)
+                )
+            }
         }
     }
 }
 
 @Composable
-fun teamList(initialList: List<String>, onListChanged: (List<String>) -> Unit) {
-    val view = LocalView.current
-
-    var list by remember { mutableStateOf(initialList) }
-    val lazyListState = rememberLazyListState()
-    val reorderableLazyListState = rememberReorderableLazyListState(lazyListState) { from, to ->
-        list = list.toMutableList().apply {
-            add(to.index, removeAt(from.index))
-        }
-        onListChanged(list)
-
-        ViewCompat.performHapticFeedback(
-            view,
-            HapticFeedbackConstantsCompat.SEGMENT_FREQUENT_TICK
+fun teamList(
+    label: String,
+    teams: List<Team>,
+    onMove: (from: Int, to: Int) -> Unit
+) {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Text(
+            text = label,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier
+                .padding(top = 8.dp, start = 10.dp)
+                .align(Alignment.Start)
         )
-    }
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        state = lazyListState,
-        contentPadding = PaddingValues(8.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        items(list, key = { it }) {
-            ReorderableItem(reorderableLazyListState, key = it) { isDragging ->
-                val elevation by animateDpAsState(if (isDragging) 4.dp else 0.dp)
-
-                Surface(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(4.dp),
-                    shadowElevation = elevation,
-                    color = defaultSecondary,
-                    contentColor = defaultOnPrimary,
-                    shape = RectangleShape,
-                    border = BorderStroke(2.dp, Color.Yellow)
-                ) {
-                    Row(
+        val view = LocalView.current
+        val lazyListState = rememberLazyListState()
+        val reorderableLazyListState = rememberReorderableLazyListState(lazyListState) { from, to ->
+            onMove(from.index, to.index)
+            ViewCompat.performHapticFeedback(
+                view,
+                HapticFeedbackConstantsCompat.SEGMENT_FREQUENT_TICK
+            )
+        }
+        LazyColumn(
+            modifier = Modifier.fillMaxWidth(),
+            state = lazyListState,
+            contentPadding = PaddingValues(8.dp)
+        ) {
+            itemsIndexed(teams, key = { _, team -> team.number }) { index, team ->
+                ReorderableItem(reorderableLazyListState, key = team.number) { isDragging ->
+                    val elevation by animateDpAsState(if (isDragging) 4.dp else 0.dp)
+                    Surface(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(8.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                            .padding(4.dp),
+                        shadowElevation = elevation,
+                        color = defaultSecondary,
+                        contentColor = defaultOnPrimary,
+                        shape = RectangleShape,
+                        border = BorderStroke(2.dp, Color.Yellow)
                     ) {
-                        Text(
-                            text = it,
-                            fontSize = 12.sp,
-                            modifier = Modifier.weight(1f)
-                        )
-                        IconButton(
-                            modifier = Modifier.draggableHandle(
-                                onDragStarted = {
-                                    ViewCompat.performHapticFeedback(
-                                        view,
-                                        HapticFeedbackConstantsCompat.GESTURE_START
-                                    )
-                                },
-                                onDragStopped = {
-                                    ViewCompat.performHapticFeedback(
-                                        view,
-                                        HapticFeedbackConstantsCompat.GESTURE_END
-                                    )
-                                },
-                            ),
-                            onClick = {},
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(4.dp),
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Icon(Icons.Rounded.Menu, contentDescription = "Reorder")
+                            Text(
+                                text = "Team ${team.number}, ${team.name}",
+                                fontSize = 12.sp,
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .padding(8.dp)
+                            )
+                            IconButton(
+                                modifier = Modifier.draggableHandle(
+                                    onDragStarted = {
+                                        ViewCompat.performHapticFeedback(
+                                            view,
+                                            HapticFeedbackConstantsCompat.GESTURE_START
+                                        )
+                                    },
+                                    onDragStopped = {
+                                        ViewCompat.performHapticFeedback(
+                                            view,
+                                            HapticFeedbackConstantsCompat.GESTURE_END
+                                        )
+                                    }
+                                ),
+                                onClick = { }
+                            ) {
+                                Icon(Icons.Rounded.Menu, contentDescription = "Reorder")
+                            }
                         }
                     }
                 }

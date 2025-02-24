@@ -1,8 +1,10 @@
 package nodes
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableIntState
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.state.ToggleableState
 import com.bumble.appyx.components.backstack.BackStack
@@ -23,8 +25,6 @@ import pages.AutoTeleSelectorMenuBottom
 import pages.AutoTeleSelectorMenuTop
 import java.lang.Integer.parseInt
 import java.util.*
-import java.util.Stack
-import java.util.Objects
 
 
 class AutoTeleSelectorNode(
@@ -141,7 +141,7 @@ class TeamMatchStartKey(
     }
 
     override fun toString(): String {
-        return "${match}, ${team}"
+        return "${match}, $team"
     }
 
 }

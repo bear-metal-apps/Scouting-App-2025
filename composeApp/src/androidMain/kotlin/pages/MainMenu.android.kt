@@ -1,10 +1,8 @@
 package pages
 
- import android.content.Context
+import android.content.Context
 import android.hardware.usb.UsbManager
-import android.os.Build
 import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -31,17 +29,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import matchData
-import nodes.RootNode
-import nodes.client
- import nodes.loadData
- import nodes.match
+import nodes.*
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
-import org.json.JSONException
 import org.tahomarobotics.scouting.Client
 import sendData
 import sendDataUSB
-import setTeam
 import sync
 import teamData
 import java.lang.Integer.parseInt
@@ -73,7 +66,7 @@ actual class MainMenu actual constructor(
 
         val deviceList = manager.deviceList
 
-        Column (modifier = Modifier.verticalScroll(ScrollState(0))) {
+        Column(modifier = Modifier.verticalScroll(ScrollState(0))) {
             DropdownMenu(expanded = deviceListOpen, onDismissRequest = { deviceListOpen = false }) {
                 deviceList.forEach { (name, _) ->
                     Log.i("USB", name)
@@ -87,7 +80,7 @@ actual class MainMenu actual constructor(
                 }) {
                     Column {
                         Text("Enter new event code")
-                        TextField(tempCompKey, {tempCompKey = it})
+                        TextField(tempCompKey, { tempCompKey = it })
                     }
                 }
             }
@@ -95,10 +88,10 @@ actual class MainMenu actual constructor(
                 OutlinedButton(
                     onClick = {
                         backStack.push(RootNode.NavTarget.LoginPage)
-                              },
+                    },
                     modifier = Modifier
-                    .scale(0.75f)
-                    .align(Alignment.CenterStart)
+                        .scale(0.75f)
+                        .align(Alignment.CenterStart)
                 ) {
                     Text(text = "Login", color = getCurrentTheme().onPrimary)
                 }
@@ -110,19 +103,23 @@ actual class MainMenu actual constructor(
                 )
 
                 OutlinedButton(
-                        onClick = {
-                    backStack.push(RootNode.NavTarget.Settings)
-                           },
-                modifier = Modifier
-                    .scale(0.75f)
-                    .align(Alignment.CenterEnd)
-                        ) {
+                    onClick = {
+                        backStack.push(RootNode.NavTarget.Settings)
+                    },
+                    modifier = Modifier
+                        .scale(0.75f)
+                        .align(Alignment.CenterEnd)
+                ) {
                     Text(text = "Settings", color = getCurrentTheme().onPrimary)
                 }
 
             }
             HorizontalDivider(color = getCurrentTheme().onSurface, thickness = 2.dp)
-            Text(text="Hello ${scoutName.value}",color = getCurrentTheme().onPrimary,modifier = Modifier.align(Alignment.CenterHorizontally))
+            Text(
+                text = "Hello ${scoutName.value}",
+                color = getCurrentTheme().onPrimary,
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            )
             OutlinedButton(
                 border = BorderStroke(3.dp, Color.Yellow),
                 shape = RoundedCornerShape(25.dp),
@@ -149,9 +146,11 @@ actual class MainMenu actual constructor(
                 )
             }
 
-            Box(modifier= Modifier
-                .align(Alignment.CenterHorizontally)
-                .offset((-100).dp, (-50).dp)) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .offset((-100).dp, (-50).dp)
+            ) {
                 DropdownMenu(
                     expanded = selectedPlacement,
                     onDismissRequest = { selectedPlacement = false },
@@ -175,7 +174,7 @@ actual class MainMenu actual constructor(
                                 .border(BorderStroke(color = Color.Yellow, width = 3.dp))
                                 .size(100.dp, 100.dp)
                                 .background(color = Color(60, 30, 30)),
-                            text =  { Text("R1", fontSize = 22.sp, color = Color.White) }
+                            text = { Text("R1", fontSize = 22.sp, color = Color.White) }
                         )
                         DropdownMenuItem(
                             onClick = {
@@ -269,6 +268,63 @@ actual class MainMenu actual constructor(
                     }
                 }
             }
+
+            var selectedAlliance by remember { mutableStateOf(false) }
+            OutlinedButton(
+                border = BorderStroke(3.dp, Color.Yellow),
+                shape = RoundedCornerShape(25.dp),
+                contentPadding = PaddingValues(horizontal = 80.dp, vertical = 5.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
+                onClick = {
+                    selectedAlliance = true
+                },
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(horizontal = 50.dp, vertical = 50.dp),
+
+                ) {
+                Text(
+                    text = "Strategy",
+                    color = getCurrentTheme().onPrimary,
+                    fontSize = 35.sp
+                )
+            }
+            Box(
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .offset((-75).dp, (-50).dp)
+            ) {
+                DropdownMenu(
+                    expanded = selectedAlliance,
+                    onDismissRequest = { selectedAlliance = false },
+                    modifier = Modifier
+                        .background(color = Color(0, 0, 0))
+                ) {
+                    DropdownMenuItem(
+                        onClick = {
+                            selectedAlliance = false
+                            setContext(true)
+                            backStack.push(RootNode.NavTarget.StratScreen)
+                        },
+                        modifier = Modifier
+                            .border(BorderStroke(color = Color.Yellow, width = 3.dp))
+                            .background(color = Color(60, 30, 30)),
+                        text = { Text("Red Alliance", fontSize = 22.sp, color = Color.White) }
+                    )
+                    DropdownMenuItem(
+                        onClick = {
+                            selectedAlliance = false
+                            backStack.push(RootNode.NavTarget.StratScreen)
+                            setContext(false)
+                        },
+                        modifier = Modifier
+                            .border(BorderStroke(color = Color.Yellow, width = 3.dp))
+                            .background(color = Color(30, 30, 60)),
+                        text = { Text("Blue Alliance", fontSize = 22.sp, color = Color.White) }
+                    )
+                }
+            }
+            
             OutlinedButton(
                 border = BorderStroke(3.dp, Color.Yellow),
                 shape = RoundedCornerShape(25.dp),
@@ -292,34 +348,14 @@ actual class MainMenu actual constructor(
             OutlinedButton(
                 border = BorderStroke(3.dp, Color.Yellow),
                 shape = RoundedCornerShape(25.dp),
-                contentPadding = PaddingValues(horizontal = 80.dp, vertical = 5.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
-                onClick = {
-                    backStack.push(RootNode.NavTarget.StratScreen)
-                },
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(horizontal = 50.dp, vertical = 50.dp),
-
-                ) {
-                Text(
-                    text = "Strat-Scouting",
-                    color = getCurrentTheme().onPrimary,
-                    fontSize = 35.sp
-                )
-            }
-
-            OutlinedButton(
-                border = BorderStroke(3.dp, Color.Yellow),
-                shape = RoundedCornerShape(25.dp),
                 contentPadding = PaddingValues(horizontal = 10.dp, vertical = 15.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
                 onClick = {
                     val scope = CoroutineScope(Dispatchers.Default)
                     scope.launch {
                         sync(true, context)
-                        teamSyncedResource = if (teamData != null)  "checkmark.png" else "crossmark.png"
-                        matchSyncedResource = if (matchData != null)  "checkmark.png" else "crossmark.png"
+                        teamSyncedResource = if (teamData != null) "checkmark.png" else "crossmark.png"
+                        matchSyncedResource = if (matchData != null) "checkmark.png" else "crossmark.png"
                     }
                 },
                 modifier = Modifier
@@ -341,8 +377,8 @@ actual class MainMenu actual constructor(
 
                     Spacer(modifier = Modifier.height(10.dp))
 
-                    Box(Modifier.fillMaxWidth(1f/2f)) {
-                        Text ("Robot List")
+                    Box(Modifier.fillMaxWidth(1f / 2f)) {
+                        Text("Robot List")
 
                         Image(
                             painterResource(res = teamSyncedResource),
@@ -355,8 +391,8 @@ actual class MainMenu actual constructor(
 
                     Spacer(modifier = Modifier.height(10.dp))
 
-                    Box(Modifier.fillMaxWidth(1f/2f)) {
-                        Text ("Match List")
+                    Box(Modifier.fillMaxWidth(1f / 2f)) {
+                        Text("Match List")
 
                         Image(
                             painterResource(res = matchSyncedResource),
@@ -398,7 +434,7 @@ actual class MainMenu actual constructor(
                 Text("Export")
             }
 
-            Box(modifier = Modifier.fillMaxSize()){
+            Box(modifier = Modifier.fillMaxSize()) {
                 OutlinedButton(
                     border = BorderStroke(3.dp, Color.Yellow),
                     shape = RoundedCornerShape(25.dp),

@@ -5,7 +5,7 @@ import androidx.compose.runtime.MutableState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import nodes.match
+import nodes.Team
 import okhttp3.Headers
 import org.json.JSONArray
 import org.json.JSONObject
@@ -142,4 +142,33 @@ actual fun setTeam(
         }
         teamNum.intValue = parseInt((teamKey as String).slice(3..<teamKey.length))
     }
+}
+
+actual fun getTeamsOnAlliance(matchNumber: Int, isRedAlliance: Boolean): List<Team> {
+    val teams = mutableListOf<Team>()
+    matchData?.let { data ->
+        val matches = data.getJSONArray("matches")
+        for (i in 0 until matches.length()) {
+            val match = matches.getJSONObject(i)
+            if (match.getString("comp_level") == "qm" && match.getInt("match_number") == matchNumber) {
+                val alliance = if (isRedAlliance) {
+                    match.getJSONObject("alliances").getJSONObject("red").getJSONArray("team_keys")
+                } else {
+                    match.getJSONObject("alliances").getJSONObject("blue").getJSONArray("team_keys")
+                }
+                for (j in 0 until alliance.length()) {
+                    val teamKey = alliance.getString(j)
+                    val teamNumber = teamKey.substring(3).toInt()
+                    val teamName = teamData?.getJSONArray("teams")?.let { teamsArray ->
+                        (0 until teamsArray.length()).map { index ->
+                            teamsArray.getJSONObject(index)
+                        }.find { it.getString("key") == teamKey }?.getString("nickname") ?: "Unknown"
+                    } ?: "Unknown"
+                    teams.add(Team(number = teamNumber, name = teamName))
+                }
+                break
+            }
+        }
+    }
+    return teams
 }

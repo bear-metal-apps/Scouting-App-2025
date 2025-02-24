@@ -1,6 +1,7 @@
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import nodes.Team
 import okhttp3.Headers
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -28,6 +29,8 @@ fun run(url: String, headers: Headers): String {
 }
 
 expect fun setTeam(teamNum: MutableIntState, match: MutableState<String>, robotStartPosition: Int)
+
+expect fun getTeamsOnAlliance(matchNumber: Int, isRedAlliance: Boolean): List<Team>
 
 var lastSynced = mutableStateOf(Instant.now())
 
