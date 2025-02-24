@@ -1,38 +1,15 @@
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.ImageDecoder
-import android.graphics.ImageDecoder.decodeBitmap
-import android.content.Context.USB_SERVICE
-import android.graphics.ImageDecoder.decodeBitmap
-import android.hardware.usb.UsbConstants.USB_DIR_OUT
-import android.hardware.usb.UsbManager
-import android.hardware.usb.UsbRequest
-import android.net.Uri
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
-import androidx.compose.compiler.plugins.kotlin.write
-import androidx.compose.ui.platform.LocalContext
-import androidx.core.net.toFile
 import com.google.gson.Gson
-import com.google.gson.JsonArray
 import com.google.gson.JsonObject
-import com.google.gson.JsonParser
-import nodes.TeamMatchStartKey
-import nodes.jsonObject
-import nodes.permPhotosList
-import nodes.photoArray
-import nodes.pitsTeamDataArray
-import nodes.scoutedTeamNumber
-import nodes.teamDataArray
+import nodes.*
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 import org.tahomarobotics.scouting.Client
-import org.tahomarobotics.scouting.ComposeFileProvider
 import java.io.*
-import java.lang.Integer.parseInt
-import java.nio.ByteBuffer
 import java.lang.Integer.parseInt
 
 var matchFolder : File? = null
@@ -283,8 +260,8 @@ fun deleteFile(context: Context){
 /**
  *@param scoutingType should be "match", "strat", or "pit"
  */
-fun sendData(context: Context, client: Client) {
-    println("reached beginning of sendData")
+fun sendMatchData(context: Context, client: Client) {
+//    println("reached beginning of sendData")
     exportScoutData(context) // does nothing
 
     val gson = Gson()
@@ -296,6 +273,29 @@ fun sendData(context: Context, client: Client) {
 
         Log.i("Client", "Message Sent: ${jsonObject.toString()}")
     }
+
+}
+
+fun sendStratData(context: Context, client: Client) {
+//    println("reached beginning of sendData")
+    exportScoutData(context) // does nothing
+
+    val gson = Gson()
+
+    for((key, value) in stratTeamDataArray.entries) {
+        val jsonObject = gson.fromJson(value, JsonObject::class.java)
+
+        client.sendData(jsonObject.toString(), "strat")
+
+        Log.i("Client", "Message Sent: ${jsonObject.toString()}")
+    }
+
+}
+
+fun sendPitsData(context: Context, client: Client) {
+    exportScoutData(context) // does nothing
+
+    val gson = Gson()
 
     for((key, value) in pitsTeamDataArray.entries) {
 
@@ -331,7 +331,6 @@ fun sendData(context: Context, client: Client) {
 
         Log.i("Client", "Message Sent: ${jsonObject}")
     }
-
 }
 
 @RequiresApi(Build.VERSION_CODES.O)

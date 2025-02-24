@@ -193,7 +193,11 @@ actual fun StratMenu(
                                     containerColor = defaultSecondary,
                                     contentColor = defaultOnPrimary
                                 ),
-                                onClick = { updateMatchNum(matchNum - 1) }
+                                onClick = {
+                                    stratTeamDataArray[teamsAllianceKey(matchNum, isRedAlliance)] = createStratOutput()
+                                    updateMatchNum(matchNum - 1)
+                                    loadStratData(matchNum, isRedAlliance)
+                                }
                             ) {
                                 Icon(
                                     Icons.AutoMirrored.Rounded.KeyboardArrowLeft,
@@ -211,7 +215,11 @@ actual fun StratMenu(
                                     containerColor = defaultSecondary,
                                     contentColor = defaultOnPrimary
                                 ),
-                                onClick = { updateMatchNum(matchNum + 1) }
+                                onClick = {
+                                    stratTeamDataArray[teamsAllianceKey(matchNum, isRedAlliance)] = createStratOutput()
+                                    updateMatchNum(matchNum + 1)
+                                    loadStratData(matchNum, isRedAlliance)
+                                }
                             ) {
                                 Icon(
                                     Icons.AutoMirrored.Rounded.KeyboardArrowRight,
@@ -250,7 +258,7 @@ actual fun StratMenu(
                                 containerColor = defaultSecondary,
                                 contentColor = defaultOnPrimary
                             ),
-                            onClick = { backStack.pop() }
+                            onClick = { stratTeamDataArray[teamsAllianceKey(matchNum, isRedAlliance)] = createStratOutput(); backStack.pop() }
                         ) {
                             Text(
                                 text = "Main",
@@ -315,8 +323,10 @@ actual fun StratMenu(
                     containerColor = defaultSecondary,
                     contentColor = defaultOnPrimary
                 ),
-                onClick = { 
+                onClick = {
+                    stratTeamDataArray[teamsAllianceKey(matchNum, isRedAlliance)] = createStratOutput()
                     nextMatch()
+                    loadStratData(matchNum, isRedAlliance)
                 }
             ) {
                 Text(

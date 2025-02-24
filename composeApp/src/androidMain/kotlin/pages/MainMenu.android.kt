@@ -10,6 +10,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -33,8 +34,10 @@ import nodes.*
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import org.tahomarobotics.scouting.Client
-import sendData
+import sendMatchData
 import sendDataUSB
+import sendPitsData
+import sendStratData
 import sync
 import teamData
 import java.lang.Integer.parseInt
@@ -65,6 +68,8 @@ actual class MainMenu actual constructor(
         var tempCompKey by remember { mutableStateOf(compKey) }
 
         val deviceList = manager.deviceList
+
+        var exportPopup by remember { mutableStateOf(false) }
 
         Column(modifier = Modifier.verticalScroll(ScrollState(0))) {
             DropdownMenu(expanded = deviceListOpen, onDismissRequest = { deviceListOpen = false }) {
@@ -304,7 +309,10 @@ actual class MainMenu actual constructor(
                         onClick = {
                             selectedAlliance = false
                             setContext(true)
+                            isRedAlliance = true
                             backStack.push(RootNode.NavTarget.StratScreen)
+
+                            loadStratData(matchNum, isRedAlliance)
                         },
                         modifier = Modifier
                             .border(BorderStroke(color = Color.Yellow, width = 3.dp))
@@ -314,8 +322,11 @@ actual class MainMenu actual constructor(
                     DropdownMenuItem(
                         onClick = {
                             selectedAlliance = false
-                            backStack.push(RootNode.NavTarget.StratScreen)
                             setContext(false)
+                            isRedAlliance = false
+                            backStack.push(RootNode.NavTarget.StratScreen)
+
+                            loadStratData(matchNum, isRedAlliance)
                         },
                         modifier = Modifier
                             .border(BorderStroke(color = Color.Yellow, width = 3.dp))
@@ -411,24 +422,7 @@ actual class MainMenu actual constructor(
                 contentPadding = PaddingValues(horizontal = 10.dp, vertical = 15.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
                 onClick = {
-                    val scope = CoroutineScope(Dispatchers.Default)
-                    scope.launch {
-                        if (client == null)
-                            client = Client()
-
-                        if (!client!!.isConnected) {
-                            client!!.discoverAndConnect()
-                        }
-                    }
-                    scope.launch {
-                        while (client == null || client?.isConnected != true) {
-//                            println("client is null or not connected")
-                        }
-                        sendData(
-                            context = context,
-                            client = client!!,
-                        )
-                    }
+                    exportPopup = true
                 }
             ) {
                 Text("Export")
@@ -452,7 +446,122 @@ actual class MainMenu actual constructor(
             }
             Text(tempCompKey)
         }
+
+        if(exportPopup) {
+            BasicAlertDialog(
+                onDismissRequest = { exportPopup = false },
+                modifier = Modifier.clip(
+                    RoundedCornerShape(5.dp)
+                ).border(BorderStroke(3.dp, getCurrentTheme().primaryVariant), RoundedCornerShape(5.dp))
+                    .background(getCurrentTheme().secondary)
+            ) {
+                Box(modifier = Modifier.fillMaxWidth(8f / 10f).padding(5.dp).fillMaxHeight(2/8f)) {
+                    Text(text = "What do you want to export?",
+                        modifier = Modifier.padding(5.dp).align(Alignment.TopCenter)
+                    )
+                    Column(
+                        modifier = Modifier.align(Alignment.Center)
+                    ) {
+                        androidx.compose.material.OutlinedButton(
+                            onClick = {
+                                val scope = CoroutineScope(Dispatchers.Default)
+                                scope.launch {
+                                    if (client == null)
+                                        client = Client()
+
+                                    if (!client!!.isConnected) {
+                                        client!!.discoverAndConnect()
+                                    }
+                                }
+                                scope.launch {
+                                    while (client == null || client?.isConnected != true) {
+//                                     println("client is null or not connected")
+                                    }
+                                    sendMatchData(
+                                        context = context,
+                                        client = client!!,
+                                    )
+                                }
+                                exportPopup = false
+                            },
+                            border = BorderStroke(2.dp, getCurrentTheme().secondaryVariant),
+                            colors = androidx.compose.material.ButtonDefaults.outlinedButtonColors(
+                                backgroundColor = getCurrentTheme().secondary,
+                                contentColor = getCurrentTheme().onSecondary
+                            ),
+                            modifier = Modifier.align(Alignment.CenterHorizontally)
+                        ) {
+                            Text(text = "Match", color = getCurrentTheme().error)
+                        }
+                        androidx.compose.material.OutlinedButton(
+                            onClick = {
+                                val scope = CoroutineScope(Dispatchers.Default)
+                                scope.launch {
+                                    if (client == null)
+                                        client = Client()
+
+                                    if (!client!!.isConnected) {
+                                        client!!.discoverAndConnect()
+                                    }
+                                }
+                                scope.launch {
+                                    while (client == null || client?.isConnected != true) {
+//                                     println("client is null or not connected")
+                                    }
+                                    sendStratData(
+                                        context = context,
+                                        client = client!!,
+                                    )
+                                }
+                                exportPopup = false
+                            },
+                            border = BorderStroke(2.dp, getCurrentTheme().secondaryVariant),
+                            colors = androidx.compose.material.ButtonDefaults.outlinedButtonColors(
+                                backgroundColor = getCurrentTheme().secondary,
+                                contentColor = getCurrentTheme().onSecondary
+                            ),
+                            modifier = Modifier.align(Alignment.CenterHorizontally)
+                        ) {
+                            Text(text = "Strat", color = getCurrentTheme().error)
+                        }
+                        androidx.compose.material.OutlinedButton(
+                            onClick = {
+                                val scope = CoroutineScope(Dispatchers.Default)
+                                scope.launch {
+                                    if (client == null)
+                                        client = Client()
+
+                                    if (!client!!.isConnected) {
+                                        client!!.discoverAndConnect()
+                                    }
+                                }
+                                scope.launch {
+                                    while (client == null || client?.isConnected != true) {
+//                                     println("client is null or not connected")
+                                    }
+                                    sendPitsData(
+                                        context = context,
+                                        client = client!!,
+                                    )
+                                }
+                                exportPopup = false
+                            },
+                            border = BorderStroke(2.dp, getCurrentTheme().secondaryVariant),
+                            colors = androidx.compose.material.ButtonDefaults.outlinedButtonColors(
+                                backgroundColor = getCurrentTheme().secondary,
+                                contentColor = getCurrentTheme().onSecondary
+                            ),
+                            modifier = Modifier.align(Alignment.CenterHorizontally)
+                        ) {
+                            Text(text = "Pits", color = getCurrentTheme().error)
+                        }
+                    }
+                }
+            }
+        }
+
     }
+
 }
 
 var ipAddress = mutableStateOf("127.0.0.1")
