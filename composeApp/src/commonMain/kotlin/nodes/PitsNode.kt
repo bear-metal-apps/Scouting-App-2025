@@ -3,11 +3,7 @@ package nodes
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.state.ToggleableState
 import com.bumble.appyx.components.backstack.BackStack
@@ -18,7 +14,6 @@ import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import compKey
 import pages.PitsScoutMenu
-import java.net.URI
 
 class PitsNode(
     buildContext: BuildContext,
@@ -98,10 +93,10 @@ fun createPitsOutput(team: MutableIntState): String {
 //    }
 
     jsonObject = JsonObject().apply {
-        addProperty("comp", compKey)
-        addProperty("scoutedTeamName", scoutedTeamName.value)
-        addProperty("scoutedTeamNumber", scoutedTeamNumber.value)
-        addProperty("scoutName", scoutName.value)
+        addProperty("team", scoutedTeamNumber.value)
+        addProperty("team_name", scoutedTeamName.value)
+        addProperty("event_key", compKey)
+        addProperty("scout_name", scoutName.value)
         for((index, value) in photoArray.withIndex()) {
             addProperty("Photo${index}", value)
         }

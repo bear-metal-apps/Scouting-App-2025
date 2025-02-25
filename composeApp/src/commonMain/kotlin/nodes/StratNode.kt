@@ -13,7 +13,6 @@ import com.google.gson.JsonObject
 import getTeamsOnAlliance
 import pages.StratMenu
 import java.util.*
-import kotlin.collections.HashMap
 
 class StratNode(
     buildContext: BuildContext,
@@ -112,14 +111,13 @@ fun createStratOutput(): String {
     val gson = Gson()
 
     stratJsonObject = JsonObject().apply {
-        addProperty("isRedAlliance", isRedAlliance)
-        addProperty("match", matchNum)
+        addProperty("event_key", matchNum)
+        addProperty("is_red_alliance", isRedAlliance)
 
         addProperty("humanNetScored", humanNetScored.intValue)
         addProperty("humanNetMissed", humanNetMissed.intValue)
 
         addProperty("strategyOrder1", strategyOrder[0].number)
-        println(strategyOrder)
         addProperty("strategyOrder2", strategyOrder[1].number)
         addProperty("strategyOrder3", strategyOrder[2].number)
 
@@ -151,8 +149,8 @@ fun loadStratData(match: Int, isRed: Boolean) {
         stratJsonObject = gson.fromJson(stratTeamDataArray[teamsAllianceKey(match, isRed)], JsonObject::class.java)
         currentTeams = getTeamsOnAlliance(match, isRed)
 
-        isRedAlliance = stratJsonObject.get("isRedAlliance").asBoolean
-        matchNum = stratJsonObject.get("match").asInt
+        isRedAlliance = stratJsonObject.get("is_red_alliance").asBoolean
+        matchNum = stratJsonObject.get("event_key").asInt
 
         humanNetScored.value = stratJsonObject.get("humanNetScored").asInt
         humanNetMissed.value = stratJsonObject.get("humanNetMissed").asInt
