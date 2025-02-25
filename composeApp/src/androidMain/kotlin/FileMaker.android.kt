@@ -1,4 +1,7 @@
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.ImageDecoder
+import android.graphics.ImageDecoder.decodeBitmap
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
@@ -9,6 +12,7 @@ import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 import org.tahomarobotics.scouting.Client
+import org.tahomarobotics.scouting.ComposeFileProvider
 import java.io.*
 import java.lang.Integer.parseInt
 
@@ -132,12 +136,12 @@ fun loadPitsDataFiles(context: Context) {
                 JsonObject::class.java
             )
             pitsTeamDataArray[
-                jsonObject.get("scoutedTeamNumber").asInt
+                jsonObject.get("team").asInt
             ] = jsonObject.toString()
 
             println(pitsFolder?.listFiles()?.toList()?.get(index).toString())
             println(pitsTeamDataArray[
-                jsonObject.get("scoutedTeamNumber").asInt
+                jsonObject.get("team").asInt
             ])
         }
     }
@@ -293,6 +297,7 @@ fun sendStratData(context: Context, client: Client) {
 }
 
 fun sendPitsData(context: Context, client: Client) {
+    println("reached start of sendData function")
     exportScoutData(context) // does nothing
 
     val gson = Gson()
@@ -304,33 +309,35 @@ fun sendPitsData(context: Context, client: Client) {
         client.sendData(jsonObject.toString(), "pit")
 
         Log.i("Client", "Message Sent: ${jsonObject}")
-
-//        var bitmap: Bitmap? = null
-
-//        println(permPhotosList.toString())
-//        for((index) in permPhotosList.withIndex()) {
-//            println("reached2")
-//            var file = File(ComposeFileProvider.getImageUri(context, parseInt(jsonObject.get("scoutedTeamNumber").asString), "Photo${index}").toString())
-////            file.delete()
-////            file = Uri.parse(permPhotosList[index]).toFile()
-//
-//            var bos = ByteArrayOutputStream()
-//
-//            // Assuming you're inside a Composable function
-//            val contentResolver = context.contentResolver
-//            val uri = /*Uri.parse(permPhotosList[index])*/ComposeFileProvider.getImageUri(context, parseInt(jsonObject.get("scoutedTeamNumber").asString), "Photo${index}")
-//            println(uri.toString())
-//            val bitmap = decodeBitmap(ImageDecoder.createSource(contentResolver, uri))
-//            bitmap.compress(Bitmap.CompressFormat.JPEG,0, bos)
-//
-//            val byteArray = bos.toByteArray()
-//
-//            file.writeBytes(byteArray)
-//
-//            client.sendData(file)
-//            println("Image sent")
-//        }
     }
+
+    var bitmap: Bitmap? = null
+
+    println(permPhotosList.toString())
+    for((index) in permPhotosList.withIndex()) {
+        println("reached2")
+        var file = File(ComposeFileProvider.getImageUri(context, parseInt(jsonObject.get("team").asString), "Photo${index}").toString())
+        if(file.exists()) {
+            println("Found image file ${file.path}")
+        }
+
+        var bos = ByteArrayOutputStream()
+
+        // Assuming you're inside a Composable function
+        val contentResolver = context.contentResolver
+        val uri = /*Uri.parse(permPhotosList[index])*/ComposeFileProvider.getImageUri(context, parseInt(jsonObject.get("team").asString), "Photo${index}")
+        println("Uri used to create bitmap: ${uri}")
+        val bitmap = decodeBitmap(ImageDecoder.createSource(contentResolver, uri))
+        bitmap.compress(Bitmap.CompressFormat.JPEG,0, bos)
+
+        val byteArray = bos.toByteArray()
+
+        file.writeBytes(byteArray)
+
+        client.sendData(file)
+        println("Image sent")
+    }
+
 }
 
 @RequiresApi(Build.VERSION_CODES.O)

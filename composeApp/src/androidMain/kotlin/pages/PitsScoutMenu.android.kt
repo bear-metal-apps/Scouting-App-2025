@@ -94,6 +94,7 @@ import nodes.createPitsOutput
 import nodes.cycleTime
 import nodes.defensePreferred
 import nodes.driveType
+import nodes.jsonObject
 import nodes.l1
 import nodes.l2
 import nodes.l3
