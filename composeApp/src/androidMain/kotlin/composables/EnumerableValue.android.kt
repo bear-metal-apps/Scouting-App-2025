@@ -39,6 +39,7 @@ actual fun EnumerableValue(label: String, value: MutableIntState, alignment: Ali
                 undoList.push(arrayOf("number" ,value, value.value))
                 value.value += 1
                 redoList.push(arrayOf("number" ,value, value.value))
+                saveData.value = true
             },
             interactionSource = interact,
             modifier = modifier
@@ -58,6 +59,7 @@ actual fun EnumerableValue(label: String, value: MutableIntState, alignment: Ali
                         undoList.push(arrayOf("number" ,value, value.value))
                         value.value -= 1
                         redoList.push(arrayOf("number" ,value, value.value))
+                        saveData.value = true
                     },
                     interactionSource = interact,
                     modifier = Modifier.align(alignment)

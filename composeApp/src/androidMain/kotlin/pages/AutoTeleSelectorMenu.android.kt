@@ -61,6 +61,8 @@ actual fun AutoTeleSelectorMenuTop(
         first = false
     }
 
+    println(saveData.value)
+
     when {
 //        openError.value -> {
 //            InternetErrorAlert {
@@ -472,16 +474,18 @@ actual fun AutoTeleSelectorMenuBottom(
                             createScoutMatchDataFile(context, match.value, team.intValue, createOutput(team, robotStartPosition))
                             println(teamDataArray)
                             mainMenuBackStack.pop()
+
+                            saveData.value = true
                         } else {
                             teamDataArray[TeamMatchStartKey(parseInt(match.value), team.intValue, robotStartPosition.intValue)] = createOutput(team, robotStartPosition)
                             createScoutMatchDataFile(context, match.value, team.intValue, createOutput(team, robotStartPosition))
                             match.value = (parseInt(match.value) + 1).toString()
                             reset()
                             backStack.push(AutoTeleSelectorNode.NavTarget.AutoScouting)
-                            println(teamDataArray)
+
+                            saveData.value = false
                         }
                         saveDataPopup.value = false
-                        saveData.value = true
                     },
                     border = BorderStroke(2.dp, getCurrentTheme().secondaryVariant),
                     colors = androidx.compose.material.ButtonDefaults.outlinedButtonColors(backgroundColor = getCurrentTheme().secondary, contentColor = getCurrentTheme().onSecondary),

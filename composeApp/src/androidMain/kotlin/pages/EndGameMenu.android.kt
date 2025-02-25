@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.components.backstack.operation.pop
+import com.bumble.appyx.components.backstack.operation.push
 import composables.Cage
 import composables.Comments
 import composables.EndGameCheckBox
@@ -44,6 +45,7 @@ import nodes.deep
 import nodes.notes
 import nodes.park
 import nodes.playedDefense
+import nodes.reset
 import nodes.saveData
 import nodes.saveDataPopup
 import nodes.saveDataSit
@@ -117,6 +119,11 @@ actual fun EndGameMenu(
                         teamDataArray[TeamMatchStartKey(parseInt(match.value), team.intValue, robotStartPosition.intValue)] = createOutput(team, robotStartPosition)
                         //Save permanent data
                         createScoutMatchDataFile(context, match.value, team.intValue, createOutput(team, robotStartPosition))
+
+                        match.value = (parseInt(match.value) + 1).toString()
+                        reset()
+                        saveData.value = false
+                        backStack.push(AutoTeleSelectorNode.NavTarget.AutoScouting)
                     } else {
                         saveDataPopup.value = true
                         saveDataSit.value = false
