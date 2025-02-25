@@ -1,5 +1,6 @@
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.ImageDecoder
 import android.graphics.ImageDecoder.decodeBitmap
 import android.os.Build
@@ -316,26 +317,44 @@ fun sendPitsData(context: Context, client: Client) {
     println(permPhotosList.toString())
     for((index) in permPhotosList.withIndex()) {
         println("reached2")
-        var file = File(ComposeFileProvider.getImageUri(context, parseInt(jsonObject.get("team").asString), "Photo${index}").toString())
-        if(file.exists()) {
-            println("Found image file ${file.path}")
-        }
-
-        var bos = ByteArrayOutputStream()
-
-        // Assuming you're inside a Composable function
-        val contentResolver = context.contentResolver
+//        val file = File(context.filesDir, "imageFile")
+//        file.delete()
+//        file.createNewFile()
+//        if(file.exists()) {
+//            println("Found image file ${file.path}")
+//        }
+//
+//        var bos = ByteArrayOutputStream()
+//
+//        // Assuming you're inside a Composable function
+//        val contentResolver = context.contentResolver
         val uri = /*Uri.parse(permPhotosList[index])*/ComposeFileProvider.getImageUri(context, parseInt(jsonObject.get("team").asString), "Photo${index}")
-        println("Uri used to create bitmap: ${uri}")
-        val bitmap = decodeBitmap(ImageDecoder.createSource(contentResolver, uri))
-        bitmap.compress(Bitmap.CompressFormat.JPEG,0, bos)
+//        println("Uri used to create bitmap: ${uri}")
+//        val source = ImageDecoder.createSource(contentResolver, uri)
+//        val bitmap = ImageDecoder.decodeBitmap(source)
+//        bitmap.compress(Bitmap.CompressFormat.JPEG,0, bos)
+//
+//        val byteArray = bos.toByteArray()
+//
+//        file.writeBytes(byteArray)
+//
+//        client.sendData(file)
+//        println("Image sent")
 
+        val inputStream = context.contentResolver.openInputStream(uri)
+        val bitmap = BitmapFactory.decodeStream(inputStream)
+        inputStream?.close()
+
+        val bos = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos) // Adjust quality as needed
         val byteArray = bos.toByteArray()
+        bos.close()
 
+        val file = File(context.filesDir, "imageFile")
         file.writeBytes(byteArray)
 
         client.sendData(file)
-        println("Image sent")
+        println("Image sent: $file")
     }
 
 }

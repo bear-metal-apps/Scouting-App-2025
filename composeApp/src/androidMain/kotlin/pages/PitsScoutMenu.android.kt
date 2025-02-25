@@ -258,6 +258,7 @@ actual fun PitsScoutMenu(
                                     for(img in permPhotosList) {
                                         if(img == uri.toString()) {
                                             permPhotosList.remove(uri.toString())
+                                            println("deleted ${uri}")
                                         }
                                     }
                                     permPhotosList.add(uri.toString())
