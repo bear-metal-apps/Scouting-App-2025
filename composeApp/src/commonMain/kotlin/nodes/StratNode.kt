@@ -10,6 +10,7 @@ import com.bumble.appyx.navigation.modality.BuildContext
 import com.bumble.appyx.navigation.node.Node
 import com.google.gson.Gson
 import com.google.gson.JsonObject
+import compKey
 import getTeamsOnAlliance
 import pages.StratMenu
 import java.util.*
@@ -111,7 +112,8 @@ fun createStratOutput(): String {
     val gson = Gson()
 
     stratJsonObject = JsonObject().apply {
-        addProperty("event_key", matchNum)
+        addProperty("event_key", compKey)
+        addProperty("match", matchNum)
         addProperty("is_red_alliance", isRedAlliance)
 
         addProperty("humanNetScored", humanNetScored.intValue)
