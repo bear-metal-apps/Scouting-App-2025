@@ -435,12 +435,12 @@ actual fun PitsScoutMenu(
                         DropdownMenuItem(
                             {
                                 Text(
-                                    text = "Omni",
+                                    text = "Other",
                                     color = Color.White
                                 )
                             },
                             onClick = {
-                                driveType.value = "Omni"
+                                driveType.value = "Other"
                                 dropDownExpanded = false
                             }
                         )
@@ -450,23 +450,6 @@ actual fun PitsScoutMenu(
                             thickness = 3.dp
                         )
 
-                        DropdownMenuItem(
-                            {
-                                Text(
-                                    text = "H-Drive",
-                                    color = Color.White
-                                )
-                            },
-                            onClick = {
-                                driveType.value = "H-Drive"
-                                dropDownExpanded = false
-                            }
-                        )
-
-                        HorizontalDivider(
-                            color = getCurrentTheme().onSurface,
-                            thickness = 3.dp
-                        )
                     }
 //                    colors = TextFieldDefaults.colors(focusedContainerColor = Color.Transparent, focusedTextColor = Color.White),
                 }
