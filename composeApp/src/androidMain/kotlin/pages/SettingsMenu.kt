@@ -26,6 +26,7 @@ import com.bumble.appyx.navigation.modality.BuildContext
 import com.bumble.appyx.navigation.node.Node
 import getCurrentTheme
 import nodes.RootNode
+import nodes.miniMinus
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import theme
@@ -153,7 +154,29 @@ actual fun SettingsMenu(
             color = getCurrentTheme().onPrimary,
             modifier = Modifier,
         )
+        Row{
+            Switch(
+                checked = miniMinus.value,
+                onCheckedChange = { miniMinus.value = !miniMinus.value },
+                colors = SwitchDefaults.colors(
+                    checkedThumbColor = getCurrentTheme().primaryVariant,
+                    checkedTrackColor = getCurrentTheme().secondaryVariant,
+                    uncheckedThumbColor = getCurrentTheme().error,
+                    uncheckedTrackColor = getCurrentTheme().onPrimary,
+                ),
+                modifier = Modifier
+                    .scale(2f)
+                    .padding(25.dp)
 
+            )
+            Text(
+                text = "Mini-Minus Buttons",
+                fontSize = 25.sp,
+                color = getCurrentTheme().onPrimary,
+                modifier = Modifier
+                    .padding(28.dp)
+            )
+        }
         HorizontalDivider(thickness = 2.dp, color = getCurrentTheme().primaryVariant)
     OutlinedButton(
         onClick = {
