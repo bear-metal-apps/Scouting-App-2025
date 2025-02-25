@@ -8,10 +8,9 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowLeft
-import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
 import androidx.compose.material.icons.rounded.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -21,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.HapticFeedbackConstantsCompat
@@ -42,7 +42,7 @@ actual fun StratMenu(
     isRedAlliance: Boolean
 ) {
     var mutableMatchNum by remember { mutableStateOf(matchNum) }
-    
+
     Scaffold(
         bottomBar = {
             BottomAppBar(
@@ -164,72 +164,40 @@ actual fun StratMenu(
                         }
                     }
                     Spacer(modifier = Modifier.weight(1f))
-                    Column(modifier = Modifier.padding(0.dp), horizontalAlignment = Alignment.End) {
-                        OutlinedButton(
-                            modifier = Modifier
-                                .width(150.dp)
-                                .fillMaxHeight(0.5f),
-                            border = BorderStroke(2.dp, color = Color.Yellow),
-                            shape = RectangleShape,
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = defaultSecondary,
-                                contentColor = defaultOnPrimary
-                            ),
-                            onClick = { }
-                        ) {
+                    OutlinedButton(
+                        modifier = Modifier
+                            .width(150.dp)
+                            .fillMaxHeight(1f),
+                        border = BorderStroke(2.dp, color = Color.Yellow),
+                        shape = RectangleShape,
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = defaultSecondary,
+                            contentColor = defaultOnPrimary
+                        ),
+                        onClick = { }
+                    ) {
+                        Column(modifier = Modifier.padding(0.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                             Text(
-                                text = "Current Match: $mutableMatchNum",
-                                fontSize = 12.sp,
-                                modifier = Modifier.align(Alignment.CenterVertically)
+                                text = "Current Match",
+                                fontSize = 12.sp
                             )
-                        }
-                        Row {
-                            OutlinedButton(
-                                modifier = Modifier
-                                    .width(75.dp)
-                                    .fillMaxHeight(),
-                                border = BorderStroke(2.dp, color = Color.Yellow),
-                                shape = RectangleShape,
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = defaultSecondary,
-                                    contentColor = defaultOnPrimary
+                            androidx.compose.material.TextField(
+                                value = if (mutableMatchNum.toString() == "0") "" else mutableMatchNum.toString(),
+                                onValueChange = {
+                                    val newMatchNum = it.betterParseInt()
+                                    mutableMatchNum = newMatchNum
+                                    updateMatchNum(newMatchNum)
+                                    loadStratData(newMatchNum, isRedAlliance)
+                                },
+                                keyboardOptions = KeyboardOptions.Default.copy(
+                                    keyboardType = KeyboardType.Number
                                 ),
-                                onClick = {
-                                    stratTeamDataArray[teamsAllianceKey(matchNum, isRedAlliance)] = createStratOutput()
-                                    updateMatchNum(matchNum - 1)
-                                    mutableMatchNum = matchNum
-                                    loadStratData(matchNum, isRedAlliance)
-                                }
-                            ) {
-                                Icon(
-                                    Icons.AutoMirrored.Rounded.KeyboardArrowLeft,
-                                    contentDescription = "Back",
-                                    modifier = Modifier.align(Alignment.CenterVertically)
+                                colors = androidx.compose.material.TextFieldDefaults.textFieldColors(
+                                    textColor = Color.White,
+                                    backgroundColor = defaultSecondary,
+                                    focusedIndicatorColor = Color.Yellow,
                                 )
-                            }
-                            OutlinedButton(
-                                modifier = Modifier
-                                    .width(75.dp)
-                                    .fillMaxHeight(),
-                                border = BorderStroke(2.dp, color = Color.Yellow),
-                                shape = RectangleShape,
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = defaultSecondary,
-                                    contentColor = defaultOnPrimary
-                                ),
-                                onClick = {
-                                    stratTeamDataArray[teamsAllianceKey(matchNum, isRedAlliance)] = createStratOutput()
-                                    updateMatchNum(matchNum + 1)
-                                    mutableMatchNum = matchNum
-                                    loadStratData(matchNum, isRedAlliance)
-                                }
-                            ) {
-                                Icon(
-                                    Icons.AutoMirrored.Rounded.KeyboardArrowRight,
-                                    contentDescription = "Forward",
-                                    modifier = Modifier.align(Alignment.CenterVertically)
-                                )
-                            }
+                            )
                         }
                     }
                     Column(modifier = Modifier.padding(0.dp), horizontalAlignment = Alignment.End) {
@@ -261,7 +229,10 @@ actual fun StratMenu(
                                 containerColor = defaultSecondary,
                                 contentColor = defaultOnPrimary
                             ),
-                            onClick = { stratTeamDataArray[teamsAllianceKey(matchNum, isRedAlliance)] = createStratOutput(); backStack.pop() }
+                            onClick = {
+                                stratTeamDataArray[TeamsAllianceKey(matchNum, isRedAlliance)] =
+                                    createStratOutput(); backStack.pop()
+                            }
                         ) {
                             Text(
                                 text = "Main",
@@ -300,19 +271,10 @@ actual fun StratMenu(
                 }
             )
             teamList(
-                label = "Collector Efficiency",
-                teams = collectorOrder,
+                label = "Mechanical Soundness",
+                teams = mechanicalSoundnessOrder,
                 onMove = { from, to ->
-                    collectorOrder.apply {
-                        add(to, removeAt(from))
-                    }
-                }
-            )
-            teamList(
-                label = "Robot Connection",
-                teams = connectionOrder,
-                onMove = { from, to ->
-                    connectionOrder.apply {
+                    mechanicalSoundnessOrder.apply {
                         add(to, removeAt(from))
                     }
                 }
@@ -328,7 +290,7 @@ actual fun StratMenu(
                     contentColor = defaultOnPrimary
                 ),
                 onClick = {
-                    stratTeamDataArray[teamsAllianceKey(matchNum, isRedAlliance)] = createStratOutput()
+                    stratTeamDataArray[TeamsAllianceKey(matchNum, isRedAlliance)] = createStratOutput()
                     nextMatch()
                     mutableMatchNum = matchNum
                     loadStratData(matchNum, isRedAlliance)
@@ -356,7 +318,7 @@ fun teamList(
             fontSize = 16.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier
-                .padding(top = 8.dp, start = 10.dp)
+                .padding(top = 8.dp, start = 12.dp)
                 .align(Alignment.Start)
         )
         val view = LocalView.current
@@ -375,7 +337,7 @@ fun teamList(
             state = lazyListState,
             contentPadding = PaddingValues(8.dp)
         ) {
-            itemsIndexed(teams, key = { _, team -> team.number }) { index, team ->
+            itemsIndexed(teams, key = { _, team -> team.number }) { _, team ->
                 ReorderableItem(reorderableLazyListState, key = team.number) { isDragging ->
                     val elevation by animateDpAsState(if (isDragging) 4.dp else 0.dp)
                     Surface(
@@ -385,7 +347,7 @@ fun teamList(
                         shadowElevation = elevation,
                         color = defaultSecondary,
                         contentColor = defaultOnPrimary,
-                        shape = RectangleShape,
+                        shape = RoundedCornerShape(8.dp),
                         border = BorderStroke(2.dp, Color.Yellow)
                     ) {
                         Row(
