@@ -353,7 +353,7 @@ fun loadData(match: Int, team: MutableIntState, robotStartPosition: MutableIntSt
         park.value = jsonObject.getAsJsonObject("endgame").get("park").asBoolean
         deep.value = jsonObject.getAsJsonObject("endgame").get("deep").asBoolean
         shallow.value = jsonObject.getAsJsonObject("endgame").get("shallow").asBoolean
-        notes.value = jsonObject.get("notes").asString
+        notes.value = if(jsonObject.get("notes").asString == "No Comments") "" else jsonObject.get("notes").asString
     } else {
         reset()
         if(saveData.value) {
