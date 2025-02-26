@@ -82,10 +82,9 @@ import defaultPrimaryVariant
 import getCurrentTheme
 import nodes.RootNode
 import nodes.algaeBarge
-import nodes.algaePreferred
 import nodes.algaeProcess
 import nodes.algaeRemoval
-import nodes.auto
+import nodes.bargePreferred
 import nodes.collectPreference
 import nodes.comments
 import nodes.coralHigh
@@ -98,17 +97,16 @@ import nodes.l1
 import nodes.l2
 import nodes.l3
 import nodes.l4
-import nodes.length
 import nodes.motorType
 import nodes.permPhotosList
 import nodes.photoArray
 import nodes.pitsReset
 import nodes.pitsTeamDataArray
+import nodes.processPreferred
 import nodes.rigidity
 import nodes.scoutedTeamName
 import nodes.scoutedTeamNumber
 import nodes.weight
-import nodes.width
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import org.tahomarobotics.scouting.ComposeFileProvider
@@ -435,12 +433,12 @@ actual fun PitsScoutMenu(
                         DropdownMenuItem(
                             {
                                 Text(
-                                    text = "Omni",
+                                    text = "Other",
                                     color = Color.White
                                 )
                             },
                             onClick = {
-                                driveType.value = "Omni"
+                                driveType.value = "Other"
                                 dropDownExpanded = false
                             }
                         )
@@ -450,23 +448,6 @@ actual fun PitsScoutMenu(
                             thickness = 3.dp
                         )
 
-                        DropdownMenuItem(
-                            {
-                                Text(
-                                    text = "H-Drive",
-                                    color = Color.White
-                                )
-                            },
-                            onClick = {
-                                driveType.value = "H-Drive"
-                                dropDownExpanded = false
-                            }
-                        )
-
-                        HorizontalDivider(
-                            color = getCurrentTheme().onSurface,
-                            thickness = 3.dp
-                        )
                     }
 //                    colors = TextFieldDefaults.colors(focusedContainerColor = Color.Transparent, focusedTextColor = Color.White),
                 }
@@ -554,24 +535,6 @@ actual fun PitsScoutMenu(
                             DropdownMenuItem(
                                 {
                                     Text(
-                                        text = "Spark",
-                                        color = Color.White
-                                    )
-                                },
-                                onClick = {
-                                    motorType.value = "Spark"
-                                    dropDown2Expanded = false
-                                }
-                            )
-
-                            HorizontalDivider(
-                                color = getCurrentTheme().onSurface,
-                                thickness = 3.dp
-                            )
-
-                            DropdownMenuItem(
-                                {
-                                    Text(
                                         text = "Neo Vortex",
                                         color = Color.White
                                     )
@@ -605,94 +568,6 @@ actual fun PitsScoutMenu(
                                 thickness = 3.dp
                             )
 
-                        }
-                    }
-                }
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(10.dp, 2.5.dp)
-                        .border(BorderStroke(2.dp, Color.Yellow), shape = RoundedCornerShape(5.dp))
-                ) {
-                    Text(
-                        text = "Auto:  ",
-                        modifier = Modifier
-                            .padding(15.dp)
-                            .align(Alignment.CenterStart)
-                    )
-                    TextField(
-                        value = auto.value,
-                        onValueChange = { auto.value = it },
-                        colors = TextFieldDefaults.colors(
-                            focusedContainerColor = Color.Transparent,
-                            focusedTextColor = Color.White,
-                            cursorColor = Color.White
-                        ),
-                        modifier = Modifier
-                            .padding(15.dp)
-                            .align(Alignment.CenterEnd)
-                    )
-                }
-
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(10.dp, 2.5.dp)
-                        .border(BorderStroke(2.dp, Color.Yellow), shape = RoundedCornerShape(5.dp))
-                ) {
-                    Text(
-                        text = "Frame Perimeter:",
-                        modifier = Modifier
-                            .padding(15.dp)
-                            .align(Alignment.CenterStart)
-                    )
-                    Row (
-                        modifier = Modifier.align(Alignment.CenterEnd)
-                    ) {
-                        Row (
-                            modifier = Modifier.align(Alignment.CenterVertically)
-                        ) {
-                            Text(
-                                text = "Width:",
-                                modifier = Modifier.align(Alignment.CenterVertically)
-                            )
-                            TextField(
-                                value = width.value,
-                                onValueChange = {
-                                    width.value = it
-                                },
-                                colors = TextFieldDefaults.colors(
-                                    focusedContainerColor = Color.Transparent,
-                                    focusedTextColor = Color.White,
-                                    cursorColor = Color.Yellow
-                                ),
-                                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-                                modifier = Modifier
-                                    .padding(top = 15.dp, bottom = 15.dp, start = 5.dp, end = 20.dp)
-                                    .width(width = 75.dp)
-                            )
-                        }
-
-                        Row (
-                            modifier = Modifier.align(Alignment.CenterVertically)
-                        ) {
-                            Text(
-                                text = "Length:",
-                                modifier = Modifier.align(Alignment.CenterVertically)
-                            )
-                            TextField(
-                                value = length.value,
-                                onValueChange = { length.value = it },
-                                colors = TextFieldDefaults.colors(
-                                    focusedContainerColor = Color.Transparent,
-                                    focusedTextColor = Color.White,
-                                    cursorColor = Color.Yellow
-                                ),
-                                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-                                modifier = Modifier
-                                    .padding(top = 15.dp, bottom = 15.dp, start = 5.dp, end = 15.dp)
-                                    .width(width = 75.dp)
-                            )
                         }
                     }
                 }
@@ -915,13 +790,24 @@ actual fun PitsScoutMenu(
                         modifier = Modifier.align(Alignment.CenterEnd)
                     ) {
                         Text(
-                            text = "Algae",
+                            text = "Barge",
                             modifier = Modifier.align(Alignment.CenterVertically)
                         )
                         Checkbox(
-                            checked = algaePreferred.value,
+                            checked = bargePreferred.value,
                             onCheckedChange = {
-                                algaePreferred.value = it
+                                bargePreferred.value = it
+                            },
+                            modifier = Modifier.padding(end = 30.dp)
+                        )
+                        Text(
+                            text = "Processed",
+                            modifier = Modifier.align(Alignment.CenterVertically)
+                        )
+                        Checkbox(
+                            checked = processPreferred.value,
+                            onCheckedChange = {
+                                processPreferred.value = it
                             },
                             modifier = Modifier.padding(end = 30.dp)
                         )
