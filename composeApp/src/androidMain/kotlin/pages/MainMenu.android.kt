@@ -297,7 +297,7 @@ actual class MainMenu actual constructor(
                             isRedAlliance = true
                             backStack.push(RootNode.NavTarget.StratScreen)
 
-                            loadStratData(matchNum, isRedAlliance)
+                            loadStratData(stratMatch, isRedAlliance)
                         },
                         modifier = Modifier
                             .border(BorderStroke(color = Color.Yellow, width = 3.dp))
@@ -310,7 +310,7 @@ actual class MainMenu actual constructor(
                             isRedAlliance = false
                             backStack.push(RootNode.NavTarget.StratScreen)
 
-                            loadStratData(matchNum, isRedAlliance)
+                            loadStratData(stratMatch, isRedAlliance)
                         },
                         modifier = Modifier
                             .border(BorderStroke(color = Color.Yellow, width = 3.dp))

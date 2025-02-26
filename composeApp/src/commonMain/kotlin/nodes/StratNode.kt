@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.navigation.modality.BuildContext
@@ -30,6 +31,12 @@ class StratNode(
 var stratJsonObject : JsonObject = JsonObject() // Don't know if there needs to be another json for strat, but just being safe for now!
 
 var stratTeamDataArray = HashMap<TeamsAllianceKey, String>()
+
+var saveStratData = mutableStateOf(false)
+
+var saveStratDataPopup = mutableStateOf(false)
+var saveStratDataSit = mutableStateOf(false) // false = nextMatch, true = main menu
+
 
 class TeamsAllianceKey(
     val match: Int,
@@ -59,9 +66,11 @@ class TeamsAllianceKey(
 }
 
 var isRedAlliance: Boolean = false
-var matchNum: Int = 1
+var stratMatch: Int = 1
 
-var teams: List<Team> = getTeamsOnAlliance(matchNum, isRedAlliance)
+var tempStratMatch = stratMatch
+
+var teams: List<Team> = getTeamsOnAlliance(stratMatch, isRedAlliance)
 
 data class Team(
     val number: Int,
@@ -72,16 +81,16 @@ fun setContext(
     redAlliance: Boolean
 ) {
     isRedAlliance = redAlliance
-    updateMatchNum(matchNum)
+    updateMatchNum(stratMatch)
 }
 
 fun updateMatchNum(matchNumber: Int) {
     if (matchNumber < 1) {
-        matchNum = 1
+        stratMatch = 1
         return
     }
-    matchNum = matchNumber
-    teams = getTeamsOnAlliance(matchNum, isRedAlliance)
+    stratMatch = matchNumber
+    teams = getTeamsOnAlliance(stratMatch, isRedAlliance)
 
     strategyOrder.clear()
     strategyOrder.addAll(teams)
@@ -94,7 +103,7 @@ fun updateMatchNum(matchNumber: Int) {
 }
 
 fun nextMatch() {
-    updateMatchNum(matchNum + 1)
+    updateMatchNum(stratMatch + 1)
 }
 
 var humanNetScored = mutableIntStateOf(0)
@@ -103,10 +112,13 @@ val strategyOrder = mutableStateListOf<Team>()
 val drivingSkillOrder = mutableStateListOf<Team>()
 val mechanicalSoundnessOrder = mutableStateListOf<Team>()
 
-fun createStratOutput(): String {
+fun createStratOutput(match: Int): String {
+
+    println("saved data")
+
     stratJsonObject = JsonObject().apply {
         addProperty("event_key", compKey)
-        addProperty("match", matchNum)
+        addProperty("match", stratMatch)
         addProperty("is_red_alliance", isRedAlliance)
 
         addProperty("human_net_scored", humanNetScored.intValue)
@@ -143,7 +155,7 @@ fun loadStratData(match: Int, isRed: Boolean) {
         currentTeams = getTeamsOnAlliance(match, isRed)
 
         isRedAlliance = stratJsonObject.get("is_red_alliance")?.asBoolean ?: false
-        matchNum = stratJsonObject.get("match")?.asInt ?: 1
+        stratMatch = stratJsonObject.get("match")?.asInt ?: 1
 
         humanNetScored.value = stratJsonObject.get("human_net_scored")?.asInt ?: 0
         humanNetMissed.value = stratJsonObject.get("human_net_missed")?.asInt ?: 0
@@ -178,7 +190,9 @@ fun loadStratData(match: Int, isRed: Boolean) {
         }
     } else {
         stratReset()
-        stratTeamDataArray[TeamsAllianceKey(match, isRed)] = createStratOutput()
+        if(saveStratData.value) {
+            stratTeamDataArray[TeamsAllianceKey(match, isRed)] = createStratOutput(stratMatch)
+        }
     }
 }
 

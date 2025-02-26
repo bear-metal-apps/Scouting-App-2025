@@ -2,6 +2,8 @@ package pages
 
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -16,6 +18,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalView
@@ -27,12 +30,16 @@ import androidx.core.view.HapticFeedbackConstantsCompat
 import androidx.core.view.ViewCompat
 import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.components.backstack.operation.pop
+import com.bumble.appyx.components.backstack.operation.push
 import defaultOnPrimary
 import defaultSecondary
+import getCurrentTheme
 import nodes.*
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
+import java.lang.Integer.parseInt
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 actual fun StratMenu(
     backStack: BackStack<RootNode.NavTarget>,
@@ -41,7 +48,18 @@ actual fun StratMenu(
     teams: List<Team>,
     isRedAlliance: Boolean
 ) {
-    var mutableMatchNum by remember { mutableStateOf(matchNum) }
+    var mutableMatchNum by remember { mutableStateOf(stratMatch) }
+
+    var first by remember { mutableStateOf(true) }
+
+    if(first) {
+        tempStratMatch = stratMatch
+        println("ran! tempStratMatch = $tempStratMatch")
+
+        saveStratData.value = false
+
+        first = false
+    }
 
     Scaffold(
         bottomBar = {
@@ -70,7 +88,7 @@ actual fun StratMenu(
                                 containerColor = defaultSecondary,
                                 contentColor = defaultOnPrimary
                             ),
-                            onClick = { humanNetScored.value += 1 }
+                            onClick = { humanNetScored.value += 1; saveStratData.value = true }
                         ) {
                             Box(
                                 modifier = Modifier
@@ -99,7 +117,7 @@ actual fun StratMenu(
                                 containerColor = defaultSecondary,
                                 contentColor = defaultOnPrimary
                             ),
-                            onClick = { humanNetMissed.value += 1 }
+                            onClick = { humanNetMissed.value += 1; saveStratData.value = true }
                         ) {
                             Box(
                                 modifier = Modifier
@@ -133,6 +151,7 @@ actual fun StratMenu(
                             onClick = {
                                 humanNetScored.value -= 1
                                 if (humanNetScored.value < 0) humanNetScored.value = 0
+                                saveStratData.value = true
                             }
                         ) {
                             Text(
@@ -154,6 +173,7 @@ actual fun StratMenu(
                             onClick = {
                                 humanNetMissed.value -= 1
                                 if (humanNetMissed.value < 0) humanNetMissed.value = 0
+                                saveStratData.value = true
                             }
                         ) {
                             Text(
@@ -184,10 +204,17 @@ actual fun StratMenu(
                             androidx.compose.material.TextField(
                                 value = if (mutableMatchNum.toString() == "0") "" else mutableMatchNum.toString(),
                                 onValueChange = {
+                                    if(saveStratData.value) {
+                                        stratTeamDataArray[TeamsAllianceKey(tempStratMatch, isRedAlliance)] = createStratOutput(tempStratMatch)
+                                    }
+
                                     val newMatchNum = it.betterParseInt()
                                     mutableMatchNum = newMatchNum
                                     updateMatchNum(newMatchNum)
                                     loadStratData(newMatchNum, isRedAlliance)
+                                    saveStratData.value = false
+
+                                    tempStratMatch = stratMatch
                                 },
                                 keyboardOptions = KeyboardOptions.Default.copy(
                                     keyboardType = KeyboardType.Number
@@ -230,8 +257,9 @@ actual fun StratMenu(
                                 contentColor = defaultOnPrimary
                             ),
                             onClick = {
-                                stratTeamDataArray[TeamsAllianceKey(matchNum, isRedAlliance)] =
-                                    createStratOutput(); backStack.pop()
+                                saveStratDataSit.value = true
+                                stratTeamDataArray[TeamsAllianceKey(stratMatch, isRedAlliance)] = createStratOutput(
+                                    stratMatch); backStack.pop()
                             }
                         ) {
                             Text(
@@ -290,10 +318,9 @@ actual fun StratMenu(
                     contentColor = defaultOnPrimary
                 ),
                 onClick = {
-                    stratTeamDataArray[TeamsAllianceKey(matchNum, isRedAlliance)] = createStratOutput()
-                    nextMatch()
-                    mutableMatchNum = matchNum
-                    loadStratData(matchNum, isRedAlliance)
+                    saveStratDataSit.value = false
+
+                    saveStratDataPopup.value = true
                 }
             ) {
                 Text(
@@ -304,6 +331,85 @@ actual fun StratMenu(
             }
         }
     }
+
+    if(saveStratDataPopup.value) {
+        BasicAlertDialog(
+            onDismissRequest = { saveStratDataPopup.value = false },
+            modifier = Modifier
+                .clip(
+                    RoundedCornerShape(5.dp)
+                )
+                .border(
+                    BorderStroke(3.dp, getCurrentTheme().primaryVariant),
+                    RoundedCornerShape(5.dp)
+                )
+                .background(getCurrentTheme().secondary)
+        ) {
+            Box(modifier = Modifier
+                .fillMaxWidth(8f / 10f)
+                .padding(5.dp)
+                .fillMaxHeight(1 / 8f)) {
+                Text(text = "Do you want to save this data?",
+                    modifier = Modifier
+                        .padding(5.dp)
+                        .align(Alignment.TopCenter)
+                )
+                androidx.compose.material.OutlinedButton(
+                    onClick = {
+                        if(saveStratDataSit.value) {
+                            stratTeamDataArray[TeamsAllianceKey(stratMatch, isRedAlliance)] = createStratOutput(
+                                stratMatch)
+                            backStack.pop()
+                        } else {
+                            stratTeamDataArray[TeamsAllianceKey(stratMatch, isRedAlliance)] = createStratOutput(
+                                stratMatch)
+                            nextMatch()
+                            mutableMatchNum = stratMatch
+                            loadStratData(stratMatch, isRedAlliance)
+                        }
+
+                        saveStratDataPopup.value = false
+                    },
+                    border = BorderStroke(2.dp, getCurrentTheme().secondaryVariant),
+                    colors = androidx.compose.material.ButtonDefaults.outlinedButtonColors(
+                        backgroundColor = getCurrentTheme().secondary,
+                        contentColor = getCurrentTheme().onSecondary
+                    ),
+                    modifier = Modifier.align(Alignment.BottomStart)
+                ) {
+                    Text(text = "Yes", color = getCurrentTheme().error)
+                }
+                androidx.compose.material.OutlinedButton(
+                    onClick = { saveStratDataPopup.value = false },
+                    border = BorderStroke(2.dp, getCurrentTheme().secondaryVariant),
+                    colors = androidx.compose.material.ButtonDefaults.outlinedButtonColors(
+                        backgroundColor = getCurrentTheme().secondary,
+                        contentColor = getCurrentTheme().onSecondary
+                    ),
+                    modifier = Modifier.align(Alignment.BottomEnd)
+                ) {
+                    Text(text = "No", color = getCurrentTheme().error)
+                }
+            }
+        }
+    }
+
+//    if(stratTeamDataArray[TeamsAllianceKey(stratMatch, isRedAlliance)] != null) {
+//        stratTeamDataArray[TeamsAllianceKey(stratMatch, isRedAlliance)] = createStratOutput(stratMatch)
+//        loadStratData(stratMatch, isRedAlliance)
+////        if(first) {
+////            loadData(parseInt(match.value), team, robotStartPosition)
+////            first = false
+////        } else {
+////            teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue, robotStartPosition.intValue)] = createOutput(team, robotStartPosition)
+//////            loadData(parseInt(match.value), team, robotStartPosition)
+////        }
+//    } else {
+//        if(saveStratData.value) {
+//            stratTeamDataArray[TeamsAllianceKey(stratMatch, isRedAlliance)] = createStratOutput(stratMatch)
+//        }
+//    }
+
 }
 
 @Composable
@@ -370,6 +476,7 @@ fun teamList(
                                             view,
                                             HapticFeedbackConstantsCompat.GESTURE_START
                                         )
+                                        saveStratData.value = true
                                     },
                                     onDragStopped = {
                                         ViewCompat.performHapticFeedback(
