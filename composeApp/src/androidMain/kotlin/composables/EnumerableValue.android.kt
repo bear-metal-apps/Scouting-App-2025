@@ -1,5 +1,6 @@
 package composables
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
@@ -30,53 +31,53 @@ actual fun EnumerableValue(label: String, value: MutableIntState, alignment: Ali
 
     val pressed by interact.collectIsPressedAsState()
 
-        OutlinedButton(
-            border = BorderStroke(2.dp, color = getCurrentTheme().primaryVariant),
-            shape = RectangleShape,
-            colors = ButtonDefaults.buttonColors(containerColor = if(pressed) flashColor else Color.Black),
-            onClick = {
-                undoList.push(arrayOf("number" ,value, value.value))
-                value.value += 1
-                redoList.push(arrayOf("number" ,value, value.value))
-                saveData.value = true
-            },
-            interactionSource = interact,
-            modifier = modifier
-        ) {
-            Box(modifier = Modifier.fillMaxSize()) {
-                Text(
-                    text = "$label \n ${value.value}",
-                    fontSize = 18.sp,
-                    color = getCurrentTheme().onPrimary,
-                    modifier = Modifier.align(Alignment.CenterStart)
-                )
-                if (miniMinus) {
-                    OutlinedButton(
-                        border = BorderStroke(1.dp, color = getCurrentTheme().primaryVariant),
-                        shape = RoundedCornerShape(2.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = if (pressed) flashColor else Color.Black),
-                        onClick = {
-                            if(value.value != 0){
-                                undoList.push(arrayOf("number", value, value.value))
-                                value.value -= 1
-                                redoList.push(arrayOf("number", value, value.value))
-                            }
+    OutlinedButton(
+        border = BorderStroke(2.dp, color = getCurrentTheme().primaryVariant),
+        shape = RectangleShape,
+        colors = ButtonDefaults.buttonColors(containerColor = if(pressed) flashColor else Color.Black),
+        onClick = {
+            undoList.push(arrayOf("number" ,value, value.value))
+            value.value += 1
+            redoList.push(arrayOf("number" ,value, value.value))
+            saveData.value = true
+        },
+        interactionSource = interact,
+        modifier = modifier
+    ) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            Text(
+                text = "$label \n ${value.value}",
+                fontSize = 18.sp,
+                color = getCurrentTheme().onPrimary,
+                modifier = Modifier.align(Alignment.CenterStart)
+            )
+            if (miniMinus) {
+                OutlinedButton(
+                    border = BorderStroke(1.dp, color = getCurrentTheme().primaryVariant),
+                    shape = RoundedCornerShape(2.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = if (pressed) flashColor else Color.Black),
+                    onClick = {
+                        if(value.value != 0){
+                            undoList.push(arrayOf("number", value, value.value))
+                            value.value -= 1
+                            redoList.push(arrayOf("number", value, value.value))
+                        }
 
-                            saveData.value = true
-                        },
-                        interactionSource = interact,
-                        modifier = Modifier.align(alignment)
-                    ) {
-                        Text(
-                            text = "-",
-                            fontSize = 18.sp,
-                            color = getCurrentTheme().onPrimary,
-                        )
-                    }
+                        saveData.value = true
+                    },
+                    interactionSource = interact,
+                    modifier = Modifier.align(alignment)
+                ) {
+                    Text(
+                        text = "-",
+                        fontSize = 18.sp,
+                        color = getCurrentTheme().onPrimary,
+                    )
                 }
             }
         }
     }
+}
 
 //
 //@Composable

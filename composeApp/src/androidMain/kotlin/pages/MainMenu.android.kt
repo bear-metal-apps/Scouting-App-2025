@@ -36,10 +36,12 @@ import nodes.*
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import org.tahomarobotics.scouting.Client
+import org.tahomarobotics.scouting.TBAInterface
 import sendDataUSB
 import sendMatchData
 import sendPitsData
 import sendStratData
+import setTeam
 import sync
 import teamData
 import java.lang.Integer.parseInt
@@ -380,6 +382,7 @@ actual class MainMenu actual constructor(
                         teamSyncedResource = if (teamData != null) "checkmark.png" else "crossmark.png"
                         matchSyncedResource = if (matchData != null) "checkmark.png" else "crossmark.png"
                     }
+//                    TBAInterface.getTBAData("/event/${compKey}/teams/keys")
                 },
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)

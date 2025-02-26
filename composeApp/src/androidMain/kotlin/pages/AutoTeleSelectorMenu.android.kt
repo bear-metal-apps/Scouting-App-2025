@@ -30,6 +30,7 @@ import defaultPrimaryVariant
 import defaultSecondary
 import exportScoutData
 import getCurrentTheme
+import getTeamsOnAlliance
 import nodes.*
 import org.json.JSONException
 import setTeam
@@ -97,6 +98,13 @@ actual fun AutoTeleSelectorMenuTop(
             positionName = "B3"
         }
     }
+
+    if (positionName == "R1" || positionName == "R2" || positionName == "R3"){
+        isRedAliance.value = true
+    }else{
+        isRedAliance.value = false
+    }
+    team.intValue = teams[robotStartPosition.intValue].number
     Column() {
         HorizontalDivider(color = getCurrentTheme().primaryVariant, thickness = 4.dp)
 
@@ -532,5 +540,6 @@ actual fun AutoTeleSelectorMenuBottom(
             teamDataArray[TeamMatchStartKey(parseInt(match.value), team.intValue, robotStartPosition.intValue)] = createOutput(team, robotStartPosition)
         }
     }
-
 }
+var isRedAliance = mutableStateOf(false)
+var teams = getTeamsOnAlliance(match.value.betterParseInt(),isRedAliance.value)

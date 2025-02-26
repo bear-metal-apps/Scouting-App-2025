@@ -51,6 +51,9 @@ import nodes.saveDataPopup
 import nodes.saveDataSit
 import nodes.shallow
 import nodes.teamDataArray
+import org.json.JSONException
+import org.tahomarobotics.scouting.TBAInterface
+import setTeam
 import java.lang.Integer.parseInt
 
 
@@ -119,10 +122,15 @@ actual fun EndGameMenu(
                         teamDataArray[TeamMatchStartKey(parseInt(match.value), team.intValue, robotStartPosition.intValue)] = createOutput(team, robotStartPosition)
                         //Save permanent data
                         createScoutMatchDataFile(context, match.value, team.intValue, createOutput(team, robotStartPosition))
-
                         match.value = (parseInt(match.value) + 1).toString()
                         reset()
                         saveData.value = false
+
+                        try {
+                            setTeam(team, nodes.match, robotStartPosition.intValue)
+                        } catch (e: JSONException) {
+                            openError.value = true
+                        }
                         backStack.push(AutoTeleSelectorNode.NavTarget.AutoScouting)
                     } else {
                         saveDataPopup.value = true
