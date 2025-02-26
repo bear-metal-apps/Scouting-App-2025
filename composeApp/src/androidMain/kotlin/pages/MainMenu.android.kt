@@ -9,6 +9,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+//import androidx.compose.material.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -542,6 +543,7 @@ actual class MainMenu actual constructor(
                         ) {
                             Text(text = "Strat", color = getCurrentTheme().error)
                         }
+
                         androidx.compose.material.OutlinedButton(
                             onClick = {
                                 val scope = CoroutineScope(Dispatchers.Default)
@@ -624,8 +626,5 @@ actual class MainMenu actual constructor(
         }
 
     }
-
 }
-
-var ipAddress = mutableStateOf("127.0.0.1")
 val openError = mutableStateOf(false)

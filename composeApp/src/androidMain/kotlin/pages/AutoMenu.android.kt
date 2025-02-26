@@ -23,7 +23,6 @@ import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.components.backstack.operation.pop
 import composables.CheckBox
 import composables.EnumerableValue
-import composables.EnumerableValueAuto
 import composables.TriStateCheckBox
 import keyboardAsState
 import nodes.AutoTeleSelectorNode
@@ -45,22 +44,9 @@ import nodes.autoStop
 import nodes.collectCoral
 import nodes.createOutput
 import nodes.groundCollectionAlgae
-import nodes.lostComms
 import nodes.miniMinus
 import nodes.saveData
 import nodes.teamDataArray
-import nodes.teleLFour
-import nodes.teleLFourMissed
-import nodes.teleLOne
-import nodes.teleLOneMissed
-import nodes.teleLThree
-import nodes.teleLThreeMissed
-import nodes.teleLTwo
-import nodes.teleLTwoMissed
-import nodes.teleNet
-import nodes.teleNetMissed
-import nodes.teleProcessed
-import nodes.teleRemoved
 import java.lang.Integer.parseInt
 
 @SuppressLint("UnrememberedMutableState")

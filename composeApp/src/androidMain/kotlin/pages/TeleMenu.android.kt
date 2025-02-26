@@ -155,16 +155,6 @@ actual fun TeleMenu(
                             .fillMaxWidth()
                     )
                 }
-                EnumerableValue(
-                    label = "Algae Processed",
-                    value = teleProcessed,
-                    flashColor = Color.Green,
-                    alignment = Alignment.CenterEnd,
-                    miniMinus = miniMinus.value,
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth()
-                )
                 Row(
                     modifier = Modifier
                         .weight(1f)
@@ -221,15 +211,12 @@ actual fun TeleMenu(
                         .fillMaxWidth()
                 )
                 CheckBox(
-                    label = "lost Comms",
+                    label = "Lost Comms",
                     ifChecked = lostComms,
                     modifier = Modifier
                         .weight(0.25f)
                         .fillMaxWidth()
                 )
-                if(lostComms.value != 0) {
-                    saveData.value = true
-                }
             }
         }
     }
