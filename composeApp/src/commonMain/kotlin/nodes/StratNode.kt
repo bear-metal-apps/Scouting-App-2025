@@ -28,7 +28,8 @@ class StratNode(
     }
 }
 
-var stratJsonObject : JsonObject = JsonObject() // Don't know if there needs to be another json for strat, but just being safe for now!
+var stratJsonObject: JsonObject =
+    JsonObject() // Don't know if there needs to be another json for strat, but just being safe for now!
 
 var stratTeamDataArray = HashMap<TeamsAllianceKey, String>()
 
@@ -61,7 +62,7 @@ class TeamsAllianceKey(
     }
 
     override fun toString(): String {
-        return "$match, ${if(isRed) "Red Alliance" else "Blue Alliance"}"
+        return "$match, ${if (isRed) "Red Alliance" else "Blue Alliance"}"
     }
 }
 
@@ -152,6 +153,7 @@ fun loadStratData(match: Int, isRed: Boolean) {
 
     if (stratTeamDataArray[TeamsAllianceKey(match, isRed)] != null) {
         stratJsonObject = gson.fromJson(stratTeamDataArray[TeamsAllianceKey(match, isRed)], JsonObject::class.java)
+
         currentTeams = getTeamsOnAlliance(match, isRed)
 
         isRedAlliance = stratJsonObject.get("is_red_alliance")?.asBoolean ?: false
@@ -160,11 +162,10 @@ fun loadStratData(match: Int, isRed: Boolean) {
         humanNetScored.value = stratJsonObject.get("human_net_scored")?.asInt ?: 0
         humanNetMissed.value = stratJsonObject.get("human_net_missed")?.asInt ?: 0
 
-        repeat(3) {
+        repeat(currentTeams.size) {
             for (team in currentTeams) {
-                if (team.number == stratJsonObject.get("strategy_order_${it + 1}")?.asInt) {
+                if (team.number == stratJsonObject.get("strategy")?.asJsonObject?.get("${it + 1}")?.asInt) {
                     strategyOrder[it] = team
-                    println("Found team!")
                     break
                 }
             }
@@ -173,7 +174,7 @@ fun loadStratData(match: Int, isRed: Boolean) {
 
         repeat(3) {
             for (team in currentTeams) {
-                if (team.number == stratJsonObject.get("driving_skill_order_${it + 1}")?.asInt) {
+                if (team.number == stratJsonObject.get("driving_skill")?.asJsonObject?.get("${it + 1}")?.asInt) {
                     drivingSkillOrder[it] = team
                     break
                 }
@@ -182,7 +183,7 @@ fun loadStratData(match: Int, isRed: Boolean) {
 
         repeat(3) {
             for (team in currentTeams) {
-                if (team.number == stratJsonObject.get("mechanical_soundness_order_${it + 1}")?.asInt) {
+                if (team.number == stratJsonObject.get("mechanical_soundness")?.asJsonObject?.get("${it + 1}")?.asInt) {
                     mechanicalSoundnessOrder[it] = team
                     break
                 }
