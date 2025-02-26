@@ -13,6 +13,7 @@ import com.google.gson.Gson
 import com.google.gson.JsonObject
 import compKey
 import getTeamsOnAlliance
+import isSynced
 import pages.StratMenu
 import java.util.*
 
@@ -118,7 +119,6 @@ val mechanicalSoundnessOrder = mutableStateListOf<Team>()
 fun createStratOutput(match: Int): String {
 
     println("saved data")
-    println(stratTeamDataArray.toString())
 
     stratJsonObject = JsonObject().apply {
         addProperty("event_key", compKey)
@@ -194,7 +194,7 @@ fun loadStratData(match: Int, isRed: Boolean) {
         }
     } else {
         stratReset()
-        if(saveStratData.value) {
+        if(saveStratData.value && isSynced()) {
             stratTeamDataArray[TeamsAllianceKey(stratMatch, isRed)] = createStratOutput(stratMatch)
         }
     }

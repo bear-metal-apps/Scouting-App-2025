@@ -36,9 +36,12 @@ import createScoutStratDataFile
 import defaultOnPrimary
 import defaultSecondary
 import getCurrentTheme
+import isSynced
+import matchData
 import nodes.*
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
+import teamData
 import java.lang.Integer.parseInt
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -207,9 +210,10 @@ actual fun StratMenu(
                             androidx.compose.material.TextField(
                                 value = if (mutableMatchNum.toString() == "0") "" else mutableMatchNum.toString(),
                                 onValueChange = {
-                                    if(saveStratData.value) {
+                                    if(saveStratData.value && isSynced()) {
                                         stratTeamDataArray[TeamsAllianceKey(stratMatch, isRedAlliance)] = createStratOutput(
                                             stratMatch)
+                                        createScoutStratDataFile(context, stratMatch.toString(), isRedAlliance, createStratOutput(stratMatch))
                                     }
 
                                     val newMatchNum = it.betterParseInt()
@@ -263,7 +267,7 @@ actual fun StratMenu(
                             onClick = {
                                 saveStratDataSit.value = true
 
-                                if(saveStratData.value) {
+                                if(saveStratData.value && isSynced()) {
                                     stratTeamDataArray[TeamsAllianceKey(stratMatch, isRedAlliance)] = createStratOutput(stratMatch)
                                     createScoutStratDataFile(context, stratMatch.toString(), isRedAlliance, createStratOutput(
                                         stratMatch))
@@ -331,15 +335,15 @@ actual fun StratMenu(
                 onClick = {
                     saveStratDataSit.value = false
 
-                    if(saveStratData.value) {
-                        saveStratDataPopup.value = true
-                    } else {
+                    if(saveStratData.value && isSynced()) {
                         stratTeamDataArray[TeamsAllianceKey(stratMatch, isRedAlliance)] = createStratOutput(stratMatch)
                         createScoutStratDataFile(context, stratMatch.toString(), isRedAlliance, createStratOutput(stratMatch))
 
                         nextMatch()
                         mutableMatchNum = stratMatch
                         loadStratData(stratMatch, isRedAlliance)
+                    } else {
+                        saveStratDataPopup.value = true
                     }
                 }
             ) {
@@ -368,8 +372,11 @@ actual fun StratMenu(
             Box(modifier = Modifier
                 .fillMaxWidth(8f / 10f)
                 .padding(5.dp)
-                .fillMaxHeight(1 / 8f)) {
-                Text(text = "Do you want to save your changes for match ${stratMatch}, ${if(isRedAlliance) "Red Alliance" else "Blue Alliance"}?",
+                .fillMaxHeight(2 / 8f)) {
+                Text(text = if(teamData != null && matchData != null) "Do you want to save your data for match " +
+                        "${stratMatch}, ${if(isRedAlliance) "Red Alliance" else "Blue Alliance"}?" else "Do you want to " +
+                        "save your data for match ${stratMatch}, ${if(isRedAlliance) "Red Alliance" else "Blue Alliance"}?\n\n" +
+                        " If you have not synced and you press \"Yes\", the order of the teams will be reset.",
                     modifier = Modifier
                         .padding(5.dp)
                         .align(Alignment.TopCenter)
@@ -426,17 +433,14 @@ actual fun StratMenu(
         }
     }
 
-    if(stratTeamDataArray[TeamsAllianceKey(stratMatch, isRedAlliance)] != null) {
+    // THINK I HAVE PREVENTED ANYWHERE WHERE THE STRAT PAGE GETS SAVED WHEN IT IS NOT SYNCED. CHECK FOR MORE PLACES.
+
+    // Saves data into temp stratTeamDataArray whenever the app recomposes.
+    if(stratTeamDataArray[TeamsAllianceKey(stratMatch, isRedAlliance)] != null && isSynced()) {
         stratTeamDataArray[TeamsAllianceKey(stratMatch, isRedAlliance)] = createStratOutput(stratMatch)
         loadStratData(stratMatch, isRedAlliance)
-//        if(first) {
-//            loadData(parseInt(match.value), team, robotStartPosition)
-//            first = false
-//        } else {
-//            teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue, robotStartPosition.intValue)] = createOutput(team, robotStartPosition)
-////            loadData(parseInt(match.value), team, robotStartPosition)
-//        }
-    } else {
+    } else if(isSynced()) {
+//        println("saved")
         if(saveStratData.value) {
             stratTeamDataArray[TeamsAllianceKey(stratMatch, isRedAlliance)] = createStratOutput(stratMatch)
         }

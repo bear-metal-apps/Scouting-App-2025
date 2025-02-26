@@ -28,6 +28,7 @@ import defaultPrimaryVariant
 import deleteFile
 import deleteScoutMatchData
 import deleteScoutPitsData
+import deleteScoutStratData
 import getCurrentTheme
 import loadMatchDataFiles
 import loadPitsDataFiles
@@ -38,6 +39,7 @@ import nodes.permPhotosList
 import nodes.pitsReset
 import nodes.teamDataArray
 import nodes.reset
+import nodes.stratReset
 import java.io.File
 import java.lang.Integer.parseInt
 
@@ -214,12 +216,13 @@ actual fun LoginMenu(
                         Box(modifier = Modifier.fillMaxWidth(8f / 10f)) {
                             Button(
                                 onClick = {
-                                    teamDataArray.clear()
                                     permPhotosList.clear()
                                     reset()
+                                    stratReset()
                                     pitsReset()
                                     deleteFile(context)
                                     deleteScoutMatchData()
+                                    deleteScoutStratData()
                                     deleteScoutPitsData()
                                     deleteData = false
                                 },
