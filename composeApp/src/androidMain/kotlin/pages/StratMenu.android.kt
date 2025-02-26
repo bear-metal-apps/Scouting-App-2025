@@ -373,10 +373,11 @@ actual fun StratMenu(
                 .fillMaxWidth(8f / 10f)
                 .padding(5.dp)
                 .fillMaxHeight(2 / 8f)) {
-                Text(text = if(teamData != null && matchData != null) "Do you want to save your data for match " +
+                Text(text = if(isSynced()) "Do you want to save your data for match " +
                         "${stratMatch}, ${if(isRedAlliance) "Red Alliance" else "Blue Alliance"}?" else "Do you want to " +
                         "save your data for match ${stratMatch}, ${if(isRedAlliance) "Red Alliance" else "Blue Alliance"}?\n\n" +
-                        " If you have not synced and you press \"Yes\", the order of the teams will be reset.",
+                        "You have not synced. If you press \"Yes\", the order of the teams for match ${stratMatch}, " +
+                        "${if(isRedAlliance) "Red Alliance" else "Blue Alliance"} will be reset.",
                     modifier = Modifier
                         .padding(5.dp)
                         .align(Alignment.TopCenter)
