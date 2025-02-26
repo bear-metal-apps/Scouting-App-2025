@@ -303,14 +303,14 @@ fun sendPitsData(context: Context, client: Client) {
 
     val gson = Gson()
 
-    for((key, value) in pitsTeamDataArray.entries) {
-
-        val jsonObject = gson.fromJson(value, JsonObject::class.java)
-
-        client.sendData(jsonObject.toString(), "pit")
-
-        Log.i("Client", "Message Sent: ${jsonObject}")
-    }
+//    for((key, value) in pitsTeamDataArray.entries) {
+//
+//        val jsonObject = gson.fromJson(value, JsonObject::class.java)
+//
+//        client.sendData(jsonObject.toString(), "pit")
+//
+//        Log.i("Client", "Message Sent: ${jsonObject}")
+//    }
 
     var bitmap: Bitmap? = null
 
@@ -351,6 +351,8 @@ fun sendPitsData(context: Context, client: Client) {
         bos.close()
 
         val file = File(context.filesDir, "imageFile")
+        file.delete()
+        file.createNewFile()
         file.writeBytes(byteArray)
 
         client.sendData(file)
