@@ -353,7 +353,7 @@ actual fun StratMenu(
                 .fillMaxWidth(8f / 10f)
                 .padding(5.dp)
                 .fillMaxHeight(1 / 8f)) {
-                Text(text = "Do you want to save your changes?",
+                Text(text = "Do you want to save your changes for match ${stratMatch}, ${if(isRedAlliance) "Red Alliance" else "Blue Alliance"}?",
                     modifier = Modifier
                         .padding(5.dp)
                         .align(Alignment.TopCenter)
