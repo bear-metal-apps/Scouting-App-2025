@@ -13,6 +13,7 @@ import java.io.*
 import java.lang.Integer.parseInt
 
 var matchFolder : File? = null
+var stratFolder : File? = null
 var pitsFolder: File? = null
 
 var imagesFolder: File? = null
@@ -25,6 +26,17 @@ fun createScoutMatchDataFolder(context: Context) {
         println("Made match data folder")
     } else {
         println("Match data folder found")
+    }
+}
+
+fun createScoutStratDataFolder(context: Context) {
+    stratFolder = File(context.filesDir, "ScoutStratDataFolder")
+
+    if(!stratFolder!!.exists()) {
+        stratFolder!!.mkdirs()
+        println("Made strat data folder")
+    } else {
+        println("Strat data folder found")
     }
 }
 
@@ -60,6 +72,22 @@ fun createScoutMatchDataFile(context: Context, match: String, team: Int, data: S
     file.forEachLine {
         try {
             println("Saved file Match${match}Team${team}.json: $it")
+        } catch (e: Exception) {
+            println(e.message)
+        }
+    }
+}
+
+fun createScoutStratDataFile(context: Context, match: String, isRed: Boolean, data: String) {
+    val file = File(stratFolder, "Match${match}${if(isRed) "RedAlliance" else "BlueAlliance"}.json")
+    file.delete()
+    file.createNewFile()
+
+    file.writeText(data)
+
+    file.forEachLine {
+        try {
+            println("Saved file Match${match}${if (isRed) "RedAlliance" else "BlueAlliance"}.json: $it")
         } catch (e: Exception) {
             println(e.message)
         }
@@ -121,6 +149,25 @@ fun loadMatchDataFiles(context: Context) {
     }
 }
 
+fun loadStratDataFiles(context: Context) {
+    val gson = Gson()
+
+    println("loading strat files...")
+    for((index) in (stratFolder?.listFiles()?.withIndex()!!)) {
+        if(gson.fromJson(stratFolder?.listFiles()?.toList()?.get(index)?.readText(), JsonObject::class.java) != null) {
+            stratJsonObject = gson.fromJson(
+                stratFolder?.listFiles()?.toList()?.get(index)?.readText(), JsonObject::class.java
+            )
+            stratTeamDataArray[TeamsAllianceKey(
+                stratJsonObject.get("match").asInt,
+                stratJsonObject.get("is_red_alliance").asBoolean
+            )] = stratJsonObject.toString()
+
+            println(stratFolder?.listFiles()?.toList()?.get(index).toString())
+        }
+    }
+}
+
 fun loadPitsDataFiles(context: Context) {
     val gson = Gson()
 
@@ -175,6 +222,17 @@ fun deleteScoutPitsData() {
             for((index, value) in imagesFolder?.listFiles()?.withIndex()!!) {
                 value.deleteRecursively()
             }
+        } catch (e: IndexOutOfBoundsException) {}
+    }
+}
+
+fun deleteScoutStratData() {
+    repeat(10) {
+        try {
+            for((index) in stratFolder?.listFiles()?.withIndex()!!) {
+                stratFolder?.listFiles()?.get(index)?.deleteRecursively()
+            }
+            stratTeamDataArray.clear()
         } catch (e: IndexOutOfBoundsException) {}
     }
 }

@@ -101,6 +101,8 @@ fun updateMatchNum(matchNumber: Int) {
 
     mechanicalSoundnessOrder.clear()
     mechanicalSoundnessOrder.addAll(teams)
+
+//    loadStratData(stratMatch, isRedAlliance)
 }
 
 fun nextMatch() {

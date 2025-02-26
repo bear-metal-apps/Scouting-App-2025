@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -31,6 +32,7 @@ import androidx.core.view.ViewCompat
 import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.components.backstack.operation.pop
 import com.bumble.appyx.components.backstack.operation.push
+import createScoutStratDataFile
 import defaultOnPrimary
 import defaultSecondary
 import getCurrentTheme
@@ -48,6 +50,8 @@ actual fun StratMenu(
     teams: List<Team>,
     isRedAlliance: Boolean
 ) {
+    var context = LocalContext.current
+
     var mutableMatchNum by remember { mutableStateOf(stratMatch) }
 
     var first by remember { mutableStateOf(true) }
@@ -260,6 +264,9 @@ actual fun StratMenu(
                                 saveStratDataSit.value = true
 
                                 if(saveStratData.value) {
+                                    stratTeamDataArray[TeamsAllianceKey(stratMatch, isRedAlliance)] = createStratOutput(stratMatch)
+                                    createScoutStratDataFile(context, stratMatch.toString(), isRedAlliance, createStratOutput(
+                                        stratMatch))
                                     backStack.pop()
                                 } else {
                                     saveStratDataPopup.value = true
@@ -324,7 +331,16 @@ actual fun StratMenu(
                 onClick = {
                     saveStratDataSit.value = false
 
-                    saveStratDataPopup.value = true
+                    if(saveStratData.value) {
+                        saveStratDataPopup.value = true
+                    } else {
+                        stratTeamDataArray[TeamsAllianceKey(stratMatch, isRedAlliance)] = createStratOutput(stratMatch)
+                        createScoutStratDataFile(context, stratMatch.toString(), isRedAlliance, createStratOutput(stratMatch))
+
+                        nextMatch()
+                        mutableMatchNum = stratMatch
+                        loadStratData(stratMatch, isRedAlliance)
+                    }
                 }
             ) {
                 Text(
@@ -362,9 +378,13 @@ actual fun StratMenu(
                     onClick = {
                         if(saveStratDataSit.value) {
                             stratTeamDataArray[TeamsAllianceKey(stratMatch, isRedAlliance)] = createStratOutput(stratMatch)
+                            createScoutStratDataFile(context, stratMatch.toString(), isRedAlliance, createStratOutput(
+                                stratMatch))
                             backStack.pop()
                         } else {
                             stratTeamDataArray[TeamsAllianceKey(stratMatch, isRedAlliance)] = createStratOutput(stratMatch)
+                            createScoutStratDataFile(context, stratMatch.toString(), isRedAlliance, createStratOutput(
+                                stratMatch))
                             nextMatch()
                             mutableMatchNum = stratMatch
                             loadStratData(stratMatch, isRedAlliance)

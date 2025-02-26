@@ -21,6 +21,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import compKey
 import createScoutMatchDataFolder
 import createScoutPitsDataFolder
+import createScoutStratDataFolder
 import defaultError
 import defaultOnPrimary
 import defaultPrimaryVariant
@@ -30,6 +31,7 @@ import deleteScoutPitsData
 import getCurrentTheme
 import loadMatchDataFiles
 import loadPitsDataFiles
+import loadStratDataFiles
 import nodes.RootNode
 import nodes.betterParseInt
 import nodes.permPhotosList
@@ -68,6 +70,9 @@ actual fun LoginMenu(
 
         createScoutPitsDataFolder(context)
         loadPitsDataFiles(context)
+
+        createScoutStratDataFolder(context)
+        loadStratDataFiles(context)
 
         first = false
     }
