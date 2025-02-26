@@ -118,7 +118,7 @@ fun createStratOutput(match: Int): String {
 
     stratJsonObject = JsonObject().apply {
         addProperty("event_key", compKey)
-        addProperty("match", stratMatch)
+        addProperty("match", match)
         addProperty("is_red_alliance", isRedAlliance)
 
         addProperty("human_net_scored", humanNetScored.intValue)

@@ -380,7 +380,17 @@ actual fun StratMenu(
                     Text(text = "Yes", color = getCurrentTheme().error)
                 }
                 androidx.compose.material.OutlinedButton(
-                    onClick = { saveStratDataPopup.value = false },
+                    onClick = {
+                        if(saveStratDataSit.value) {
+                            backStack.pop()
+                        } else {
+                            nextMatch()
+                            mutableMatchNum = stratMatch
+                            loadStratData(stratMatch, isRedAlliance)
+                        }
+
+                        saveStratDataPopup.value = false
+                    },
                     border = BorderStroke(2.dp, getCurrentTheme().secondaryVariant),
                     colors = androidx.compose.material.ButtonDefaults.outlinedButtonColors(
                         backgroundColor = getCurrentTheme().secondary,
@@ -394,21 +404,21 @@ actual fun StratMenu(
         }
     }
 
-//    if(stratTeamDataArray[TeamsAllianceKey(stratMatch, isRedAlliance)] != null) {
-//        stratTeamDataArray[TeamsAllianceKey(stratMatch, isRedAlliance)] = createStratOutput(stratMatch)
-//        loadStratData(stratMatch, isRedAlliance)
-////        if(first) {
+    if(stratTeamDataArray[TeamsAllianceKey(stratMatch, isRedAlliance)] != null) {
+        stratTeamDataArray[TeamsAllianceKey(stratMatch, isRedAlliance)] = createStratOutput(stratMatch)
+        loadStratData(stratMatch, isRedAlliance)
+//        if(first) {
+//            loadData(parseInt(match.value), team, robotStartPosition)
+//            first = false
+//        } else {
+//            teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue, robotStartPosition.intValue)] = createOutput(team, robotStartPosition)
 ////            loadData(parseInt(match.value), team, robotStartPosition)
-////            first = false
-////        } else {
-////            teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue, robotStartPosition.intValue)] = createOutput(team, robotStartPosition)
-//////            loadData(parseInt(match.value), team, robotStartPosition)
-////        }
-//    } else {
-//        if(saveStratData.value) {
-//            stratTeamDataArray[TeamsAllianceKey(stratMatch, isRedAlliance)] = createStratOutput(stratMatch)
 //        }
-//    }
+    } else {
+        if(saveStratData.value) {
+            stratTeamDataArray[TeamsAllianceKey(stratMatch, isRedAlliance)] = createStratOutput(stratMatch)
+        }
+    }
 
 }
 
