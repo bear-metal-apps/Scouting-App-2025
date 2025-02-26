@@ -9,7 +9,7 @@ import nodes.RootNode
 
 
 @Composable
-expect fun AutoTeleSelectorMenuTop(
+expect fun MatchMenuTop(
     match: MutableState<String>,
     team: MutableIntState,
     robotStartPosition: MutableIntState,
@@ -18,7 +18,7 @@ expect fun AutoTeleSelectorMenuTop(
 
 
 @Composable
-expect fun AutoTeleSelectorMenuBottom(
+expect fun MatchMenuBottom(
     robotStartPosition: MutableIntState,
     team: MutableIntState,
     pageIndex: MutableIntState,

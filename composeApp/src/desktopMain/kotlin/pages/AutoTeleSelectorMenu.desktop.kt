@@ -134,7 +134,7 @@ actual fun AutoTeleSelectorMenuBottom(
 }
 
 @Composable
-actual fun AutoTeleSelectorMenuBottom(
+actual fun MatchMenuBottom(
     robotStartPosition: MutableIntState,
     team: MutableIntState,
     pageIndex: MutableIntState,
@@ -145,7 +145,7 @@ actual fun AutoTeleSelectorMenuBottom(
 }
 
 @Composable
-actual fun AutoTeleSelectorMenuTop(
+actual fun MatchMenuTop(
     match: MutableState<String>,
     team: MutableIntState,
     robotStartPosition: MutableIntState
