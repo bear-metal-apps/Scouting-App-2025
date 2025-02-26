@@ -132,12 +132,12 @@ fun loadPitsDataFiles(context: Context) {
                 JsonObject::class.java
             )
             pitsTeamDataArray[
-                jsonObject.get("scoutedTeamNumber").asInt
+                jsonObject.get("team").asInt
             ] = jsonObject.toString()
 
             println(pitsFolder?.listFiles()?.toList()?.get(index).toString())
             println(pitsTeamDataArray[
-                jsonObject.get("scoutedTeamNumber").asInt
+                jsonObject.get("team").asInt
             ])
         }
     }
