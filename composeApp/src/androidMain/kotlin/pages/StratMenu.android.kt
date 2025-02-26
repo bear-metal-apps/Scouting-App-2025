@@ -53,8 +53,7 @@ actual fun StratMenu(
     var first by remember { mutableStateOf(true) }
 
     if(first) {
-        tempStratMatch = stratMatch
-        println("ran! tempStratMatch = $tempStratMatch")
+//        tempStratMatch = stratMatch
 
         saveStratData.value = false
 
@@ -205,7 +204,8 @@ actual fun StratMenu(
                                 value = if (mutableMatchNum.toString() == "0") "" else mutableMatchNum.toString(),
                                 onValueChange = {
                                     if(saveStratData.value) {
-                                        stratTeamDataArray[TeamsAllianceKey(tempStratMatch, isRedAlliance)] = createStratOutput(tempStratMatch)
+                                        stratTeamDataArray[TeamsAllianceKey(stratMatch, isRedAlliance)] = createStratOutput(
+                                            stratMatch)
                                     }
 
                                     val newMatchNum = it.betterParseInt()
@@ -214,7 +214,7 @@ actual fun StratMenu(
                                     loadStratData(newMatchNum, isRedAlliance)
                                     saveStratData.value = false
 
-                                    tempStratMatch = stratMatch
+//                                    tempStratMatch = stratMatch
                                 },
                                 keyboardOptions = KeyboardOptions.Default.copy(
                                     keyboardType = KeyboardType.Number
@@ -258,8 +258,12 @@ actual fun StratMenu(
                             ),
                             onClick = {
                                 saveStratDataSit.value = true
-                                stratTeamDataArray[TeamsAllianceKey(stratMatch, isRedAlliance)] = createStratOutput(
-                                    stratMatch); backStack.pop()
+
+                                if(saveStratData.value) {
+                                    backStack.pop()
+                                } else {
+                                    saveStratDataPopup.value = true
+                                }
                             }
                         ) {
                             Text(
@@ -349,7 +353,7 @@ actual fun StratMenu(
                 .fillMaxWidth(8f / 10f)
                 .padding(5.dp)
                 .fillMaxHeight(1 / 8f)) {
-                Text(text = "Do you want to save this data?",
+                Text(text = "Do you want to save your changes?",
                     modifier = Modifier
                         .padding(5.dp)
                         .align(Alignment.TopCenter)
@@ -357,12 +361,10 @@ actual fun StratMenu(
                 androidx.compose.material.OutlinedButton(
                     onClick = {
                         if(saveStratDataSit.value) {
-                            stratTeamDataArray[TeamsAllianceKey(stratMatch, isRedAlliance)] = createStratOutput(
-                                stratMatch)
+                            stratTeamDataArray[TeamsAllianceKey(stratMatch, isRedAlliance)] = createStratOutput(stratMatch)
                             backStack.pop()
                         } else {
-                            stratTeamDataArray[TeamsAllianceKey(stratMatch, isRedAlliance)] = createStratOutput(
-                                stratMatch)
+                            stratTeamDataArray[TeamsAllianceKey(stratMatch, isRedAlliance)] = createStratOutput(stratMatch)
                             nextMatch()
                             mutableMatchNum = stratMatch
                             loadStratData(stratMatch, isRedAlliance)

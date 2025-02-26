@@ -294,10 +294,10 @@ actual class MainMenu actual constructor(
                         onClick = {
                             selectedAlliance = false
                             setContext(true)
-                            isRedAlliance = true
+//                            isRedAlliance = true
                             backStack.push(RootNode.NavTarget.StratScreen)
 
-                            loadStratData(stratMatch, isRedAlliance)
+                            loadStratData(stratMatch, true)
                         },
                         modifier = Modifier
                             .border(BorderStroke(color = Color.Yellow, width = 3.dp))
@@ -307,10 +307,10 @@ actual class MainMenu actual constructor(
                         onClick = {
                             selectedAlliance = false
                             setContext(false)
-                            isRedAlliance = false
+//                            isRedAlliance = false
                             backStack.push(RootNode.NavTarget.StratScreen)
 
-                            loadStratData(stratMatch, isRedAlliance)
+                            loadStratData(stratMatch, false)
                         },
                         modifier = Modifier
                             .border(BorderStroke(color = Color.Yellow, width = 3.dp))

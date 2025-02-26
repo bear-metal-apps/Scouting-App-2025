@@ -116,6 +116,7 @@ val mechanicalSoundnessOrder = mutableStateListOf<Team>()
 fun createStratOutput(match: Int): String {
 
     println("saved data")
+    println(stratTeamDataArray.toString())
 
     stratJsonObject = JsonObject().apply {
         addProperty("event_key", compKey)
@@ -192,7 +193,7 @@ fun loadStratData(match: Int, isRed: Boolean) {
     } else {
         stratReset()
         if(saveStratData.value) {
-            stratTeamDataArray[TeamsAllianceKey(match, isRed)] = createStratOutput(stratMatch)
+            stratTeamDataArray[TeamsAllianceKey(stratMatch, isRed)] = createStratOutput(stratMatch)
         }
     }
 }
