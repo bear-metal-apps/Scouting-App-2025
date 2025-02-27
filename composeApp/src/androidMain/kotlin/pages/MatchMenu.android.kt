@@ -25,9 +25,6 @@ import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.components.backstack.operation.pop
 import com.bumble.appyx.components.backstack.operation.push
 import createScoutMatchDataFile
-import defaultError
-import defaultPrimaryVariant
-import defaultSecondary
 import exportScoutData
 import getCurrentTheme
 import nodes.*
@@ -39,7 +36,7 @@ import java.util.*
 @SuppressLint("SuspiciousIndentation")
 @RequiresApi(Build.VERSION_CODES.R)
 @Composable
-actual fun AutoTeleSelectorMenuTop(
+actual fun MatchMenuTop(
     match: MutableState<String>,
     team: MutableIntState,
     robotStartPosition: MutableIntState
@@ -241,7 +238,7 @@ actual fun AutoTeleSelectorMenuTop(
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
-actual fun AutoTeleSelectorMenuBottom(
+actual fun MatchMenuBottom(
     robotStartPosition: MutableIntState,
     team: MutableIntState,
     pageIndex: MutableIntState,

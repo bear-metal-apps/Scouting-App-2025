@@ -21,8 +21,8 @@ import com.google.gson.Gson
 import com.google.gson.JsonObject
 import compKey
 import composables.MainMenuAlertDialog
-import pages.AutoTeleSelectorMenuBottom
-import pages.AutoTeleSelectorMenuTop
+import pages.MatchMenuBottom
+import pages.MatchMenuTop
 import java.lang.Integer.parseInt
 import java.util.*
 
@@ -90,7 +90,7 @@ class AutoTeleSelectorNode(
     override fun View(modifier: Modifier) {
         Column {
             var mainMenuDialog = mutableStateOf(false)
-            AutoTeleSelectorMenuTop(match, team, robotStartPosition)
+            MatchMenuTop(match, team, robotStartPosition)
             MainMenuAlertDialog(
                 mainMenuDialog,
                 bob = {
@@ -103,7 +103,7 @@ class AutoTeleSelectorNode(
                 appyxComponent = backStack,
                 modifier = Modifier.weight(0.9f),
             )
-            AutoTeleSelectorMenuBottom(
+            MatchMenuBottom(
                 robotStartPosition,
                 team,
                 pageIndex,

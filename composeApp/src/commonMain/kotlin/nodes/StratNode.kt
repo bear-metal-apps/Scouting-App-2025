@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.navigation.modality.BuildContext
@@ -12,6 +13,7 @@ import com.google.gson.Gson
 import com.google.gson.JsonObject
 import compKey
 import getTeamsOnAlliance
+import isSynced
 import pages.StratMenu
 import java.util.*
 
@@ -27,11 +29,18 @@ class StratNode(
     }
 }
 
-var stratJsonObject : JsonObject = JsonObject() // Don't know if there needs to be another json for strat, but just being safe for now!
+var stratJsonObject: JsonObject =
+    JsonObject() // Don't know if there needs to be another json for strat, but just being safe for now!
 
-var stratTeamDataArray = HashMap<teamsAllianceKey, String>()
+var stratTeamDataArray = HashMap<TeamsAllianceKey, String>()
 
-class teamsAllianceKey(
+var saveStratData = mutableStateOf(false)
+
+var saveStratDataPopup = mutableStateOf(false)
+var saveStratDataSit = mutableStateOf(false) // false = nextMatch, true = main menu
+
+
+class TeamsAllianceKey(
     val match: Int,
     val isRed: Boolean
 ) {
@@ -45,7 +54,7 @@ class teamsAllianceKey(
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as teamsAllianceKey
+        other as TeamsAllianceKey
 
         if (match != other.match) return false
         if (isRed != other.isRed) return false
@@ -54,14 +63,16 @@ class teamsAllianceKey(
     }
 
     override fun toString(): String {
-        return "$match, ${if(isRed) "Red Alliance" else "Blue Alliance"}"
+        return "$match, ${if (isRed) "Red Alliance" else "Blue Alliance"}"
     }
 }
 
 var isRedAlliance: Boolean = false
-var matchNum: Int = 1
+var stratMatch: Int = 1
 
-var teams: List<Team> = getTeamsOnAlliance(matchNum, isRedAlliance)
+var tempStratMatch = stratMatch
+
+var teams: List<Team> = getTeamsOnAlliance(stratMatch, isRedAlliance)
 
 data class Team(
     val number: Int,
@@ -72,16 +83,16 @@ fun setContext(
     redAlliance: Boolean
 ) {
     isRedAlliance = redAlliance
-    updateMatchNum(matchNum)
+    updateMatchNum(stratMatch)
 }
 
 fun updateMatchNum(matchNumber: Int) {
     if (matchNumber < 1) {
-        matchNum = 1
+        stratMatch = 1
         return
     }
-    matchNum = matchNumber
-    teams = getTeamsOnAlliance(matchNum, isRedAlliance)
+    stratMatch = matchNumber
+    teams = getTeamsOnAlliance(stratMatch, isRedAlliance)
 
     strategyOrder.clear()
     strategyOrder.addAll(teams)
@@ -89,79 +100,75 @@ fun updateMatchNum(matchNumber: Int) {
     drivingSkillOrder.clear()
     drivingSkillOrder.addAll(teams)
 
-    collectorOrder.clear()
-    collectorOrder.addAll(teams)
+    mechanicalSoundnessOrder.clear()
+    mechanicalSoundnessOrder.addAll(teams)
 
-    connectionOrder.clear()
-    connectionOrder.addAll(teams)
+//    loadStratData(stratMatch, isRedAlliance)
 }
 
 fun nextMatch() {
-    updateMatchNum(matchNum + 1)
+    updateMatchNum(stratMatch + 1)
 }
 
 var humanNetScored = mutableIntStateOf(0)
 var humanNetMissed = mutableIntStateOf(0)
 val strategyOrder = mutableStateListOf<Team>()
 val drivingSkillOrder = mutableStateListOf<Team>()
-val collectorOrder = mutableStateListOf<Team>()
-val connectionOrder = mutableStateListOf<Team>()
+val mechanicalSoundnessOrder = mutableStateListOf<Team>()
 
-fun createStratOutput(): String {
+fun createStratOutput(match: Int): String {
 
-    val gson = Gson()
+    println("saved data")
 
     stratJsonObject = JsonObject().apply {
         addProperty("event_key", compKey)
-        addProperty("match", matchNum)
+        addProperty("match", match)
         addProperty("is_red_alliance", isRedAlliance)
 
-        addProperty("humanNetScored", humanNetScored.intValue)
-        addProperty("humanNetMissed", humanNetMissed.intValue)
+        addProperty("human_net_scored", humanNetScored.intValue)
+        addProperty("human_net_missed", humanNetMissed.intValue)
 
-        addProperty("strategyOrder1", strategyOrder[0].number)
-        addProperty("strategyOrder2", strategyOrder[1].number)
-        addProperty("strategyOrder3", strategyOrder[2].number)
+        add("strategy", JsonObject().apply {
+            for (i in strategyOrder.indices) {
+                addProperty("${i + 1}", strategyOrder[i].number)
+            }
+        })
 
-        addProperty("drivingSkillOrder1", drivingSkillOrder[0].number)
-        addProperty("drivingSkillOrder2", drivingSkillOrder[1].number)
-        addProperty("drivingSkillOrder3", drivingSkillOrder[2].number)
+        add("driving_skill", JsonObject().apply {
+            for (i in drivingSkillOrder.indices) {
+                addProperty("${i + 1}", drivingSkillOrder[i].number)
+            }
+        })
 
-        addProperty("collectorOrder1", collectorOrder[0].number)
-        addProperty("collectorOrder2", collectorOrder[1].number)
-        addProperty("collectorOrder3", collectorOrder[2].number)
-
-        addProperty("connectionOrder1", connectionOrder[0].number)
-        addProperty("connectionOrder2", connectionOrder[1].number)
-        addProperty("connectionOrder3", connectionOrder[2].number)
+        add("mechanical_soundness", JsonObject().apply {
+            for (i in mechanicalSoundnessOrder.indices) {
+                addProperty("${i + 1}", mechanicalSoundnessOrder[i].number)
+            }
+        })
     }
 
     return stratJsonObject.toString()
-
 }
 
 fun loadStratData(match: Int, isRed: Boolean) {
-
     val gson = Gson()
+    val currentTeams: List<Team>
 
-    val currentTeams : List<Team>
+    if (stratTeamDataArray[TeamsAllianceKey(match, isRed)] != null) {
+        stratJsonObject = gson.fromJson(stratTeamDataArray[TeamsAllianceKey(match, isRed)], JsonObject::class.java)
 
-    if(stratTeamDataArray[teamsAllianceKey(match, isRed)] != null) {
-
-        stratJsonObject = gson.fromJson(stratTeamDataArray[teamsAllianceKey(match, isRed)], JsonObject::class.java)
         currentTeams = getTeamsOnAlliance(match, isRed)
 
-        isRedAlliance = stratJsonObject.get("is_red_alliance").asBoolean
-        matchNum = stratJsonObject.get("event_key").asInt
+        isRedAlliance = stratJsonObject.get("is_red_alliance")?.asBoolean ?: false
+        stratMatch = stratJsonObject.get("match")?.asInt ?: 1
 
-        humanNetScored.value = stratJsonObject.get("humanNetScored").asInt
-        humanNetMissed.value = stratJsonObject.get("humanNetMissed").asInt
+        humanNetScored.value = stratJsonObject.get("human_net_scored")?.asInt ?: 0
+        humanNetMissed.value = stratJsonObject.get("human_net_missed")?.asInt ?: 0
 
-        repeat(3) {
-            for(team in currentTeams) {
-                if(team.number == stratJsonObject.get("strategyOrder${it+1}").asInt) {
+        repeat(currentTeams.size) {
+            for (team in currentTeams) {
+                if (team.number == stratJsonObject.get("strategy")?.asJsonObject?.get("${it + 1}")?.asInt) {
                     strategyOrder[it] = team
-                    println("Found team!")
                     break
                 }
             }
@@ -169,8 +176,8 @@ fun loadStratData(match: Int, isRed: Boolean) {
         }
 
         repeat(3) {
-            for(team in currentTeams) {
-                if(team.number == stratJsonObject.get("drivingSkillOrder${it+1}").asInt) {
+            for (team in currentTeams) {
+                if (team.number == stratJsonObject.get("driving_skill")?.asJsonObject?.get("${it + 1}")?.asInt) {
                     drivingSkillOrder[it] = team
                     break
                 }
@@ -178,28 +185,19 @@ fun loadStratData(match: Int, isRed: Boolean) {
         }
 
         repeat(3) {
-            for(team in currentTeams) {
-                if(team.number == stratJsonObject.get("collectorOrder${it+1}").asInt) {
-                    collectorOrder[it] = team
+            for (team in currentTeams) {
+                if (team.number == stratJsonObject.get("mechanical_soundness")?.asJsonObject?.get("${it + 1}")?.asInt) {
+                    mechanicalSoundnessOrder[it] = team
                     break
                 }
             }
         }
-
-        repeat(3) {
-            for(team in currentTeams) {
-                if(team.number == stratJsonObject.get("connectionOrder${it+1}").asInt) {
-                    connectionOrder[it] = team
-                    break
-                }
-            }
-        }
-
     } else {
         stratReset()
-        stratTeamDataArray[teamsAllianceKey(match, isRed)] = createStratOutput()
+        if(saveStratData.value && isSynced()) {
+            stratTeamDataArray[TeamsAllianceKey(stratMatch, isRed)] = createStratOutput(stratMatch)
+        }
     }
-
 }
 
 fun stratReset() {
