@@ -21,15 +21,18 @@ import androidx.compose.ui.text.input.KeyboardType
 import compKey
 import createScoutMatchDataFolder
 import createScoutPitsDataFolder
+import createScoutStratDataFolder
 import defaultError
 import defaultOnPrimary
 import defaultPrimaryVariant
 import deleteFile
 import deleteScoutMatchData
 import deleteScoutPitsData
+import deleteScoutStratData
 import getCurrentTheme
 import loadMatchDataFiles
 import loadPitsDataFiles
+import loadStratDataFiles
 import matchData
 import nodes.RootNode
 import nodes.betterParseInt
@@ -38,6 +41,7 @@ import nodes.pitsReset
 import nodes.teamDataArray
 import nodes.reset
 import teamData
+import nodes.stratReset
 import java.io.File
 import java.lang.Integer.parseInt
 
@@ -70,6 +74,9 @@ actual fun LoginMenu(
 
         createScoutPitsDataFolder(context)
         loadPitsDataFiles(context)
+
+        createScoutStratDataFolder(context)
+        loadStratDataFiles(context)
 
         first = false
     }
@@ -252,12 +259,13 @@ actual fun LoginMenu(
                         Box(modifier = Modifier.fillMaxWidth(8f / 10f)) {
                             Button(
                                 onClick = {
-                                    teamDataArray.clear()
                                     permPhotosList.clear()
                                     reset()
+                                    stratReset()
                                     pitsReset()
                                     deleteFile(context)
                                     deleteScoutMatchData()
+                                    deleteScoutStratData()
                                     deleteScoutPitsData()
                                     deleteData = false
                                 },
