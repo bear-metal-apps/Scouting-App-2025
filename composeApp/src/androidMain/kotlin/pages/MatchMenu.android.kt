@@ -193,7 +193,6 @@ actual fun MatchMenuTop(
                         stringMatch.value = temp.slice(0..<temp.length.coerceAtMost(5))
                         match.value = temp.slice(0..<temp.length.coerceAtMost(5))
                         loadData(parseInt(match.value), team, robotStartPosition)
-//                        teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
                         exportScoutData(context) // Does nothing
 
                         try {
@@ -207,7 +206,6 @@ actual fun MatchMenuTop(
                         match.value = "0"
 
                         loadData(parseInt(match.value), team, robotStartPosition)
-//                        teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
                         exportScoutData(context) // Does nothing
 
                         try {
