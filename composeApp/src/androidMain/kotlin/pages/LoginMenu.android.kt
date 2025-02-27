@@ -34,11 +34,16 @@ import loadMatchDataFiles
 import loadPitsDataFiles
 import loadStratDataFiles
 import nodes.RootNode
+import nodes.TeamMatchStartKey
 import nodes.betterParseInt
+import nodes.createOutput
+import nodes.match
 import nodes.permPhotosList
 import nodes.pitsReset
 import nodes.teamDataArray
 import nodes.reset
+import nodes.saveData
+import nodes.saveDataPopup
 import nodes.stratReset
 import java.io.File
 import java.lang.Integer.parseInt
@@ -208,35 +213,38 @@ actual fun LoginMenu(
                     onDismissRequest = { deleteData = false },
                     modifier = Modifier.clip(
                         RoundedCornerShape(5.dp)
-                    ).border(BorderStroke(3.dp, defaultPrimaryVariant), RoundedCornerShape(5.dp))
-
+                    ).border(BorderStroke(3.dp, getCurrentTheme().primaryVariant), RoundedCornerShape(5.dp))
+                        .background(getCurrentTheme().secondary)
                 ) {
-                    Column {
-                        Text(text = "Are you sure?")
-                        Box(modifier = Modifier.fillMaxWidth(8f / 10f)) {
-                            Button(
-                                onClick = {
-                                    permPhotosList.clear()
-                                    reset()
-                                    stratReset()
-                                    pitsReset()
-                                    deleteFile(context)
-                                    deleteScoutMatchData()
-                                    deleteScoutStratData()
-                                    deleteScoutPitsData()
-                                    deleteData = false
-                                },
-                                modifier = Modifier.align(Alignment.CenterStart)
-                            ) {
-                                Text(text = "Yes", color = defaultError)
-                            }
-
-                            Button(
-                                onClick = { deleteData = false },
-                                modifier = Modifier.align(Alignment.CenterEnd)
-                            ) {
-                                Text(text = "No", color = defaultError)
-                            }
+                    Box(modifier = Modifier.fillMaxWidth(8f / 10f).padding(5.dp).fillMaxHeight(1/8f)) {
+                        Text(text = "Are you sure you want to delete all data?",
+                            modifier = Modifier.padding(5.dp).align(Alignment.TopCenter)
+                        )
+                        androidx.compose.material.OutlinedButton(
+                            onClick = {
+                                permPhotosList.clear()
+                                reset()
+                                stratReset()
+                                pitsReset()
+                                deleteFile(context)
+                                deleteScoutMatchData()
+                                deleteScoutStratData()
+                                deleteScoutPitsData()
+                                deleteData = false
+                            },
+                            border = BorderStroke(2.dp, getCurrentTheme().secondaryVariant),
+                            colors = androidx.compose.material.ButtonDefaults.outlinedButtonColors(backgroundColor = getCurrentTheme().secondary, contentColor = getCurrentTheme().onSecondary),
+                            modifier = Modifier.align(Alignment.BottomStart)
+                        ) {
+                            Text(text = "Yes", color = getCurrentTheme().error)
+                        }
+                        androidx.compose.material.OutlinedButton(
+                            onClick = { deleteData = false },
+                            border = BorderStroke(2.dp, getCurrentTheme().secondaryVariant),
+                            colors = androidx.compose.material.ButtonDefaults.outlinedButtonColors(backgroundColor = getCurrentTheme().secondary, contentColor = getCurrentTheme().onSecondary),
+                            modifier = Modifier.align(Alignment.BottomEnd)
+                        ) {
+                            Text(text = "No", color = getCurrentTheme().error)
                         }
                     }
                 }
