@@ -32,8 +32,8 @@ import deleteScoutStratData
 import getCurrentTheme
 import loadMatchDataFiles
 import loadPitsDataFiles
-import loadStratDataFiles
 import matchData
+import loadStratDataFiles
 import nodes.RootNode
 import nodes.betterParseInt
 import nodes.permPhotosList

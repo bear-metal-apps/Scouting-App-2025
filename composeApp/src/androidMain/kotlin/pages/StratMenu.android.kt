@@ -216,11 +216,12 @@ actual fun StratMenu(
                                         createScoutStratDataFile(context, stratMatch.toString(), isRedAlliance, createStratOutput(stratMatch))
                                     }
 
+                                    saveStratData.value = false
+
                                     val newMatchNum = it.betterParseInt()
                                     mutableMatchNum = newMatchNum
                                     updateMatchNum(newMatchNum)
                                     loadStratData(newMatchNum, isRedAlliance)
-                                    saveStratData.value = false
 
 //                                    tempStratMatch = stratMatch
                                 },
@@ -272,6 +273,8 @@ actual fun StratMenu(
                                     createScoutStratDataFile(context, stratMatch.toString(), isRedAlliance, createStratOutput(
                                         stratMatch))
                                     backStack.pop()
+
+                                    saveStratData.value = false
                                 } else {
                                     saveStratDataPopup.value = true
                                 }
@@ -338,10 +341,11 @@ actual fun StratMenu(
                     if(saveStratData.value && isSynced()) {
                         stratTeamDataArray[TeamsAllianceKey(stratMatch, isRedAlliance)] = createStratOutput(stratMatch)
                         createScoutStratDataFile(context, stratMatch.toString(), isRedAlliance, createStratOutput(stratMatch))
-
+                        saveStratData.value = false
                         nextMatch()
                         mutableMatchNum = stratMatch
                         loadStratData(stratMatch, isRedAlliance)
+
                     } else {
                         saveStratDataPopup.value = true
                     }
@@ -389,10 +393,12 @@ actual fun StratMenu(
                             createScoutStratDataFile(context, stratMatch.toString(), isRedAlliance, createStratOutput(
                                 stratMatch))
                             backStack.pop()
+                            saveStratData.value = false
                         } else {
                             stratTeamDataArray[TeamsAllianceKey(stratMatch, isRedAlliance)] = createStratOutput(stratMatch)
                             createScoutStratDataFile(context, stratMatch.toString(), isRedAlliance, createStratOutput(
                                 stratMatch))
+                            saveStratData.value = false
                             nextMatch()
                             mutableMatchNum = stratMatch
                             loadStratData(stratMatch, isRedAlliance)
@@ -434,14 +440,11 @@ actual fun StratMenu(
         }
     }
 
-    // THINK I HAVE PREVENTED ANYWHERE WHERE THE STRAT PAGE GETS SAVED WHEN IT IS NOT SYNCED. CHECK FOR MORE PLACES.
-
     // Saves data into temp stratTeamDataArray whenever the app recomposes.
     if(stratTeamDataArray[TeamsAllianceKey(stratMatch, isRedAlliance)] != null && isSynced()) {
         stratTeamDataArray[TeamsAllianceKey(stratMatch, isRedAlliance)] = createStratOutput(stratMatch)
         loadStratData(stratMatch, isRedAlliance)
     } else if(isSynced()) {
-//        println("saved")
         if(saveStratData.value) {
             stratTeamDataArray[TeamsAllianceKey(stratMatch, isRedAlliance)] = createStratOutput(stratMatch)
         }
