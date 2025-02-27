@@ -121,8 +121,10 @@ actual fun MatchMenuTop(
                 Color.Red
             }
 
+            var stringTeam = remember { mutableStateOf("") }
+
             TextField(
-                value = team.intValue.toString(),
+                value = stringTeam.value,
                 onValueChange = { value ->
                     if(saveData.value) {
                         teamDataArray[TeamMatchStartKey(parseInt(tempMatch), tempTeam, robotStartPosition.intValue)] = createOutput(mutableIntStateOf(tempTeam), robotStartPosition)
@@ -132,15 +134,18 @@ actual fun MatchMenuTop(
                     saveData.value = false
 
                     val filteredText = value.filter { it.isDigit() }
-                    if (filteredText.isNotEmpty() && !filteredText.contains(','))
-                        teamNumAsText =
-                            filteredText.slice(0..<filteredText.length.coerceAtMost(5))//WHY IS FILTER NOT FILTERING
-                        team.intValue = parseInt(teamNumAsText)
+                    if (filteredText.isNotEmpty()) {
+                        stringTeam.value = filteredText.slice(0..<filteredText.length.coerceAtMost(5))//WHY IS FILTER NOT FILTERING
+                        team.intValue = parseInt(filteredText.slice(0..<filteredText.length.coerceAtMost(5)))
                         loadData(parseInt(match.value), team, robotStartPosition)
 
-                    tempTeam = team.intValue
+                    } else {
+                        stringTeam.value = ""//WHY IS FILTER NOT FILTERING
+                        team.intValue = 0
+                        loadData(parseInt(match.value), team, robotStartPosition)
+                    }
 
-                    println(robotStartPosition.intValue.toString())
+                    tempTeam = team.intValue
 
                 },
                 colors = TextFieldDefaults.colors(
@@ -171,8 +176,10 @@ actual fun MatchMenuTop(
                 fontSize = 28.sp
             )
 
+            var stringMatch = remember {mutableStateOf("1")}
+
             TextField(
-                value = match.value,
+                value = stringMatch.value,
                 onValueChange = { value ->
                     if(saveData.value) {
                         teamDataArray[TeamMatchStartKey(parseInt(tempMatch), tempTeam, robotStartPosition.intValue)] = createOutput(mutableIntStateOf(tempTeam), robotStartPosition)
@@ -183,6 +190,7 @@ actual fun MatchMenuTop(
 
                     val temp = value.filter { it.isDigit() }
                     if(temp.isNotEmpty()) {
+                        stringMatch.value = temp.slice(0..<temp.length.coerceAtMost(5))
                         match.value = temp.slice(0..<temp.length.coerceAtMost(5))
                         loadData(parseInt(match.value), team, robotStartPosition)
 //                        teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
@@ -194,6 +202,19 @@ actual fun MatchMenuTop(
                             openError.value = true
                         }
 
+                    } else {
+                        stringMatch.value = ""
+                        match.value = "0"
+
+                        loadData(parseInt(match.value), team, robotStartPosition)
+//                        teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
+                        exportScoutData(context) // Does nothing
+
+                        try {
+                            setTeam(team, nodes.match, robotStartPosition.intValue)
+                        } catch (e: JSONException) {
+                            openError.value = true
+                        }
                     }
 
                     tempMatch = match.value
