@@ -73,35 +73,50 @@ actual fun MatchMenuTop(
     when (robotStartPosition.intValue) {
         0 -> {
             positionName = "R1"
+            isRedAliance.value = true
         }
 
         1 -> {
             positionName = "R2"
+            isRedAliance.value = true
         }
 
         2 -> {
             positionName = "R3"
+            isRedAliance.value = true
         }
 
         3 -> {
             positionName = "B1"
+            isRedAliance.value = false
+            tempRobotStart.value -= 3
         }
 
         4 -> {
             positionName = "B2"
+            isRedAliance.value = false
+            tempRobotStart.value -= 3
         }
 
         5 -> {
             positionName = "B3"
+            isRedAliance.value = false
+            tempRobotStart.value -= 3
         }
     }
-
+    tempRobotStart = robotStartPosition
     if (positionName == "R1" || positionName == "R2" || positionName == "R3"){
         isRedAliance.value = true
     }else{
         isRedAliance.value = false
+        tempRobotStart.value -= 3
     }
-    team.intValue = teams[robotStartPosition.intValue].number
+    try{
+        team.intValue = getTeamsOnAlliance(match.value.betterParseInt(), isRedAliance.value)[tempRobotStart.value].number
+    }catch (e: Exception){
+
+    }
+
     Column() {
         HorizontalDivider(color = getCurrentTheme().primaryVariant, thickness = 4.dp)
 
@@ -137,6 +152,10 @@ actual fun MatchMenuTop(
                         createScoutMatchDataFile(context, tempMatch, tempTeam, createOutput(mutableIntStateOf(tempTeam), robotStartPosition))
                     }
 
+//                    try{
+                        team.intValue = getTeamsOnAlliance(match.value.betterParseInt(), isRedAlliance)[tempRobotStart.value].number
+//                    }catch (e: Exception){
+//                    }
                     saveData.value = false
 
                     val filteredText = value.filter { it.isDigit() }
@@ -538,5 +557,6 @@ actual fun MatchMenuBottom(
         }
     }
 }
+var tempRobotStart : MutableState<Int> = mutableStateOf(0)
 var isRedAliance = mutableStateOf(false)
 var teams = getTeamsOnAlliance(match.value.betterParseInt(),isRedAliance.value)

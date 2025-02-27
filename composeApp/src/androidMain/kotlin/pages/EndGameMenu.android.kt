@@ -36,21 +36,9 @@ import composables.Comments
 import composables.EndGameCheckBox
 import createScoutMatchDataFile
 import defaultSecondary
+import getTeamsOnAlliance
 import keyboardAsState
-import nodes.AutoTeleSelectorNode
-import nodes.RootNode
-import nodes.TeamMatchStartKey
-import nodes.createOutput
-import nodes.deep
-import nodes.notes
-import nodes.park
-import nodes.playedDefense
-import nodes.reset
-import nodes.saveData
-import nodes.saveDataPopup
-import nodes.saveDataSit
-import nodes.shallow
-import nodes.teamDataArray
+import nodes.*
 import org.json.JSONException
 import org.tahomarobotics.scouting.TBAInterface
 import setTeam
@@ -125,12 +113,6 @@ actual fun EndGameMenu(
                         match.value = (parseInt(match.value) + 1).toString()
                         reset()
                         saveData.value = false
-
-                        try {
-                            setTeam(team, nodes.match, robotStartPosition.intValue)
-                        } catch (e: JSONException) {
-                            openError.value = true
-                        }
                         backStack.push(AutoTeleSelectorNode.NavTarget.AutoScouting)
                     } else {
                         saveDataPopup.value = true
