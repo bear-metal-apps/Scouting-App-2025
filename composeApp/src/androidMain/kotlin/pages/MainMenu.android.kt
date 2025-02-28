@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+//import androidx.compose.material.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,10 +35,12 @@ import nodes.*
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import org.tahomarobotics.scouting.Client
+import org.tahomarobotics.scouting.TBAInterface
 import sendDataUSB
 import sendMatchData
 import sendPitsData
 import sendStratData
+import setTeam
 import sync
 import teamData
 import java.lang.Integer.parseInt
@@ -349,6 +352,7 @@ actual class MainMenu actual constructor(
                         teamSyncedResource = if (teamData != null) "checkmark.png" else "crossmark.png"
                         matchSyncedResource = if (matchData != null) "checkmark.png" else "crossmark.png"
                     }
+//                    TBAInterface.getTBAData("/event/${compKey}/teams/keys")
                 },
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
@@ -511,8 +515,10 @@ actual class MainMenu actual constructor(
                         ) {
                             Text(text = "Strat", color = getCurrentTheme().error)
                         }
+
                         androidx.compose.material.OutlinedButton(
                             onClick = {
+                                println(permPhotosList.toString())
                                 val scope = CoroutineScope(Dispatchers.Default)
                                 scope.launch {
                                     if (client == null) client = Client()
@@ -547,6 +553,4 @@ actual class MainMenu actual constructor(
         }
     }
 }
-
-var ipAddress = mutableStateOf("127.0.0.1")
 val openError = mutableStateOf(false)

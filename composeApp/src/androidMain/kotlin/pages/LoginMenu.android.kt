@@ -32,6 +32,7 @@ import deleteScoutStratData
 import getCurrentTheme
 import loadMatchDataFiles
 import loadPitsDataFiles
+import matchData
 import loadStratDataFiles
 import nodes.RootNode
 import nodes.TeamMatchStartKey
@@ -44,6 +45,7 @@ import nodes.teamDataArray
 import nodes.reset
 import nodes.saveData
 import nodes.saveDataPopup
+import teamData
 import nodes.stratReset
 import java.io.File
 import java.lang.Integer.parseInt
@@ -61,11 +63,11 @@ actual fun LoginMenu(
     var deleteData by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val tbaMatches = listOf(
-        "2024wabon",
-        "2024wasam",
-        "2024orsal",
-        "2024pncmp",
-        "2024hop"
+        "2025wasno",
+        "2025wabon",
+        "2025waahs",
+        "2025pncmp",
+        "2025hop"
 
     )
 
@@ -139,23 +141,64 @@ actual fun LoginMenu(
             }
             DropdownMenu(expanded = compDD, onDismissRequest = { compDD = false; },modifier= Modifier.background(color = getCurrentTheme().onSurface)) {
                 DropdownMenuItem(
-                    onClick = { comp.value = "Bonney Lake"; compDD = false; compKey = tbaMatches[0]},
+                    onClick = {
+                        if(comp.value != "Glacier Peak"){
+                            comp.value = "Glacier Peak"
+                            compKey = tbaMatches[0]
+//                            teamData?.clear()
+//                            matchData?.clear()
+                        }
+                        compDD = false
+                              },
+                    text = { Text(text = "Glacier Peak", color = getCurrentTheme().onPrimary,modifier= Modifier.background(color = getCurrentTheme().onSurface)) }
+                )
+                DropdownMenuItem(
+                    onClick = {
+                        if(comp.value != "Bonney Lake"){
+                            comp.value = "Bonney Lake"
+                            compKey = tbaMatches[1]
+//                            teamData?.clear()
+//                            matchData?.clear()
+                        }
+                        compDD = false
+                    },
                     text = { Text(text = "Bonney Lake", color = getCurrentTheme().onPrimary,modifier= Modifier.background(color = getCurrentTheme().onSurface)) }
                 )
                 DropdownMenuItem(
-                    onClick = { comp.value = "Lake Sammamish"; compDD = false; compKey = tbaMatches[1]},
-                    text = { Text(text = "Lake Sammamish", color = getCurrentTheme().onPrimary,modifier= Modifier.background(color = getCurrentTheme().onSurface)) }
+                    onClick = {
+                        if(comp.value != "Auburn"){
+                            comp.value = "Auburn"
+                            compKey = tbaMatches[2]
+//                            teamData?.clear()
+//                            matchData?.clear()
+                        }
+                        compDD = false
+                    },
+                    text ={ Text(text = "Auburn", color = getCurrentTheme().onPrimary,modifier= Modifier.background(color = getCurrentTheme().onSurface)) }
                 )
                 DropdownMenuItem(
-                    onClick = { comp.value = "Salem"; compDD = false; compKey = tbaMatches[2]},
-                    text ={ Text(text = "Salem", color = getCurrentTheme().onPrimary,modifier= Modifier.background(color = getCurrentTheme().onSurface)) }
-                )
-                DropdownMenuItem(
-                    onClick = { comp.value = "Portland"; compDD = false; compKey = tbaMatches[3] },
+                    onClick = {
+                        if(comp.value != "Cheney"){
+                            comp.value = "Cheney"
+                            compKey = tbaMatches[3]
+//                            teamData?.clear()
+//                            matchData?.clear()
+                        }
+                        compDD = false
+                    },
                     text = { Text(text = "DCMP", color = getCurrentTheme().onPrimary, modifier = Modifier.background(color = getCurrentTheme().onSurface)) }
                 )
                 DropdownMenuItem(
-                    onClick = { comp.value = "Houston"; compDD = false; compKey = tbaMatches[4]},
+                    onClick = {
+                        if(comp.value != "Houston"){
+                            comp.value = "Houston"
+                            compKey = tbaMatches[4]
+//                            teamData?.clear()
+//                            matchData?.clear()
+                        }
+                        compDD = false
+
+                              },
                     text ={ Text(text = "Houston", color = getCurrentTheme().onPrimary,modifier= Modifier.background(color = getCurrentTheme().onSurface)) }
                 )
                 OutlinedTextField(

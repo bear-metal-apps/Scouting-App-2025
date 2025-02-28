@@ -98,13 +98,14 @@ actual fun CheckBox(
             modifier = Modifier.align(Alignment.TopCenter)
         )
         Checkbox(
-            checked = if(autoStop.value == 0){ false }else{ true },
+            checked = if(ifChecked.value == 0){ false }else{ true },
             onCheckedChange = {
-                if(autoStop.value == 0){
-                    autoStop.value = 1
+                if(ifChecked.value == 0){
+                    ifChecked.value = 1
                 }else{
-                    autoStop.value = 0
+                    ifChecked.value = 0
                 }
+                saveData.value = true
             },
             modifier = Modifier.align(Alignment.Center).fillMaxSize(),
         )

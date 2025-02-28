@@ -242,7 +242,7 @@ actual fun PitsScoutMenu(
                                 var uri = Uri.EMPTY
 
                                 try {
-                                    uri = ComposeFileProvider.getImageUri(context, parseInt(scoutedTeamNumber.value), "Photo${permPhotosList.size}")
+                                    uri = ComposeFileProvider.getImageUri(context, parseInt(scoutedTeamNumber.value), "Team${scoutedTeamNumber.value}Photo${photoArray.size}")
                                     println("permPhotosList Uri: $uri")
 
                                     imageUri = uri
@@ -961,6 +961,7 @@ actual fun PitsScoutMenu(
                             val removeList = mutableListOf<String>()
 
                             println("photos:")
+                            println(photoArray[0])
                             photoArray.forEach {
                                 val startIndex = it.indexOf("/", 56)
                                 addList.add(it.substring(startIndex+1))
@@ -971,7 +972,6 @@ actual fun PitsScoutMenu(
                             photoArray.removeAll(removeList)
 
                             pitsTeamDataArray[parseInt(scoutedTeamNumber.value)] = createPitsOutput(mutableIntStateOf(parseInt(scoutedTeamNumber.value)))
-
                             createScoutPitsDataFile(context, parseInt(scoutedTeamNumber.value), pitsTeamDataArray[parseInt(scoutedTeamNumber.value)]!!)
 
                             pitsReset()

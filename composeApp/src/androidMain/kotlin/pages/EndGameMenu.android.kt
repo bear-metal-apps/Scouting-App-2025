@@ -30,25 +30,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.components.backstack.operation.pop
+import com.bumble.appyx.components.backstack.operation.push
 import composables.Cage
 import composables.Comments
 import composables.EndGameCheckBox
 import createScoutMatchDataFile
 import defaultSecondary
+import getTeamsOnAlliance
 import keyboardAsState
-import nodes.AutoTeleSelectorNode
-import nodes.RootNode
-import nodes.TeamMatchStartKey
-import nodes.createOutput
-import nodes.deep
-import nodes.notes
-import nodes.park
-import nodes.playedDefense
-import nodes.saveData
-import nodes.saveDataPopup
-import nodes.saveDataSit
-import nodes.shallow
-import nodes.teamDataArray
+import nodes.*
+import org.json.JSONException
+import org.tahomarobotics.scouting.TBAInterface
+import setTeam
 import java.lang.Integer.parseInt
 
 
@@ -117,6 +110,15 @@ actual fun EndGameMenu(
                         teamDataArray[TeamMatchStartKey(parseInt(match.value), team.intValue, robotStartPosition.intValue)] = createOutput(team, robotStartPosition)
                         //Save permanent data
                         createScoutMatchDataFile(context, match.value, team.intValue, createOutput(team, robotStartPosition))
+                        match.value = (parseInt(match.value) + 1).toString()
+                        reset()
+                        saveData.value = false
+                        backStack.push(AutoTeleSelectorNode.NavTarget.AutoScouting)
+
+                        //Grab team from TBA for next match
+                        try{
+                            team.intValue = getTeamsOnAlliance(match.value.betterParseInt(), isRedAliance.value)[tempRobotStart.value].number
+                        }catch (e: Exception){}
                     } else {
                         saveDataPopup.value = true
                         saveDataSit.value = false

@@ -27,6 +27,7 @@ import com.bumble.appyx.components.backstack.operation.push
 import createScoutMatchDataFile
 import exportScoutData
 import getCurrentTheme
+import getTeamsOnAlliance
 import nodes.*
 import org.json.JSONException
 import setTeam
@@ -48,8 +49,62 @@ actual fun MatchMenuTop(
 
     var first by remember { mutableStateOf(true) }
 
+    println("robotStartPosition: ${robotStartPosition.intValue}")
+
+    when (robotStartPosition.intValue) {
+        0 -> {
+            positionName = "R1"
+            isRedAliance.value = true
+            tempRobotStart.value = 0
+        }
+
+        1 -> {
+            positionName = "R2"
+            isRedAliance.value = true
+            tempRobotStart.value = 1
+        }
+
+        2 -> {
+            positionName = "R3"
+            isRedAliance.value = true
+            tempRobotStart.value = 2
+        }
+
+        3 -> {
+            positionName = "B1"
+            isRedAliance.value = false
+//            tempRobotStart.value -= 3
+            tempRobotStart.value = 0
+        }
+
+        4 -> {
+            positionName = "B2"
+            isRedAliance.value = false
+//            tempRobotStart.value -= 3
+            tempRobotStart.value = 1
+        }
+
+        5 -> {
+            positionName = "B3"
+            isRedAliance.value = false
+//            tempRobotStart.value -= 3
+            tempRobotStart.value = 2
+        }
+    }
+//    tempRobotStart = robotStartPosition
+    if (positionName == "R1" || positionName == "R2" || positionName == "R3"){
+        isRedAliance.value = true
+    }else{
+        isRedAliance.value = false
+//        tempRobotStart.value -= 3
+    }
+
     // When the user first opens the app, the tempTeam and tempMatch variables are assigned to the current match and team so they can be saved when the user changes the match or team!
     if(first) {
+        try{
+            team.intValue = getTeamsOnAlliance(match.value.betterParseInt(), isRedAliance.value)[tempRobotStart.value].number
+        }catch (e: Exception){}
+
         tempTeam = team.intValue
         tempMatch = match.value
 
@@ -58,40 +113,6 @@ actual fun MatchMenuTop(
         first = false
     }
 
-    when {
-//        openError.value -> {
-//            InternetErrorAlert {
-//                openError.value = false
-//                mainMenuBackStack.pop()
-//            }
-//        }
-    }
-
-    when (robotStartPosition.intValue) {
-        0 -> {
-            positionName = "R1"
-        }
-
-        1 -> {
-            positionName = "R2"
-        }
-
-        2 -> {
-            positionName = "R3"
-        }
-
-        3 -> {
-            positionName = "B1"
-        }
-
-        4 -> {
-            positionName = "B2"
-        }
-
-        5 -> {
-            positionName = "B3"
-        }
-    }
     Column() {
         HorizontalDivider(color = getCurrentTheme().primaryVariant, thickness = 4.dp)
 
@@ -130,15 +151,13 @@ actual fun MatchMenuTop(
                     saveData.value = false
 
                     val filteredText = value.filter { it.isDigit() }
-                    if (filteredText.isNotEmpty() && !filteredText.contains(','))
-                        teamNumAsText =
-                            filteredText.slice(0..<filteredText.length.coerceAtMost(5))//WHY IS FILTER NOT FILTERING
+                    if (filteredText.isNotEmpty() && !filteredText.contains(',')) {
+                        teamNumAsText = filteredText.slice(0..<filteredText.length.coerceAtMost(5))
                         team.intValue = parseInt(teamNumAsText)
                         loadData(parseInt(match.value), team, robotStartPosition)
+                    }
 
                     tempTeam = team.intValue
-
-                    println(robotStartPosition.intValue.toString())
 
                 },
                 colors = TextFieldDefaults.colors(
@@ -183,7 +202,6 @@ actual fun MatchMenuTop(
                     if(temp.isNotEmpty()) {
                         match.value = temp.slice(0..<temp.length.coerceAtMost(5))
                         loadData(parseInt(match.value), team, robotStartPosition)
-//                        teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
                         exportScoutData(context) // Does nothing
 
                         try {
@@ -192,9 +210,12 @@ actual fun MatchMenuTop(
                             openError.value = true
                         }
 
+                        println(match.value)
+
                     }
 
                     tempMatch = match.value
+                    tempTeam = team.intValue
 
                 },
                 modifier = Modifier.fillMaxWidth(1/2f),
@@ -469,16 +490,22 @@ actual fun MatchMenuBottom(
                             createScoutMatchDataFile(context, match.value, team.intValue, createOutput(team, robotStartPosition))
                             println(teamDataArray)
                             mainMenuBackStack.pop()
+
+                            saveData.value = true
                         } else {
                             teamDataArray[TeamMatchStartKey(parseInt(match.value), team.intValue, robotStartPosition.intValue)] = createOutput(team, robotStartPosition)
                             createScoutMatchDataFile(context, match.value, team.intValue, createOutput(team, robotStartPosition))
                             match.value = (parseInt(match.value) + 1).toString()
                             reset()
                             backStack.push(AutoTeleSelectorNode.NavTarget.AutoScouting)
-                            println(teamDataArray)
+
+                            try{
+                                team.intValue = getTeamsOnAlliance(match.value.betterParseInt(), isRedAliance.value)[tempRobotStart.value].number
+                            }catch (e: Exception){}
+
+                            saveData.value = false
                         }
                         saveDataPopup.value = false
-                        saveData.value = true
                     },
                     border = BorderStroke(2.dp, getCurrentTheme().secondaryVariant),
                     colors = androidx.compose.material.ButtonDefaults.outlinedButtonColors(backgroundColor = getCurrentTheme().secondary, contentColor = getCurrentTheme().onSecondary),
@@ -495,7 +522,11 @@ actual fun MatchMenuBottom(
                             match.value = (parseInt(match.value) + 1).toString()
                             reset()
                             backStack.push(AutoTeleSelectorNode.NavTarget.AutoScouting)
-                            println(teamDataArray)
+
+                            try{
+                                team.intValue = getTeamsOnAlliance(match.value.betterParseInt(), isRedAliance.value)[tempRobotStart.value].number
+                            }catch (e: Exception){}
+
                         }
                         saveDataPopup.value = false
                         saveData.value = false
@@ -510,16 +541,9 @@ actual fun MatchMenuBottom(
         }
     }
 
-    if(teamDataArray[TeamMatchStartKey(parseInt(match.value), team.intValue, robotStartPosition.intValue)] != null) {
+    if(teamDataArray[TeamMatchStartKey(parseInt(match.value), team.intValue, robotStartPosition.intValue)] != null && saveData.value) {
         teamDataArray[TeamMatchStartKey(parseInt(match.value), team.intValue, robotStartPosition.intValue)] = createOutput(team, robotStartPosition)
         loadData(parseInt(match.value), team, robotStartPosition)
-//        if(first) {
-//            loadData(parseInt(match.value), team, robotStartPosition)
-//            first = false
-//        } else {
-//            teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue, robotStartPosition.intValue)] = createOutput(team, robotStartPosition)
-////            loadData(parseInt(match.value), team, robotStartPosition)
-//        }
     } else {
         if(saveData.value) {
             teamDataArray[TeamMatchStartKey(parseInt(match.value), team.intValue, robotStartPosition.intValue)] = createOutput(team, robotStartPosition)
@@ -527,3 +551,6 @@ actual fun MatchMenuBottom(
     }
 
 }
+var tempRobotStart : MutableState<Int> = mutableStateOf(0)
+var isRedAliance = mutableStateOf(false)
+var teams = getTeamsOnAlliance(match.value.betterParseInt(),isRedAliance.value)
