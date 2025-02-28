@@ -518,6 +518,7 @@ actual class MainMenu actual constructor(
 
                         androidx.compose.material.OutlinedButton(
                             onClick = {
+                                println(permPhotosList.toString())
                                 val scope = CoroutineScope(Dispatchers.Default)
                                 scope.launch {
                                     if (client == null) client = Client()

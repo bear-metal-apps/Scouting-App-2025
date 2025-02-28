@@ -114,6 +114,11 @@ actual fun EndGameMenu(
                         reset()
                         saveData.value = false
                         backStack.push(AutoTeleSelectorNode.NavTarget.AutoScouting)
+
+                        //Grab team from TBA for next match
+                        try{
+                            team.intValue = getTeamsOnAlliance(match.value.betterParseInt(), isRedAliance.value)[tempRobotStart.value].number
+                        }catch (e: Exception){}
                     } else {
                         saveDataPopup.value = true
                         saveDataSit.value = false
