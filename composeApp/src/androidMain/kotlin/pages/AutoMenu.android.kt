@@ -45,6 +45,7 @@ import nodes.collectCoral
 import nodes.createOutput
 import nodes.groundCollectionAlgae
 import nodes.miniMinus
+import nodes.pageIndex
 import nodes.saveData
 import nodes.teamDataArray
 import java.lang.Integer.parseInt
@@ -58,6 +59,8 @@ actual fun AutoMenu(
     team: MutableIntState,
     robotStartPosition: MutableIntState
 ) {
+
+    pageIndex.intValue = 0
 
     val context = LocalContext.current
     fun bob() {
