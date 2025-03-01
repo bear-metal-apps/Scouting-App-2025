@@ -111,6 +111,7 @@ actual fun EndGameMenu(
                         //Save permanent data
                         createScoutMatchDataFile(context, match.value, team.intValue, createOutput(team, robotStartPosition))
                         match.value = (parseInt(match.value) + 1).toString()
+                        stringMatch.value = match.value
                         reset()
                         saveData.value = false
                         backStack.push(AutoTeleSelectorNode.NavTarget.AutoScouting)
@@ -119,6 +120,7 @@ actual fun EndGameMenu(
                         try{
                             team.intValue = getTeamsOnAlliance(match.value.betterParseInt(), isRedAliance.value)[tempRobotStart.value].number
                         }catch (e: Exception){}
+                        stringTeam.value = team.intValue.toString()
                     } else {
                         saveDataPopup.value = true
                         saveDataSit.value = false
