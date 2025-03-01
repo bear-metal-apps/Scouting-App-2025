@@ -165,6 +165,9 @@ val match = mutableStateOf("1")
 var tempMatch = match.value
 var tempTeam: Int = 0
 
+var stringMatch = mutableStateOf("")
+var stringTeam = mutableStateOf("")
+
 // Auto
 var collectCoral = mutableIntStateOf(0)
 var groundCollectionAlgae = mutableStateOf(ToggleableState.Off)

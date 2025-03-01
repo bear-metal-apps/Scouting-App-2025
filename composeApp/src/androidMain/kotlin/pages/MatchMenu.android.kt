@@ -49,8 +49,6 @@ actual fun MatchMenuTop(
 
     var first by remember { mutableStateOf(true) }
 
-    println("robotStartPosition: ${robotStartPosition.intValue}")
-
     when (robotStartPosition.intValue) {
         0 -> {
             positionName = "R1"
@@ -108,6 +106,9 @@ actual fun MatchMenuTop(
         tempTeam = team.intValue
         tempMatch = match.value
 
+        stringMatch = remember { mutableStateOf(match.value) }
+        stringTeam = remember { mutableStateOf(team.intValue.toString()) }
+
         saveData.value = false
 
         first = false
@@ -141,7 +142,7 @@ actual fun MatchMenuTop(
             }
 
             TextField(
-                value = team.intValue.toString(),
+                value = stringTeam.value,
                 onValueChange = { value ->
                     if(saveData.value) {
                         teamDataArray[TeamMatchStartKey(parseInt(tempMatch), tempTeam, robotStartPosition.intValue)] = createOutput(mutableIntStateOf(tempTeam), robotStartPosition)
@@ -150,12 +151,20 @@ actual fun MatchMenuTop(
 
                     saveData.value = false
 
-                    val filteredText = value.filter { it.isDigit() }
-                    if (filteredText.isNotEmpty() && !filteredText.contains(',')) {
-                        teamNumAsText = filteredText.slice(0..<filteredText.length.coerceAtMost(5))
-                        team.intValue = parseInt(teamNumAsText)
-                        loadData(parseInt(match.value), team, robotStartPosition)
+                    if(value.isNotEmpty()) {
+                        val filteredText = value.filter { it.isDigit() }
+                        stringTeam.value = filteredText.slice(0..<filteredText.length.coerceAtMost(10))
+                    } else {
+                        stringTeam.value = ""
                     }
+                    team.intValue = stringTeam.value.betterParseInt()
+//                    if (filteredText.isNotEmpty() && !filteredText.contains(',')) {
+//                        teamNumAsText = filteredText.slice(0..<filteredText.length.coerceAtMost(5))
+//                        team.intValue = parseInt(teamNumAsText)
+                    loadData(parseInt(match.value), team, robotStartPosition)
+
+                    println("Team: ${team.intValue}")
+//                    }
 
                     tempTeam = team.intValue
 
@@ -189,7 +198,7 @@ actual fun MatchMenuTop(
             )
 
             TextField(
-                value = match.value,
+                value = stringMatch.value,
                 onValueChange = { value ->
                     if(saveData.value) {
                         teamDataArray[TeamMatchStartKey(parseInt(tempMatch), tempTeam, robotStartPosition.intValue)] = createOutput(mutableIntStateOf(tempTeam), robotStartPosition)
@@ -198,21 +207,27 @@ actual fun MatchMenuTop(
 
                     saveData.value = false
 
-                    val temp = value.filter { it.isDigit() }
-                    if(temp.isNotEmpty()) {
-                        match.value = temp.slice(0..<temp.length.coerceAtMost(5))
-                        loadData(parseInt(match.value), team, robotStartPosition)
-                        exportScoutData(context) // Does nothing
-
-                        try {
-                            setTeam(team, nodes.match, robotStartPosition.intValue)
-                        } catch (e: JSONException) {
-                            openError.value = true
-                        }
-
-                        println(match.value)
-
+                    if(value.isNotEmpty()) {
+                        val filteredText = value.filter { it.isDigit() }
+                        stringMatch.value = filteredText.slice(0..<filteredText.length.coerceAtMost(5))
+                    } else {
+                        stringMatch.value = ""
                     }
+                    match.value = stringMatch.value.betterParseInt().toString()
+                    println(match.value)
+
+                    try {
+                        setTeam(team, nodes.match, robotStartPosition.intValue)
+                    } catch (e: JSONException) {
+                        openError.value = true
+                    }
+                    stringTeam.value = team.intValue.toString()
+
+                    println(team.value)
+
+                    loadData(parseInt(match.value), team, robotStartPosition)
+
+                    exportScoutData(context) // Does nothing
 
                     tempMatch = match.value
                     tempTeam = team.intValue
@@ -496,12 +511,14 @@ actual fun MatchMenuBottom(
                             teamDataArray[TeamMatchStartKey(parseInt(match.value), team.intValue, robotStartPosition.intValue)] = createOutput(team, robotStartPosition)
                             createScoutMatchDataFile(context, match.value, team.intValue, createOutput(team, robotStartPosition))
                             match.value = (parseInt(match.value) + 1).toString()
+                            stringMatch.value = match.value
                             reset()
                             backStack.push(AutoTeleSelectorNode.NavTarget.AutoScouting)
 
                             try{
                                 team.intValue = getTeamsOnAlliance(match.value.betterParseInt(), isRedAliance.value)[tempRobotStart.value].number
                             }catch (e: Exception){}
+                            stringTeam.value = team.intValue.toString()
 
                             saveData.value = false
                         }
@@ -520,12 +537,14 @@ actual fun MatchMenuBottom(
                             mainMenuBackStack.pop()
                         } else {
                             match.value = (parseInt(match.value) + 1).toString()
+                            stringMatch.value = match.value
                             reset()
                             backStack.push(AutoTeleSelectorNode.NavTarget.AutoScouting)
 
                             try{
                                 team.intValue = getTeamsOnAlliance(match.value.betterParseInt(), isRedAliance.value)[tempRobotStart.value].number
                             }catch (e: Exception){}
+                            stringTeam.value = team.intValue.toString()
 
                         }
                         saveDataPopup.value = false
