@@ -5,24 +5,22 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.components.backstack.operation.push
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.input.KeyboardType
 import compKey
 import createScoutMatchDataFolder
 import createScoutPitsDataFolder
 import createScoutStratDataFolder
-import defaultError
 import defaultOnPrimary
 import defaultPrimaryVariant
 import deleteFile
@@ -32,23 +30,13 @@ import deleteScoutStratData
 import getCurrentTheme
 import loadMatchDataFiles
 import loadPitsDataFiles
-import matchData
 import loadStratDataFiles
 import nodes.RootNode
-import nodes.TeamMatchStartKey
-import nodes.betterParseInt
-import nodes.createOutput
-import nodes.match
 import nodes.permPhotosList
 import nodes.pitsReset
-import nodes.teamDataArray
 import nodes.reset
-import nodes.saveData
-import nodes.saveDataPopup
-import teamData
 import nodes.stratReset
 import java.io.File
-import java.lang.Integer.parseInt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -259,35 +247,75 @@ actual fun LoginMenu(
                     ).border(BorderStroke(3.dp, getCurrentTheme().primaryVariant), RoundedCornerShape(5.dp))
                         .background(getCurrentTheme().secondary)
                 ) {
-                    Box(modifier = Modifier.fillMaxWidth(8f / 10f).padding(5.dp).fillMaxHeight(1/8f)) {
-                        Text(text = "Are you sure you want to delete all data?",
-                            modifier = Modifier.padding(5.dp).align(Alignment.TopCenter)
+                    var password by remember { mutableStateOf("") }
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth(8f / 10f)
+                            .padding(5.dp)
+                            .fillMaxHeight(2 / 8f)
+                    ) {
+                        Text(
+                            text = "To delete all data, ask the scouting lead for the master password",
+                            modifier = Modifier
+                                .padding(5.dp)
+                                .align(Alignment.TopCenter)
+                        )
+                        OutlinedTextField(
+                            value = password,
+                            onValueChange = { password = it },
+                            placeholder = { Text("Password") },
+                            shape = RoundedCornerShape(15.dp),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                unfocusedContainerColor = getCurrentTheme().background,
+                                unfocusedTextColor = getCurrentTheme().onPrimary,
+                                focusedContainerColor = getCurrentTheme().background,
+                                focusedTextColor = getCurrentTheme().onPrimary,
+                                cursorColor = getCurrentTheme().onSecondary,
+                                focusedBorderColor = Color.Cyan,
+                                unfocusedBorderColor = getCurrentTheme().secondary
+                            ),
+                            modifier = Modifier
+                                .align(Alignment.Center)
                         )
                         androidx.compose.material.OutlinedButton(
                             onClick = {
-                                permPhotosList.clear()
-                                reset()
-                                stratReset()
-                                pitsReset()
-                                deleteFile(context)
-                                deleteScoutMatchData()
-                                deleteScoutStratData()
-                                deleteScoutPitsData()
+                                if (password == "2046delete") {
+                                    permPhotosList.clear()
+                                    reset()
+                                    stratReset()
+                                    pitsReset()
+                                    deleteFile(context)
+                                    deleteScoutMatchData()
+                                    deleteScoutStratData()
+                                    deleteScoutPitsData()
+                                } else {
+                                    password = ""
+                                }
                                 deleteData = false
                             },
                             border = BorderStroke(2.dp, getCurrentTheme().secondaryVariant),
-                            colors = androidx.compose.material.ButtonDefaults.outlinedButtonColors(backgroundColor = getCurrentTheme().secondary, contentColor = getCurrentTheme().onSecondary),
-                            modifier = Modifier.align(Alignment.BottomStart)
-                        ) {
-                            Text(text = "Yes", color = getCurrentTheme().error)
+                            colors = androidx.compose.material.ButtonDefaults.outlinedButtonColors(
+                                backgroundColor = getCurrentTheme().secondary,
+                                contentColor = getCurrentTheme().onSecondary
+                            ),
+                            modifier = Modifier
+                                .align(Alignment.BottomEnd)
+                                .alpha(if (password == "2046delete") 1f else .5f),
+                            enabled = password == "2046delete",
+
+                            ) {
+                            Text(text = "Confirm", color = getCurrentTheme().error)
                         }
                         androidx.compose.material.OutlinedButton(
                             onClick = { deleteData = false },
                             border = BorderStroke(2.dp, getCurrentTheme().secondaryVariant),
-                            colors = androidx.compose.material.ButtonDefaults.outlinedButtonColors(backgroundColor = getCurrentTheme().secondary, contentColor = getCurrentTheme().onSecondary),
-                            modifier = Modifier.align(Alignment.BottomEnd)
+                            colors = androidx.compose.material.ButtonDefaults.outlinedButtonColors(
+                                backgroundColor = getCurrentTheme().secondary,
+                                contentColor = getCurrentTheme().onSecondary
+                            ),
+                            modifier = Modifier.align(Alignment.BottomStart)
                         ) {
-                            Text(text = "No", color = getCurrentTheme().error)
+                            Text(text = "Cancel", color = getCurrentTheme().error)
                         }
                     }
                 }
