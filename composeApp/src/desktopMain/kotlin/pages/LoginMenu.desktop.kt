@@ -24,16 +24,16 @@ import defaultPrimaryVariant
 import deleteFile
 import getCurrentTheme
 import nodes.RootNode
-import nodes.teamDataArray
 import nodes.reset
+import nodes.scoutName
+import nodes.teamDataArray
 import java.io.File
 
 @Composable
 actual fun LoginMenu(
     backStack: BackStack<RootNode.NavTarget>,
-    scoutName: MutableState<String>,
     comp: MutableState<String>,
-    numOfPitsPeople: MutableIntState
+    robotStartPosition: MutableIntState
 ) {
     val logo = File("Logo.png")
     var compDD by remember { mutableStateOf(false) }
@@ -168,3 +168,4 @@ actual fun LoginMenu(
         }
     }
 }
+

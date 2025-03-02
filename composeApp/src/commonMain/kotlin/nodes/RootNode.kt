@@ -60,7 +60,7 @@ class RootNode(
 
     override fun resolve(interactionTarget: NavTarget, buildContext: BuildContext): Node =
         when (interactionTarget) {
-            NavTarget.LoginPage -> LoginNode(buildContext, backStack, scoutName, comp, numOfPitsPeople)
+            NavTarget.LoginPage -> LoginNode(buildContext, backStack, scoutName, robotStartPosition)
             NavTarget.MainMenu -> MainMenu(buildContext, backStack, robotStartPosition, scoutName, comp, team)
             NavTarget.MatchScouting -> AutoTeleSelectorNode(buildContext, robotStartPosition, team, backStack)
             NavTarget.PitsScouting -> PitsNode(buildContext, backStack, pitsPerson, numOfPitsPeople)

@@ -26,3 +26,6 @@ val defaultOnSecondary = Color.Yellow
 val defaultOnBackground = Color.Yellow
 val defaultOnSurface = Color(15,15,15)
 val defaultOnError = Color(6,9,13)
+
+val redAlliance = Color(60, 30, 30)
+val blueAlliance = Color(30, 30, 60)

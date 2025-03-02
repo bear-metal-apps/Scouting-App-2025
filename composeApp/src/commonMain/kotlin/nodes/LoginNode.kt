@@ -13,11 +13,10 @@ class LoginNode(
     buildContext: BuildContext,
     private val backStack: BackStack<RootNode.NavTarget>,
     private val scoutName: MutableState<String>,
-    private val comp:  MutableState<String>,
-    private val numOfPitsPeople : MutableIntState
+    private val robotStartPositon: MutableIntState
 ) : Node(buildContext) {
     @Composable
     override fun View(modifier: Modifier) {
-        LoginMenu(backStack, scoutName, comp, numOfPitsPeople)
+        LoginMenu(backStack, scoutName, robotStartPositon)
     }
 }

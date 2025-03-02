@@ -5,6 +5,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -15,13 +17,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import blueAlliance
 import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.components.backstack.operation.push
 import compKey
 import createScoutMatchDataFolder
 import createScoutPitsDataFolder
 import createScoutStratDataFolder
-import defaultOnPrimary
 import defaultPrimaryVariant
 import deleteFile
 import deleteScoutMatchData
@@ -36,18 +38,19 @@ import nodes.permPhotosList
 import nodes.pitsReset
 import nodes.reset
 import nodes.stratReset
+import redAlliance
 import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 actual fun LoginMenu(
     backStack: BackStack<RootNode.NavTarget>,
-    scoutName: MutableState<String>,
     comp: MutableState<String>,
-    numOfPitsPeople: MutableIntState
+    robotStartPosition: MutableIntState
 ) {
     val logo = File("Logo.png")
     var compDD by remember { mutableStateOf(false) }
+    var typeDD by remember { mutableStateOf(false) }
     var deleteData by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val tbaMatches = listOf(
@@ -61,7 +64,7 @@ actual fun LoginMenu(
 
     var first by remember { mutableStateOf(true) }
 
-    if(first) {
+    if (first) {
         createScoutMatchDataFolder(context)
         loadMatchDataFiles(context)
 
@@ -74,154 +77,359 @@ actual fun LoginMenu(
         first = false
     }
 
-    Column {
-//        AsyncImage(
-//            model = logo,//turn into bitmap
-//            contentDescription = "Logo"
-//        )
+    Column(modifier = Modifier.padding(8.dp)) {
         Text(
             text = "Login",
             fontSize = 45.sp,
             color = getCurrentTheme().onPrimary,
-            modifier = Modifier.align(Alignment.CenterHorizontally)
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .padding(8.dp)
         )
         HorizontalDivider(
             color = defaultPrimaryVariant,
-            thickness = 3.dp
+            thickness = 3.dp,
+            modifier = Modifier.padding(8.dp)
         )
-        Row(modifier = Modifier.align(Alignment.CenterHorizontally)) {
-            Text(text = "Name", color = defaultOnPrimary)
-            OutlinedTextField(
-                value = scoutName.value,
-                onValueChange = {scoutName.value = it},
-                placeholder = { Text("First, Last Name") },
-                shape = RoundedCornerShape(15.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    unfocusedContainerColor = getCurrentTheme().background,
-                    unfocusedTextColor = getCurrentTheme().onPrimary,
-                    focusedContainerColor = getCurrentTheme().background,
-                    focusedTextColor = getCurrentTheme().onPrimary,
-                    cursorColor = getCurrentTheme().onSecondary,
-                    focusedBorderColor = Color.Cyan,
-                    unfocusedBorderColor = getCurrentTheme().secondary
-                )
-            )
-        }
-        Box(modifier = Modifier.padding(15.dp).fillMaxWidth()) {
-            OutlinedButton(
-                onClick = { compDD = true },
-                shape = RoundedCornerShape(15.dp),
-                border = BorderStroke(3.dp, color = defaultPrimaryVariant),
-                colors = ButtonDefaults.buttonColors(containerColor = getCurrentTheme().primary)
+//        Row(modifier = Modifier.align(Alignment.CenterHorizontally)) {
+//            Text(text = "Name", color = defaultOnPrimary)
+//            OutlinedTextField(
+//                value = scoutName.value,
+//                onValueChange = {scoutName.value = it},
+//                placeholder = { Text("First, Last Name") },
+//                shape = RoundedCornerShape(15.dp),
+//                colors = OutlinedTextFieldDefaults.colors(
+//                    unfocusedContainerColor = getCurrentTheme().background,
+//                    unfocusedTextColor = getCurrentTheme().onPrimary,
+//                    focusedContainerColor = getCurrentTheme().background,
+//                    focusedTextColor = getCurrentTheme().onPrimary,
+//                    cursorColor = getCurrentTheme().onSecondary,
+//                    focusedBorderColor = Color.Cyan,
+//                    unfocusedBorderColor = getCurrentTheme().secondary
+//                )
+//            )
+//        }
+        Row {
+            Box(
+                modifier = Modifier
+                    .padding(8.dp)
+                    .fillMaxWidth(0.5f)
             ) {
-                Box(modifier = Modifier.fillMaxWidth()) {
-                    Text(
-                        text = "Competition: ${comp.value}",
-                        color = getCurrentTheme().onPrimary,
-                        modifier = Modifier.align(Alignment.CenterStart)
+                OutlinedButton(
+                    onClick = { compDD = true },
+                    shape = RoundedCornerShape(16.dp),
+                    border = BorderStroke(3.dp, color = defaultPrimaryVariant),
+                    colors = ButtonDefaults.buttonColors(containerColor = getCurrentTheme().primary)
+                ) {
+                    Box(modifier = Modifier.fillMaxWidth()) {
+                        Text(
+                            text = "Competition: ${comp.value}",
+                            color = getCurrentTheme().onPrimary,
+                            modifier = Modifier.align(Alignment.CenterStart)
+                        )
+                        Icon(
+                            imageVector = Icons.Default.ArrowDropDown,
+                            contentDescription = "Drop Down",
+                            tint = getCurrentTheme().onPrimary,
+                            modifier = Modifier.align(Alignment.CenterEnd)
+                        )
+                    }
+                }
+                DropdownMenu(
+                    expanded = compDD,
+                    onDismissRequest = { compDD = false; },
+                    modifier = Modifier.background(color = getCurrentTheme().onSurface)
+                ) {
+                    DropdownMenuItem(
+                        onClick = {
+                            if (comp.value != "Glacier Peak") {
+                                comp.value = "Glacier Peak"
+                                compKey = tbaMatches[0]
+//                            teamData?.clear()
+//                            matchData?.clear()
+                            }
+                            compDD = false
+                        },
+                        text = {
+                            Text(
+                                text = "Glacier Peak",
+                                color = getCurrentTheme().onPrimary,
+                                modifier = Modifier.background(color = getCurrentTheme().onSurface)
+                            )
+                        }
                     )
-                    Text(
-                        text = "V",
-                        color = getCurrentTheme().onPrimary,
-                        modifier = Modifier.align(Alignment.CenterEnd)
+                    DropdownMenuItem(
+                        onClick = {
+                            if (comp.value != "Bonney Lake") {
+                                comp.value = "Bonney Lake"
+                                compKey = tbaMatches[1]
+//                            teamData?.clear()
+//                            matchData?.clear()
+                            }
+                            compDD = false
+                        },
+                        text = {
+                            Text(
+                                text = "Bonney Lake",
+                                color = getCurrentTheme().onPrimary,
+                                modifier = Modifier.background(color = getCurrentTheme().onSurface)
+                            )
+                        }
+                    )
+                    DropdownMenuItem(
+                        onClick = {
+                            if (comp.value != "Auburn") {
+                                comp.value = "Auburn"
+                                compKey = tbaMatches[2]
+//                            teamData?.clear()
+//                            matchData?.clear()
+                            }
+                            compDD = false
+                        },
+                        text = {
+                            Text(
+                                text = "Auburn",
+                                color = getCurrentTheme().onPrimary,
+                                modifier = Modifier.background(color = getCurrentTheme().onSurface)
+                            )
+                        }
+                    )
+                    DropdownMenuItem(
+                        onClick = {
+                            if (comp.value != "Cheney") {
+                                comp.value = "Cheney"
+                                compKey = tbaMatches[3]
+//                            teamData?.clear()
+//                            matchData?.clear()
+                            }
+                            compDD = false
+                        },
+                        text = {
+                            Text(
+                                text = "DCMP",
+                                color = getCurrentTheme().onPrimary,
+                                modifier = Modifier.background(color = getCurrentTheme().onSurface)
+                            )
+                        }
+                    )
+                    DropdownMenuItem(
+                        onClick = {
+                            if (comp.value != "Houston") {
+                                comp.value = "Houston"
+                                compKey = tbaMatches[4]
+//                            teamData?.clear()
+//                            matchData?.clear()
+                            }
+                            compDD = false
+
+                        },
+                        text = {
+                            Text(
+                                text = "Houston",
+                                color = getCurrentTheme().onPrimary,
+                                modifier = Modifier.background(color = getCurrentTheme().onSurface)
+                            )
+                        }
+                    )
+                    OutlinedTextField(
+                        value = comp.value,
+                        onValueChange = {
+                            comp.value = it
+                            compKey = it
+                        },
+                        placeholder = { Text("Custom Competition Key") },
+                        shape = RoundedCornerShape(15.dp),
+                        singleLine = true,
+                        colors = OutlinedTextFieldDefaults.colors(
+                            unfocusedContainerColor = getCurrentTheme().background,
+                            unfocusedTextColor = getCurrentTheme().onPrimary,
+                            focusedContainerColor = getCurrentTheme().background,
+                            focusedTextColor = getCurrentTheme().onPrimary,
+                            cursorColor = getCurrentTheme().onSecondary,
+                            focusedBorderColor = Color.Cyan,
+                            unfocusedBorderColor = getCurrentTheme().secondary
+                        )
                     )
                 }
-            }
-            DropdownMenu(expanded = compDD, onDismissRequest = { compDD = false; },modifier= Modifier.background(color = getCurrentTheme().onSurface)) {
-                DropdownMenuItem(
-                    onClick = {
-                        if(comp.value != "Glacier Peak"){
-                            comp.value = "Glacier Peak"
-                            compKey = tbaMatches[0]
-//                            teamData?.clear()
-//                            matchData?.clear()
-                        }
-                        compDD = false
-                              },
-                    text = { Text(text = "Glacier Peak", color = getCurrentTheme().onPrimary,modifier= Modifier.background(color = getCurrentTheme().onSurface)) }
-                )
-                DropdownMenuItem(
-                    onClick = {
-                        if(comp.value != "Bonney Lake"){
-                            comp.value = "Bonney Lake"
-                            compKey = tbaMatches[1]
-//                            teamData?.clear()
-//                            matchData?.clear()
-                        }
-                        compDD = false
-                    },
-                    text = { Text(text = "Bonney Lake", color = getCurrentTheme().onPrimary,modifier= Modifier.background(color = getCurrentTheme().onSurface)) }
-                )
-                DropdownMenuItem(
-                    onClick = {
-                        if(comp.value != "Auburn"){
-                            comp.value = "Auburn"
-                            compKey = tbaMatches[2]
-//                            teamData?.clear()
-//                            matchData?.clear()
-                        }
-                        compDD = false
-                    },
-                    text ={ Text(text = "Auburn", color = getCurrentTheme().onPrimary,modifier= Modifier.background(color = getCurrentTheme().onSurface)) }
-                )
-                DropdownMenuItem(
-                    onClick = {
-                        if(comp.value != "Cheney"){
-                            comp.value = "Cheney"
-                            compKey = tbaMatches[3]
-//                            teamData?.clear()
-//                            matchData?.clear()
-                        }
-                        compDD = false
-                    },
-                    text = { Text(text = "DCMP", color = getCurrentTheme().onPrimary, modifier = Modifier.background(color = getCurrentTheme().onSurface)) }
-                )
-                DropdownMenuItem(
-                    onClick = {
-                        if(comp.value != "Houston"){
-                            comp.value = "Houston"
-                            compKey = tbaMatches[4]
-//                            teamData?.clear()
-//                            matchData?.clear()
-                        }
-                        compDD = false
 
-                              },
-                    text ={ Text(text = "Houston", color = getCurrentTheme().onPrimary,modifier= Modifier.background(color = getCurrentTheme().onSurface)) }
-                )
-                OutlinedTextField(
-                    value = comp.value,
-                    onValueChange = { comp.value = it
-                        compKey = it},
-                    placeholder = { Text("Custom Competition Key") },
-                    shape = RoundedCornerShape(15.dp),
-                    singleLine = true,
-                    colors = OutlinedTextFieldDefaults.colors(
-                        unfocusedContainerColor = getCurrentTheme().background,
-                        unfocusedTextColor = getCurrentTheme().onPrimary,
-                        focusedContainerColor = getCurrentTheme().background,
-                        focusedTextColor = getCurrentTheme().onPrimary,
-                        cursorColor = getCurrentTheme().onSecondary,
-                        focusedBorderColor = Color.Cyan,
-                        unfocusedBorderColor = getCurrentTheme().secondary
+            }
+            Box(
+                modifier = Modifier
+                    .padding(8.dp)
+                    .fillMaxWidth()
+            ) {
+                OutlinedButton(
+                    onClick = { typeDD = true },
+                    shape = RoundedCornerShape(16.dp),
+                    border = BorderStroke(3.dp, color = defaultPrimaryVariant),
+                    colors = ButtonDefaults.buttonColors(containerColor = if (robotStartPosition.value < 3) redAlliance else if (robotStartPosition.value < 6) blueAlliance else if (robotStartPosition.value == 6) redAlliance else blueAlliance)
+                ) {
+                    Box(modifier = Modifier.fillMaxWidth()) {
+                        var textLabel = ""
+                        when (robotStartPosition.value) {
+                            0 -> textLabel = "Red 1"
+                            1 -> textLabel = "Red 2"
+                            2 -> textLabel = "Red 3"
+                            3 -> textLabel = "Blue 1"
+                            4 -> textLabel = "Blue 2"
+                            5 -> textLabel = "Blue 3"
+                            6 -> textLabel = "Red Strat"
+                            7 -> textLabel = "Blue Strat"
+                        }
+                        Text(
+                            text = textLabel,
+                            color = getCurrentTheme().onPrimary,
+                            modifier = Modifier.align(Alignment.CenterStart)
+                        )
+                        Icon(
+                            imageVector = Icons.Default.ArrowDropDown,
+                            contentDescription = "Drop Down",
+                            tint = getCurrentTheme().onPrimary,
+                            modifier = Modifier.align(Alignment.CenterEnd)
+                        )
+                    }
+                }
+                DropdownMenu(
+                    expanded = typeDD,
+                    onDismissRequest = { typeDD = false; },
+                    modifier = Modifier.background(color = getCurrentTheme().onSurface)
+                ) {
+                    DropdownMenuItem(
+                        onClick = {
+                            robotStartPosition.value = 0
+                            typeDD = false
+                        },
+                        text = {
+                            Text(
+                                text = "Red 1",
+                                color = getCurrentTheme().onPrimary
+                            )
+                        },
+                        modifier = Modifier.background(color = redAlliance)
                     )
-                )
-            }
+                    DropdownMenuItem(
+                        onClick = {
+                            robotStartPosition.value = 1
+                            typeDD = false
+                        },
+                        text = {
+                            Text(
+                                text = "Red 2",
+                                color = getCurrentTheme().onPrimary
+                            )
+                        },
+                        modifier = Modifier.background(color = redAlliance)
+                    )
+                    DropdownMenuItem(
+                        onClick = {
+                            robotStartPosition.value = 2
+                            typeDD = false
+                        },
+                        text = {
+                            Text(
+                                text = "Red 3",
+                                color = getCurrentTheme().onPrimary
+                            )
+                        },
+                        modifier = Modifier.background(color = redAlliance)
+                    )
+                    DropdownMenuItem(
+                        onClick = {
+                            robotStartPosition.value = 6
+                            typeDD = false
+                        },
+                        text = {
+                            Text(
+                                text = "Red Strat",
+                                color = getCurrentTheme().onPrimary
+                            )
+                        },
+                        modifier = Modifier.background(color = redAlliance)
+                    )
+                    HorizontalDivider(
+                        color = defaultPrimaryVariant,
+                        thickness = 3.dp,
+                        modifier = Modifier.padding(8.dp)
+                    )
+                    DropdownMenuItem(
+                        onClick = {
+                            robotStartPosition.value = 3
+                            typeDD = false
+                        },
+                        text = {
+                            Text(
+                                text = "Blue 1",
+                                color = getCurrentTheme().onPrimary
+                            )
+                        },
+                        modifier = Modifier.background(color = blueAlliance)
+                    )
+                    DropdownMenuItem(
+                        onClick = {
+                            robotStartPosition.value = 4
+                            typeDD = false
 
+                        },
+                        text = {
+                            Text(
+                                text = "Blue 2",
+                                color = getCurrentTheme().onPrimary
+                            )
+                        },
+                        modifier = Modifier.background(color = blueAlliance)
+                    )
+                    DropdownMenuItem(
+                        onClick = {
+                            robotStartPosition.value = 5
+                            typeDD = false
+                        },
+                        text = {
+                            Text(
+                                text = "Blue 3",
+                                color = getCurrentTheme().onPrimary
+                            )
+                        },
+                        modifier = Modifier.background(color = blueAlliance)
+                    )
+                    DropdownMenuItem(
+                        onClick = {
+                            robotStartPosition.value = 7
+                            typeDD = false
+                        },
+                        text = {
+                            Text(
+                                text = "Blue Strat",
+                                color = getCurrentTheme().onPrimary
+                            )
+                        },
+                        modifier = Modifier.background(color = blueAlliance)
+                    )
+                }
+
+            }
         }
         HorizontalDivider(
             color = defaultPrimaryVariant,
+            thickness = 3.dp,
+            modifier = Modifier.padding(8.dp)
         )
 
-        Box(modifier = Modifier.fillMaxWidth(9f/10f).align(Alignment.CenterHorizontally)) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.CenterHorizontally)
+        ) {
             OutlinedButton(
                 onClick = {
-                    if (comp.value != "" && scoutName.value != "")
+                    if (comp.value != "")
                         backStack.push(RootNode.NavTarget.MainMenu)
                 },
                 border = BorderStroke(color = defaultPrimaryVariant, width = 2.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = getCurrentTheme().primary),
-                modifier = Modifier.align(Alignment.CenterEnd)
+                modifier = Modifier
+                    .align(Alignment.CenterEnd)
+                    .padding(8.dp)
+
             ) {
                 Text(
                     text = "Submit",
@@ -232,7 +440,9 @@ actual fun LoginMenu(
                 onClick = { deleteData = true },
                 border = BorderStroke(color = defaultPrimaryVariant, width = 2.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = getCurrentTheme().primary),
-                modifier = Modifier.align(Alignment.CenterStart)
+                modifier = Modifier
+                    .align(Alignment.CenterStart)
+                    .padding(8.dp)
             ) {
                 Text(
                     text = "Delete Data",
@@ -242,9 +452,11 @@ actual fun LoginMenu(
             if (deleteData) {
                 BasicAlertDialog(
                     onDismissRequest = { deleteData = false },
-                    modifier = Modifier.clip(
-                        RoundedCornerShape(5.dp)
-                    ).border(BorderStroke(3.dp, getCurrentTheme().primaryVariant), RoundedCornerShape(5.dp))
+                    modifier = Modifier
+                        .clip(
+                            RoundedCornerShape(5.dp)
+                        )
+                        .border(BorderStroke(3.dp, getCurrentTheme().primaryVariant), RoundedCornerShape(5.dp))
                         .background(getCurrentTheme().secondary)
                 ) {
                     var password by remember { mutableStateOf("") }
