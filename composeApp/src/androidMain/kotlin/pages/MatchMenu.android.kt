@@ -421,26 +421,30 @@ actual fun MatchMenuBottom(
         OutlinedButton(
             border = BorderStroke(1.dp, color = Color.Yellow),
             shape = RoundedCornerShape(1.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = getCurrentTheme().secondary),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = if (pageIndex.value == 0) Color.Yellow.copy(alpha = 0.5f) else getCurrentTheme().secondary
+            ),
             onClick = {
                 backStack.push(AutoTeleSelectorNode.NavTarget.AutoScouting)
                 pageIndex.value = 0
-                if(saveData.value) {
+                if (saveData.value) {
                     teamDataArray[TeamMatchStartKey(parseInt(match.value), team.intValue, robotStartPosition.intValue)] = createOutput(team, robotStartPosition)
                 }
             },
-            modifier = Modifier.fillMaxWidth(1/4f)
+            modifier = Modifier.fillMaxWidth(1 / 4f)
         ) {
             Text(
                 text = "Auto",
-                color = Color.Yellow,
+                color = if (pageIndex.value == 0) Color.White else Color.Yellow,
                 fontSize = 23.sp
             )
         }
         OutlinedButton(
             border = BorderStroke(1.dp, color = Color.Yellow),
             shape = RoundedCornerShape(1.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = getCurrentTheme().secondary),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = if (pageIndex.value == 1) Color.Yellow.copy(alpha = 0.5f) else getCurrentTheme().secondary
+            ),
             onClick = {
                 backStack.push(AutoTeleSelectorNode.NavTarget.TeleScouting)
                 pageIndex.value = 1
@@ -452,14 +456,16 @@ actual fun MatchMenuBottom(
         ) {
             Text(
                 text = "Tele",
-                color = Color.Yellow,
+                color = if (pageIndex.value == 1) Color.White else Color.Yellow,
                 fontSize = 23.sp
             )
         }
         OutlinedButton(
             border = BorderStroke(1.dp, color = Color.Yellow),
             shape = RoundedCornerShape(1.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = getCurrentTheme().secondary),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = if (pageIndex.value == 2) Color.Yellow.copy(alpha = 0.5f) else getCurrentTheme().secondary
+            ),
             onClick = {
                 backStack.push(AutoTeleSelectorNode.NavTarget.EndGameScouting)
                 pageIndex.value = 2
@@ -471,7 +477,7 @@ actual fun MatchMenuBottom(
         ) {
             Text(
                 text = "End",
-                color = Color.Yellow,
+                color = if (pageIndex.value == 2) Color.White else Color.Yellow,
                 fontSize = 23.sp
             )
         }
