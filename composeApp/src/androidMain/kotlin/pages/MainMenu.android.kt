@@ -1,14 +1,15 @@
 package pages
 
+//import androidx.compose.material.*
 import android.content.Context
 import android.hardware.usb.UsbManager
 import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-//import androidx.compose.material.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -18,6 +19,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import blueAlliance
 import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.components.backstack.operation.push
 import com.bumble.appyx.navigation.modality.BuildContext
@@ -35,12 +37,11 @@ import nodes.*
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import org.tahomarobotics.scouting.Client
-import org.tahomarobotics.scouting.TBAInterface
+import redAlliance
 import sendDataUSB
 import sendMatchData
 import sendPitsData
 import sendStratData
-import setTeam
 import sync
 import teamData
 import java.lang.Integer.parseInt
@@ -100,7 +101,7 @@ actual class MainMenu actual constructor(
                         .scale(0.75f)
                         .align(Alignment.CenterStart)
                 ) {
-                    Text(text = "Login", color = getCurrentTheme().onPrimary)
+                    Text(text = "Back to Login", color = getCurrentTheme().onPrimary)
                 }
 
                 Text(
@@ -119,224 +120,81 @@ actual class MainMenu actual constructor(
 
             }
             HorizontalDivider(color = getCurrentTheme().onSurface, thickness = 2.dp)
-            Text(
-                text = "Hello ${scoutName.value}",
-                color = getCurrentTheme().onPrimary,
-                modifier = Modifier.align(Alignment.CenterHorizontally)
-            )
+            Row(modifier = Modifier.fillMaxWidth()) {
+                var textLabel = ""
+                when (robotStartPosition.value) {
+                    0 -> textLabel = "Red 1"
+                    1 -> textLabel = "Red 2"
+                    2 -> textLabel = "Red 3"
+                    3 -> textLabel = "Blue 1"
+                    4 -> textLabel = "Blue 2"
+                    5 -> textLabel = "Blue 3"
+                    6 -> textLabel = "Red Strat"
+                    7 -> textLabel = "Blue Strat"
+                    8 -> textLabel = "Pits"
+                }
+                OutlinedButton(
+                    content = { Text(textLabel, color = getCurrentTheme().onPrimary) },
+                    onClick = { },
+                    enabled = false,
+                    shape = RoundedCornerShape(12.dp),
+                    border = BorderStroke(1.dp, color = Color.Yellow),
+                    colors = ButtonDefaults.buttonColors(
+                        disabledContainerColor = if (robotStartPosition.value < 3) redAlliance else if (robotStartPosition.value < 6) blueAlliance else if (robotStartPosition.value == 6) redAlliance else blueAlliance,
+                        ),
+                    modifier = Modifier
+                        .fillMaxWidth(0.2f)
+                        .padding(8.dp)
+                        .height(80.dp)
+                )
+                androidx.compose.material.OutlinedTextField(
+                    value = scoutName.value,
+                    onValueChange = { scoutName.value = it },
+                    label = { Text("Scout First and Last Name", color = getCurrentTheme().onPrimary) },
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = Color.Cyan,
+                        unfocusedBorderColor = Color.Yellow,
+                        cursorColor = getCurrentTheme().onPrimary,
+                        textColor = getCurrentTheme().onPrimary
+                    ),
+                    shape = RoundedCornerShape(12.dp),
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .fillMaxWidth()
+                        .height(80.dp)
+                )
+            }
             OutlinedButton(
                 border = BorderStroke(3.dp, Color.Yellow),
                 shape = RoundedCornerShape(25.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
                 contentPadding = PaddingValues(horizontal = 60.dp, vertical = 5.dp),
                 onClick = {
-                    val scope = CoroutineScope(Dispatchers.Default)
-                    scope.launch {
-                        sync(false, context)
+                    if (robotStartPosition.value < 6) {
+                        val scope = CoroutineScope(Dispatchers.Default)
+                        scope.launch {
+                            sync(false, context)
+                        }
+
+                        createScoutMatchDataFolder(context)
+
+                        loadData(parseInt(match.value), team, robotStartPosition)
+                        backStack.push(RootNode.NavTarget.MatchScouting)
+                    } else if (robotStartPosition.value < 8) {
+                        val redAlliance = robotStartPosition.value == 6
+                        setContext(redAlliance)
+                        backStack.push(RootNode.NavTarget.StratScreen)
+                        loadStratData(stratMatch, redAlliance)
+                    } else {
+                        backStack.push(RootNode.NavTarget.PitsScouting)
                     }
-
-                    selectedPlacement = true
-
-                    createScoutMatchDataFolder(context)
                 },
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
                     .padding(horizontal = 50.dp, vertical = 50.dp),
             ) {
                 Text(
-                    text = "Match", color = getCurrentTheme().onPrimary, fontSize = 35.sp
-                )
-            }
-
-            Box(
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .offset((-100).dp, (-50).dp)
-            ) {
-                DropdownMenu(
-                    expanded = selectedPlacement,
-                    onDismissRequest = { selectedPlacement = false },
-                    modifier = Modifier
-                        .size(200.dp, 332.dp)
-                        .background(color = Color(0, 0, 0))
-                ) {
-                    Row {
-                        DropdownMenuItem(
-                            onClick = {
-                                robotStartPosition.intValue = 0
-                                loadData(parseInt(match.value), team, robotStartPosition)
-                                backStack.push(RootNode.NavTarget.MatchScouting)
-//                                try {
-//                                    setTeam(team, match, robotStartPosition.intValue)
-//                                } catch (e: JSONException) {
-//                                    openError.value = true
-//                                }
-                            },
-                            modifier = Modifier
-                                .border(BorderStroke(color = Color.Yellow, width = 3.dp))
-                                .size(100.dp, 100.dp)
-                                .background(color = Color(60, 30, 30)),
-                            text = { Text("R1", fontSize = 22.sp, color = Color.White) })
-                        DropdownMenuItem(
-                            onClick = {
-                                robotStartPosition.intValue = 3
-                                loadData(parseInt(match.value), team, robotStartPosition)
-                                backStack.push(RootNode.NavTarget.MatchScouting)
-//                                try {
-//                                    setTeam(team, match, robotStartPosition.intValue)
-//                                } catch (e: JSONException) {
-//                                    openError.value = true
-//                                }
-                            },
-                            modifier = Modifier
-                                .border(BorderStroke(color = Color.Yellow, width = 3.dp))
-                                .size(100.dp, 100.dp)
-                                .background(color = Color(30, 30, 60)),
-                            text = { Text("B1", fontSize = 22.sp, color = Color.White) })
-                    }
-                    Row {
-                        DropdownMenuItem(
-                            onClick = {
-                                robotStartPosition.intValue = 1
-                                loadData(parseInt(match.value), team, robotStartPosition)
-                                backStack.push(RootNode.NavTarget.MatchScouting)
-//                                try {
-//                                    setTeam(team, match, robotStartPosition.intValue)
-//                                } catch (e: JSONException) {
-//                                    openError.value = true
-//                                }
-                            },
-                            modifier = Modifier
-                                .border(BorderStroke(color = Color.Yellow, width = 3.dp))
-                                .size(100.dp, 100.dp)
-                                .background(color = Color(60, 30, 30)),
-                            text = { Text("R2", fontSize = 22.sp, color = Color.White) })
-                        DropdownMenuItem(
-                            onClick = {
-                                robotStartPosition.intValue = 4
-                                loadData(parseInt(match.value), team, robotStartPosition)
-                                backStack.push(RootNode.NavTarget.MatchScouting)
-//                                try {
-//                                    setTeam(team, match, robotStartPosition.intValue)
-//                                } catch (e: JSONException) {
-//                                    openError.value = true
-//                                }
-                            },
-                            modifier = Modifier
-                                .border(BorderStroke(color = Color.Yellow, width = 3.dp))
-                                .size(100.dp, 100.dp)
-                                .background(color = Color(30, 30, 60)),
-                            text = { Text("B2", fontSize = 22.sp, color = Color.White) })
-                    }
-                    Row {
-                        DropdownMenuItem(
-                            onClick = {
-                                robotStartPosition.intValue = 2
-                                loadData(parseInt(match.value), team, robotStartPosition)
-                                backStack.push(RootNode.NavTarget.MatchScouting)
-//                                try {
-//                                    setTeam(team, match, robotStartPosition.intValue)
-//                                } catch (e: JSONException) {
-//                                    openError.value = true
-//                                }
-                            },
-                            modifier = Modifier
-                                .border(BorderStroke(color = Color.Yellow, width = 3.dp))
-                                .size(100.dp, 100.dp)
-                                .background(color = Color(60, 30, 30)),
-                            text = { Text("R3", fontSize = 22.sp, color = Color.White) })
-                        DropdownMenuItem(
-                            onClick = {
-                                robotStartPosition.intValue = 5
-                                loadData(parseInt(match.value), team, robotStartPosition)
-                                backStack.push(RootNode.NavTarget.MatchScouting)
-//                                try {
-//                                    setTeam(team, match, robotStartPosition.intValue)
-//                                } catch (e: JSONException) {
-//                                    openError.value = true
-//                                }
-                            },
-                            modifier = Modifier
-                                .border(BorderStroke(color = Color.Yellow, width = 3.dp))
-                                .size(100.dp, 100.dp)
-                                .background(color = Color(30, 30, 60)),
-                            text = { Text("B3", fontSize = 22.sp, color = Color.White) })
-                    }
-                }
-            }
-
-            var selectedAlliance by remember { mutableStateOf(false) }
-            OutlinedButton(
-                border = BorderStroke(3.dp, Color.Yellow),
-                shape = RoundedCornerShape(25.dp),
-                contentPadding = PaddingValues(horizontal = 80.dp, vertical = 5.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
-                onClick = {
-                    selectedAlliance = true
-                },
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(horizontal = 50.dp, vertical = 50.dp),
-
-                ) {
-                Text(
-                    text = "Strategy", color = getCurrentTheme().onPrimary, fontSize = 35.sp
-                )
-            }
-            Box(
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .offset((-75).dp, (-50).dp)
-            ) {
-                DropdownMenu(
-                    expanded = selectedAlliance,
-                    onDismissRequest = { selectedAlliance = false },
-                    modifier = Modifier.background(color = Color(0, 0, 0))
-                ) {
-                    DropdownMenuItem(
-                        onClick = {
-                            selectedAlliance = false
-                            setContext(true)
-//                            isRedAlliance = true
-                            backStack.push(RootNode.NavTarget.StratScreen)
-
-                            loadStratData(stratMatch, true)
-                        },
-                        modifier = Modifier
-                            .border(BorderStroke(color = Color.Yellow, width = 3.dp))
-                            .background(color = Color(60, 30, 30)),
-                        text = { Text("Red Alliance", fontSize = 22.sp, color = Color.White) })
-                    DropdownMenuItem(
-                        onClick = {
-                            selectedAlliance = false
-                            setContext(false)
-//                            isRedAlliance = false
-                            backStack.push(RootNode.NavTarget.StratScreen)
-
-                            loadStratData(stratMatch, false)
-                        },
-                        modifier = Modifier
-                            .border(BorderStroke(color = Color.Yellow, width = 3.dp))
-                            .background(color = Color(30, 30, 60)),
-                        text = { Text("Blue Alliance", fontSize = 22.sp, color = Color.White) })
-                }
-            }
-
-            OutlinedButton(
-                border = BorderStroke(3.dp, Color.Yellow),
-                shape = RoundedCornerShape(25.dp),
-                contentPadding = PaddingValues(horizontal = 80.dp, vertical = 5.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
-                onClick = {
-                    backStack.push(RootNode.NavTarget.PitsScouting)
-                },
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(horizontal = 50.dp, vertical = 50.dp),
-
-                ) {
-                Text(
-                    text = "Pits", color = getCurrentTheme().onPrimary, fontSize = 35.sp
+                    text = "Start Scouting", color = getCurrentTheme().onPrimary, fontSize = 35.sp
                 )
             }
 
@@ -552,4 +410,5 @@ actual class MainMenu actual constructor(
         }
     }
 }
+
 val openError = mutableStateOf(false)

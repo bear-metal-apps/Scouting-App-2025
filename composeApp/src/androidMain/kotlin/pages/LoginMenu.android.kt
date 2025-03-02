@@ -25,6 +25,7 @@ import createScoutMatchDataFolder
 import createScoutPitsDataFolder
 import createScoutStratDataFolder
 import defaultPrimaryVariant
+import defaultSecondary
 import deleteFile
 import deleteScoutMatchData
 import deleteScoutPitsData
@@ -275,6 +276,7 @@ actual fun LoginMenu(
                             5 -> textLabel = "Blue 3"
                             6 -> textLabel = "Red Strat"
                             7 -> textLabel = "Blue Strat"
+                            8 -> textLabel = "Pits"
                         }
                         Text(
                             text = textLabel,
@@ -403,6 +405,24 @@ actual fun LoginMenu(
                             )
                         },
                         modifier = Modifier.background(color = blueAlliance)
+                    )
+                    HorizontalDivider(
+                        color = defaultPrimaryVariant,
+                        thickness = 3.dp,
+                        modifier = Modifier.padding(8.dp)
+                    )
+                    DropdownMenuItem(
+                        onClick = {
+                            robotStartPosition.value = 8
+                            typeDD = false
+                        },
+                        text = {
+                            Text(
+                                text = "Pits",
+                                color = getCurrentTheme().onPrimary
+                            )
+                        },
+                        modifier = Modifier.background(color = defaultSecondary)
                     )
                 }
 

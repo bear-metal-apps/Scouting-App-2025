@@ -108,7 +108,7 @@ actual fun MatchMenuTop(
     if(first) {
         try{
             team.intValue = getTeamsOnAlliance(match.value.betterParseInt(), isRedAliance.value)[tempRobotStart.value].number
-        }catch (e: Exception){}
+        } catch (e: Exception){}
 
         tempTeam = team.intValue
         tempMatch = match.value
