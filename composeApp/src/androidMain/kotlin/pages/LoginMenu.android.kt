@@ -81,7 +81,7 @@ actual fun LoginMenu(
     Column(modifier = Modifier.padding(8.dp)) {
         Text(
             text = "Login",
-            fontSize = 45.sp,
+            fontSize = 32.sp,
             color = getCurrentTheme().onPrimary,
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
@@ -92,33 +92,15 @@ actual fun LoginMenu(
             thickness = 3.dp,
             modifier = Modifier.padding(8.dp)
         )
-//        Row(modifier = Modifier.align(Alignment.CenterHorizontally)) {
-//            Text(text = "Name", color = defaultOnPrimary)
-//            OutlinedTextField(
-//                value = scoutName.value,
-//                onValueChange = {scoutName.value = it},
-//                placeholder = { Text("First, Last Name") },
-//                shape = RoundedCornerShape(15.dp),
-//                colors = OutlinedTextFieldDefaults.colors(
-//                    unfocusedContainerColor = getCurrentTheme().background,
-//                    unfocusedTextColor = getCurrentTheme().onPrimary,
-//                    focusedContainerColor = getCurrentTheme().background,
-//                    focusedTextColor = getCurrentTheme().onPrimary,
-//                    cursorColor = getCurrentTheme().onSecondary,
-//                    focusedBorderColor = Color.Cyan,
-//                    unfocusedBorderColor = getCurrentTheme().secondary
-//                )
-//            )
-//        }
         Row {
             Box(
                 modifier = Modifier
                     .padding(8.dp)
-                    .fillMaxWidth(0.5f)
+                    .fillMaxWidth(0.6f)
             ) {
                 OutlinedButton(
                     onClick = { compDD = true },
-                    shape = RoundedCornerShape(16.dp),
+                    shape = RoundedCornerShape(12.dp),
                     border = BorderStroke(3.dp, color = defaultPrimaryVariant),
                     colors = ButtonDefaults.buttonColors(containerColor = getCurrentTheme().primary)
                 ) {
@@ -239,7 +221,7 @@ actual fun LoginMenu(
                             compKey = it
                         },
                         placeholder = { Text("Custom Competition Key") },
-                        shape = RoundedCornerShape(15.dp),
+                        shape = RoundedCornerShape(12.dp),
                         singleLine = true,
                         colors = OutlinedTextFieldDefaults.colors(
                             unfocusedContainerColor = getCurrentTheme().background,
@@ -261,7 +243,7 @@ actual fun LoginMenu(
             ) {
                 OutlinedButton(
                     onClick = { typeDD = true },
-                    shape = RoundedCornerShape(16.dp),
+                    shape = RoundedCornerShape(12.dp),
                     border = BorderStroke(3.dp, color = defaultPrimaryVariant),
                     colors = ButtonDefaults.buttonColors(containerColor = if (robotStartPosition.value < 3) redAlliance else if (robotStartPosition.value < 6) blueAlliance else if (robotStartPosition.value == 6) redAlliance else blueAlliance)
                 ) {
@@ -428,11 +410,11 @@ actual fun LoginMenu(
 
             }
         }
-        HorizontalDivider(
-            color = defaultPrimaryVariant,
-            thickness = 3.dp,
-            modifier = Modifier.padding(8.dp)
-        )
+//        HorizontalDivider(
+//            color = defaultPrimaryVariant,
+//            thickness = 3.dp,
+//            modifier = Modifier.padding(8.dp)
+//        )
 
         Box(
             modifier = Modifier
@@ -444,8 +426,9 @@ actual fun LoginMenu(
                     if (comp.value != "")
                         backStack.push(RootNode.NavTarget.MainMenu)
                 },
-                border = BorderStroke(color = defaultPrimaryVariant, width = 2.dp),
+                border = BorderStroke(color = defaultPrimaryVariant, width = 3.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = getCurrentTheme().primary),
+                shape = RoundedCornerShape(12.dp),
                 modifier = Modifier
                     .align(Alignment.CenterEnd)
                     .padding(8.dp)
@@ -458,8 +441,9 @@ actual fun LoginMenu(
             }
             OutlinedButton(
                 onClick = { deleteData = true },
-                border = BorderStroke(color = defaultPrimaryVariant, width = 2.dp),
+                border = BorderStroke(color = defaultPrimaryVariant, width = 3.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = getCurrentTheme().primary),
+                shape = RoundedCornerShape(12.dp),
                 modifier = Modifier
                     .align(Alignment.CenterStart)
                     .padding(8.dp)
@@ -496,7 +480,7 @@ actual fun LoginMenu(
                             value = password,
                             onValueChange = { password = it },
                             placeholder = { Text("Password") },
-                            shape = RoundedCornerShape(15.dp),
+                            shape = RoundedCornerShape(12.dp),
                             colors = OutlinedTextFieldDefaults.colors(
                                 unfocusedContainerColor = getCurrentTheme().background,
                                 unfocusedTextColor = getCurrentTheme().onPrimary,

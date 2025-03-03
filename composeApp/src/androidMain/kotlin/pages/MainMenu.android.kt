@@ -1,31 +1,29 @@
 package pages
 
 //import androidx.compose.material.*
-import android.content.Context
-import android.hardware.usb.UsbManager
-import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.CheckCircleOutline
+import androidx.compose.material.icons.rounded.ChevronLeft
+import androidx.compose.material.icons.rounded.ErrorOutline
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
-import blueAlliance
 import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.components.backstack.operation.push
 import com.bumble.appyx.navigation.modality.BuildContext
 import com.bumble.appyx.navigation.node.Node
-import compKey
 import createScoutMatchDataFolder
+import defaultPrimaryVariant
 import defaultSecondary
 import getCurrentTheme
 import getLastSynced
@@ -35,10 +33,7 @@ import kotlinx.coroutines.launch
 import matchData
 import nodes.*
 import org.jetbrains.compose.resources.ExperimentalResourceApi
-import org.jetbrains.compose.resources.painterResource
 import org.tahomarobotics.scouting.Client
-import redAlliance
-import sendDataUSB
 import sendMatchData
 import sendPitsData
 import sendStratData
@@ -59,116 +54,168 @@ actual class MainMenu actual constructor(
     @Composable
     actual override fun View(modifier: Modifier) {
         val context = LocalContext.current
-        var selectedPlacement by remember { mutableStateOf(false) }
-        var matchSyncedResource by remember { mutableStateOf(if (matchData == null) "crossmark.png" else "checkmark.png") }
-        var teamSyncedResource by remember { mutableStateOf(if (teamData == null) "crossmark.png" else "checkmark.png") }
-        var serverDialogOpen by remember { mutableStateOf(false) }
-
-        var ipAddressErrorDialog by remember { mutableStateOf(false) }
-        var deviceListOpen by remember { mutableStateOf(false) }
-        val manager = context.getSystemService(Context.USB_SERVICE) as UsbManager
-
-        var setEventCode by remember { mutableStateOf(false) }
-        var tempCompKey by remember { mutableStateOf(compKey) }
-
-        val deviceList = manager.deviceList
-
+        var matchSynced by remember { mutableStateOf(matchData != null) }
+        var teamSynced by remember { mutableStateOf(teamData != null) }
+        
         var exportPopup by remember { mutableStateOf(false) }
 
-        Column(modifier = Modifier.verticalScroll(ScrollState(0))) {
-            DropdownMenu(expanded = deviceListOpen, onDismissRequest = { deviceListOpen = false }) {
-                deviceList.forEach { (name, _) ->
-                    Log.i("USB", name)
-                    DropdownMenuItem(text = { Text(name) }, onClick = { sendDataUSB(context, name) })
-                }
-            }
-            if (setEventCode) {
-                Dialog(onDismissRequest = {
-                    setEventCode = false
-                    compKey = tempCompKey
-                }) {
-                    Column {
-                        Text("Enter new event code")
-                        TextField(tempCompKey, { tempCompKey = it })
-                    }
-                }
-            }
+        Column(
+            modifier = Modifier
+                .verticalScroll(ScrollState(0))
+                .padding(8.dp)
+        ) {
             Box(modifier = Modifier.fillMaxWidth()) {
                 OutlinedButton(
+                    border = BorderStroke(3.dp, Color.Yellow),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
                     onClick = {
                         backStack.push(RootNode.NavTarget.LoginPage)
-                    }, modifier = Modifier
-                        .scale(0.75f)
+                    },
+                    modifier = Modifier
                         .align(Alignment.CenterStart)
+                        .padding(8.dp, 0.dp, 8.dp, 0.dp)
                 ) {
-                    Text(text = "Back to Login", color = getCurrentTheme().onPrimary)
+                    Icon(Icons.Rounded.ChevronLeft, "Back")
                 }
 
+                var textLabel = ""
+                when (robotStartPosition.value) {
+                    0 -> textLabel = "Red 1 Match"
+                    1 -> textLabel = "Red 2 Match"
+                    2 -> textLabel = "Red 3 Match"
+                    3 -> textLabel = "Blue 1 Match"
+                    4 -> textLabel = "Blue 2 Match"
+                    5 -> textLabel = "Blue 3 Match"
+                    6 -> textLabel = "Red Strat"
+                    7 -> textLabel = "Blue Strat"
+                    8 -> textLabel = "Pits"
+                }
                 Text(
-                    text = "Bear Metal Scout App", fontSize = 25.sp, modifier = Modifier.align(Alignment.Center)
+                    text = textLabel,
+                    fontSize = 32.sp,
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .padding(8.dp)
                 )
 
                 OutlinedButton(
+                    border = BorderStroke(3.dp, Color.Yellow),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
                     onClick = {
                         backStack.push(RootNode.NavTarget.Settings)
-                    }, modifier = Modifier
-                        .scale(0.75f)
+                    },
+                    modifier = Modifier
                         .align(Alignment.CenterEnd)
+                        .padding(8.dp, 0.dp, 8.dp, 0.dp)
                 ) {
                     Text(text = "Settings", color = getCurrentTheme().onPrimary)
                 }
 
             }
-            HorizontalDivider(color = getCurrentTheme().onSurface, thickness = 2.dp)
-            Row(modifier = Modifier.fillMaxWidth()) {
-                var textLabel = ""
-                when (robotStartPosition.value) {
-                    0 -> textLabel = "Red 1"
-                    1 -> textLabel = "Red 2"
-                    2 -> textLabel = "Red 3"
-                    3 -> textLabel = "Blue 1"
-                    4 -> textLabel = "Blue 2"
-                    5 -> textLabel = "Blue 3"
-                    6 -> textLabel = "Red Strat"
-                    7 -> textLabel = "Blue Strat"
-                    8 -> textLabel = "Pits"
-                }
-                OutlinedButton(
-                    content = { Text(textLabel, color = getCurrentTheme().onPrimary) },
-                    onClick = { },
-                    enabled = false,
-                    shape = RoundedCornerShape(12.dp),
-                    border = BorderStroke(1.dp, color = Color.Yellow),
-                    colors = ButtonDefaults.buttonColors(
-                        disabledContainerColor = if (robotStartPosition.value < 3) redAlliance else if (robotStartPosition.value < 6) blueAlliance else if (robotStartPosition.value == 6) redAlliance else blueAlliance,
-                        ),
-                    modifier = Modifier
-                        .fillMaxWidth(0.2f)
-                        .padding(8.dp)
-                        .height(80.dp)
-                )
-                androidx.compose.material.OutlinedTextField(
-                    value = scoutName.value,
-                    onValueChange = { scoutName.value = it },
-                    label = { Text("Scout First and Last Name", color = getCurrentTheme().onPrimary) },
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
-                        focusedBorderColor = Color.Cyan,
-                        unfocusedBorderColor = Color.Yellow,
-                        cursorColor = getCurrentTheme().onPrimary,
-                        textColor = getCurrentTheme().onPrimary
-                    ),
-                    shape = RoundedCornerShape(12.dp),
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .fillMaxWidth()
-                        .height(80.dp)
-                )
-            }
+
+            HorizontalDivider(
+                color = defaultPrimaryVariant,
+                thickness = 3.dp,
+                modifier = Modifier.padding(8.dp)
+            )
+            
+            androidx.compose.material.OutlinedTextField(
+                value = scoutName.value,
+                onValueChange = { scoutName.value = it },
+                label = { Text("Scout First and Last Name", color = getCurrentTheme().onPrimary) },
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = Color.Cyan,
+                    unfocusedBorderColor = Color.Yellow,
+                    cursorColor = getCurrentTheme().onPrimary,
+                    textColor = getCurrentTheme().onPrimary,
+                    backgroundColor = defaultSecondary,
+                ),
+                shape = RoundedCornerShape(12.dp),
+                modifier = Modifier
+                    .padding(8.dp)
+                    .fillMaxWidth(0.6f)
+                    .align(Alignment.CenterHorizontally)
+            )
+            
             OutlinedButton(
                 border = BorderStroke(3.dp, Color.Yellow),
-                shape = RoundedCornerShape(25.dp),
+                shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
-                contentPadding = PaddingValues(horizontal = 60.dp, vertical = 5.dp),
+                onClick = {
+                    val scope = CoroutineScope(Dispatchers.Default)
+                    scope.launch {
+                        sync(true, context)
+                        teamSynced = teamData != null
+                        matchSynced = matchData != null
+                    }
+//                    TBAInterface.getTBAData("/event/${compKey}/teams/keys")
+                },
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(12.dp),
+            ) {
+                Column {
+                    Text(
+                        text = "Sync",
+                        color = getCurrentTheme().onPrimary,
+                        fontSize = 24.sp,
+                        modifier = Modifier
+                            .align(Alignment.CenterHorizontally)
+                            .padding(8.dp)
+                    )
+
+                    Text(
+                        text = "Last synced ${getLastSynced()}",
+                        fontSize = 12.sp,
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                    )
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    Box(
+                        Modifier
+                            .fillMaxWidth(1f / 2f)
+                            .padding(0.dp, 8.dp, 0.dp, 0.dp)
+                    ) {
+                        Text("Robot List", modifier = Modifier.align(Alignment.CenterStart))
+
+                        Icon(
+                            if (teamSynced) Icons.Rounded.CheckCircleOutline else Icons.Rounded.ErrorOutline,
+                            contentDescription = "team sync status",
+                            tint = if (teamSynced) Color.Green else Color.Red,
+                            modifier = Modifier
+                                .size(30.dp)
+                                .align(Alignment.CenterEnd)
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    Box(
+                        Modifier
+                            .fillMaxWidth(1f / 2f)
+                            .padding(0.dp, 0.dp, 0.dp, 8.dp)
+                    ) {
+                        Text("Match List", modifier = Modifier.align(Alignment.CenterStart))
+                        
+                        Icon(
+                            if (matchSynced) Icons.Rounded.CheckCircleOutline else Icons.Rounded.ErrorOutline,
+                            contentDescription = "match sync status",
+                            tint = if (matchSynced) Color.Green else Color.Red,
+                            modifier = Modifier
+                                .size(30.dp)
+                                .align(Alignment.CenterEnd)
+                        )
+                    }
+                }
+            }
+
+            OutlinedButton(
+                border = BorderStroke(3.dp, Color.Yellow),
+                shape = RoundedCornerShape(12.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
                 onClick = {
                     if (robotStartPosition.value < 6) {
                         val scope = CoroutineScope(Dispatchers.Default)
@@ -191,102 +238,24 @@ actual class MainMenu actual constructor(
                 },
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
-                    .padding(horizontal = 50.dp, vertical = 50.dp),
+                    .padding(8.dp),
             ) {
                 Text(
-                    text = "Start Scouting", color = getCurrentTheme().onPrimary, fontSize = 35.sp
+                    text = "Start Scouting", color = getCurrentTheme().onPrimary
                 )
             }
 
             OutlinedButton(
                 border = BorderStroke(3.dp, Color.Yellow),
-                shape = RoundedCornerShape(25.dp),
-                contentPadding = PaddingValues(horizontal = 10.dp, vertical = 15.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
-                onClick = {
-                    val scope = CoroutineScope(Dispatchers.Default)
-                    scope.launch {
-                        sync(true, context)
-                        teamSyncedResource = if (teamData != null) "checkmark.png" else "crossmark.png"
-                        matchSyncedResource = if (matchData != null) "checkmark.png" else "crossmark.png"
-                    }
-//                    TBAInterface.getTBAData("/event/${compKey}/teams/keys")
-                },
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(horizontal = 50.dp, vertical = 50.dp),
-            ) {
-                Column {
-                    Text(
-                        text = "Sync",
-                        color = getCurrentTheme().onPrimary,
-                        fontSize = 35.sp,
-                        modifier = Modifier.align(Alignment.CenterHorizontally)
-                    )
-
-                    Text(
-                        text = "Last synced ${getLastSynced()}",
-                        fontSize = 12.sp,
-                    )
-
-                    Spacer(modifier = Modifier.height(10.dp))
-
-                    Box(Modifier.fillMaxWidth(1f / 2f)) {
-                        Text("Robot List")
-
-                        Image(
-                            painterResource(res = teamSyncedResource),
-                            contentDescription = "status",
-                            modifier = Modifier
-                                .size(30.dp)
-                                .align(Alignment.CenterEnd)
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(10.dp))
-
-                    Box(Modifier.fillMaxWidth(1f / 2f)) {
-                        Text("Match List")
-
-                        Image(
-                            painterResource(res = matchSyncedResource),
-                            contentDescription = "status",
-                            modifier = Modifier
-                                .size(30.dp)
-                                .align(Alignment.CenterEnd)
-                        )
-                    }
-                }
-            }
-
-            OutlinedButton(
-                border = BorderStroke(3.dp, Color.Yellow),
-                shape = RoundedCornerShape(25.dp),
-                contentPadding = PaddingValues(horizontal = 10.dp, vertical = 15.dp),
+                shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
                 onClick = {
                     exportPopup = true
-                }) {
-                Text("Export")
-            }
-
-            Box(modifier = Modifier.fillMaxSize()) {
-                OutlinedButton(
-                    border = BorderStroke(3.dp, Color.Yellow),
-                    shape = RoundedCornerShape(25.dp),
-                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 15.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
-                    onClick = {
-                        setEventCode = true
-                        teamSyncedResource = "crossmark.png"
-                        matchSyncedResource = "crossmark.png"
-                    },
-                    modifier = Modifier.align(Alignment.CenterEnd)
-                ) {
-                    Text("Set custom event key", fontSize = 9.sp)
-                }
-            }
-            Text(tempCompKey)
+                },
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(8.dp),
+            ) { Text(text = "Export Data", color = getCurrentTheme().onPrimary) }
         }
 
         if (exportPopup) {
@@ -300,9 +269,9 @@ actual class MainMenu actual constructor(
             ) {
                 Box(
                     modifier = Modifier
-                        .fillMaxWidth(8f / 10f)
+                        .fillMaxWidth(0.8f)
                         .padding(5.dp)
-                        .fillMaxHeight(2 / 8f)
+                        .fillMaxHeight(0.25f)
                 ) {
                     Text(
                         text = "What do you want to export?",
@@ -331,6 +300,7 @@ actual class MainMenu actual constructor(
                                         context = context,
                                         client = client!!,
                                     )
+                                    client!!.disconnect()
                                 }
                                 exportPopup = false
                             },
