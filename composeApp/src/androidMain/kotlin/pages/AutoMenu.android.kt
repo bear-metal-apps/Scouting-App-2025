@@ -22,7 +22,7 @@ import androidx.compose.ui.platform.LocalContext
 import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.components.backstack.operation.pop
 import composables.CheckBox
-import composables.EnumerableValueAuto
+import composables.EnumerableValue
 import composables.TriStateCheckBox
 import keyboardAsState
 import nodes.AutoTeleSelectorNode
@@ -38,13 +38,14 @@ import nodes.autoCoralLevel3Missed
 import nodes.autoCoralLevel3Scored
 import nodes.autoCoralLevel4Missed
 import nodes.autoCoralLevel4Scored
-import nodes.autoFeederCollection
 import nodes.autoNetMissed
 import nodes.autoNetScored
 import nodes.autoStop
+import nodes.collectCoral
 import nodes.createOutput
 import nodes.groundCollectionAlgae
-import nodes.groundCollectionCoral
+import nodes.miniMinus
+import nodes.pageIndex
 import nodes.saveData
 import nodes.teamDataArray
 import java.lang.Integer.parseInt
@@ -58,6 +59,8 @@ actual fun AutoMenu(
     team: MutableIntState,
     robotStartPosition: MutableIntState
 ) {
+
+    pageIndex.intValue = 0
 
     val context = LocalContext.current
     fun bob() {
@@ -81,178 +84,193 @@ actual fun AutoMenu(
                 .weight(10f)
                 .fillMaxWidth()
         ) {
+            Column (
+                modifier = Modifier
+                    .weight(2f)
+                    .fillMaxHeight()
+            ) {
+                Row(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                ) {
+                    EnumerableValue(
+                        label = "Score L4",
+                        value = autoCoralLevel4Scored,
+                        flashColor = Color.Green,
+                        alignment = Alignment.BottomEnd,
+                        miniMinus = miniMinus.value,
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxWidth()
+                    )
+                    EnumerableValue(
+                        label = "Miss L4",
+                        value = autoCoralLevel4Missed,
+                        flashColor = Color.Red,
+                        alignment = Alignment.BottomEnd,
+                        miniMinus = miniMinus.value,
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxWidth()
+                    )
+                }
+                Row(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                ){
+                    EnumerableValue(
+                        label = "Score L3",
+                        value = autoCoralLevel3Scored,
+                        flashColor = Color.Green,
+                        alignment = Alignment.BottomEnd,
+                        miniMinus = miniMinus.value,
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxWidth()
+                    )
+                    EnumerableValue(
+                        label = "Miss L3",
+                        value = autoCoralLevel3Missed,
+                        flashColor = Color.Red,
+                        alignment = Alignment.BottomEnd,
+                        miniMinus = miniMinus.value,
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxWidth()
+                    )
+                }
+
+                Row(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                ){
+                    EnumerableValue(
+                        label = "Score L2",
+                        value = autoCoralLevel2Scored,
+                        flashColor = Color.Green,
+                        alignment = Alignment.BottomEnd,
+                        miniMinus = miniMinus.value,
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxWidth()
+                    )
+                    EnumerableValue(
+                        label = "Miss L2",
+                        value = autoCoralLevel2Missed,
+                        flashColor = Color.Red,
+                        alignment = Alignment.BottomEnd,
+                        miniMinus = miniMinus.value,
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxWidth()
+                    )
+                }
+
+                Row(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                ){
+                    EnumerableValue(
+                        label = "Score L1",
+                        value = autoCoralLevel1Scored,
+                        flashColor = Color.Green,
+                        alignment = Alignment.BottomEnd,
+                        miniMinus = miniMinus.value,
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxWidth()
+                    )
+                    EnumerableValue(
+                        label = "Miss L1",
+                        value = autoCoralLevel1Missed,
+                        flashColor = Color.Red,
+                        alignment = Alignment.BottomEnd,
+                        miniMinus = miniMinus.value,
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxWidth()
+                    )
+                }
+
+                Row(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                ) {
+                    EnumerableValue(
+                        label = "Collect coral",
+                        value = collectCoral,
+                        flashColor = Color.Green,
+                        alignment = Alignment.CenterEnd,
+                        miniMinus = miniMinus.value,
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxWidth()
+                    )
+                    TriStateCheckBox(
+                        label = "Ground Algae",
+                        ifChecked = groundCollectionAlgae,
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxWidth()
+                    )
+                }
+
+                Row(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                ){
+                    EnumerableValue(
+                        label = "Algae Removed",
+                        value = algaeRemoved,
+                        flashColor = Color.Blue,
+                        alignment = Alignment.BottomEnd,
+                        miniMinus = miniMinus.value,
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxWidth()
+                    )
+                    EnumerableValue(
+                        label = "Algae Processed",
+                        value = algaeProcessed,
+                        flashColor = Color.Blue,
+                        alignment = Alignment.BottomEnd,
+                        miniMinus = miniMinus.value,
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxWidth()
+                    )
+                }
+            }
 
             Column (
                 modifier = Modifier
                     .weight(0.5f)
-                    .fillMaxHeight()
-            ) {
-
-                EnumerableValueAuto(
-                    label = "Feeder",
-                    value = autoFeederCollection,
-                    flashColor = Color.Green,
-                    alignment = Alignment.Center,
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth()
-                )
-
-                TriStateCheckBox(
-                    label = "Ground Coral",
-                    ifChecked = groundCollectionCoral,
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth()
-                )
-
-                TriStateCheckBox(
-                    label = "Ground Algae",
-                    ifChecked = groundCollectionAlgae,
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth()
-                )
-
-            }
-
-            Column (
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxHeight()
-            ) {
-
-                EnumerableValueAuto(
-                    label = "Score L4",
-                    value = autoCoralLevel4Scored,
-                    flashColor = Color.Green,
-                    alignment = Alignment.Center,
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth()
-                )
-
-                EnumerableValueAuto(
-                    label = "Score L3",
-                    value = autoCoralLevel3Scored,
-                    flashColor = Color.Green,
-                    alignment = Alignment.Center,
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth()
-                )
-
-                EnumerableValueAuto(
-                    label = "Score L2",
-                    value = autoCoralLevel2Scored,
-                    flashColor = Color.Green,
-                    alignment = Alignment.Center,
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth()
-                )
-
-                EnumerableValueAuto(
-                    label = "Score L1",
-                    value = autoCoralLevel1Scored,
-                    flashColor = Color.Green,
-                    alignment = Alignment.Center,
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth()
-                )
-
-                EnumerableValueAuto(
-                    label = "Algae Removed",
-                    value = algaeRemoved,
-                    flashColor = Color.Green,
-                    alignment = Alignment.Center,
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth()
-                )
-
-            }
-
-            Column (
-                modifier = Modifier
-                    .weight(1f)
                     .fillMaxWidth()
             ) {
 
-                EnumerableValueAuto(
-                    label = "Miss L4",
-                    value = autoCoralLevel4Missed,
-                    flashColor = Color.Red,
-                    alignment = Alignment.Center,
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth()
-                )
-
-                EnumerableValueAuto(
-                    label = "Miss L3",
-                    value = autoCoralLevel3Missed,
-                    flashColor = Color.Red,
-                    alignment = Alignment.Center,
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth()
-                )
-
-                EnumerableValueAuto(
-                    label = "Miss L2",
-                    value = autoCoralLevel2Missed,
-                    flashColor = Color.Red,
-                    alignment = Alignment.Center,
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth()
-                )
-
-                EnumerableValueAuto(
-                    label = "Miss L1",
-                    value = autoCoralLevel1Missed,
-                    flashColor = Color.Red,
-                    alignment = Alignment.Center,
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth()
-                )
-
-                EnumerableValueAuto(
-                    label = "Algae Processed",
-                    value = algaeProcessed,
-                    flashColor = Color.Green,
-                    alignment = Alignment.Center,
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth()
-                )
-
-            }
-
-            Column (
-                modifier = Modifier
-                    .weight(0.5f)
-                    .fillMaxWidth()
-            ) {
-
-                EnumerableValueAuto(
-                    label = "Net Missed",
+                EnumerableValue(
+                    label = "Net Miss",
                     value = autoNetMissed,
-                    flashColor = Color.Green,
-                    alignment = Alignment.Center,
+                    flashColor = Color.Red,
+                    alignment = Alignment.BottomEnd,
+                    miniMinus = miniMinus.value,
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxWidth()
                 )
 
-                EnumerableValueAuto(
-                    label = "Net Scored",
+                EnumerableValue(
+                    label = "Net Score",
                     value = autoNetScored,
                     flashColor = Color.Green,
-                    alignment = Alignment.Center,
+                    alignment = Alignment.BottomEnd,
+                    miniMinus = miniMinus.value,
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxWidth()
@@ -268,7 +286,7 @@ actual fun AutoMenu(
                     saveData.value = true
                 }
             }
-
         }
+
     }
 }

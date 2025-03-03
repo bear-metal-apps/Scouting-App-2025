@@ -41,6 +41,13 @@ fun getLastSynced() : String {
     return formatter.format(lastSynced.value)
 }
 
+fun isSynced(): Boolean {
+    if(teamData != null && matchData != null) {
+        return true
+    }
+    return false
+}
+
 private const val PATTERN_FORMAT = "dd/MM/yyyy @ hh:mm"
 
 

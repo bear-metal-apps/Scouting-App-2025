@@ -25,11 +25,9 @@ import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.components.backstack.operation.pop
 import com.bumble.appyx.components.backstack.operation.push
 import createScoutMatchDataFile
-import defaultError
-import defaultPrimaryVariant
-import defaultSecondary
 import exportScoutData
 import getCurrentTheme
+import getTeamsOnAlliance
 import nodes.*
 import org.json.JSONException
 import setTeam
@@ -39,7 +37,7 @@ import java.util.*
 @SuppressLint("SuspiciousIndentation")
 @RequiresApi(Build.VERSION_CODES.R)
 @Composable
-actual fun AutoTeleSelectorMenuTop(
+actual fun MatchMenuTop(
     match: MutableState<String>,
     team: MutableIntState,
     robotStartPosition: MutableIntState
@@ -51,50 +49,71 @@ actual fun AutoTeleSelectorMenuTop(
 
     var first by remember { mutableStateOf(true) }
 
+    when (robotStartPosition.intValue) {
+        0 -> {
+            positionName = "R1"
+            isRedAliance.value = true
+            tempRobotStart.value = 0
+        }
+
+        1 -> {
+            positionName = "R2"
+            isRedAliance.value = true
+            tempRobotStart.value = 1
+        }
+
+        2 -> {
+            positionName = "R3"
+            isRedAliance.value = true
+            tempRobotStart.value = 2
+        }
+
+        3 -> {
+            positionName = "B1"
+            isRedAliance.value = false
+//            tempRobotStart.value -= 3
+            tempRobotStart.value = 0
+        }
+
+        4 -> {
+            positionName = "B2"
+            isRedAliance.value = false
+//            tempRobotStart.value -= 3
+            tempRobotStart.value = 1
+        }
+
+        5 -> {
+            positionName = "B3"
+            isRedAliance.value = false
+//            tempRobotStart.value -= 3
+            tempRobotStart.value = 2
+        }
+    }
+//    tempRobotStart = robotStartPosition
+    if (positionName == "R1" || positionName == "R2" || positionName == "R3"){
+        isRedAliance.value = true
+    }else{
+        isRedAliance.value = false
+//        tempRobotStart.value -= 3
+    }
+
     // When the user first opens the app, the tempTeam and tempMatch variables are assigned to the current match and team so they can be saved when the user changes the match or team!
     if(first) {
+        try{
+            team.intValue = getTeamsOnAlliance(match.value.betterParseInt(), isRedAliance.value)[tempRobotStart.value].number
+        }catch (e: Exception){}
+
         tempTeam = team.intValue
         tempMatch = match.value
+
+        stringMatch = remember { mutableStateOf(match.value) }
+        stringTeam = remember { mutableStateOf(team.intValue.toString()) }
 
         saveData.value = false
 
         first = false
     }
 
-    when {
-//        openError.value -> {
-//            InternetErrorAlert {
-//                openError.value = false
-//                mainMenuBackStack.pop()
-//            }
-//        }
-    }
-
-    when (robotStartPosition.intValue) {
-        0 -> {
-            positionName = "R1"
-        }
-
-        1 -> {
-            positionName = "R2"
-        }
-
-        2 -> {
-            positionName = "R3"
-        }
-
-        3 -> {
-            positionName = "B1"
-        }
-
-        4 -> {
-            positionName = "B2"
-        }
-
-        5 -> {
-            positionName = "B3"
-        }
-    }
     Column() {
         HorizontalDivider(color = getCurrentTheme().primaryVariant, thickness = 4.dp)
 
@@ -123,7 +142,7 @@ actual fun AutoTeleSelectorMenuTop(
             }
 
             TextField(
-                value = team.intValue.toString(),
+                value = stringTeam.value,
                 onValueChange = { value ->
                     if(saveData.value) {
                         teamDataArray[TeamMatchStartKey(parseInt(tempMatch), tempTeam, robotStartPosition.intValue)] = createOutput(mutableIntStateOf(tempTeam), robotStartPosition)
@@ -132,16 +151,22 @@ actual fun AutoTeleSelectorMenuTop(
 
                     saveData.value = false
 
-                    val filteredText = value.filter { it.isDigit() }
-                    if (filteredText.isNotEmpty() && !filteredText.contains(','))
-                        teamNumAsText =
-                            filteredText.slice(0..<filteredText.length.coerceAtMost(5))//WHY IS FILTER NOT FILTERING
-                        team.intValue = parseInt(teamNumAsText)
-                        loadData(parseInt(match.value), team, robotStartPosition)
+                    if(value.isNotEmpty()) {
+                        val filteredText = value.filter { it.isDigit() }
+                        stringTeam.value = filteredText.slice(0..<filteredText.length.coerceAtMost(10))
+                    } else {
+                        stringTeam.value = ""
+                    }
+                    team.intValue = stringTeam.value.betterParseInt()
+//                    if (filteredText.isNotEmpty() && !filteredText.contains(',')) {
+//                        teamNumAsText = filteredText.slice(0..<filteredText.length.coerceAtMost(5))
+//                        team.intValue = parseInt(teamNumAsText)
+                    loadData(parseInt(match.value), team, robotStartPosition)
+
+                    println("Team: ${team.intValue}")
+//                    }
 
                     tempTeam = team.intValue
-
-                    println(robotStartPosition.intValue.toString())
 
                 },
                 colors = TextFieldDefaults.colors(
@@ -173,7 +198,7 @@ actual fun AutoTeleSelectorMenuTop(
             )
 
             TextField(
-                value = match.value,
+                value = stringMatch.value,
                 onValueChange = { value ->
                     if(saveData.value) {
                         teamDataArray[TeamMatchStartKey(parseInt(tempMatch), tempTeam, robotStartPosition.intValue)] = createOutput(mutableIntStateOf(tempTeam), robotStartPosition)
@@ -182,22 +207,30 @@ actual fun AutoTeleSelectorMenuTop(
 
                     saveData.value = false
 
-                    val temp = value.filter { it.isDigit() }
-                    if(temp.isNotEmpty()) {
-                        match.value = temp.slice(0..<temp.length.coerceAtMost(5))
-                        loadData(parseInt(match.value), team, robotStartPosition)
-//                        teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue)] = createOutput(team, robotStartPosition)
-                        exportScoutData(context) // Does nothing
-
-                        try {
-                            setTeam(team, nodes.match, robotStartPosition.intValue)
-                        } catch (e: JSONException) {
-                            openError.value = true
-                        }
-
+                    if(value.isNotEmpty()) {
+                        val filteredText = value.filter { it.isDigit() }
+                        stringMatch.value = filteredText.slice(0..<filteredText.length.coerceAtMost(5))
+                    } else {
+                        stringMatch.value = ""
                     }
+                    match.value = stringMatch.value.betterParseInt().toString()
+                    println(match.value)
+
+                    try {
+                        setTeam(team, nodes.match, robotStartPosition.intValue)
+                    } catch (e: JSONException) {
+                        openError.value = true
+                    }
+                    stringTeam.value = team.intValue.toString()
+
+                    println(team.value)
+
+                    loadData(parseInt(match.value), team, robotStartPosition)
+
+                    exportScoutData(context) // Does nothing
 
                     tempMatch = match.value
+                    tempTeam = team.intValue
 
                 },
                 modifier = Modifier.fillMaxWidth(1/2f),
@@ -239,7 +272,7 @@ actual fun AutoTeleSelectorMenuTop(
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
-actual fun AutoTeleSelectorMenuBottom(
+actual fun MatchMenuBottom(
     robotStartPosition: MutableIntState,
     team: MutableIntState,
     pageIndex: MutableIntState,
@@ -472,16 +505,24 @@ actual fun AutoTeleSelectorMenuBottom(
                             createScoutMatchDataFile(context, match.value, team.intValue, createOutput(team, robotStartPosition))
                             println(teamDataArray)
                             mainMenuBackStack.pop()
+
+                            saveData.value = true
                         } else {
                             teamDataArray[TeamMatchStartKey(parseInt(match.value), team.intValue, robotStartPosition.intValue)] = createOutput(team, robotStartPosition)
                             createScoutMatchDataFile(context, match.value, team.intValue, createOutput(team, robotStartPosition))
                             match.value = (parseInt(match.value) + 1).toString()
+                            stringMatch.value = match.value
                             reset()
                             backStack.push(AutoTeleSelectorNode.NavTarget.AutoScouting)
-                            println(teamDataArray)
+
+                            try{
+                                team.intValue = getTeamsOnAlliance(match.value.betterParseInt(), isRedAliance.value)[tempRobotStart.value].number
+                            }catch (e: Exception){}
+                            stringTeam.value = team.intValue.toString()
+
+                            saveData.value = false
                         }
                         saveDataPopup.value = false
-                        saveData.value = true
                     },
                     border = BorderStroke(2.dp, getCurrentTheme().secondaryVariant),
                     colors = androidx.compose.material.ButtonDefaults.outlinedButtonColors(backgroundColor = getCurrentTheme().secondary, contentColor = getCurrentTheme().onSecondary),
@@ -496,9 +537,15 @@ actual fun AutoTeleSelectorMenuBottom(
                             mainMenuBackStack.pop()
                         } else {
                             match.value = (parseInt(match.value) + 1).toString()
+                            stringMatch.value = match.value
                             reset()
                             backStack.push(AutoTeleSelectorNode.NavTarget.AutoScouting)
-                            println(teamDataArray)
+
+                            try{
+                                team.intValue = getTeamsOnAlliance(match.value.betterParseInt(), isRedAliance.value)[tempRobotStart.value].number
+                            }catch (e: Exception){}
+                            stringTeam.value = team.intValue.toString()
+
                         }
                         saveDataPopup.value = false
                         saveData.value = false
@@ -513,16 +560,9 @@ actual fun AutoTeleSelectorMenuBottom(
         }
     }
 
-    if(teamDataArray[TeamMatchStartKey(parseInt(match.value), team.intValue, robotStartPosition.intValue)] != null) {
+    if(teamDataArray[TeamMatchStartKey(parseInt(match.value), team.intValue, robotStartPosition.intValue)] != null && saveData.value) {
         teamDataArray[TeamMatchStartKey(parseInt(match.value), team.intValue, robotStartPosition.intValue)] = createOutput(team, robotStartPosition)
         loadData(parseInt(match.value), team, robotStartPosition)
-//        if(first) {
-//            loadData(parseInt(match.value), team, robotStartPosition)
-//            first = false
-//        } else {
-//            teamDataArray[TeamMatchKey(parseInt(match.value), team.intValue, robotStartPosition.intValue)] = createOutput(team, robotStartPosition)
-////            loadData(parseInt(match.value), team, robotStartPosition)
-//        }
     } else {
         if(saveData.value) {
             teamDataArray[TeamMatchStartKey(parseInt(match.value), team.intValue, robotStartPosition.intValue)] = createOutput(team, robotStartPosition)
@@ -530,3 +570,6 @@ actual fun AutoTeleSelectorMenuBottom(
     }
 
 }
+var tempRobotStart : MutableState<Int> = mutableStateOf(0)
+var isRedAliance = mutableStateOf(false)
+var teams = getTeamsOnAlliance(match.value.betterParseInt(),isRedAliance.value)

@@ -21,8 +21,8 @@ import com.google.gson.Gson
 import com.google.gson.JsonObject
 import compKey
 import composables.MainMenuAlertDialog
-import pages.AutoTeleSelectorMenuBottom
-import pages.AutoTeleSelectorMenuTop
+import pages.MatchMenuBottom
+import pages.MatchMenuTop
 import java.lang.Integer.parseInt
 import java.util.*
 
@@ -90,7 +90,7 @@ class AutoTeleSelectorNode(
     override fun View(modifier: Modifier) {
         Column {
             var mainMenuDialog = mutableStateOf(false)
-            AutoTeleSelectorMenuTop(match, team, robotStartPosition)
+            MatchMenuTop(match, team, robotStartPosition)
             MainMenuAlertDialog(
                 mainMenuDialog,
                 bob = {
@@ -103,7 +103,7 @@ class AutoTeleSelectorNode(
                 appyxComponent = backStack,
                 modifier = Modifier.weight(0.9f),
             )
-            AutoTeleSelectorMenuBottom(
+            MatchMenuBottom(
                 robotStartPosition,
                 team,
                 pageIndex,
@@ -158,16 +158,18 @@ var jsonObject: JsonObject = JsonObject()
 var pageIndex = mutableIntStateOf(0)
 
 //Settings variables
-val miniMinus = mutableStateOf(false)
+val miniMinus = mutableStateOf(true)
 
 val match = mutableStateOf("1")
 
 var tempMatch = match.value
 var tempTeam: Int = 0
 
+var stringMatch = mutableStateOf("")
+var stringTeam = mutableStateOf("")
+
 // Auto
-var autoFeederCollection = mutableIntStateOf(0)
-var groundCollectionCoral = mutableStateOf(ToggleableState.Off)
+var collectCoral = mutableIntStateOf(0)
 var groundCollectionAlgae = mutableStateOf(ToggleableState.Off)
 var algaeProcessed = mutableIntStateOf(0)
 var algaeRemoved = mutableIntStateOf(0)
@@ -209,8 +211,6 @@ var notes = mutableStateOf("")
 
 fun createOutput(team: MutableIntState, robotStartPosition: MutableIntState): String {
 
-    println("saved data")
-
     fun stateToInt(state: ToggleableState) = when (state) {
         ToggleableState.Off -> 0
         ToggleableState.Indeterminate -> 1
@@ -235,10 +235,9 @@ fun createOutput(team: MutableIntState, robotStartPosition: MutableIntState): St
                 addProperty("ground_collection", stateToInt(groundCollectionAlgae.value))
                 addProperty("removed", algaeRemoved.intValue)
                 addProperty("processed", algaeProcessed.intValue)
-                addProperty("feeder", autoFeederCollection.intValue)
             })
             add("coral", JsonObject().apply {
-                addProperty("ground_collection", stateToInt(groundCollectionCoral.value))
+                addProperty("collection", collectCoral.value)
                 addProperty("reef_level1", autoCoralLevel1Scored.intValue)
                 addProperty("reef_level2", autoCoralLevel2Scored.intValue)
                 addProperty("reef_level3", autoCoralLevel3Scored.intValue)
@@ -255,7 +254,7 @@ fun createOutput(team: MutableIntState, robotStartPosition: MutableIntState): St
         })
         add("tele", JsonObject().apply {
             addProperty("lost_comms", lostComms.intValue)
-            addProperty("played_defense", playedDefense.value)
+//            addProperty("played_defense", playedDefense.value)
             add("algae", JsonObject().apply {
                 addProperty("reef_collected", teleReefAlgaeCollected.value)
                 addProperty("processed", teleProcessed.intValue)
@@ -276,11 +275,11 @@ fun createOutput(team: MutableIntState, robotStartPosition: MutableIntState): St
                 addProperty("missed", teleNetMissed.intValue)
             })
         })
-        add("endgame", JsonObject().apply {
-            addProperty("park", park.value)
-            addProperty("deep", deep.value)
-            addProperty("shallow", shallow.value)
-        })
+//        add("endgame", JsonObject().apply {
+//            addProperty("park", park.value)
+//            addProperty("deep", deep.value)
+//            addProperty("shallow", shallow.value)
+//        })
     }
     return jsonObject.toString()
 }
@@ -305,11 +304,10 @@ fun loadData(match: Int, team: MutableIntState, robotStartPosition: MutableIntSt
 //        match.value = parseInt(jsonObject.get("match").asString)
         scoutName.value = jsonObject.get("scout_name").asString
         robotStartPosition.intValue = jsonObject.get("robotStartPosition").asInt
-        autoFeederCollection.intValue = jsonObject.getAsJsonObject("auto").getAsJsonObject("algae").get("feeder").asInt
         groundCollectionAlgae.value =
             intToState(jsonObject.getAsJsonObject("auto").getAsJsonObject("algae").get("ground_collection").asInt)
-        groundCollectionCoral.value =
-            intToState(jsonObject.getAsJsonObject("auto").getAsJsonObject("coral").get("ground_collection").asInt)
+        collectCoral.value =
+            jsonObject.getAsJsonObject("auto").getAsJsonObject("coral").get("collection").asInt
         algaeProcessed.intValue = jsonObject.getAsJsonObject("auto").getAsJsonObject("algae").get("processed").asInt
         algaeRemoved.intValue = jsonObject.getAsJsonObject("auto").getAsJsonObject("algae").get("removed").asInt
         autoCoralLevel4Scored.intValue =
@@ -349,10 +347,10 @@ fun loadData(match: Int, team: MutableIntState, robotStartPosition: MutableIntSt
         teleLOneMissed.intValue =
             jsonObject.getAsJsonObject("tele").getAsJsonObject("coral").get("reef_level1_missed").asInt
         lostComms.intValue = jsonObject.getAsJsonObject("tele").get("lost_comms").asInt
-        playedDefense.value = jsonObject.getAsJsonObject("tele").get("played_defense").asBoolean
-        park.value = jsonObject.getAsJsonObject("endgame").get("park").asBoolean
-        deep.value = jsonObject.getAsJsonObject("endgame").get("deep").asBoolean
-        shallow.value = jsonObject.getAsJsonObject("endgame").get("shallow").asBoolean
+//        playedDefense.value = jsonObject.getAsJsonObject("tele").get("played_defense").asBoolean
+//        park.value = jsonObject.getAsJsonObject("endgame").get("park").asBoolean
+//        deep.value = jsonObject.getAsJsonObject("endgame").get("deep").asBoolean
+//        shallow.value = jsonObject.getAsJsonObject("endgame").get("shallow").asBoolean
         notes.value = if(jsonObject.get("notes").asString == "No Comments") "" else jsonObject.get("notes").asString
     } else {
         reset()
@@ -364,8 +362,7 @@ fun loadData(match: Int, team: MutableIntState, robotStartPosition: MutableIntSt
 
 fun reset() {
 
-    autoFeederCollection.intValue = 0
-    groundCollectionCoral.value = ToggleableState.Off
+    collectCoral.intValue = 0
     groundCollectionAlgae.value = ToggleableState.Off
     algaeProcessed.intValue = 0
     algaeRemoved.intValue = 0

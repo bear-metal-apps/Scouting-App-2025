@@ -5,10 +5,10 @@ import android.hardware.usb.UsbManager
 import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+//import androidx.compose.material.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,10 +35,12 @@ import nodes.*
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import org.tahomarobotics.scouting.Client
+import org.tahomarobotics.scouting.TBAInterface
 import sendDataUSB
 import sendMatchData
 import sendPitsData
 import sendStratData
+import setTeam
 import sync
 import teamData
 import java.lang.Integer.parseInt
@@ -71,8 +73,6 @@ actual class MainMenu actual constructor(
         val deviceList = manager.deviceList
 
         var exportPopup by remember { mutableStateOf(false) }
-        var tbaPopup by remember { mutableStateOf(false) }
-
 
         Column(modifier = Modifier.verticalScroll(ScrollState(0))) {
             DropdownMenu(expanded = deviceListOpen, onDismissRequest = { deviceListOpen = false }) {
@@ -96,8 +96,7 @@ actual class MainMenu actual constructor(
                 OutlinedButton(
                     onClick = {
                         backStack.push(RootNode.NavTarget.LoginPage)
-                    },
-                    modifier = Modifier
+                    }, modifier = Modifier
                         .scale(0.75f)
                         .align(Alignment.CenterStart)
                 ) {
@@ -105,16 +104,13 @@ actual class MainMenu actual constructor(
                 }
 
                 Text(
-                    text = "Bear Metal Scout App",
-                    fontSize = 25.sp,
-                    modifier = Modifier.align(Alignment.Center)
+                    text = "Bear Metal Scout App", fontSize = 25.sp, modifier = Modifier.align(Alignment.Center)
                 )
 
                 OutlinedButton(
                     onClick = {
                         backStack.push(RootNode.NavTarget.Settings)
-                    },
-                    modifier = Modifier
+                    }, modifier = Modifier
                         .scale(0.75f)
                         .align(Alignment.CenterEnd)
                 ) {
@@ -148,9 +144,7 @@ actual class MainMenu actual constructor(
                     .padding(horizontal = 50.dp, vertical = 50.dp),
             ) {
                 Text(
-                    text = "Match",
-                    color = getCurrentTheme().onPrimary,
-                    fontSize = 35.sp
+                    text = "Match", color = getCurrentTheme().onPrimary, fontSize = 35.sp
                 )
             }
 
@@ -182,8 +176,7 @@ actual class MainMenu actual constructor(
                                 .border(BorderStroke(color = Color.Yellow, width = 3.dp))
                                 .size(100.dp, 100.dp)
                                 .background(color = Color(60, 30, 30)),
-                            text = { Text("R1", fontSize = 22.sp, color = Color.White) }
-                        )
+                            text = { Text("R1", fontSize = 22.sp, color = Color.White) })
                         DropdownMenuItem(
                             onClick = {
                                 robotStartPosition.intValue = 3
@@ -199,8 +192,7 @@ actual class MainMenu actual constructor(
                                 .border(BorderStroke(color = Color.Yellow, width = 3.dp))
                                 .size(100.dp, 100.dp)
                                 .background(color = Color(30, 30, 60)),
-                            text = { Text("B1", fontSize = 22.sp, color = Color.White) }
-                        )
+                            text = { Text("B1", fontSize = 22.sp, color = Color.White) })
                     }
                     Row {
                         DropdownMenuItem(
@@ -218,8 +210,7 @@ actual class MainMenu actual constructor(
                                 .border(BorderStroke(color = Color.Yellow, width = 3.dp))
                                 .size(100.dp, 100.dp)
                                 .background(color = Color(60, 30, 30)),
-                            text = { Text("R2", fontSize = 22.sp, color = Color.White) }
-                        )
+                            text = { Text("R2", fontSize = 22.sp, color = Color.White) })
                         DropdownMenuItem(
                             onClick = {
                                 robotStartPosition.intValue = 4
@@ -235,8 +226,7 @@ actual class MainMenu actual constructor(
                                 .border(BorderStroke(color = Color.Yellow, width = 3.dp))
                                 .size(100.dp, 100.dp)
                                 .background(color = Color(30, 30, 60)),
-                            text = { Text("B2", fontSize = 22.sp, color = Color.White) }
-                        )
+                            text = { Text("B2", fontSize = 22.sp, color = Color.White) })
                     }
                     Row {
                         DropdownMenuItem(
@@ -254,8 +244,7 @@ actual class MainMenu actual constructor(
                                 .border(BorderStroke(color = Color.Yellow, width = 3.dp))
                                 .size(100.dp, 100.dp)
                                 .background(color = Color(60, 30, 30)),
-                            text = { Text("R3", fontSize = 22.sp, color = Color.White) }
-                        )
+                            text = { Text("R3", fontSize = 22.sp, color = Color.White) })
                         DropdownMenuItem(
                             onClick = {
                                 robotStartPosition.intValue = 5
@@ -271,8 +260,7 @@ actual class MainMenu actual constructor(
                                 .border(BorderStroke(color = Color.Yellow, width = 3.dp))
                                 .size(100.dp, 100.dp)
                                 .background(color = Color(30, 30, 60)),
-                            text = { Text("B3", fontSize = 22.sp, color = Color.White) }
-                        )
+                            text = { Text("B3", fontSize = 22.sp, color = Color.White) })
                     }
                 }
             }
@@ -292,9 +280,7 @@ actual class MainMenu actual constructor(
 
                 ) {
                 Text(
-                    text = "Strategy",
-                    color = getCurrentTheme().onPrimary,
-                    fontSize = 35.sp
+                    text = "Strategy", color = getCurrentTheme().onPrimary, fontSize = 35.sp
                 )
             }
             Box(
@@ -305,48 +291,37 @@ actual class MainMenu actual constructor(
                 DropdownMenu(
                     expanded = selectedAlliance,
                     onDismissRequest = { selectedAlliance = false },
-                    modifier = Modifier
-                        .background(color = Color(0, 0, 0))
+                    modifier = Modifier.background(color = Color(0, 0, 0))
                 ) {
                     DropdownMenuItem(
                         onClick = {
-                            if (!(teamData == null || matchData == null)) {
-                                selectedAlliance = false
-                                setContext(true)
-                                isRedAlliance = true
-                                backStack.push(RootNode.NavTarget.StratScreen)
+                            selectedAlliance = false
+                            setContext(true)
+//                            isRedAlliance = true
+                            backStack.push(RootNode.NavTarget.StratScreen)
 
-                                loadStratData(matchNum, isRedAlliance)
-                            } else {
-                                tbaPopup = true
-                            }
+                            loadStratData(stratMatch, true)
                         },
                         modifier = Modifier
                             .border(BorderStroke(color = Color.Yellow, width = 3.dp))
                             .background(color = Color(60, 30, 30)),
-                        text = { Text("Red Alliance", fontSize = 22.sp, color = Color.White) }
-                    )
+                        text = { Text("Red Alliance", fontSize = 22.sp, color = Color.White) })
                     DropdownMenuItem(
                         onClick = {
-                            if (!(teamData == null || matchData == null)) {
-                                selectedAlliance = false
-                                setContext(false)
-                                isRedAlliance = false
-                                backStack.push(RootNode.NavTarget.StratScreen)
+                            selectedAlliance = false
+                            setContext(false)
+//                            isRedAlliance = false
+                            backStack.push(RootNode.NavTarget.StratScreen)
 
-                                loadStratData(matchNum, isRedAlliance)
-                            } else {
-                                tbaPopup = true
-                            }
+                            loadStratData(stratMatch, false)
                         },
                         modifier = Modifier
                             .border(BorderStroke(color = Color.Yellow, width = 3.dp))
                             .background(color = Color(30, 30, 60)),
-                        text = { Text("Blue Alliance", fontSize = 22.sp, color = Color.White) }
-                    )
+                        text = { Text("Blue Alliance", fontSize = 22.sp, color = Color.White) })
                 }
             }
-            
+
             OutlinedButton(
                 border = BorderStroke(3.dp, Color.Yellow),
                 shape = RoundedCornerShape(25.dp),
@@ -361,9 +336,7 @@ actual class MainMenu actual constructor(
 
                 ) {
                 Text(
-                    text = "Pits",
-                    color = getCurrentTheme().onPrimary,
-                    fontSize = 35.sp
+                    text = "Pits", color = getCurrentTheme().onPrimary, fontSize = 35.sp
                 )
             }
 
@@ -379,6 +352,7 @@ actual class MainMenu actual constructor(
                         teamSyncedResource = if (teamData != null) "checkmark.png" else "crossmark.png"
                         matchSyncedResource = if (matchData != null) "checkmark.png" else "crossmark.png"
                     }
+//                    TBAInterface.getTBAData("/event/${compKey}/teams/keys")
                 },
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
@@ -434,8 +408,7 @@ actual class MainMenu actual constructor(
                 colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
                 onClick = {
                     exportPopup = true
-                }
-            ) {
+                }) {
                 Text("Export")
             }
 
@@ -458,21 +431,23 @@ actual class MainMenu actual constructor(
             Text(tempCompKey)
         }
 
-        if(exportPopup) {
+        if (exportPopup) {
             BasicAlertDialog(
-                onDismissRequest = { exportPopup = false },
-                modifier = Modifier
+                onDismissRequest = { exportPopup = false }, modifier = Modifier
                     .clip(
                         RoundedCornerShape(5.dp)
                     )
                     .border(BorderStroke(3.dp, getCurrentTheme().primaryVariant), RoundedCornerShape(5.dp))
                     .background(getCurrentTheme().secondary)
             ) {
-                Box(modifier = Modifier
-                    .fillMaxWidth(8f / 10f)
-                    .padding(5.dp)
-                    .fillMaxHeight(2 / 8f)) {
-                    Text(text = "What do you want to export?",
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(8f / 10f)
+                        .padding(5.dp)
+                        .fillMaxHeight(2 / 8f)
+                ) {
+                    Text(
+                        text = "What do you want to export?",
                         modifier = Modifier
                             .padding(5.dp)
                             .align(Alignment.TopCenter)
@@ -484,8 +459,7 @@ actual class MainMenu actual constructor(
                             onClick = {
                                 val scope = CoroutineScope(Dispatchers.Default)
                                 scope.launch {
-                                    if (client == null)
-                                        client = Client()
+                                    if (client == null) client = Client()
 
                                     if (!client!!.isConnected) {
                                         client!!.discoverAndConnect()
@@ -515,8 +489,7 @@ actual class MainMenu actual constructor(
                             onClick = {
                                 val scope = CoroutineScope(Dispatchers.Default)
                                 scope.launch {
-                                    if (client == null)
-                                        client = Client()
+                                    if (client == null) client = Client()
 
                                     if (!client!!.isConnected) {
                                         client!!.discoverAndConnect()
@@ -542,12 +515,12 @@ actual class MainMenu actual constructor(
                         ) {
                             Text(text = "Strat", color = getCurrentTheme().error)
                         }
+
                         androidx.compose.material.OutlinedButton(
                             onClick = {
                                 val scope = CoroutineScope(Dispatchers.Default)
                                 scope.launch {
-                                    if (client == null)
-                                        client = Client()
+                                    if (client == null) client = Client()
 
                                     if (!client!!.isConnected) {
                                         client!!.discoverAndConnect()
@@ -577,55 +550,6 @@ actual class MainMenu actual constructor(
                 }
             }
         }
-        
-        if(tbaPopup) {
-            BasicAlertDialog(
-                onDismissRequest = { tbaPopup = false },
-                modifier = Modifier
-                    .clip(
-                        RoundedCornerShape(5.dp)
-                    )
-                    .border(BorderStroke(3.dp, getCurrentTheme().primaryVariant), RoundedCornerShape(5.dp))
-                    .background(getCurrentTheme().secondary)
-            ) {
-                Box(modifier = Modifier
-                    .fillMaxWidth(8f / 10f)
-                    .padding(5.dp)
-                    .fillMaxHeight(2 / 8f)) {
-                    Text(text = "Strategy Scouting requires TBA sync",
-                        modifier = Modifier
-                            .padding(5.dp)
-                            .align(Alignment.TopCenter)
-                    )
-                    Column(
-                        modifier = Modifier.align(Alignment.Center)
-                    ) {
-                        androidx.compose.material.OutlinedButton(
-                            onClick = {
-                                tbaPopup = false
-                            },
-                            border = BorderStroke(2.dp, getCurrentTheme().secondaryVariant),
-                            colors = androidx.compose.material.ButtonDefaults.outlinedButtonColors(
-                                backgroundColor = Color.Red,
-                                contentColor = getCurrentTheme().onSecondary
-                            ),
-                            modifier = Modifier
-                                .align(Alignment.CenterHorizontally)
-                                .width(150.dp)
-                                .height(150.dp),
-                            shape = CircleShape,
-                            
-                        ) {
-                            Text(text = "Ok", color = getCurrentTheme().error)
-                        }
-                    }
-                }
-            }
-        }
-
     }
-
 }
-
-var ipAddress = mutableStateOf("127.0.0.1")
 val openError = mutableStateOf(false)

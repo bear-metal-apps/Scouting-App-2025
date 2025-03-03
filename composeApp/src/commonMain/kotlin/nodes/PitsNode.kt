@@ -54,7 +54,8 @@ var cycleTime = mutableStateOf("")
 var rigidity = mutableStateOf("")
 var coralHigh = mutableStateOf(false)
 var coralLow = mutableStateOf(false)
-var algaePreferred = mutableStateOf(false)
+var bargePreferred = mutableStateOf(false)
+var processPreferred = mutableStateOf(false)
 var defensePreferred = mutableStateOf(false)
 var collectPreference = mutableStateOf("None Selected")
 var comments = mutableStateOf("")
@@ -117,7 +118,8 @@ fun createPitsOutput(team: MutableIntState): String {
         addProperty("rigidity", rigidity.value)
         addProperty("coralHigh", coralHigh.value)
         addProperty("coralLow", coralLow.value)
-        addProperty("algaePreferred", algaePreferred.value)
+        addProperty("bargePreferred", bargePreferred.value)
+        addProperty("processPreferred", processPreferred.value)
         addProperty("defensePreferred", defensePreferred.value)
         addProperty("collectPreference", collectPreference.value)
         addProperty("comments", comments.value)
@@ -147,7 +149,8 @@ fun pitsReset(){
     rigidity.value = ""
     coralHigh.value = false
     coralLow.value = false
-    algaePreferred.value = false
+    bargePreferred.value = false
+    processPreferred.value = false
     defensePreferred.value = false
     collectPreference.value = "None Selected"
     comments.value = ""
