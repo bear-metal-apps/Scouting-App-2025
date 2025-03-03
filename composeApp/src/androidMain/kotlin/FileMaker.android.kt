@@ -11,6 +11,7 @@ import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 import org.tahomarobotics.scouting.Client
+import org.tahomarobotics.scouting.ComposeFileProvider
 import java.io.*
 import java.lang.Integer.parseInt
 
@@ -111,23 +112,6 @@ fun createScoutPitsDataFile(context: Context, team: Int, data: String) {
         }
     }
 }
-
-//fun createScoutPitsImageLocationsFile(context: Context, data: String) {
-//    val file = File(imagesFolder, "ImageLocations.json")
-//    file.delete()
-//    file.createNewFile()
-//
-//    file.writeText(data)
-//
-//    file.forEachLine {
-//        try {
-//            println("Saved file ImageLocations.json: $it")
-//        } catch (e: Exception) {
-//            println(e.message)
-//        }
-//    }
-//
-//}
 
 
 fun loadMatchDataFiles(context: Context) {
@@ -352,6 +336,17 @@ fun sendStratData(context: Context, client: Client) {
 
 }
 
+fun encodeJPEGToBASE64(filePath:String) : String {
+    if(File(filePath).exists()) {
+        val bitmap = BitmapFactory.decodeFile(filePath)
+        val byteArrayOutputStream = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream)
+        val byteArray = byteArrayOutputStream.toByteArray()
+        return android.util.Base64.encodeToString(byteArray, android.util.Base64.DEFAULT)
+    }
+    return ""
+}
+
 fun sendPitsData(context: Context, client: Client) {
     println("reached start of sendData function")
     exportScoutData(context) // does nothing
@@ -371,7 +366,13 @@ fun sendPitsData(context: Context, client: Client) {
 
     println(permPhotosList.toString())
     for((index) in permPhotosList.withIndex()) {
-        println("reached2")
+        println("reached for loop")
+
+        val file = File(encodeJPEGToBASE64(permPhotosList[index]))
+
+        client.sendData(file)
+        println("Image sent!")
+
 //        val file = File(context.filesDir, "imageFile")
 //        file.delete()
 //        file.createNewFile()
@@ -383,7 +384,7 @@ fun sendPitsData(context: Context, client: Client) {
 //
 //        // Assuming you're inside a Composable function
 //        val contentResolver = context.contentResolver
-        val uri = /*Uri.parse(permPhotosList[index])*/ComposeFileProvider.getImageUri(context, parseInt(jsonObject.get("team").asString), "Photo${index}")
+        val uri = ComposeFileProvider.getImageUri(context, parseInt(jsonObject.get("team").asString), "Photo${index}")
 //        println("Uri used to create bitmap: ${uri}")
 //        val source = ImageDecoder.createSource(contentResolver, uri)
 //        val bitmap = ImageDecoder.decodeBitmap(source)
@@ -395,23 +396,6 @@ fun sendPitsData(context: Context, client: Client) {
 //
 //        client.sendData(file)
 //        println("Image sent")
-
-        val inputStream = context.contentResolver.openInputStream(uri)
-        val bitmap = BitmapFactory.decodeStream(inputStream)
-        inputStream?.close()
-
-        val bos = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos) // Adjust quality as needed
-        val byteArray = bos.toByteArray()
-        bos.close()
-
-        val file = File(context.filesDir, "imageFile")
-        file.delete()
-        file.createNewFile()
-        file.writeBytes(byteArray)
-
-        client.sendData(file)
-        println("Image sent: $file")
     }
 
 }
