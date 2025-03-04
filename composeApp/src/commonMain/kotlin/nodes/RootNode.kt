@@ -23,7 +23,7 @@ class RootNode(
     buildContext: BuildContext,
     private val backStack: BackStack<NavTarget> = BackStack(
         model = BackStackModel(
-            initialTarget = NavTarget.LoginPage,
+            initialTarget = NavTarget.MainMenu,
             savedStateMap = buildContext.savedStateMap
         ),
         visualisation = { BackStackFader(it) }
@@ -92,7 +92,7 @@ var client: Client? = null
  * *IMPORTANT* - when using it does NOT remove "/n" so you should set it to be a single line
  */
 fun String.betterParseInt(): Int {
-    var stringBuilder = StringBuilder()
+    val stringBuilder = StringBuilder()
     for (c in this) {
         try {
             parseInt(c.toString())

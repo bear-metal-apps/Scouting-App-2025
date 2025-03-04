@@ -1,6 +1,12 @@
 package pages
 
 //import androidx.compose.material.*
+import android.content.Context
+import android.content.Intent
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.provider.Settings
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -18,6 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat.startActivity
 import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.components.backstack.operation.push
 import com.bumble.appyx.navigation.modality.BuildContext
@@ -29,6 +36,7 @@ import getCurrentTheme
 import getLastSynced
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import matchData
 import nodes.*
@@ -40,6 +48,7 @@ import sendStratData
 import sync
 import teamData
 import java.lang.Integer.parseInt
+
 
 actual class MainMenu actual constructor(
     buildContext: BuildContext,
@@ -54,11 +63,21 @@ actual class MainMenu actual constructor(
     @Composable
     actual override fun View(modifier: Modifier) {
         val context = LocalContext.current
+        val activity = context as ComponentActivity
+        
         var matchSynced by remember { mutableStateOf(matchData != null) }
         var teamSynced by remember { mutableStateOf(teamData != null) }
         
         var exportPopup by remember { mutableStateOf(false) }
 
+        var isInternetAvailable by remember { mutableStateOf(isInternetAvailable(context)) }
+        LaunchedEffect(Unit) {
+            while (true) {
+                isInternetAvailable = isInternetAvailable(context)
+                delay(1000) // Check every second
+            }
+        }
+        
         Column(
             modifier = Modifier
                 .verticalScroll(ScrollState(0))
@@ -250,6 +269,12 @@ actual class MainMenu actual constructor(
                 shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
                 onClick = {
+                    // Step 1: Turn on WiFi if not on already
+                    if (!isInternetAvailable(context)) {
+                        val panelIntent = Intent(Settings.ACTION_WIFI_SETTINGS)
+                        startActivity(context, panelIntent, null)
+                    }
+                    // Step 2: Connect to the server
                     exportPopup = true
                 },
                 modifier = Modifier
@@ -260,125 +285,135 @@ actual class MainMenu actual constructor(
 
         if (exportPopup) {
             BasicAlertDialog(
-                onDismissRequest = { exportPopup = false }, modifier = Modifier
+                onDismissRequest = { }, modifier = Modifier
                     .clip(
                         RoundedCornerShape(5.dp)
                     )
                     .border(BorderStroke(3.dp, getCurrentTheme().primaryVariant), RoundedCornerShape(5.dp))
                     .background(getCurrentTheme().secondary)
             ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth(0.8f)
-                        .padding(5.dp)
-                        .fillMaxHeight(0.25f)
-                ) {
-                    Text(
-                        text = "What do you want to export?",
-                        modifier = Modifier
-                            .padding(5.dp)
-                            .align(Alignment.TopCenter)
-                    )
                     Column(
-                        modifier = Modifier.align(Alignment.Center)
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .fillMaxWidth()
                     ) {
-                        androidx.compose.material.OutlinedButton(
-                            onClick = {
-                                val scope = CoroutineScope(Dispatchers.Default)
-                                scope.launch {
-                                    if (client == null) client = Client()
-
-                                    if (!client!!.isConnected) {
-                                        client!!.discoverAndConnect()
-                                    }
-                                }
-                                scope.launch {
-                                    while (client == null || client?.isConnected != true) {
-//                                     println("client is null or not connected")
-                                    }
-                                    sendMatchData(
-                                        context = context,
-                                        client = client!!,
-                                    )
-                                    client!!.disconnect()
-                                }
-                                exportPopup = false
-                            },
-                            border = BorderStroke(2.dp, getCurrentTheme().secondaryVariant),
-                            colors = androidx.compose.material.ButtonDefaults.outlinedButtonColors(
-                                backgroundColor = getCurrentTheme().secondary,
-                                contentColor = getCurrentTheme().onSecondary
-                            ),
-                            modifier = Modifier.align(Alignment.CenterHorizontally)
+                        Row(
+                            Modifier
+                                .fillMaxWidth()
                         ) {
-                            Text(text = "Match", color = getCurrentTheme().error)
-                        }
-                        androidx.compose.material.OutlinedButton(
-                            onClick = {
-                                val scope = CoroutineScope(Dispatchers.Default)
-                                scope.launch {
-                                    if (client == null) client = Client()
+                            Icon(
+                                if (isInternetAvailable) Icons.Rounded.CheckCircleOutline else Icons.Rounded.ErrorOutline,
+                                contentDescription = "team sync status",
+                                tint = if (isInternetAvailable) Color.Green else Color.Red,
+                                modifier = Modifier
+                                    .size(32.dp)
+                                    .align(Alignment.CenterVertically)
+                            )
+                            Text("WiFi Connection", modifier = Modifier
+                                .align(Alignment.CenterVertically)
+                                .padding(8.dp)
+                            )
+                            Spacer(modifier = Modifier.weight(1f))
+                            if (!isInternetAvailable(context)) {
+                                androidx.compose.material.OutlinedButton(
+                                    onClick = {
+                                        val panelIntent = Intent(Settings.ACTION_WIFI_SETTINGS)
+                                        startActivity(context, panelIntent, null)
+                                    },
+                                    border = BorderStroke(3.dp, getCurrentTheme().secondaryVariant),
+                                    shape = RoundedCornerShape(12.dp),
+                                    colors = androidx.compose.material.ButtonDefaults.outlinedButtonColors(
+                                        backgroundColor = defaultSecondary,
+                                        contentColor = getCurrentTheme().onPrimary
+                                    ),
+                                    modifier = Modifier
+                                        .align(Alignment.CenterVertically)
+                                        .padding(8.dp)
+                                        
+                                ) {
+                                    Text(text = "Settings", color = getCurrentTheme().onPrimary)
+                                }
+                            }
 
-                                    if (!client!!.isConnected) {
-                                        client!!.discoverAndConnect()
-                                    }
-                                }
-                                scope.launch {
-                                    while (client == null || client?.isConnected != true) {
-//                                     println("client is null or not connected")
-                                    }
-                                    sendStratData(
-                                        context = context,
-                                        client = client!!,
-                                    )
-                                }
-                                exportPopup = false
-                            },
-                            border = BorderStroke(2.dp, getCurrentTheme().secondaryVariant),
-                            colors = androidx.compose.material.ButtonDefaults.outlinedButtonColors(
-                                backgroundColor = getCurrentTheme().secondary,
-                                contentColor = getCurrentTheme().onSecondary
-                            ),
-                            modifier = Modifier.align(Alignment.CenterHorizontally)
-                        ) {
-                            Text(text = "Strat", color = getCurrentTheme().error)
                         }
 
-                        androidx.compose.material.OutlinedButton(
-                            onClick = {
-                                val scope = CoroutineScope(Dispatchers.Default)
-                                scope.launch {
-                                    if (client == null) client = Client()
+                        Row(modifier = Modifier.fillMaxWidth()) {
+                            if (isInternetAvailable) {
+                                androidx.compose.material.OutlinedButton(
+                                    onClick = {
+                                        val scope = CoroutineScope(Dispatchers.Default)
+                                        scope.launch {
+                                            if (client == null) client = Client()
 
-                                    if (!client!!.isConnected) {
-                                        client!!.discoverAndConnect()
-                                    }
+                                            if (!client!!.isConnected) {
+                                                client!!.discoverAndConnect()
+                                            }
+                                        }
+                                        scope.launch {
+                                            while (client == null || client?.isConnected != true) {
+                                                //                                     println("client is null or not connected")
+                                            }
+                                            if (robotStartPosition.value < 6) {
+                                                sendMatchData(
+                                                    context = context,
+                                                    client = client!!,
+                                                )
+                                                client!!.disconnect()
+
+                                            } else if (robotStartPosition.value < 8) {
+                                                sendStratData(
+                                                    context = context,
+                                                    client = client!!,
+                                                )
+                                            } else {
+                                                sendPitsData(
+                                                    context = context,
+                                                    client = client!!,
+                                                )
+                                            }
+                                        }
+                                    },
+                                    border = BorderStroke(2.dp, getCurrentTheme().secondaryVariant),
+                                    colors = androidx.compose.material.ButtonDefaults.outlinedButtonColors(
+                                        backgroundColor = getCurrentTheme().secondary,
+                                        contentColor = getCurrentTheme().onSecondary
+                                    ),
+                                    modifier = Modifier.align(Alignment.CenterVertically)
+                                ) {
+                                    Text(text = "Export", color = getCurrentTheme().error)
                                 }
-                                scope.launch {
-                                    while (client == null || client?.isConnected != true) {
-//                                     println("client is null or not connected")
+                            }
+                            Spacer(modifier = Modifier.weight(1f))
+                            androidx.compose.material.OutlinedButton(
+                                onClick = {
+                                    if (isInternetAvailable(context)) {
+                                        val panelIntent = Intent(Settings.ACTION_WIFI_SETTINGS)
+                                        startActivity(context, panelIntent, null)
                                     }
-                                    sendPitsData(
-                                        context = context,
-                                        client = client!!,
-                                    )
-                                }
-                                exportPopup = false
-                            },
-                            border = BorderStroke(2.dp, getCurrentTheme().secondaryVariant),
-                            colors = androidx.compose.material.ButtonDefaults.outlinedButtonColors(
-                                backgroundColor = getCurrentTheme().secondary,
-                                contentColor = getCurrentTheme().onSecondary
-                            ),
-                            modifier = Modifier.align(Alignment.CenterHorizontally)
-                        ) {
-                            Text(text = "Pits", color = getCurrentTheme().error)
+                                    exportPopup = false
+                                },
+                                border = BorderStroke(2.dp, getCurrentTheme().secondaryVariant),
+                                colors = androidx.compose.material.ButtonDefaults.outlinedButtonColors(
+                                    backgroundColor = getCurrentTheme().secondary,
+                                    contentColor = getCurrentTheme().onSecondary
+                                ),
+                                modifier = Modifier.align(Alignment.CenterVertically)
+                            ) {
+                                Text(text = "Done", color = getCurrentTheme().error)
+                            }
                         }
                     }
-                }
+                
             }
         }
     }
 }
 
 val openError = mutableStateOf(false)
+
+fun isInternetAvailable(context: Context): Boolean {
+    val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    val activeNetwork = connectivityManager.activeNetwork ?: return false
+    val networkCapabilities = connectivityManager.getNetworkCapabilities(activeNetwork) ?: return false
+    return networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+}

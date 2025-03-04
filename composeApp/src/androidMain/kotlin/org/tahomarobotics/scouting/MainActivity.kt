@@ -10,7 +10,6 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.ExperimentalUnitApi
 import com.bumble.appyx.navigation.integration.NodeActivity
 import com.bumble.appyx.navigation.integration.NodeHost
@@ -30,10 +29,10 @@ import openScoutFile
 @ExperimentalAnimationApi
 @ExperimentalComposeUiApi
 class MainActivity : NodeActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
+        
         setContent {
 
             openScoutFile(LocalContext.current)
@@ -44,7 +43,7 @@ class MainActivity : NodeActivity() {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colorScheme.background) {
                     NodeHost(
-                        lifecycle = AndroidLifecycle(LocalLifecycleOwner.current.lifecycle),
+                        lifecycle = AndroidLifecycle(androidx.lifecycle.compose.LocalLifecycleOwner.current.lifecycle),
                         integrationPoint = appyxV2IntegrationPoint,
                     ) {
                         RootNode(
