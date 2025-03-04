@@ -344,6 +344,7 @@ fun encodeJPEGToBASE64(filePath:String) : String {
         val byteArray = byteArrayOutputStream.toByteArray()
         return android.util.Base64.encodeToString(byteArray, android.util.Base64.DEFAULT)
     }
+    println("Image not found")
     return ""
 }
 
@@ -368,7 +369,7 @@ fun sendPitsData(context: Context, client: Client) {
     for((index) in permPhotosList.withIndex()) {
         println("reached for loop")
 
-        val file = File(encodeJPEGToBASE64(permPhotosList[index]))
+        val file = File()
 
         client.sendData(file)
         println("Image sent!")
