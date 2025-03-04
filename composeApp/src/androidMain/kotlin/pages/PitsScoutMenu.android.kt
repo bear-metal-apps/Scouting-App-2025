@@ -79,7 +79,10 @@ import createScoutPitsDataFile
 import defaultError
 import defaultOnPrimary
 import defaultPrimaryVariant
+import encodeJPEGToBASE64
 import getCurrentTheme
+import getFileName
+import imageBasesFolder
 import nodes.RootNode
 import nodes.algaeBarge
 import nodes.algaeProcess
@@ -260,6 +263,7 @@ actual fun PitsScoutMenu(
                                         }
                                     }
                                     permPhotosList.add(uri.toString())
+                                    println("URI added to permPhotosList: ${uri.toString()}")
                                 } catch (e: NumberFormatException) {
                                     teamNumberPopup = true
                                 }

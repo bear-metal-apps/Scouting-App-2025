@@ -20,6 +20,7 @@ var stratFolder : File? = null
 var pitsFolder: File? = null
 
 var imagesFolder: File? = null
+var imageBasesFolder : File? = null
 
 fun createScoutMatchDataFolder(context: Context) {
     matchFolder = File(context.filesDir, "ScoutMatchDataFolder")
@@ -60,6 +61,15 @@ fun createScoutPitsDataFolder(context: Context) {
         println("Made pits images folder")
     } else {
         println("Pits images folder found")
+    }
+
+    imageBasesFolder = File(context.filesDir, "imageBases")
+
+    if(!imageBasesFolder!!.exists()) {
+        imageBasesFolder!!.mkdirs()
+        println("Made pits image bases folder")
+    } else {
+        println("Pits image bases folder found")
     }
 
 }
@@ -159,7 +169,7 @@ fun loadPitsDataFiles(context: Context) {
 
     println("loading pits files...")
     for((index, value) in (pitsFolder?.listFiles()?.withIndex()!!)) {
-        if(value?.name != "ImagesFolder" && gson.fromJson(pitsFolder?.listFiles()?.toList()?.get(index)?.readText(), JsonObject::class.java) != null) {
+        if(gson.fromJson(pitsFolder?.listFiles()?.toList()?.get(index)?.readText(), JsonObject::class.java) != null) {
             jsonObject = gson.fromJson(
                 pitsFolder?.listFiles()?.toList()?.get(index)?.readText(),
                 JsonObject::class.java
@@ -169,9 +179,11 @@ fun loadPitsDataFiles(context: Context) {
             ] = jsonObject.toString()
 
             println(pitsFolder?.listFiles()?.toList()?.get(index).toString())
-            println(pitsTeamDataArray[
-                jsonObject.get("team").asInt
-            ])
+            println(
+                pitsTeamDataArray[
+                    jsonObject.get("team").asInt
+                ]
+            )
         }
     }
 
@@ -181,6 +193,7 @@ fun loadPitsDataFiles(context: Context) {
         permPhotosList.add(value.path)
         println(permPhotosList[outerIndex])
     }
+
 }
 
 
@@ -206,6 +219,9 @@ fun deleteScoutPitsData() {
                 }
             }
             for((index, value) in imagesFolder?.listFiles()?.withIndex()!!) {
+                value.deleteRecursively()
+            }
+            for((index, value) in imageBasesFolder?.listFiles()?.withIndex()!!) {
                 value.deleteRecursively()
             }
         } catch (e: IndexOutOfBoundsException) {}
@@ -369,7 +385,11 @@ fun sendPitsData(context: Context, client: Client) {
     for((index) in permPhotosList.withIndex()) {
         println("reached for loop")
 
-        val file = File()
+        val file = File(imageBasesFolder, getFileName(permPhotosList[index]) + ".txt")
+        file.delete()
+        file.createNewFile()
+
+        file.writeText(encodeJPEGToBASE64("/data/data/org.tahomarobotics.scouting/files/images/${getFileName(permPhotosList[index])}.jpg"))
 
         client.sendData(file)
         println("Image sent!")
@@ -385,7 +405,7 @@ fun sendPitsData(context: Context, client: Client) {
 //
 //        // Assuming you're inside a Composable function
 //        val contentResolver = context.contentResolver
-        val uri = ComposeFileProvider.getImageUri(context, parseInt(jsonObject.get("team").asString), "Photo${index}")
+//        val uri = ComposeFileProvider.getImageUri(context, parseInt(jsonObject.get("team").asString), "Photo${index}")
 //        println("Uri used to create bitmap: ${uri}")
 //        val source = ImageDecoder.createSource(contentResolver, uri)
 //        val bitmap = ImageDecoder.decodeBitmap(source)
@@ -399,6 +419,19 @@ fun sendPitsData(context: Context, client: Client) {
 //        println("Image sent")
     }
 
+}
+
+fun getFileName(filePath: String) : String {
+    val string = filePath.reversed()
+    var dotIndex = 0
+    for((index, char) in string.withIndex()) {
+        if (char == '.') {
+            dotIndex = index
+        } else if(char == '/') {
+            return string.substring(dotIndex+1, index).reversed()
+        }
+    }
+    return ""
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
