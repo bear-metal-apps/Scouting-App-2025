@@ -43,6 +43,7 @@ actual fun MatchMenuTop(
     robotStartPosition: MutableIntState
 ) {
     var positionName by remember { mutableStateOf("") }
+    var teamColor by remember { mutableStateOf(Color.Black) }
     val context = LocalContext.current
     var teamNumAsText by remember { mutableStateOf(team.intValue.toString()) }
     var pageName = mutableListOf("A","T","E")
@@ -52,24 +53,28 @@ actual fun MatchMenuTop(
     when (robotStartPosition.intValue) {
         0 -> {
             positionName = "R1"
+            teamColor = Color.Red
             isRedAliance.value = true
             tempRobotStart.value = 0
         }
 
         1 -> {
             positionName = "R2"
+            teamColor = Color.Red
             isRedAliance.value = true
             tempRobotStart.value = 1
         }
 
         2 -> {
             positionName = "R3"
+            teamColor = Color.Red
             isRedAliance.value = true
             tempRobotStart.value = 2
         }
 
         3 -> {
             positionName = "B1"
+            teamColor = Color.Blue
             isRedAliance.value = false
 //            tempRobotStart.value -= 3
             tempRobotStart.value = 0
@@ -77,6 +82,7 @@ actual fun MatchMenuTop(
 
         4 -> {
             positionName = "B2"
+            teamColor = Color.Blue
             isRedAliance.value = false
 //            tempRobotStart.value -= 3
             tempRobotStart.value = 1
@@ -84,6 +90,7 @@ actual fun MatchMenuTop(
 
         5 -> {
             positionName = "B3"
+            teamColor = Color.Blue
             isRedAliance.value = false
 //            tempRobotStart.value -= 3
             tempRobotStart.value = 2
@@ -122,24 +129,26 @@ actual fun MatchMenuTop(
                 .align(Alignment.CenterHorizontally)
                 .height(IntrinsicSize.Min)
         ) {
-            Text(
-                text = positionName,
+            Box(
                 modifier = Modifier
-                    .scale(1.2f)
+                    .background(teamColor)
                     .align(Alignment.CenterVertically)
-                    .padding(horizontal = 25.dp),
-                fontSize = 28.sp
-            )
+                    .fillMaxHeight()
+            ) {
+                Text(
+                    text = positionName,
+                    modifier = Modifier
+                        .scale(1.2f)
+                        .padding(horizontal = 25.dp)
+                        .align(Alignment.Center),
+                    fontSize = 28.sp
+                )
+            }
 
             VerticalDivider(
                 color = getCurrentTheme().primaryVariant,
                 thickness = 3.dp
             )
-            val textColor = if (positionName.lowercase().contains("b")) {
-                Color(red = 0.1f, green = Color.Cyan.green - 0.4f, blue = Color.Cyan.blue - 0.2f)
-            } else {
-                Color.Red
-            }
 
             TextField(
                 value = stringTeam.value,
@@ -412,26 +421,30 @@ actual fun MatchMenuBottom(
         OutlinedButton(
             border = BorderStroke(1.dp, color = Color.Yellow),
             shape = RoundedCornerShape(1.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = getCurrentTheme().secondary),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = if (pageIndex.value == 0) Color.Yellow.copy(alpha = 0.5f) else getCurrentTheme().secondary
+            ),
             onClick = {
                 backStack.push(AutoTeleSelectorNode.NavTarget.AutoScouting)
                 pageIndex.value = 0
-                if(saveData.value) {
+                if (saveData.value) {
                     teamDataArray[TeamMatchStartKey(parseInt(match.value), team.intValue, robotStartPosition.intValue)] = createOutput(team, robotStartPosition)
                 }
             },
-            modifier = Modifier.fillMaxWidth(1/4f)
+            modifier = Modifier.fillMaxWidth(1 / 4f)
         ) {
             Text(
                 text = "Auto",
-                color = Color.Yellow,
+                color = if (pageIndex.value == 0) Color.White else Color.Yellow,
                 fontSize = 23.sp
             )
         }
         OutlinedButton(
             border = BorderStroke(1.dp, color = Color.Yellow),
             shape = RoundedCornerShape(1.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = getCurrentTheme().secondary),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = if (pageIndex.value == 1) Color.Yellow.copy(alpha = 0.5f) else getCurrentTheme().secondary
+            ),
             onClick = {
                 backStack.push(AutoTeleSelectorNode.NavTarget.TeleScouting)
                 pageIndex.value = 1
@@ -443,14 +456,16 @@ actual fun MatchMenuBottom(
         ) {
             Text(
                 text = "Tele",
-                color = Color.Yellow,
+                color = if (pageIndex.value == 1) Color.White else Color.Yellow,
                 fontSize = 23.sp
             )
         }
         OutlinedButton(
             border = BorderStroke(1.dp, color = Color.Yellow),
             shape = RoundedCornerShape(1.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = getCurrentTheme().secondary),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = if (pageIndex.value == 2) Color.Yellow.copy(alpha = 0.5f) else getCurrentTheme().secondary
+            ),
             onClick = {
                 backStack.push(AutoTeleSelectorNode.NavTarget.EndGameScouting)
                 pageIndex.value = 2
@@ -462,7 +477,7 @@ actual fun MatchMenuBottom(
         ) {
             Text(
                 text = "End",
-                color = Color.Yellow,
+                color = if (pageIndex.value == 2) Color.White else Color.Yellow,
                 fontSize = 23.sp
             )
         }
@@ -489,14 +504,21 @@ actual fun MatchMenuBottom(
     if(saveDataPopup.value) {
         BasicAlertDialog(
             onDismissRequest = { saveDataPopup.value = false },
-            modifier = Modifier.clip(
-                RoundedCornerShape(5.dp)
-            ).border(BorderStroke(3.dp, getCurrentTheme().primaryVariant), RoundedCornerShape(5.dp))
+            modifier = Modifier
+                .clip(
+                    RoundedCornerShape(5.dp)
+                )
+                .border(BorderStroke(3.dp, getCurrentTheme().primaryVariant), RoundedCornerShape(5.dp))
                 .background(getCurrentTheme().secondary)
         ) {
-            Box(modifier = Modifier.fillMaxWidth(8f / 10f).padding(5.dp).fillMaxHeight(1/8f)) {
+            Box(modifier = Modifier
+                .fillMaxWidth(8f / 10f)
+                .padding(5.dp)
+                .fillMaxHeight(1 / 8f)) {
                 Text(text = "Save data for team ${team.intValue}, match ${match.value}?",
-                    modifier = Modifier.padding(5.dp).align(Alignment.TopCenter)
+                    modifier = Modifier
+                        .padding(5.dp)
+                        .align(Alignment.TopCenter)
                 )
                 androidx.compose.material.OutlinedButton(
                     onClick = {
