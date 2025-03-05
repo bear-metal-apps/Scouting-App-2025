@@ -79,7 +79,7 @@ actual fun TriStateCheckBox(
             Text(
                 text = label,
                 color = textColor.value,
-                fontSize = 18.sp,
+                fontSize = 24.sp,
                 modifier = Modifier.align(Alignment.CenterStart) // Does nothing?
             )
         }

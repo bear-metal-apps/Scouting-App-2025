@@ -2,6 +2,7 @@ package composables
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
@@ -14,6 +15,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
@@ -43,14 +45,15 @@ actual fun EnumerableValue(label: String, value: MutableIntState, alignment: Ali
             saveData.value = true
         },
         interactionSource = interact,
+        contentPadding = PaddingValues(5.dp, 5.dp),
         modifier = modifier
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             Text(
-                text = "$label \n ${value.value}",
-                fontSize = 18.sp,
+                text = "$label \n\n ${value.value}",
+                fontSize = 24.sp,
                 color = getCurrentTheme().onPrimary,
-                modifier = Modifier.align(Alignment.CenterStart)
+                modifier = Modifier.align(Alignment.CenterStart).padding(0.dp)
             )
             if (miniMinus) {
                 OutlinedButton(

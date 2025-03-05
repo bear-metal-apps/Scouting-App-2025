@@ -221,7 +221,7 @@ actual fun AutoMenu(
                             .fillMaxWidth()
                     )
                     TriStateCheckBox(
-                        label = "Ground Algae",
+                        label = "Collect Ground Algae",
                         color = Color(0, 131, 52),
                         ifChecked = groundCollectionAlgae,
                         modifier = Modifier
