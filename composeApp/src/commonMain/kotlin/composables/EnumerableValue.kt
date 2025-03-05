@@ -12,6 +12,7 @@ expect fun EnumerableValue(
     value: MutableIntState,
     alignment: Alignment,
     flashColor: Color,
+    backgroundColor : Color,
     miniMinus: Boolean,
     modifier: Modifier
 )

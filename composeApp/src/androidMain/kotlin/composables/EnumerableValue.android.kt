@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.bumble.appyx.interactions.core.ui.property.impl.BackgroundColor
 import defaultOnPrimary
 import defaultSecondary
 import getCurrentTheme
@@ -26,7 +27,7 @@ import nodes.undoList
 import nodes.saveData
 
 @Composable
-actual fun EnumerableValue(label: String, value: MutableIntState, alignment: Alignment, flashColor: Color, miniMinus : Boolean, modifier: Modifier) {
+actual fun EnumerableValue(label: String, value: MutableIntState, alignment: Alignment, flashColor: Color, backgroundColor: Color, miniMinus : Boolean, modifier: Modifier) {
     val interact = remember { MutableInteractionSource() }
 
     val pressed by interact.collectIsPressedAsState()
@@ -34,7 +35,7 @@ actual fun EnumerableValue(label: String, value: MutableIntState, alignment: Ali
     OutlinedButton(
         border = BorderStroke(2.dp, color = getCurrentTheme().primaryVariant),
         shape = RectangleShape,
-        colors = ButtonDefaults.buttonColors(containerColor = if(pressed) flashColor else Color.Black),
+        colors = ButtonDefaults.buttonColors(containerColor = if(pressed) flashColor else backgroundColor),
         onClick = {
             undoList.push(arrayOf("number" ,value, value.value))
             value.value += 1

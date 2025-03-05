@@ -24,11 +24,12 @@ import nodes.undoList
 @Composable
 actual fun TriStateCheckBox(
     label: String,
+    color: Color,
     ifChecked: MutableState<ToggleableState>,
     modifier: Modifier
 ){
 
-    var backgroundColor = remember { mutableStateOf(Color.Black) }
+    var backgroundColor = remember { mutableStateOf(color) }
     var textColor = remember { mutableStateOf(Color.White) }
 
     fun getNewState(state: ToggleableState) = when (state) {
@@ -38,13 +39,13 @@ actual fun TriStateCheckBox(
     }
 
     if(ifChecked.value == ToggleableState.On) {
-        backgroundColor.value = Color(0, 204, 102)
+        backgroundColor.value = Color(0, 255, 0)
         textColor.value = Color.White
     } else if(ifChecked.value == ToggleableState.Indeterminate) {
         backgroundColor.value = Color.Yellow
         textColor.value = Color.Black
     } else {
-        backgroundColor.value = Color.Black
+        backgroundColor.value = color
         textColor.value = Color.White
     }
 
@@ -57,13 +58,13 @@ actual fun TriStateCheckBox(
             ifChecked.value = getNewState(ifChecked.value)
 
             if(ifChecked.value == ToggleableState.On) {
-                backgroundColor.value = Color(0, 204, 102)
+                backgroundColor.value = Color(0, 255, 0)
                 textColor.value = Color.White
             } else if(ifChecked.value == ToggleableState.Indeterminate) {
                 backgroundColor.value = Color.Yellow
                 textColor.value = Color.Black
             } else {
-                backgroundColor.value = Color.Black
+                backgroundColor.value = color
                 textColor.value = Color.White
             }
 
