@@ -58,7 +58,7 @@ actual fun TeleMenu(
                         label = "Score L4",
                         value = teleLFour,
                         flashColor = Color.Green,
-                        backgroundColor = Color(255, 255, 255),
+                        backgroundColor = Color(60, 0, 255),
                         alignment = Alignment.BottomEnd,
                         miniMinus = miniMinus.value,
                         modifier = Modifier
@@ -69,7 +69,7 @@ actual fun TeleMenu(
                         label = "Miss L4",
                         value = teleLFourMissed,
                         flashColor = Color.Red,
-                        backgroundColor = Color(255, 255, 255),
+                        backgroundColor = Color(60, 0, 255),
                         alignment = Alignment.BottomEnd,
                         miniMinus = miniMinus.value,
                         modifier = Modifier
@@ -86,7 +86,7 @@ actual fun TeleMenu(
                     label = "Score L3",
                     value = teleLThree,
                     flashColor = Color.Green,
-                    backgroundColor = Color(250, 250, 250),
+                    backgroundColor = Color(55, 0, 236),
                     alignment = Alignment.BottomEnd,
                     miniMinus = miniMinus.value,
                     modifier = Modifier
@@ -97,7 +97,7 @@ actual fun TeleMenu(
                         label = "Miss L3",
                         value = teleLThreeMissed,
                         flashColor = Color.Red,
-                        backgroundColor = Color(250, 250, 250),
+                        backgroundColor = Color(55, 0, 236),
                         alignment = Alignment.BottomEnd,
                         miniMinus = miniMinus.value,
                         modifier = Modifier
@@ -115,7 +115,7 @@ actual fun TeleMenu(
                         label = "Score L2",
                         value = teleLTwo,
                         flashColor = Color.Green,
-                        backgroundColor = Color(245, 245, 245),
+                        backgroundColor = Color(50, 0, 215),
                         alignment = Alignment.BottomEnd,
                         miniMinus = miniMinus.value,
                         modifier = Modifier
@@ -126,7 +126,7 @@ actual fun TeleMenu(
                         label = "Miss L2",
                         value = teleLTwoMissed,
                         flashColor = Color.Red,
-                        backgroundColor = Color(245, 245, 245),
+                        backgroundColor = Color(50, 0, 215),
                         alignment = Alignment.BottomEnd,
                         miniMinus = miniMinus.value,
                         modifier = Modifier
@@ -144,7 +144,7 @@ actual fun TeleMenu(
                         label = "Score L1",
                         value = teleLOne,
                         flashColor = Color.Green,
-                        backgroundColor = Color(240, 240, 240),
+                        backgroundColor = Color(45, 0, 193),
                         alignment = Alignment.BottomEnd,
                         miniMinus = miniMinus.value,
                         modifier = Modifier
@@ -155,7 +155,7 @@ actual fun TeleMenu(
                         label = "Miss L1",
                         value = teleLOneMissed,
                         flashColor = Color.Red,
-                        backgroundColor = Color(240, 240, 240),
+                        backgroundColor = Color(45, 0, 193),
                         alignment = Alignment.BottomEnd,
                         miniMinus = miniMinus.value,
                         modifier = Modifier
@@ -172,7 +172,7 @@ actual fun TeleMenu(
                         label = "Algae Removed",
                         value = teleRemoved,
                         flashColor = Color.Blue,
-                        backgroundColor = Color(0, 182, 73),
+                        backgroundColor = Color(0, 131, 52),
                         alignment = Alignment.BottomEnd,
                         miniMinus = miniMinus.value,
                         modifier = Modifier
@@ -183,7 +183,7 @@ actual fun TeleMenu(
                         label = "Algae Processed",
                         value = teleProcessed,
                         flashColor = Color.Blue,
-                        backgroundColor = Color(0, 182, 73),
+                        backgroundColor = Color(0, 131, 52),
                         alignment = Alignment.BottomEnd,
                         miniMinus = miniMinus.value,
                         modifier = Modifier
@@ -203,7 +203,7 @@ actual fun TeleMenu(
                     label = "Net Miss",
                     value = teleNetMissed,
                     flashColor = Color.Red,
-                    backgroundColor = Color(0, 182, 73),
+                    backgroundColor = Color(0, 131, 52),
                     alignment = Alignment.BottomEnd,
                     miniMinus = miniMinus.value,
                     modifier = Modifier
@@ -215,7 +215,7 @@ actual fun TeleMenu(
                     label = "Net Score",
                     value = teleNet,
                     flashColor = Color.Green,
-                    backgroundColor = Color(0, 182, 73),
+                    backgroundColor = Color(0, 131, 52),
                     alignment = Alignment.BottomEnd,
                     miniMinus = miniMinus.value,
                     modifier = Modifier

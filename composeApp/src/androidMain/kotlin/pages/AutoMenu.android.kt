@@ -98,7 +98,7 @@ actual fun AutoMenu(
                         label = "Score L4",
                         value = autoCoralLevel4Scored,
                         flashColor = Color.Green,
-                        backgroundColor = Color(255, 255, 255),
+                        backgroundColor = Color(60, 0, 255),
                         alignment = Alignment.BottomEnd,
                         miniMinus = miniMinus.value,
                         modifier = Modifier
@@ -109,7 +109,7 @@ actual fun AutoMenu(
                         label = "Miss L4",
                         value = autoCoralLevel4Missed,
                         flashColor = Color.Red,
-                        backgroundColor = Color(250, 250, 250),
+                        backgroundColor = Color(60, 0, 255),
                         alignment = Alignment.BottomEnd,
                         miniMinus = miniMinus.value,
                         modifier = Modifier
@@ -126,7 +126,7 @@ actual fun AutoMenu(
                         label = "Score L3",
                         value = autoCoralLevel3Scored,
                         flashColor = Color.Green,
-                        backgroundColor = Color(240, 240, 240),
+                        backgroundColor = Color(55, 0, 236),
                         alignment = Alignment.BottomEnd,
                         miniMinus = miniMinus.value,
                         modifier = Modifier
@@ -137,7 +137,7 @@ actual fun AutoMenu(
                         label = "Miss L3",
                         value = autoCoralLevel3Missed,
                         flashColor = Color.Red,
-                        backgroundColor = Color(240, 240, 240),
+                        backgroundColor = Color(55, 0, 236),
                         alignment = Alignment.BottomEnd,
                         miniMinus = miniMinus.value,
                         modifier = Modifier
@@ -155,7 +155,7 @@ actual fun AutoMenu(
                         label = "Score L2",
                         value = autoCoralLevel2Scored,
                         flashColor = Color.Green,
-                        backgroundColor = Color(235, 235, 235),
+                        backgroundColor = Color(50, 0, 215),
                         alignment = Alignment.BottomEnd,
                         miniMinus = miniMinus.value,
                         modifier = Modifier
@@ -166,7 +166,7 @@ actual fun AutoMenu(
                         label = "Miss L2",
                         value = autoCoralLevel2Missed,
                         flashColor = Color.Red,
-                        backgroundColor = Color(230, 230, 230),
+                        backgroundColor = Color(50, 0, 215),
                         alignment = Alignment.BottomEnd,
                         miniMinus = miniMinus.value,
                         modifier = Modifier
@@ -184,7 +184,7 @@ actual fun AutoMenu(
                         label = "Score L1",
                         value = autoCoralLevel1Scored,
                         flashColor = Color.Green,
-                        backgroundColor = Color(225, 225, 225),
+                        backgroundColor = Color(45, 0, 193),
                         alignment = Alignment.BottomEnd,
                         miniMinus = miniMinus.value,
                         modifier = Modifier
@@ -195,7 +195,7 @@ actual fun AutoMenu(
                         label = "Miss L1",
                         value = autoCoralLevel1Missed,
                         flashColor = Color.Red,
-                        backgroundColor = Color(225, 225, 225),
+                        backgroundColor = Color(45, 0, 193),
                         alignment = Alignment.BottomEnd,
                         miniMinus = miniMinus.value,
                         modifier = Modifier
@@ -213,7 +213,7 @@ actual fun AutoMenu(
                         label = "Collect coral",
                         value = collectCoral,
                         flashColor = Color.Green,
-                        backgroundColor = Color(255, 255, 255),
+                        backgroundColor = Color(60, 0, 255),
                         alignment = Alignment.CenterEnd,
                         miniMinus = miniMinus.value,
                         modifier = Modifier
@@ -222,7 +222,7 @@ actual fun AutoMenu(
                     )
                     TriStateCheckBox(
                         label = "Ground Algae",
-                        color = Color(0, 182, 73),
+                        color = Color(0, 131, 52),
                         ifChecked = groundCollectionAlgae,
                         modifier = Modifier
                             .weight(1f)
@@ -238,8 +238,8 @@ actual fun AutoMenu(
                     EnumerableValue(
                         label = "Algae Removed",
                         value = algaeRemoved,
-                        flashColor = Color.Blue,
-                        backgroundColor = Color(0, 182, 73),
+                        flashColor = Color.Green,
+                        backgroundColor = Color(0, 131, 52),
                         alignment = Alignment.BottomEnd,
                         miniMinus = miniMinus.value,
                         modifier = Modifier
@@ -249,8 +249,8 @@ actual fun AutoMenu(
                     EnumerableValue(
                         label = "Algae Processed",
                         value = algaeProcessed,
-                        flashColor = Color.Blue,
-                        backgroundColor = Color(0, 182, 73),
+                        flashColor = Color.Green,
+                        backgroundColor = Color(0, 131, 52),
                         alignment = Alignment.BottomEnd,
                         miniMinus = miniMinus.value,
                         modifier = Modifier
@@ -270,7 +270,7 @@ actual fun AutoMenu(
                     label = "Net Miss",
                     value = autoNetMissed,
                     flashColor = Color.Red,
-                    backgroundColor = Color(0, 182, 73),
+                    backgroundColor = Color(0, 131, 52),
                     alignment = Alignment.BottomEnd,
                     miniMinus = miniMinus.value,
                     modifier = Modifier
@@ -282,7 +282,7 @@ actual fun AutoMenu(
                     label = "Net Score",
                     value = autoNetScored,
                     flashColor = Color.Green,
-                    backgroundColor = Color(0, 182, 73),
+                    backgroundColor = Color(0, 131, 52),
                     alignment = Alignment.BottomEnd,
                     miniMinus = miniMinus.value,
                     modifier = Modifier

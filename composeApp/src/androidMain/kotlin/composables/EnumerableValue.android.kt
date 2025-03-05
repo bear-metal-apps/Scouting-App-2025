@@ -56,7 +56,7 @@ actual fun EnumerableValue(label: String, value: MutableIntState, alignment: Ali
                 OutlinedButton(
                     border = BorderStroke(1.dp, color = getCurrentTheme().primaryVariant),
                     shape = RoundedCornerShape(2.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = if (pressed) flashColor else Color.Black),
+                    colors = ButtonDefaults.buttonColors(containerColor = if (pressed) flashColor else backgroundColor),
                     onClick = {
                         if(value.value != 0){
                             undoList.push(arrayOf("number", value, value.value))
