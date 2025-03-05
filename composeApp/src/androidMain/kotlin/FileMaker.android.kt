@@ -2,6 +2,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Build
+import android.os.FileUtils
 import android.util.Log
 import androidx.annotation.RequiresApi
 import com.google.gson.Gson
@@ -352,16 +353,15 @@ fun sendStratData(context: Context, client: Client) {
 
 }
 
-fun encodeJPEGToBASE64(filePath:String) : String {
+fun encodeJPEGToBytes(filePath:String) : ByteArray {
     if(File(filePath).exists()) {
         val bitmap = BitmapFactory.decodeFile(filePath)
         val byteArrayOutputStream = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream)
-        val byteArray = byteArrayOutputStream.toByteArray()
-        return android.util.Base64.encodeToString(byteArray, android.util.Base64.DEFAULT)
+        return byteArrayOutputStream.toByteArray()
     }
     println("Image not found")
-    return ""
+    return ByteArray(0)
 }
 
 fun sendPitsData(context: Context, client: Client) {
@@ -385,12 +385,14 @@ fun sendPitsData(context: Context, client: Client) {
     for((index) in permPhotosList.withIndex()) {
         println("reached for loop")
 
-        val file = File(imageBasesFolder, getFileName(permPhotosList[index]) + ".txt")
+        val file = File(imageBasesFolder, getFileName(permPhotosList[index]) + ".jpg")
         file.delete()
         file.createNewFile()
 
-        file.writeText(encodeJPEGToBASE64("/data/data/org.tahomarobotics.scouting/files/images/${getFileName(permPhotosList[index])}.jpg"))
-
+        val array = encodeJPEGToBytes("/data/data/org.tahomarobotics.scouting/files/images/${getFileName(permPhotosList[index])}.jpg")
+        FileOutputStream(file).use {
+            it.write(array)
+        }
         client.sendData(file)
         println("Image sent!")
 

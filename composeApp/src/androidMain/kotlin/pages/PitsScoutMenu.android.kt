@@ -79,7 +79,6 @@ import createScoutPitsDataFile
 import defaultError
 import defaultOnPrimary
 import defaultPrimaryVariant
-import encodeJPEGToBASE64
 import getCurrentTheme
 import getFileName
 import imageBasesFolder
