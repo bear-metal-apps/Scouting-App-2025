@@ -208,14 +208,82 @@ var deep = mutableStateOf(false)
 var shallow = mutableStateOf(false)
 var notes = mutableStateOf("")
 
+var totalAutoCoralAttempts = mutableIntStateOf(0)
+
+fun stateToInt(state: ToggleableState) = when (state) {
+    ToggleableState.Off -> 0
+    ToggleableState.Indeterminate -> 1
+    ToggleableState.On -> 2
+}
+
+fun createJson(team: MutableIntState, robotStartPosition: MutableIntState) {
+
+    jsonObject = JsonObject().apply {
+        addProperty("team", team.intValue.toString())
+        addProperty("event_key", compKey)
+        addProperty("match", match.value)
+        addProperty("scout_name", scoutName.value)
+        addProperty("notes", notes.value)
+        addProperty("robotStartPosition", robotStartPosition.intValue)
+        add("auto", JsonObject().apply {
+            addProperty("stop", autoStop.intValue)
+            add("algae", JsonObject().apply {
+                addProperty("ground_collection", stateToInt(groundCollectionAlgae.value))
+                addProperty("removed", algaeRemoved.intValue)
+                addProperty("processed", algaeProcessed.intValue)
+            })
+            add("coral", JsonObject().apply {
+                addProperty("collection", collectCoral.value)
+                addProperty("reef_level1", autoCoralLevel1Scored.intValue)
+                addProperty("reef_level2", autoCoralLevel2Scored.intValue)
+                addProperty("reef_level3", autoCoralLevel3Scored.intValue)
+                addProperty("reef_level4", autoCoralLevel4Scored.intValue)
+                addProperty("reef_level1_missed", autoCoralLevel1Missed.intValue)
+                addProperty("reef_level2_missed", autoCoralLevel2Missed.intValue)
+                addProperty("reef_level3_missed", autoCoralLevel3Missed.intValue)
+                addProperty("reef_level4_missed", autoCoralLevel4Missed.intValue)
+            })
+            add("net", JsonObject().apply {
+                addProperty("scored", autoNetScored.intValue)
+                addProperty("missed", autoNetMissed.intValue)
+            })
+        })
+        add("tele", JsonObject().apply {
+            addProperty("lost_comms", lostComms.intValue)
+//            addProperty("played_defense", playedDefense.value)
+            add("algae", JsonObject().apply {
+                addProperty("reef_collected", teleReefAlgaeCollected.value)
+                addProperty("processed", teleProcessed.intValue)
+            })
+            add("coral", JsonObject().apply {
+                addProperty("reef_level1", teleLOne.intValue)
+                addProperty("reef_level2", teleLTwo.intValue)
+                addProperty("reef_level3", teleLThree.intValue)
+                addProperty("reef_level4", teleLFour.intValue)
+                addProperty("reef_level1_missed", teleLOneMissed.intValue)
+                addProperty("reef_level2_missed", teleLTwoMissed.intValue)
+                addProperty("reef_level3_missed", teleLThreeMissed.intValue)
+                addProperty("reef_level4_missed", teleLFourMissed.intValue)
+
+            })
+            add("net", JsonObject().apply {
+                addProperty("scored", teleNet.intValue)
+                addProperty("missed", teleNetMissed.intValue)
+            })
+        })
+//        add("endgame", JsonObject().apply {
+//            addProperty("park", park.value)
+//            addProperty("deep", deep.value)
+//            addProperty("shallow", shallow.value)
+//        })
+    }
+
+    println("Created Match JSON")
+}
 
 fun createOutput(team: MutableIntState, robotStartPosition: MutableIntState): String {
 
-    fun stateToInt(state: ToggleableState) = when (state) {
-        ToggleableState.Off -> 0
-        ToggleableState.Indeterminate -> 1
-        ToggleableState.On -> 2
-    }
+    println("saved data")
 
     if (notes.value.isEmpty()) {
         notes.value = "No Comments"

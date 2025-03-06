@@ -94,6 +94,7 @@ actual fun EndGameMenu(
                         playedDefense.value = !playedDefense.value
 
                         saveData.value = true
+                        teamDataArray[TeamMatchStartKey(parseInt(match.value), team.intValue, robotStartPosition.intValue)] = createOutput(team, robotStartPosition)
                     },
                     modifier = Modifier.align(Alignment.CenterVertically),
                 )

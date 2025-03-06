@@ -16,9 +16,14 @@ import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import getCurrentTheme
+import nodes.TeamMatchStartKey
 import nodes.autoStop
+import nodes.createOutput
+import nodes.jsonObject
+import nodes.match
 import nodes.redoList
 import nodes.saveData
+import nodes.teamDataArray
 import nodes.undoList
 
 @Composable
@@ -69,6 +74,8 @@ actual fun TriStateCheckBox(
             }
 
             saveData.value = true
+            teamDataArray[TeamMatchStartKey(match.value.toInt(), jsonObject.get("team").asInt, jsonObject.get("robotStartPosition").asInt)] = createOutput(
+                mutableIntStateOf(jsonObject.get("team").asInt), mutableIntStateOf(jsonObject.get("robotStartPosition").asInt))
         },
         contentPadding = PaddingValues(5.dp, 5.dp),
         modifier = modifier
@@ -107,6 +114,8 @@ actual fun CheckBox(
                     ifChecked.value = 0
                 }
                 saveData.value = true
+                teamDataArray[TeamMatchStartKey(match.value.toInt(), jsonObject.get("team").asInt, jsonObject.get("robotStartPosition").asInt)] = createOutput(
+                    mutableIntStateOf(jsonObject.get("team").asInt), mutableIntStateOf(jsonObject.get("robotStartPosition").asInt))
             },
             modifier = Modifier.align(Alignment.Center).fillMaxSize(),
         )

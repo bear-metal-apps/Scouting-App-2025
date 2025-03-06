@@ -28,6 +28,7 @@ import createScoutMatchDataFile
 import exportScoutData
 import getCurrentTheme
 import getTeamsOnAlliance
+import kotlinx.coroutines.delay
 import nodes.*
 import org.json.JSONException
 import setTeam
@@ -118,8 +119,14 @@ actual fun MatchMenuTop(
 
         saveData.value = false
 
+        createJson(team, robotStartPosition)
+
         first = false
     }
+
+    totalAutoCoralAttempts.intValue = autoCoralLevel4Scored.intValue+ autoCoralLevel3Scored.intValue+
+            autoCoralLevel2Scored.intValue+ autoCoralLevel1Scored.intValue+ autoCoralLevel4Missed.intValue+
+            autoCoralLevel3Missed.intValue+ autoCoralLevel2Missed.intValue+ autoCoralLevel1Missed.intValue
 
     Column() {
         HorizontalDivider(color = getCurrentTheme().primaryVariant, thickness = 4.dp)
@@ -167,13 +174,8 @@ actual fun MatchMenuTop(
                         stringTeam.value = ""
                     }
                     team.intValue = stringTeam.value.betterParseInt()
-//                    if (filteredText.isNotEmpty() && !filteredText.contains(',')) {
-//                        teamNumAsText = filteredText.slice(0..<filteredText.length.coerceAtMost(5))
-//                        team.intValue = parseInt(teamNumAsText)
-                    loadData(parseInt(match.value), team, robotStartPosition)
 
-                    println("Team: ${team.intValue}")
-//                    }
+                    loadData(parseInt(match.value), team, robotStartPosition)
 
                     tempTeam = team.intValue
 
@@ -258,7 +260,7 @@ actual fun MatchMenuTop(
                 thickness = 3.dp
             )
             Box(
-                modifier = Modifier.fillMaxHeight().background(if(pageIndex.value == 0) Color.Green else if(pageIndex.value == 1) Color.Yellow.copy(alpha = 0.5f) else Color.Red)
+                modifier = Modifier.fillMaxHeight().background(if(pageIndex.value == 0) Color.Green.copy(alpha = 0.5f) else if(pageIndex.value == 1) Color.Yellow.copy(alpha = 0.5f) else Color.Red.copy(alpha = 0.5f))
             ) {
                 Text(
                     text = pageName[pageIndex.value],
@@ -295,6 +297,23 @@ actual fun MatchMenuBottom(
 ) {
     var backgroundColor = remember { mutableStateOf(Color.Black) }
     var textColor = remember { mutableStateOf(Color.White) }
+
+    var teleFlash = if(totalAutoCoralAttempts.intValue > 3) true else false
+    var teleColor : MutableState<Color> = remember { mutableStateOf(getCurrentTheme().secondary) }
+
+    if(teleFlash) {
+        LaunchedEffect(
+            key1 = Unit
+        ) {
+            while(teleFlash) {
+                println("FLASH")
+                teleColor = mutableStateOf(Color.Green.copy(alpha = 0.8f))
+                delay(200)
+                teleColor = mutableStateOf(getCurrentTheme().secondary)
+                delay(200)
+            }
+        }
+    }
 
     val context = LocalContext.current
 
@@ -447,7 +466,7 @@ actual fun MatchMenuBottom(
             border = BorderStroke(1.dp, color = Color.Yellow),
             shape = RoundedCornerShape(1.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = if (pageIndex.value == 1) Color.Yellow.copy(alpha = 0.5f) else getCurrentTheme().secondary
+                containerColor = if (nodes.pageIndex.intValue == 1 && !teleFlash) Color.Yellow.copy(alpha = 0.5f) else if (!teleFlash) getCurrentTheme().secondary else teleColor.value
             ),
             onClick = {
                 backStack.push(AutoTeleSelectorNode.NavTarget.TeleScouting)
@@ -455,6 +474,7 @@ actual fun MatchMenuBottom(
                 if(saveData.value) {
                     teamDataArray[TeamMatchStartKey(parseInt(match.value), team.intValue, robotStartPosition.intValue)] = createOutput(team, robotStartPosition)
                 }
+                teleFlash = false
             },
             modifier = Modifier.fillMaxWidth(1/3f)
         ) {
@@ -586,13 +606,9 @@ actual fun MatchMenuBottom(
         }
     }
 
-    if(teamDataArray[TeamMatchStartKey(parseInt(match.value), team.intValue, robotStartPosition.intValue)] != null/* && saveData.value*/) {
-        loadData(parseInt(match.value), team, robotStartPosition)
-    } else {
-        if(saveData.value) {
-            teamDataArray[TeamMatchStartKey(parseInt(match.value), team.intValue, robotStartPosition.intValue)] = createOutput(team, robotStartPosition)
-        }
-    }
+//    if(saveData.value) {
+//        teamDataArray[TeamMatchStartKey(parseInt(match.value), team.intValue, robotStartPosition.intValue)] = createOutput(team, robotStartPosition)
+//    }
 
 }
 var tempRobotStart : MutableState<Int> = mutableStateOf(0)

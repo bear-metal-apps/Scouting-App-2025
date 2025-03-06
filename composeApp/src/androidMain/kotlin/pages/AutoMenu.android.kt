@@ -296,9 +296,6 @@ actual fun AutoMenu(
                         .weight(0.5f)
                         .fillMaxWidth()
                 )
-                if(autoStop.value != 0) {
-                    saveData.value = true
-                }
             }
         }
 
