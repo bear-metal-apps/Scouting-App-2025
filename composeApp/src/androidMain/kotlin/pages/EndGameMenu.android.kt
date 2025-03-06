@@ -38,6 +38,7 @@ import createScoutMatchDataFile
 import defaultSecondary
 import getTeamsOnAlliance
 import keyboardAsState
+import kotlinx.coroutines.runBlocking
 import nodes.*
 import org.json.JSONException
 import org.tahomarobotics.scouting.TBAInterface
@@ -121,6 +122,7 @@ actual fun EndGameMenu(
                             team.intValue = getTeamsOnAlliance(match.value.betterParseInt(), isRedAliance.value)[tempRobotStart.value].number
                         }catch (e: Exception){}
                         stringTeam.value = team.intValue.toString()
+
                     } else {
                         saveDataPopup.value = true
                         saveDataSit.value = false
