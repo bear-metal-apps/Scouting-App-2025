@@ -257,13 +257,17 @@ actual fun MatchMenuTop(
                 color = getCurrentTheme().primaryVariant,
                 thickness = 3.dp
             )
-            Text(
-                text = pageName[pageIndex.value],
-                modifier = Modifier
-                    .align(Alignment.CenterVertically)
-                    .padding(start = 25.dp),
-                fontSize = 28.sp
-            )
+            Box(
+                modifier = Modifier.fillMaxHeight().background(if(pageIndex.value == 0) Color.Green else if(pageIndex.value == 1) Color.Yellow.copy(alpha = 0.5f) else Color.Red)
+            ) {
+                Text(
+                    text = pageName[pageIndex.value],
+                    modifier = Modifier
+                        .padding(horizontal = 30.dp)
+                        .align(Alignment.Center),
+                    fontSize = 28.sp
+                )
+            }
         }
         HorizontalDivider(color = getCurrentTheme().primaryVariant, thickness = 3.dp)
     }
@@ -422,7 +426,7 @@ actual fun MatchMenuBottom(
             border = BorderStroke(1.dp, color = Color.Yellow),
             shape = RoundedCornerShape(1.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = if (pageIndex.value == 0) Color.Yellow.copy(alpha = 0.5f) else getCurrentTheme().secondary
+                containerColor = if (pageIndex.value == 0) Color.Green.copy(alpha = 0.5f) else getCurrentTheme().secondary
             ),
             onClick = {
                 backStack.push(AutoTeleSelectorNode.NavTarget.AutoScouting)
@@ -435,7 +439,7 @@ actual fun MatchMenuBottom(
         ) {
             Text(
                 text = "Auto",
-                color = if (pageIndex.value == 0) Color.White else Color.Yellow,
+                color = if (pageIndex.value == 0) Color.White else if(pageIndex.value != 1) Color.Yellow else Color(122, 122, 0),
                 fontSize = 23.sp
             )
         }
@@ -464,7 +468,7 @@ actual fun MatchMenuBottom(
             border = BorderStroke(1.dp, color = Color.Yellow),
             shape = RoundedCornerShape(1.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = if (pageIndex.value == 2) Color.Yellow.copy(alpha = 0.5f) else getCurrentTheme().secondary
+                containerColor = if (pageIndex.value == 2) Color.Red.copy(alpha = 0.5f) else getCurrentTheme().secondary
             ),
             onClick = {
                 backStack.push(AutoTeleSelectorNode.NavTarget.EndGameScouting)
@@ -477,7 +481,7 @@ actual fun MatchMenuBottom(
         ) {
             Text(
                 text = "End",
-                color = if (pageIndex.value == 2) Color.White else Color.Yellow,
+                color = if (pageIndex.value == 2) Color.White else if(pageIndex.value != 0) Color.Yellow else Color(122, 122, 0),
                 fontSize = 23.sp
             )
         }
