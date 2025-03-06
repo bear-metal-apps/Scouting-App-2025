@@ -107,6 +107,7 @@ actual fun CheckBox(
                     ifChecked.value = 0
                 }
                 saveData.value = true
+                undoList.push(arrayOf("checkBox" ,ifChecked, ifChecked.value))
             },
             modifier = Modifier.align(Alignment.Center).fillMaxSize(),
         )

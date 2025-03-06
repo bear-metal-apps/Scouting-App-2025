@@ -5,6 +5,7 @@ import android.hardware.usb.UsbManager
 import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -19,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.bumble.appyx.components.backstack.BackStack
+import com.bumble.appyx.components.backstack.operation.pop
 import com.bumble.appyx.components.backstack.operation.push
 import com.bumble.appyx.navigation.modality.BuildContext
 import com.bumble.appyx.navigation.node.Node
@@ -29,6 +31,7 @@ import getCurrentTheme
 import getLastSynced
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import matchData
 import nodes.*
@@ -45,6 +48,7 @@ import sync
 import teamData
 import java.lang.Integer.parseInt
 
+@Suppress("UNREACHABLE_CODE")
 actual class MainMenu actual constructor(
     buildContext: BuildContext,
     private val backStack: BackStack<RootNode.NavTarget>,
@@ -62,6 +66,7 @@ actual class MainMenu actual constructor(
         var matchSyncedResource by remember { mutableStateOf(if (matchData == null) "crossmark.png" else "checkmark.png") }
         var teamSyncedResource by remember { mutableStateOf(if (teamData == null) "crossmark.png" else "checkmark.png") }
         var serverDialogOpen by remember { mutableStateOf(false) }
+        var noMatchTeamData = mutableStateOf(false)
 
         var ipAddressErrorDialog by remember { mutableStateOf(false) }
         var deviceListOpen by remember { mutableStateOf(false) }
@@ -165,7 +170,12 @@ actual class MainMenu actual constructor(
                             onClick = {
                                 robotStartPosition.intValue = 0
                                 loadData(parseInt(match.value), team, robotStartPosition)
-                                backStack.push(RootNode.NavTarget.MatchScouting)
+                                tbaConnection(
+                                    Navtarget = RootNode.NavTarget.MatchScouting,
+                                    backStack = backStack,
+                                    context = context,
+                                    warningMenu = noMatchTeamData
+                                )
 //                                try {
 //                                    setTeam(team, match, robotStartPosition.intValue)
 //                                } catch (e: JSONException) {
@@ -181,7 +191,12 @@ actual class MainMenu actual constructor(
                             onClick = {
                                 robotStartPosition.intValue = 3
                                 loadData(parseInt(match.value), team, robotStartPosition)
-                                backStack.push(RootNode.NavTarget.MatchScouting)
+                                tbaConnection(
+                                    Navtarget = RootNode.NavTarget.MatchScouting,
+                                    backStack = backStack,
+                                    context = context,
+                                    warningMenu = noMatchTeamData
+                                )
 //                                try {
 //                                    setTeam(team, match, robotStartPosition.intValue)
 //                                } catch (e: JSONException) {
@@ -199,7 +214,12 @@ actual class MainMenu actual constructor(
                             onClick = {
                                 robotStartPosition.intValue = 1
                                 loadData(parseInt(match.value), team, robotStartPosition)
-                                backStack.push(RootNode.NavTarget.MatchScouting)
+                                tbaConnection(
+                                    Navtarget = RootNode.NavTarget.MatchScouting,
+                                    backStack = backStack,
+                                    context = context,
+                                    warningMenu = noMatchTeamData
+                                )
 //                                try {
 //                                    setTeam(team, match, robotStartPosition.intValue)
 //                                } catch (e: JSONException) {
@@ -215,7 +235,12 @@ actual class MainMenu actual constructor(
                             onClick = {
                                 robotStartPosition.intValue = 4
                                 loadData(parseInt(match.value), team, robotStartPosition)
-                                backStack.push(RootNode.NavTarget.MatchScouting)
+                                tbaConnection(
+                                    Navtarget = RootNode.NavTarget.MatchScouting,
+                                    backStack = backStack,
+                                    context = context,
+                                    warningMenu = noMatchTeamData
+                                )
 //                                try {
 //                                    setTeam(team, match, robotStartPosition.intValue)
 //                                } catch (e: JSONException) {
@@ -233,7 +258,12 @@ actual class MainMenu actual constructor(
                             onClick = {
                                 robotStartPosition.intValue = 2
                                 loadData(parseInt(match.value), team, robotStartPosition)
-                                backStack.push(RootNode.NavTarget.MatchScouting)
+                                tbaConnection(
+                                    Navtarget = RootNode.NavTarget.MatchScouting,
+                                    backStack = backStack,
+                                    context = context,
+                                    warningMenu = noMatchTeamData
+                                )
 //                                try {
 //                                    setTeam(team, match, robotStartPosition.intValue)
 //                                } catch (e: JSONException) {
@@ -249,7 +279,12 @@ actual class MainMenu actual constructor(
                             onClick = {
                                 robotStartPosition.intValue = 5
                                 loadData(parseInt(match.value), team, robotStartPosition)
-                                backStack.push(RootNode.NavTarget.MatchScouting)
+                                tbaConnection(
+                                    Navtarget = RootNode.NavTarget.MatchScouting,
+                                    backStack = backStack,
+                                    context = context,
+                                    warningMenu = noMatchTeamData
+                                )
 //                                try {
 //                                    setTeam(team, match, robotStartPosition.intValue)
 //                                } catch (e: JSONException) {
@@ -261,6 +296,66 @@ actual class MainMenu actual constructor(
                                 .size(100.dp, 100.dp)
                                 .background(color = Color(30, 30, 60)),
                             text = { Text("B3", fontSize = 22.sp, color = Color.White) })
+                    }
+                }
+            }
+            if(noMatchTeamData.value){
+                BasicAlertDialog(
+                    onDismissRequest = {noMatchTeamData.value = false},
+                    modifier = Modifier.clip(
+                        RoundedCornerShape(5.dp)
+                    ).border(BorderStroke(3.dp, getCurrentTheme().primaryVariant), RoundedCornerShape(5.dp))
+                        .background(getCurrentTheme().secondary)
+                ) {
+                    Text(
+                        text = "We are unable to sync to match or team data. This is either because of a lack of internet or schedule on tba"
+                    )
+                    Text(
+                        text = "Comp code: $compKey"
+                    )
+                    Box{
+                        OutlinedButton(
+                            onClick = {
+                                backStack.pop()
+                            },
+                            shape = CircleShape,
+//                            colors = ButtonDefaults.buttonColors(
+//
+//                            ),
+                            modifier = Modifier.align(Alignment.CenterStart)
+                        ) {
+                            Text(
+                                text = "Return to login"
+                            )
+                        }
+//                        OutlinedButton(
+//                            onClick = {
+//                                backStack.pop()
+//                            },
+//                            shape = CircleShape,
+////                            colors = ButtonDefaults.buttonColors(
+////
+////                            ),
+//                            modifier = Modifier.align(Alignment.Center)
+//                        ) {
+//                            Text(
+//                                text = "Practice Match"
+//                            )
+//                        }
+                        OutlinedButton(
+                            onClick = {
+                                noMatchTeamData.value = false
+                            },
+                            shape = CircleShape,
+//                            colors = ButtonDefaults.buttonColors(
+//
+//                            ),
+                            modifier = Modifier.align(Alignment.CenterEnd)
+                        ) {
+                            Text(
+                                text = "Dismiss"
+                            )
+                        }
                     }
                 }
             }
@@ -553,3 +648,19 @@ actual class MainMenu actual constructor(
     }
 }
 val openError = mutableStateOf(false)
+var synced = false
+
+fun tbaConnection(Navtarget: RootNode.NavTarget, backStack: BackStack<RootNode.NavTarget>, context: Context, warningMenu: MutableState<Boolean>) {
+    val scope = CoroutineScope(Dispatchers.Default)
+//    if (!(teamData?.isEmpty!! || matchData?.isEmpty!!) && synced) {
+        backStack.push(Navtarget)
+//    } else if(!synced) {
+//        scope.launch {
+//            synced = sync(true, context)
+//            tbaConnection(Navtarget,backStack,context,warningMenu)
+//            scope.cancel()
+//        }
+//    } else{
+//        warningMenu.value = true
+//    }
+}

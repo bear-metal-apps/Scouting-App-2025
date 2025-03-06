@@ -26,3 +26,6 @@ val defaultOnSecondary = Color.Yellow
 val defaultOnBackground = Color.Yellow
 val defaultOnSurface = Color(15,15,15)
 val defaultOnError = Color(6,9,13)
+
+val defaultGamePiece1 = Color(50, 45, 35)
+val defaultGamePiece2 = Color(5, 0, 48)

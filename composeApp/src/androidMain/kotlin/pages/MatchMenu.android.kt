@@ -217,12 +217,13 @@ actual fun MatchMenuTop(
                     saveData.value = false
 
                     if(value.isNotEmpty()) {
-                        val filteredText = value.filter { it.isDigit() }
-                        stringMatch.value = filteredText.slice(0..<filteredText.length.coerceAtMost(5))
+                        stringMatch.value = value.betterParseInt(5).toString()
+                        match.value = stringMatch.value.betterParseInt().toString()
                     } else {
                         stringMatch.value = ""
+                        match.value = "0"
                     }
-                    match.value = stringMatch.value.betterParseInt().toString()
+
                     println(match.value)
 
                     try {
@@ -253,6 +254,28 @@ actual fun MatchMenuTop(
                 singleLine = true,
                 textStyle = TextStyle.Default.copy(fontSize = 28.sp)
             )
+//            if (matchNumberButtons.value){
+                Column(modifier = Modifier.fillMaxHeight()) {
+                    OutlinedButton(
+                        onClick = {
+//                            tempMatch = match.value + 1
+                        },
+                        modifier = Modifier.width(50.dp).fillMaxHeight(1/2f),
+                        shape = RoundedCornerShape(1.dp)
+                    ) {
+                        Text("+")
+                    }
+                    OutlinedButton(
+                        onClick = {
+//                            tempMatch = match.value - 1
+                        },
+                        modifier = Modifier.width(50.dp).fillMaxHeight(),
+                        shape = RoundedCornerShape(1.dp)
+                    ) {
+                        Text("-")
+                    }
+                }
+//        }
             VerticalDivider(
                 color = getCurrentTheme().primaryVariant,
                 thickness = 3.dp
@@ -353,6 +376,10 @@ actual fun MatchMenuBottom(
                             )
                         )
                     }
+                    "checkbox" -> {
+                        (action[1] as MutableState<Boolean>).value = action[2] as Boolean
+                        redoList.push(arrayOf(action[0], action[1], !(action[2] as Boolean)))
+                    }
                 }
 
                 if(saveData.value) {
@@ -401,6 +428,10 @@ actual fun MatchMenuBottom(
                         (action[3] as MutableState<Color>).value = backgroundColor.value
                         (action[5] as MutableState<Color>).value = textColor.value
 
+                    }
+                    "checkbox" -> {
+                        (action[1] as MutableState<Boolean>).value = action[2] as Boolean
+                        redoList.push(arrayOf(action[0], action[1], !(action[2] as Boolean)))
                     }
                 }
 
