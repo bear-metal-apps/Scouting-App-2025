@@ -583,11 +583,7 @@ actual fun MatchMenuBottom(
     }
 
     if(teamDataArray[TeamMatchStartKey(parseInt(match.value), team.intValue, robotStartPosition.intValue)] != null/* && saveData.value*/) {
-        println("team: $team")
-        println("match ${match.value}")
-        teamDataArray[TeamMatchStartKey(parseInt(match.value), team.intValue, robotStartPosition.intValue)] = createOutput(team, robotStartPosition)
         loadData(parseInt(match.value), team, robotStartPosition)
-//        println("loaded data")
     } else {
         if(saveData.value) {
             teamDataArray[TeamMatchStartKey(parseInt(match.value), team.intValue, robotStartPosition.intValue)] = createOutput(team, robotStartPosition)
