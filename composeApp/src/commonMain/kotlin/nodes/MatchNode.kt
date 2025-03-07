@@ -163,9 +163,6 @@ val miniMinus = mutableStateOf(true)
 
 val match = mutableStateOf("1")
 
-var tempMatch = match.value
-var tempTeam: Int = 0
-
 var stringMatch = mutableStateOf("")
 var stringTeam = mutableStateOf("")
 
@@ -253,7 +250,7 @@ fun createJson(team: MutableIntState, robotStartPosition: MutableIntState) {
             addProperty("lost_comms", lostComms.intValue)
 //            addProperty("played_defense", playedDefense.value)
             add("algae", JsonObject().apply {
-                addProperty("reef_collected", teleReefAlgaeCollected.value)
+                addProperty("reef_removed", teleReefAlgaeCollected.value)
                 addProperty("processed", teleProcessed.intValue)
             })
             add("coral", JsonObject().apply {
@@ -289,7 +286,7 @@ fun createOutput(team: MutableIntState, robotStartPosition: MutableIntState): St
     if (notes.value.isEmpty()) {
         notes.value = "No Comments"
     }
-    notes.value = notes.value.replace(":", "")
+//    notes.value = notes.value.replace(":", "")
 
     jsonObject = JsonObject().apply {
         addProperty("team", team.intValue.toString())

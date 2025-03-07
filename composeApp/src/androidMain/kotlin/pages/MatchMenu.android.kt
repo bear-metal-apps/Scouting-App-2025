@@ -105,14 +105,10 @@ actual fun MatchMenuTop(
 //        tempRobotStart.value -= 3
     }
 
-    // When the user first opens the app, the tempTeam and tempMatch variables are assigned to the current match and team so they can be saved when the user changes the match or team!
     if(first) {
         try{
             team.intValue = getTeamsOnAlliance(match.value.betterParseInt(), isRedAliance.value)[tempRobotStart.value].number
         }catch (e: Exception){}
-
-        tempTeam = team.intValue
-        tempMatch = match.value
 
         stringMatch = remember { mutableStateOf(match.value) }
         stringTeam = remember { mutableStateOf(team.intValue.toString()) }
@@ -157,8 +153,8 @@ actual fun MatchMenuTop(
                 value = stringTeam.value,
                 onValueChange = { value ->
                     if(saveData.value) {
-                        teamDataArray[TeamMatchStartKey(parseInt(tempMatch), tempTeam, robotStartPosition.intValue)] = createOutput(mutableIntStateOf(tempTeam), robotStartPosition)
-                        createScoutMatchDataFile(context, tempMatch, tempTeam, createOutput(mutableIntStateOf(tempTeam), robotStartPosition))
+                        teamDataArray[TeamMatchStartKey(parseInt(match.value), team.intValue, robotStartPosition.intValue)] = createOutput(mutableIntStateOf(team.intValue), robotStartPosition)
+                        createScoutMatchDataFile(context, match.value, team.intValue, createOutput(mutableIntStateOf(team.intValue), robotStartPosition))
                     }
 
                     saveData.value = false
@@ -172,8 +168,6 @@ actual fun MatchMenuTop(
                     team.intValue = stringTeam.value.betterParseInt()
 
                     loadData(parseInt(match.value), team, robotStartPosition)
-
-                    tempTeam = team.intValue
 
                 },
                 colors = TextFieldDefaults.colors(
@@ -208,8 +202,8 @@ actual fun MatchMenuTop(
                 value = stringMatch.value,
                 onValueChange = { value ->
                     if(saveData.value) {
-                        teamDataArray[TeamMatchStartKey(parseInt(tempMatch), tempTeam, robotStartPosition.intValue)] = createOutput(mutableIntStateOf(tempTeam), robotStartPosition)
-                        createScoutMatchDataFile(context, tempMatch, tempTeam, createOutput(mutableIntStateOf(tempTeam), robotStartPosition))
+                        teamDataArray[TeamMatchStartKey(parseInt(match.value), team.intValue, robotStartPosition.intValue)] = createOutput(mutableIntStateOf(team.intValue), robotStartPosition)
+                        createScoutMatchDataFile(context, match.value, team.intValue, createOutput(mutableIntStateOf(team.intValue), robotStartPosition))
                     }
 
                     saveData.value = false
@@ -235,9 +229,6 @@ actual fun MatchMenuTop(
                     loadData(parseInt(match.value), team, robotStartPosition)
 
                     exportScoutData(context) // Does nothing
-
-                    tempMatch = match.value
-                    tempTeam = team.intValue
 
                 },
                 modifier = Modifier.fillMaxWidth(1/2f),
