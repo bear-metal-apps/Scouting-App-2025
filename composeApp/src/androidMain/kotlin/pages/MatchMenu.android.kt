@@ -124,10 +124,6 @@ actual fun MatchMenuTop(
         first = false
     }
 
-    totalAutoCoralAttempts.intValue = autoCoralLevel4Scored.intValue+ autoCoralLevel3Scored.intValue+
-            autoCoralLevel2Scored.intValue+ autoCoralLevel1Scored.intValue+ autoCoralLevel4Missed.intValue+
-            autoCoralLevel3Missed.intValue+ autoCoralLevel2Missed.intValue+ autoCoralLevel1Missed.intValue
-
     Column() {
         HorizontalDivider(color = getCurrentTheme().primaryVariant, thickness = 4.dp)
 
@@ -298,20 +294,22 @@ actual fun MatchMenuBottom(
     var backgroundColor = remember { mutableStateOf(Color.Black) }
     var textColor = remember { mutableStateOf(Color.White) }
 
-    var teleFlash = if(totalAutoCoralAttempts.intValue > 3) true else false
-    var teleColor : MutableState<Color> = remember { mutableStateOf(getCurrentTheme().secondary) }
+    var teleFlash = if(totalAutoCoralAttempts.intValue > 3 && pageIndex.intValue == 0) true else false
+    var teleColor = remember { mutableStateOf(getCurrentTheme().secondary) }
+    var teleTextColor = remember { mutableStateOf(Color.Yellow) }
 
-    if(teleFlash) {
-        LaunchedEffect(
-            key1 = Unit
-        ) {
-            while(teleFlash) {
-                println("FLASH")
-                teleColor = mutableStateOf(Color.Green.copy(alpha = 0.8f))
-                delay(200)
-                teleColor = mutableStateOf(getCurrentTheme().secondary)
-                delay(200)
-            }
+    totalAutoCoralAttempts.intValue = autoCoralLevel4Scored.intValue+ autoCoralLevel3Scored.intValue+
+            autoCoralLevel2Scored.intValue+ autoCoralLevel1Scored.intValue+ autoCoralLevel4Missed.intValue+
+            autoCoralLevel3Missed.intValue+ autoCoralLevel2Missed.intValue+ autoCoralLevel1Missed.intValue
+
+    LaunchedEffect(teleFlash) {
+        while (teleFlash) {
+            teleColor.value = Color.Green.copy(alpha = 0.8f)
+            teleTextColor.value = Color.White
+            delay(200)
+            teleTextColor.value = Color.Yellow
+            teleColor.value = getCurrentTheme().secondary
+            delay(200)
         }
     }
 
@@ -448,6 +446,7 @@ actual fun MatchMenuBottom(
                 containerColor = if (pageIndex.value == 0) Color.Green.copy(alpha = 0.5f) else getCurrentTheme().secondary
             ),
             onClick = {
+                totalAutoCoralAttempts.value = 0
                 backStack.push(AutoTeleSelectorNode.NavTarget.AutoScouting)
                 pageIndex.value = 0
                 if (saveData.value) {
@@ -469,19 +468,19 @@ actual fun MatchMenuBottom(
                 containerColor = if (nodes.pageIndex.intValue == 1 && !teleFlash) Color.Yellow.copy(alpha = 0.5f) else if (!teleFlash) getCurrentTheme().secondary else teleColor.value
             ),
             onClick = {
+                teleFlash = false
                 backStack.push(AutoTeleSelectorNode.NavTarget.TeleScouting)
                 pageIndex.value = 1
                 if(saveData.value) {
                     teamDataArray[TeamMatchStartKey(parseInt(match.value), team.intValue, robotStartPosition.intValue)] = createOutput(team, robotStartPosition)
                 }
-                teleFlash = false
             },
             modifier = Modifier.fillMaxWidth(1/3f)
         ) {
             Text(
                 text = "Tele",
-                color = if (pageIndex.value == 1) Color.White else Color.Yellow,
-                fontSize = 23.sp
+                color = if (nodes.pageIndex.intValue == 1 && !teleFlash) Color.White else if (!teleFlash) Color.Yellow else teleTextColor.value,
+                        fontSize = 23.sp
             )
         }
         OutlinedButton(
@@ -491,6 +490,7 @@ actual fun MatchMenuBottom(
                 containerColor = if (pageIndex.value == 2) Color.Red.copy(alpha = 0.5f) else getCurrentTheme().secondary
             ),
             onClick = {
+                totalAutoCoralAttempts.value = 0
                 backStack.push(AutoTeleSelectorNode.NavTarget.EndGameScouting)
                 pageIndex.value = 2
                 if(saveData.value) {
