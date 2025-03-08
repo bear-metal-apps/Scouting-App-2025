@@ -9,7 +9,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.ExperimentalUnitApi
 import com.bumble.appyx.navigation.integration.NodeActivity
 import com.bumble.appyx.navigation.integration.NodeHost
@@ -23,7 +22,6 @@ import defaultPrimary
 import defaultSecondary
 import defaultSurface
 import nodes.RootNode
-import openScoutFile
 
 @ExperimentalUnitApi
 @ExperimentalAnimationApi
@@ -34,9 +32,6 @@ class MainActivity : NodeActivity() {
         supportActionBar?.hide()
         
         setContent {
-
-            openScoutFile(LocalContext.current)
-
             MaterialTheme(
                 colorScheme = defaultScheme
             ) {

@@ -206,7 +206,11 @@ actual fun StratMenu(
                                     if(saveStratData.value && isSynced()) {
                                         stratTeamDataArray[TeamsAllianceKey(stratMatch, isRedAlliance)] = createStratOutput(
                                             stratMatch)
-                                        createScoutStratDataFile(context, stratMatch.toString(), isRedAlliance, createStratOutput(stratMatch))
+                                        createScoutStratDataFile(
+                                            stratMatch.toString(),
+                                            isRedAlliance,
+                                            createStratOutput(stratMatch)
+                                        )
                                     }
 
                                     saveStratData.value = false
@@ -264,8 +268,10 @@ actual fun StratMenu(
 
                                 if(saveStratData.value && isSynced()) {
                                     stratTeamDataArray[TeamsAllianceKey(stratMatch, isRedAlliance)] = createStratOutput(stratMatch)
-                                    createScoutStratDataFile(context, stratMatch.toString(), isRedAlliance, createStratOutput(
-                                        stratMatch))
+                                    createScoutStratDataFile(
+                                        stratMatch.toString(), isRedAlliance, createStratOutput(
+                                            stratMatch)
+                                    )
                                     backStack.pop()
 
                                     saveStratData.value = false
@@ -334,7 +340,7 @@ actual fun StratMenu(
 
                     if(saveStratData.value && isSynced()) {
                         stratTeamDataArray[TeamsAllianceKey(stratMatch, isRedAlliance)] = createStratOutput(stratMatch)
-                        createScoutStratDataFile(context, stratMatch.toString(), isRedAlliance, createStratOutput(stratMatch))
+                        createScoutStratDataFile(stratMatch.toString(), isRedAlliance, createStratOutput(stratMatch))
                         saveStratData.value = false
                         nextMatch()
                         mutableMatchNum = stratMatch
@@ -384,14 +390,18 @@ actual fun StratMenu(
                     onClick = {
                         if(saveStratDataSit.value) {
                             stratTeamDataArray[TeamsAllianceKey(stratMatch, isRedAlliance)] = createStratOutput(stratMatch)
-                            createScoutStratDataFile(context, stratMatch.toString(), isRedAlliance, createStratOutput(
-                                stratMatch))
+                            createScoutStratDataFile(
+                                stratMatch.toString(), isRedAlliance, createStratOutput(
+                                    stratMatch)
+                            )
                             backStack.pop()
                             saveStratData.value = false
                         } else {
                             stratTeamDataArray[TeamsAllianceKey(stratMatch, isRedAlliance)] = createStratOutput(stratMatch)
-                            createScoutStratDataFile(context, stratMatch.toString(), isRedAlliance, createStratOutput(
-                                stratMatch))
+                            createScoutStratDataFile(
+                                stratMatch.toString(), isRedAlliance, createStratOutput(
+                                    stratMatch)
+                            )
                             saveStratData.value = false
                             nextMatch()
                             mutableMatchNum = stratMatch

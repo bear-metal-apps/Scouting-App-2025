@@ -25,7 +25,7 @@ class RootNode(
     buildContext: BuildContext,
     private val backStack: BackStack<NavTarget> = BackStack(
         model = BackStackModel(
-            initialTarget = NavTarget.MainMenu,
+            initialTarget = NavTarget.LoginPage,
             savedStateMap = buildContext.savedStateMap
         ),
         visualisation = { BackStackFader(it) }

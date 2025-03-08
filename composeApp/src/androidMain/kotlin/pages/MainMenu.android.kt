@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.HelpOutline
 import androidx.compose.material.icons.rounded.CheckCircleOutline
 import androidx.compose.material.icons.rounded.ChevronLeft
 import androidx.compose.material.icons.rounded.ErrorOutline
@@ -29,17 +30,17 @@ import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.components.backstack.operation.push
 import com.bumble.appyx.navigation.modality.BuildContext
 import com.bumble.appyx.navigation.node.Node
-import com.google.gson.Gson
-import com.google.gson.JsonObject
+import compKey
 import createScoutMatchDataFolder
 import createScoutPitsDataFolder
 import createScoutStratDataFolder
-import createTabletDataFile
 import defaultPrimaryVariant
 import defaultSecondary
 import getCurrentTheme
 import getLastSynced
-import grabTabletDataFile
+import isTBAMTeamDataSynced
+import isTBAMatchDataOld
+import isTBAMatchDataSynced
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -47,17 +48,14 @@ import kotlinx.coroutines.launch
 import loadMatchDataFiles
 import loadPitsDataFiles
 import loadStratDataFiles
-import grabTabletDataFile
-import matchData
 import nodes.*
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.tahomarobotics.scouting.Client
 import sendMatchData
 import sendPitsData
 import sendStratData
-import sync
-import teamData
-import writeTabletDataFile
+import syncMatches
+import syncTeams
 import java.lang.Integer.parseInt
 
 
@@ -76,8 +74,9 @@ actual class MainMenu actual constructor(
         val context = LocalContext.current
         val activity = context as ComponentActivity
         
-        var matchSynced by remember { mutableStateOf(matchData != null) }
-        var teamSynced by remember { mutableStateOf(teamData != null) }
+        var matchSynced by remember { mutableStateOf(isTBAMatchDataSynced(context, compKey)) }
+        var matchOutOfDate by remember { mutableStateOf(isTBAMatchDataOld(context, compKey)) }
+        var teamSynced by remember { mutableStateOf(isTBAMTeamDataSynced(context, compKey)) }
         
         var exportPopup by remember { mutableStateOf(false) }
 
@@ -100,18 +99,6 @@ actual class MainMenu actual constructor(
 
             createScoutStratDataFolder(context)
             loadStratDataFiles()
-
-            createTabletDataFile(context)
-            // Cannot get robotStartPosition variable in rootnode from FileMaker.kt, so doing some logic here:
-            val gson = Gson()
-            if(gson.fromJson(grabTabletDataFile(), jsonObject::class.java) != gson.fromJson("", jsonObject::class.java)) {
-                if(robotStartPosition.intValue != 8) {
-                    robotStartPosition.intValue = gson.fromJson(grabTabletDataFile(), JsonObject::class.java).get("robotStartPosition").asInt
-                    println("loaded robot start position: ${robotStartPosition.intValue}")
-                }
-            } else {
-                writeTabletDataFile(createTabletDataOutput(0))
-            }
 
             first = false
         }
@@ -203,9 +190,11 @@ actual class MainMenu actual constructor(
                 onClick = {
                     val scope = CoroutineScope(Dispatchers.Default)
                     scope.launch {
-                        sync(true, context)
-                        teamSynced = teamData != null
-                        matchSynced = matchData != null
+                        syncTeams(context)
+                        teamSynced = isTBAMTeamDataSynced(context, compKey)
+                        syncMatches(context)
+                        matchOutOfDate = isTBAMatchDataOld(context, compKey)
+                        matchSynced = isTBAMatchDataSynced(context, compKey)
                     }
 //                    TBAInterface.getTBAData("/event/${compKey}/teams/keys")
                 },
@@ -258,9 +247,9 @@ actual class MainMenu actual constructor(
                         Text("Match List", modifier = Modifier.align(Alignment.CenterStart))
                         
                         Icon(
-                            if (matchSynced) Icons.Rounded.CheckCircleOutline else Icons.Rounded.ErrorOutline,
+                            if (matchSynced) Icons.Rounded.CheckCircleOutline else if (matchOutOfDate) Icons.AutoMirrored.Rounded.HelpOutline else Icons.Rounded.ErrorOutline,
                             contentDescription = "match sync status",
-                            tint = if (matchSynced) Color.Green else Color.Red,
+                            tint = if (matchSynced) Color.Green else if (matchOutOfDate) Color.Yellow else Color.Red,
                             modifier = Modifier
                                 .size(30.dp)
                                 .align(Alignment.CenterEnd)
@@ -277,7 +266,8 @@ actual class MainMenu actual constructor(
                     if (robotStartPosition.value < 6) {
                         val scope = CoroutineScope(Dispatchers.Default)
                         scope.launch {
-                            sync(false, context)
+                            syncTeams(context)
+                            syncMatches(context)
                         }
 
                         createScoutMatchDataFolder(context)
@@ -393,19 +383,16 @@ actual class MainMenu actual constructor(
                                             }
                                             if (robotStartPosition.value < 6) {
                                                 sendMatchData(
-                                                    context = context,
                                                     client = client!!,
                                                 )
                                                 client!!.disconnect()
 
                                             } else if (robotStartPosition.value < 8) {
                                                 sendStratData(
-                                                    context = context,
                                                     client = client!!,
                                                 )
                                             } else {
                                                 sendPitsData(
-                                                    context = context,
                                                     client = client!!,
                                                 )
                                             }
