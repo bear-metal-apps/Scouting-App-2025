@@ -222,6 +222,17 @@ actual fun TeleMenu(
                         .weight(1f)
                         .fillMaxWidth()
                 )
+                EnumerableValue(
+                    label = "Penalty",
+                    value = penalties,
+                    flashColor = Color.Yellow,
+                    backgroundColor = Color.Black,
+                    alignment = Alignment.BottomEnd,
+                    miniMinus = miniMinus.value,
+                    modifier = Modifier
+                        .weight(.5f)
+                        .fillMaxWidth()
+                )
                 CheckBox(
                     label = "Lost Comms",
                     ifChecked = lostComms,

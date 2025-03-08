@@ -199,6 +199,7 @@ val teleLTwoMissed = mutableIntStateOf(0)
 val teleLOneMissed = mutableIntStateOf(0)
 var lostComms = mutableIntStateOf(0)
 var playedDefense = mutableStateOf(false)
+var penalties = mutableIntStateOf(0)
 
 // Endgame
 var park = mutableStateOf(false)
@@ -248,6 +249,7 @@ fun createJson(team: MutableIntState, robotStartPosition: MutableIntState) {
         })
         add("tele", JsonObject().apply {
             addProperty("lost_comms", lostComms.intValue)
+            addProperty("penalties", penalties.intValue)
 //            addProperty("played_defense", playedDefense.value)
             add("algae", JsonObject().apply {
                 addProperty("reef_removed", teleReefAlgaeCollected.value)
@@ -320,6 +322,7 @@ fun createOutput(team: MutableIntState, robotStartPosition: MutableIntState): St
         })
         add("tele", JsonObject().apply {
             addProperty("lost_comms", lostComms.intValue)
+            addProperty("penalties", penalties.intValue)
 //            addProperty("played_defense", playedDefense.value)
             add("algae", JsonObject().apply {
                 addProperty("reef_collected", teleReefAlgaeCollected.value)
@@ -395,6 +398,7 @@ fun loadData(match: Int, team: MutableIntState, robotStartPosition: MutableIntSt
         autoNetScored.intValue = jsonObject.getAsJsonObject("auto").getAsJsonObject("net").get("scored").asInt
         autoNetMissed.intValue = jsonObject.getAsJsonObject("auto").getAsJsonObject("net").get("missed").asInt
         autoStop.intValue = jsonObject.getAsJsonObject("auto").get("stop").asInt
+        penalties.intValue = jsonObject.getAsJsonObject("tele").get("penalties").asInt
         teleNet.intValue = jsonObject.getAsJsonObject("tele").getAsJsonObject("net").get("scored").asInt
         teleNetMissed.intValue = jsonObject.getAsJsonObject("tele").getAsJsonObject("net").get("missed").asInt
         teleLFour.intValue = jsonObject.getAsJsonObject("tele").getAsJsonObject("coral").get("reef_level4").asInt
@@ -458,6 +462,7 @@ fun reset() {
     teleLOneMissed.intValue = 0
     lostComms.intValue = 0
     playedDefense.value = false
+    penalties.intValue = 0
     park.value = false
     deep.value = false
     shallow.value = false
