@@ -14,6 +14,8 @@ import com.bumble.appyx.navigation.node.Node
 import com.bumble.appyx.navigation.node.ParentNode
 import com.bumble.appyx.utils.multiplatform.Parcelable
 import com.bumble.appyx.utils.multiplatform.Parcelize
+import com.google.gson.Gson
+import com.google.gson.JsonObject
 import org.tahomarobotics.scouting.Client
 import pages.MainMenu
 import java.lang.Integer.parseInt
@@ -85,6 +87,15 @@ var scoutName = mutableStateOf("")
 val teamDataArray: HashMap<TeamMatchStartKey, String> = hashMapOf<TeamMatchStartKey, String>()
 var client: Client? = null
 
+
+fun createTabletDataOutput(robotStartPosition : Int) : String {
+    val gson = Gson()
+
+    var jsonObject = JsonObject().apply {
+        addProperty("robotStartPosition", robotStartPosition)
+    }
+    return jsonObject.toString()
+}
 
 /**
  * @return int 0 if string has 0 ints and the first 10 digits of an int

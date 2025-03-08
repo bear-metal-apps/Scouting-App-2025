@@ -3,12 +3,33 @@ package pages
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.BasicAlertDialog
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableIntState
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -21,9 +42,7 @@ import blueAlliance
 import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.components.backstack.operation.push
 import compKey
-import createScoutMatchDataFolder
-import createScoutPitsDataFolder
-import createScoutStratDataFolder
+import createTabletDataFile
 import defaultPrimaryVariant
 import defaultSecondary
 import deleteFile
@@ -31,16 +50,16 @@ import deleteScoutMatchData
 import deleteScoutPitsData
 import deleteScoutStratData
 import getCurrentTheme
-import loadMatchDataFiles
-import loadPitsDataFiles
-import loadStratDataFiles
 import nodes.RootNode
+import nodes.createTabletDataOutput
 import nodes.permPhotosList
 import nodes.pitsReset
 import nodes.reset
 import nodes.stratReset
 import redAlliance
+import writeTabletDataFile
 import java.io.File
+import java.lang.Integer.parseInt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -60,23 +79,7 @@ actual fun LoginMenu(
         "2025waahs",
         "2025pncmp",
         "2025hop"
-
     )
-
-    var first by remember { mutableStateOf(true) }
-
-    if (first) {
-        createScoutMatchDataFolder(context)
-        loadMatchDataFiles(context)
-
-        createScoutPitsDataFolder(context)
-        loadPitsDataFiles(context)
-
-        createScoutStratDataFolder(context)
-        loadStratDataFiles(context)
-
-        first = false
-    }
 
     Column(modifier = Modifier.padding(8.dp)) {
         Text(
@@ -281,6 +284,7 @@ actual fun LoginMenu(
                     DropdownMenuItem(
                         onClick = {
                             robotStartPosition.value = 0
+                            writeTabletDataFile(createTabletDataOutput(0))
                             typeDD = false
                         },
                         text = {
@@ -294,6 +298,7 @@ actual fun LoginMenu(
                     DropdownMenuItem(
                         onClick = {
                             robotStartPosition.value = 1
+                            writeTabletDataFile(createTabletDataOutput(1))
                             typeDD = false
                         },
                         text = {
@@ -307,6 +312,7 @@ actual fun LoginMenu(
                     DropdownMenuItem(
                         onClick = {
                             robotStartPosition.value = 2
+                            writeTabletDataFile(createTabletDataOutput(2))
                             typeDD = false
                         },
                         text = {
@@ -320,6 +326,7 @@ actual fun LoginMenu(
                     DropdownMenuItem(
                         onClick = {
                             robotStartPosition.value = 6
+                            writeTabletDataFile(createTabletDataOutput(6))
                             typeDD = false
                         },
                         text = {
@@ -338,6 +345,7 @@ actual fun LoginMenu(
                     DropdownMenuItem(
                         onClick = {
                             robotStartPosition.value = 3
+                            writeTabletDataFile(createTabletDataOutput(3))
                             typeDD = false
                         },
                         text = {
@@ -351,6 +359,7 @@ actual fun LoginMenu(
                     DropdownMenuItem(
                         onClick = {
                             robotStartPosition.value = 4
+                            writeTabletDataFile(createTabletDataOutput(4))
                             typeDD = false
 
                         },
@@ -365,6 +374,7 @@ actual fun LoginMenu(
                     DropdownMenuItem(
                         onClick = {
                             robotStartPosition.value = 5
+                            writeTabletDataFile(createTabletDataOutput(5))
                             typeDD = false
                         },
                         text = {
@@ -378,6 +388,7 @@ actual fun LoginMenu(
                     DropdownMenuItem(
                         onClick = {
                             robotStartPosition.value = 7
+                            writeTabletDataFile(createTabletDataOutput(7))
                             typeDD = false
                         },
                         text = {

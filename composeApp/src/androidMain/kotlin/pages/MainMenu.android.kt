@@ -29,15 +29,25 @@ import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.components.backstack.operation.push
 import com.bumble.appyx.navigation.modality.BuildContext
 import com.bumble.appyx.navigation.node.Node
+import com.google.gson.Gson
+import com.google.gson.JsonObject
 import createScoutMatchDataFolder
+import createScoutPitsDataFolder
+import createScoutStratDataFolder
+import createTabletDataFile
 import defaultPrimaryVariant
 import defaultSecondary
 import getCurrentTheme
 import getLastSynced
+import grabTabletDataFile
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import loadMatchDataFiles
+import loadPitsDataFiles
+import loadStratDataFiles
+import grabTabletDataFile
 import matchData
 import nodes.*
 import org.jetbrains.compose.resources.ExperimentalResourceApi
@@ -47,6 +57,7 @@ import sendPitsData
 import sendStratData
 import sync
 import teamData
+import writeTabletDataFile
 import java.lang.Integer.parseInt
 
 
@@ -76,6 +87,33 @@ actual class MainMenu actual constructor(
                 isInternetAvailable = isInternetAvailable(context)
                 delay(1000) // Check every second
             }
+        }
+
+        var first by remember { mutableStateOf(true) }
+
+        if (first) {
+            createScoutMatchDataFolder(context)
+            loadMatchDataFiles()
+
+            createScoutPitsDataFolder(context)
+            loadPitsDataFiles()
+
+            createScoutStratDataFolder(context)
+            loadStratDataFiles()
+
+            createTabletDataFile(context)
+            // Cannot get robotStartPosition variable in rootnode from FileMaker.kt, so doing some logic here:
+            val gson = Gson()
+            if(gson.fromJson(grabTabletDataFile(), jsonObject::class.java) != gson.fromJson("", jsonObject::class.java)) {
+                if(robotStartPosition.intValue != 8) {
+                    robotStartPosition.intValue = gson.fromJson(grabTabletDataFile(), JsonObject::class.java).get("robotStartPosition").asInt
+                    println("loaded robot start position: ${robotStartPosition.intValue}")
+                }
+            } else {
+                writeTabletDataFile(createTabletDataOutput(0))
+            }
+
+            first = false
         }
         
         Column(

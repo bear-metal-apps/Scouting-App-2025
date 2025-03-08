@@ -22,6 +22,8 @@ var pitsFolder: File? = null
 
 var imagesFolder: File? = null
 
+var tabletDatafile : File? = null
+
 fun createScoutMatchDataFolder(context: Context) {
     matchFolder = File(context.filesDir, "ScoutMatchDataFolder")
 
@@ -114,25 +116,28 @@ fun createScoutPitsDataFile(context: Context, team: Int, data: String) {
     }
 }
 
-//fun createScoutPitsImageLocationsFile(context: Context, data: String) {
-//    val file = File(imagesFolder, "ImageLocations.json")
-//    file.delete()
-//    file.createNewFile()
-//
-//    file.writeText(data)
-//
-//    file.forEachLine {
-//        try {
-//            println("Saved file ImageLocations.json: $it")
-//        } catch (e: Exception) {
-//            println(e.message)
-//        }
-//    }
-//
-//}
+fun createTabletDataFile(context: Context) {
+    tabletDatafile = File(context.filesDir, "TabletData.json")
+    if(!tabletDatafile!!.exists())
+        tabletDatafile!!.createNewFile()
+}
+
+fun writeTabletDataFile(data: String) {
+    val gson = Gson()
+
+    tabletDatafile!!.writeText(data)
+
+    tabletDatafile!!.forEachLine {
+        try {
+            println("Saved data to TabletData.json: $it")
+        } catch (e: Exception) {
+            println(e.message)
+        }
+    }
+}
 
 
-fun loadMatchDataFiles(context: Context) {
+fun loadMatchDataFiles() {
     val gson = Gson()
 
     println("loading match files...")
@@ -153,7 +158,7 @@ fun loadMatchDataFiles(context: Context) {
     }
 }
 
-fun loadStratDataFiles(context: Context) {
+fun loadStratDataFiles() {
     val gson = Gson()
 
     println("loading strat files...")
@@ -172,7 +177,7 @@ fun loadStratDataFiles(context: Context) {
     }
 }
 
-fun loadPitsDataFiles(context: Context) {
+fun loadPitsDataFiles() {
     val gson = Gson()
 
     println("loading pits files...")
@@ -198,6 +203,16 @@ fun loadPitsDataFiles(context: Context) {
     for ((outerIndex, value) in imagesFolder?.listFiles()?.withIndex()!!) {
         permPhotosList.add(value.path)
         println(permPhotosList[outerIndex])
+    }
+}
+
+fun grabTabletDataFile() : String {
+    val gson = Gson()
+
+    if(tabletDatafile?.exists()!!) {
+        return tabletDatafile?.readText()!!
+    } else {
+        return ""
     }
 }
 
