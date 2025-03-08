@@ -456,6 +456,16 @@ fun isTBAMatchDataOld(context: Context, eventKey: String): Boolean {
     }
 }
 
+fun getTBAMatchDataTimestamp(context: Context, eventKey: String): Long {
+    val file = File(TBAMatchDataFolder, "${eventKey}.json")
+    if (file.exists()) {
+        val json = JSONObject(file.readText())
+        return json.getLong("timestamp")
+    } else {
+        return 0
+    }
+}
+
 //fun openTBATeamData(context: Context, eventKey: String) {
 //    matchData = try {
 //        JSONObject(String(FileInputStream(File(TBATeamDataFolder, "${eventKey}.json")).readBytes()))

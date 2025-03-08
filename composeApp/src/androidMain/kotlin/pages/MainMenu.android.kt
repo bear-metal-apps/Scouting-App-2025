@@ -37,7 +37,7 @@ import createScoutStratDataFolder
 import defaultPrimaryVariant
 import defaultSecondary
 import getCurrentTheme
-import getLastSynced
+import getTBAMatchDataTimestamp
 import isTBAMTeamDataSynced
 import isTBAMatchDataOld
 import isTBAMatchDataSynced
@@ -211,15 +211,7 @@ actual class MainMenu actual constructor(
                             .align(Alignment.CenterHorizontally)
                             .padding(8.dp)
                     )
-
-                    Text(
-                        text = "Last synced ${getLastSynced()}",
-                        fontSize = 12.sp,
-                        modifier = Modifier.align(Alignment.CenterHorizontally)
-                    )
-
-                    Spacer(modifier = Modifier.height(10.dp))
-
+                    
                     Box(
                         Modifier
                             .fillMaxWidth(1f / 2f)
