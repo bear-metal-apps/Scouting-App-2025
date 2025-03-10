@@ -67,7 +67,7 @@ actual fun LoginMenu(
     // Cannot get robotStartPosition variable in rootnode from FileMaker.kt, so doing some logic here:
     val gson = Gson()
     val tabletData = gson.fromJson(grabTabletDataFile(), JsonObject::class.java)
-    if (tabletData != JsonObject()) {
+    if (tabletData != null && tabletData != JsonObject() && tabletData.has("robotStartPosition")) {
         if (robotStartPosition.intValue != 8) {
             robotStartPosition.intValue = tabletData.get("robotStartPosition").asInt
             println("loaded robot start position: ${robotStartPosition.intValue}")
