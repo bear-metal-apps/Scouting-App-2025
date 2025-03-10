@@ -1,19 +1,10 @@
 package pages
 
-//import composables.AutoCheckboxesHorizontal
-//import composables.AutoCheckboxesVertical
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableIntState
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,29 +16,7 @@ import composables.CheckBox
 import composables.EnumerableValue
 import composables.TriStateCheckBox
 import keyboardAsState
-import nodes.AutoTeleSelectorNode
-import nodes.RootNode
-import nodes.TeamMatchStartKey
-import nodes.algaeProcessed
-import nodes.algaeRemoved
-import nodes.autoCoralLevel1Missed
-import nodes.autoCoralLevel1Scored
-import nodes.autoCoralLevel2Missed
-import nodes.autoCoralLevel2Scored
-import nodes.autoCoralLevel3Missed
-import nodes.autoCoralLevel3Scored
-import nodes.autoCoralLevel4Missed
-import nodes.autoCoralLevel4Scored
-import nodes.autoNetMissed
-import nodes.autoNetScored
-import nodes.autoStop
-import nodes.collectCoral
-import nodes.createOutput
-import nodes.groundCollectionAlgae
-import nodes.miniMinus
-import nodes.pageIndex
-import nodes.saveData
-import nodes.teamDataArray
+import nodes.*
 import java.lang.Integer.parseInt
 
 @SuppressLint("UnrememberedMutableState")

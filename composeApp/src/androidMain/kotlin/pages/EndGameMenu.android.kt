@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -31,7 +30,6 @@ import androidx.compose.ui.unit.sp
 import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.components.backstack.operation.pop
 import com.bumble.appyx.components.backstack.operation.push
-import composables.Cage
 import composables.Comments
 import composables.EndGameCheckBox
 import createScoutMatchDataFile
@@ -112,7 +110,7 @@ actual fun EndGameMenu(
                         //Save temp data
                         teamDataArray[TeamMatchStartKey(parseInt(match.value), team.intValue, robotStartPosition.intValue)] = createOutput(team, robotStartPosition)
                         //Save permanent data
-                        createScoutMatchDataFile(context, match.value, team.intValue, createOutput(team, robotStartPosition))
+                        createScoutMatchDataFile(match.value, team.intValue, createOutput(team, robotStartPosition))
                         match.value = (parseInt(match.value) + 1).toString()
                         stringMatch.value = match.value
                         reset()

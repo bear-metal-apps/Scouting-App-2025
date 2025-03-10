@@ -1,5 +1,5 @@
+
 import org.jetbrains.compose.ExperimentalComposeLibrary
-import org.jetbrains.kotlin.psi.psiUtil.canPlaceAfterSimpleNameEntry
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
 plugins {
@@ -37,6 +37,7 @@ kotlin {
             implementation(libs.androidx.activity.compose)
             implementation(libs.androidx.material3)
             implementation(libs.coil.compose)
+            implementation(libs.androidx.material.icons.extended)
         }
 
         desktopMain.dependencies {

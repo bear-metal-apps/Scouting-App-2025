@@ -2,24 +2,16 @@ package composables
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.ImageDecoder
 import android.graphics.ImageDecoder.decodeBitmap
-import android.media.Image
 import android.net.Uri
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.compiler.plugins.kotlin.write
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
-import java.io.BufferedInputStream
 import java.io.ByteArrayOutputStream
 import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
-import java.io.InputStream
 
 var pitsFolder : File = File("Pits")
 
@@ -65,8 +57,4 @@ fun downloadPitsPhotos(
         file.writeBytes(byteArray)
     }
 
-}
-
-fun syncPitsPhotosList(context: Context) {
-//    pitsFolder.list
 }

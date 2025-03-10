@@ -1,17 +1,13 @@
 package pages
 
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Menu
 import androidx.compose.material3.*
@@ -31,18 +27,14 @@ import androidx.core.view.HapticFeedbackConstantsCompat
 import androidx.core.view.ViewCompat
 import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.components.backstack.operation.pop
-import com.bumble.appyx.components.backstack.operation.push
 import createScoutStratDataFile
 import defaultOnPrimary
 import defaultSecondary
 import getCurrentTheme
 import isSynced
-import matchData
 import nodes.*
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
-import teamData
-import java.lang.Integer.parseInt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -196,9 +188,10 @@ actual fun StratMenu(
                             .fillMaxHeight(1f),
                         border = BorderStroke(2.dp, color = Color.Yellow),
                         shape = RectangleShape,
+                        enabled = false,
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = defaultSecondary,
-                            contentColor = defaultOnPrimary
+                            disabledContainerColor = defaultSecondary,
+                            disabledContentColor = defaultOnPrimary
                         ),
                         onClick = { }
                     ) {
@@ -213,7 +206,11 @@ actual fun StratMenu(
                                     if(saveStratData.value && isSynced()) {
                                         stratTeamDataArray[TeamsAllianceKey(stratMatch, isRedAlliance)] = createStratOutput(
                                             stratMatch)
-                                        createScoutStratDataFile(context, stratMatch.toString(), isRedAlliance, createStratOutput(stratMatch))
+                                        createScoutStratDataFile(
+                                            stratMatch.toString(),
+                                            isRedAlliance,
+                                            createStratOutput(stratMatch)
+                                        )
                                     }
 
                                     saveStratData.value = false
@@ -243,9 +240,10 @@ actual fun StratMenu(
                                 .fillMaxHeight(0.5f),
                             border = BorderStroke(2.dp, color = Color.Yellow),
                             shape = RectangleShape,
+                            enabled = false,
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = if (isRedAlliance) Color.Red else Color.Blue,
-                                contentColor = defaultOnPrimary
+                                disabledContainerColor = if (isRedAlliance) Color.Red else Color.Blue,
+                                disabledContentColor = defaultOnPrimary
                             ),
                             onClick = { }
                         ) {
@@ -270,8 +268,10 @@ actual fun StratMenu(
 
                                 if(saveStratData.value && isSynced()) {
                                     stratTeamDataArray[TeamsAllianceKey(stratMatch, isRedAlliance)] = createStratOutput(stratMatch)
-                                    createScoutStratDataFile(context, stratMatch.toString(), isRedAlliance, createStratOutput(
-                                        stratMatch))
+                                    createScoutStratDataFile(
+                                        stratMatch.toString(), isRedAlliance, createStratOutput(
+                                            stratMatch)
+                                    )
                                     backStack.pop()
 
                                     saveStratData.value = false
@@ -329,8 +329,8 @@ actual fun StratMenu(
                 modifier = Modifier
                     .padding(8.dp)
                     .align(Alignment.CenterHorizontally),
-                border = BorderStroke(2.dp, color = Color.Yellow),
-                shape = RoundedCornerShape(100),
+                border = BorderStroke(3.dp, color = Color.Yellow),
+                shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = defaultSecondary,
                     contentColor = defaultOnPrimary
@@ -340,7 +340,7 @@ actual fun StratMenu(
 
                     if(saveStratData.value && isSynced()) {
                         stratTeamDataArray[TeamsAllianceKey(stratMatch, isRedAlliance)] = createStratOutput(stratMatch)
-                        createScoutStratDataFile(context, stratMatch.toString(), isRedAlliance, createStratOutput(stratMatch))
+                        createScoutStratDataFile(stratMatch.toString(), isRedAlliance, createStratOutput(stratMatch))
                         saveStratData.value = false
                         nextMatch()
                         mutableMatchNum = stratMatch
@@ -390,14 +390,18 @@ actual fun StratMenu(
                     onClick = {
                         if(saveStratDataSit.value) {
                             stratTeamDataArray[TeamsAllianceKey(stratMatch, isRedAlliance)] = createStratOutput(stratMatch)
-                            createScoutStratDataFile(context, stratMatch.toString(), isRedAlliance, createStratOutput(
-                                stratMatch))
+                            createScoutStratDataFile(
+                                stratMatch.toString(), isRedAlliance, createStratOutput(
+                                    stratMatch)
+                            )
                             backStack.pop()
                             saveStratData.value = false
                         } else {
                             stratTeamDataArray[TeamsAllianceKey(stratMatch, isRedAlliance)] = createStratOutput(stratMatch)
-                            createScoutStratDataFile(context, stratMatch.toString(), isRedAlliance, createStratOutput(
-                                stratMatch))
+                            createScoutStratDataFile(
+                                stratMatch.toString(), isRedAlliance, createStratOutput(
+                                    stratMatch)
+                            )
                             saveStratData.value = false
                             nextMatch()
                             mutableMatchNum = stratMatch
@@ -493,8 +497,8 @@ fun teamList(
                         shadowElevation = elevation,
                         color = defaultSecondary,
                         contentColor = defaultOnPrimary,
-                        shape = RoundedCornerShape(8.dp),
-                        border = BorderStroke(2.dp, Color.Yellow)
+                        shape = RoundedCornerShape(12.dp),
+                        border = BorderStroke(3.dp, Color.Yellow)
                     ) {
                         Row(
                             modifier = Modifier

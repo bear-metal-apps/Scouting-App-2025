@@ -1,31 +1,29 @@
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.ImageDecoder
-import android.graphics.ImageDecoder.decodeBitmap
-import android.os.Build
 import android.util.Log
-import androidx.annotation.RequiresApi
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import nodes.*
-import org.json.JSONArray
-import org.json.JSONException
 import org.json.JSONObject
 import org.tahomarobotics.scouting.Client
-import org.tahomarobotics.scouting.ComposeFileProvider
-import java.io.*
+import java.io.File
 import java.lang.Integer.parseInt
 
-var matchFolder : File? = null
-var stratFolder : File? = null
+var matchFolder: File? = null
+var stratFolder: File? = null
 var pitsFolder: File? = null
 
+var tbaDataFolder: File? = null
+var TBAMatchDataFolder = File(tbaDataFolder, "MatchData")
+var TBATeamDataFolder = File(tbaDataFolder, "TeamData")
+
 var imagesFolder: File? = null
+
+var tabletDatafile: File? = null
 
 fun createScoutMatchDataFolder(context: Context) {
     matchFolder = File(context.filesDir, "ScoutMatchDataFolder")
 
-    if(!matchFolder!!.exists()) {
+    if (!matchFolder!!.exists()) {
         matchFolder!!.mkdirs()
         println("Made match data folder")
     } else {
@@ -33,10 +31,40 @@ fun createScoutMatchDataFolder(context: Context) {
     }
 }
 
+fun initFileMaker(context: Context) {
+    // Existing folders for scouting data.
+    createScoutMatchDataFolder(context)
+    createScoutStratDataFolder(context)
+    createScoutPitsDataFolder(context)
+
+    // Initialize TBA folders.
+    tbaDataFolder = File(context.filesDir, "TBAData")
+    if (!tbaDataFolder!!.exists()) {
+        tbaDataFolder!!.mkdirs()
+        println("Made tba data folder")
+    } else {
+        println("tba data folder found")
+    }
+    TBAMatchDataFolder = File(tbaDataFolder, "MatchData")
+    if (!TBAMatchDataFolder.exists()) {
+        TBAMatchDataFolder.mkdirs()
+        println("Made match data subfolder")
+    } else {
+        println("Match data subfolder found")
+    }
+    TBATeamDataFolder = File(tbaDataFolder, "TeamData")
+    if (!TBATeamDataFolder.exists()) {
+        TBATeamDataFolder.mkdirs()
+        println("Made team data subfolder")
+    } else {
+        println("Team data subfolder found")
+    }
+}
+
 fun createScoutStratDataFolder(context: Context) {
     stratFolder = File(context.filesDir, "ScoutStratDataFolder")
 
-    if(!stratFolder!!.exists()) {
+    if (!stratFolder!!.exists()) {
         stratFolder!!.mkdirs()
         println("Made strat data folder")
     } else {
@@ -47,7 +75,7 @@ fun createScoutStratDataFolder(context: Context) {
 fun createScoutPitsDataFolder(context: Context) {
     pitsFolder = File(context.filesDir, "ScoutPitsDataFolder")
 
-    if(!pitsFolder!!.exists()) {
+    if (!pitsFolder!!.exists()) {
         pitsFolder!!.mkdirs()
         println("Made pits data folder")
     } else {
@@ -56,7 +84,7 @@ fun createScoutPitsDataFolder(context: Context) {
 
     imagesFolder = File(context.filesDir, "images")
 
-    if(!imagesFolder!!.exists()) {
+    if (!imagesFolder!!.exists()) {
         imagesFolder!!.mkdirs()
         println("Made pits images folder")
     } else {
@@ -66,7 +94,7 @@ fun createScoutPitsDataFolder(context: Context) {
 }
 
 
-fun createScoutMatchDataFile(context: Context, match: String, team: Int, data: String) {
+fun createScoutMatchDataFile(match: String, team: Int, data: String) {
     val file = File(matchFolder, "Match${match}Team${team}.json")
     file.delete()
     file.createNewFile()
@@ -82,8 +110,8 @@ fun createScoutMatchDataFile(context: Context, match: String, team: Int, data: S
     }
 }
 
-fun createScoutStratDataFile(context: Context, match: String, isRed: Boolean, data: String) {
-    val file = File(stratFolder, "Match${match}${if(isRed) "RedAlliance" else "BlueAlliance"}.json")
+fun createScoutStratDataFile(match: String, isRed: Boolean, data: String) {
+    val file = File(stratFolder, "Match${match}${if (isRed) "RedAlliance" else "BlueAlliance"}.json")
     file.delete()
     file.createNewFile()
 
@@ -98,7 +126,7 @@ fun createScoutStratDataFile(context: Context, match: String, isRed: Boolean, da
     }
 }
 
-fun createScoutPitsDataFile(context: Context, team: Int, data: String) {
+fun createScoutPitsDataFile(team: Int, data: String) {
     val file = File(pitsFolder, "Team${team}.json")
     file.delete()
     file.createNewFile()
@@ -114,30 +142,34 @@ fun createScoutPitsDataFile(context: Context, team: Int, data: String) {
     }
 }
 
-//fun createScoutPitsImageLocationsFile(context: Context, data: String) {
-//    val file = File(imagesFolder, "ImageLocations.json")
-//    file.delete()
-//    file.createNewFile()
-//
-//    file.writeText(data)
-//
-//    file.forEachLine {
-//        try {
-//            println("Saved file ImageLocations.json: $it")
-//        } catch (e: Exception) {
-//            println(e.message)
-//        }
-//    }
-//
-//}
+fun createTabletDataFile(context: Context) {
+    tabletDatafile = File(context.filesDir, "TabletData.json")
+    if (!tabletDatafile!!.exists())
+        tabletDatafile!!.createNewFile()
+}
+
+fun writeTabletDataFile(context: Context, data: String) {
+    createTabletDataFile(context = context)
+    val gson = Gson()
+
+    tabletDatafile!!.writeText(data)
+
+    tabletDatafile!!.forEachLine {
+        try {
+            println("Saved data to TabletData.json: $it")
+        } catch (e: Exception) {
+            println(e.message)
+        }
+    }
+}
 
 
-fun loadMatchDataFiles(context: Context) {
+fun loadMatchDataFiles() {
     val gson = Gson()
 
     println("loading match files...")
-    for((index) in (matchFolder?.listFiles()?.withIndex()!!)) {
-        if(gson.fromJson(matchFolder?.listFiles()?.toList()?.get(index)?.readText(), JsonObject::class.java) != null) {
+    for ((index) in (matchFolder?.listFiles()?.withIndex()!!)) {
+        if (gson.fromJson(matchFolder?.listFiles()?.toList()?.get(index)?.readText(), JsonObject::class.java) != null) {
             jsonObject = gson.fromJson(
                 matchFolder?.listFiles()?.toList()?.get(index)?.readText(),
                 JsonObject::class.java
@@ -153,12 +185,12 @@ fun loadMatchDataFiles(context: Context) {
     }
 }
 
-fun loadStratDataFiles(context: Context) {
+fun loadStratDataFiles() {
     val gson = Gson()
 
     println("loading strat files...")
-    for((index) in (stratFolder?.listFiles()?.withIndex()!!)) {
-        if(gson.fromJson(stratFolder?.listFiles()?.toList()?.get(index)?.readText(), JsonObject::class.java) != null) {
+    for ((index) in (stratFolder?.listFiles()?.withIndex()!!)) {
+        if (gson.fromJson(stratFolder?.listFiles()?.toList()?.get(index)?.readText(), JsonObject::class.java) != null) {
             stratJsonObject = gson.fromJson(
                 stratFolder?.listFiles()?.toList()?.get(index)?.readText(), JsonObject::class.java
             )
@@ -172,12 +204,16 @@ fun loadStratDataFiles(context: Context) {
     }
 }
 
-fun loadPitsDataFiles(context: Context) {
+fun loadPitsDataFiles() {
     val gson = Gson()
 
     println("loading pits files...")
-    for((index, value) in (pitsFolder?.listFiles()?.withIndex()!!)) {
-        if(value?.name != "ImagesFolder" && gson.fromJson(pitsFolder?.listFiles()?.toList()?.get(index)?.readText(), JsonObject::class.java) != null) {
+    for ((index, value) in (pitsFolder?.listFiles()?.withIndex()!!)) {
+        if (value?.name != "ImagesFolder" && gson.fromJson(
+                pitsFolder?.listFiles()?.toList()?.get(index)?.readText(),
+                JsonObject::class.java
+            ) != null
+        ) {
             jsonObject = gson.fromJson(
                 pitsFolder?.listFiles()?.toList()?.get(index)?.readText(),
                 JsonObject::class.java
@@ -187,9 +223,11 @@ fun loadPitsDataFiles(context: Context) {
             ] = jsonObject.toString()
 
             println(pitsFolder?.listFiles()?.toList()?.get(index).toString())
-            println(pitsTeamDataArray[
-                jsonObject.get("team").asInt
-            ])
+            println(
+                pitsTeamDataArray[
+                    jsonObject.get("team").asInt
+                ]
+            )
         }
     }
 
@@ -201,15 +239,26 @@ fun loadPitsDataFiles(context: Context) {
     }
 }
 
+fun grabTabletDataFile(): String {
+    val gson = Gson()
+
+    if (tabletDatafile?.exists()!!) {
+        return tabletDatafile?.readText()!!
+    } else {
+        return ""
+    }
+}
+
 
 fun deleteScoutMatchData() {
     repeat(10) {
         try {
-            for((index) in matchFolder?.listFiles()?.withIndex()!!) {
+            for ((index) in matchFolder?.listFiles()?.withIndex()!!) {
                 matchFolder?.listFiles()?.get(index)?.deleteRecursively()
             }
             teamDataArray.clear()
-        } catch (e: IndexOutOfBoundsException) {}
+        } catch (_: IndexOutOfBoundsException) {
+        }
     }
 }
 
@@ -218,209 +267,227 @@ fun deleteScoutPitsData() {
     permPhotosList.clear()
     repeat(10) {
         try {
-            for((index) in pitsFolder?.listFiles()?.withIndex()!!) {
-                if(pitsFolder?.listFiles()?.toList()?.get(index)?.name != "ImagesFolder") {
+            for ((index) in pitsFolder?.listFiles()?.withIndex()!!) {
+                if (pitsFolder?.listFiles()?.toList()?.get(index)?.name != "ImagesFolder") {
                     pitsFolder?.listFiles()?.get(index)?.deleteRecursively()
                 }
             }
-            for((index, value) in imagesFolder?.listFiles()?.withIndex()!!) {
+            for ((_, value) in imagesFolder?.listFiles()?.withIndex()!!) {
                 value.deleteRecursively()
             }
-        } catch (e: IndexOutOfBoundsException) {}
+        } catch (_: IndexOutOfBoundsException) {
+        }
     }
 }
 
 fun deleteScoutStratData() {
     repeat(10) {
         try {
-            for((index) in stratFolder?.listFiles()?.withIndex()!!) {
+            for ((index) in stratFolder?.listFiles()?.withIndex()!!) {
                 stratFolder?.listFiles()?.get(index)?.deleteRecursively()
             }
             stratTeamDataArray.clear()
-        } catch (e: IndexOutOfBoundsException) {}
+        } catch (_: IndexOutOfBoundsException) {
+        }
+    }
+}
+
+object TBAFileManager {
+    fun readJsonFile(file: File, default: JSONObject = JSONObject()): JSONObject {
+        if (!file.exists() || file.length() == 0L) return default
+        return try {
+            JSONObject(file.readText())
+        } catch (e: Exception) {
+            default
+        }
+    }
+
+    fun writeJsonFile(file: File, json: JSONObject) {
+        if (file.exists()) file.delete()
+        file.createNewFile()
+        file.writeText(json.toString(4))
     }
 }
 
 
-fun createFile(context: Context) {
-    val file = File(context.filesDir, "match_data.json")
-    file.delete()
+
+// Private helper functions to centralize JSON file handling.
+private fun readJsonFile(file: File, default: JSONObject = JSONObject()): JSONObject {
+    if (!file.exists() || file.length() == 0L) return default
+    return try {
+        JSONObject(file.readText())
+    } catch (e: Exception) {
+        default
+    }
+}
+
+private fun writeJsonFile(file: File, json: JSONObject) {
+    if (file.exists()) file.delete()
     file.createNewFile()
-    val writer = FileWriter(file)
-
-    matchData?.toString(1)?.let { writer.write(it) }
-    writer.close()
-
-    val teamFile = File(context.filesDir,"team_data.json")
-    teamFile.delete()
-    teamFile.createNewFile()
-    val teamWriter = FileWriter(teamFile)
-
-    teamData?.toString(1)?.let { teamWriter.write(it) }
-    teamWriter.close()
+    file.writeText(json.toString(4))
 }
 
-fun openFile(context: Context) {
-    matchData = try {
-        JSONObject(String(FileInputStream(File(context.filesDir, "match_data.json")).readBytes()))
-    } catch (e: JSONException) {
-        null
+// TBA methods using the new init and JSON helpers.
+fun storeTBAMatchData(eventKey: String, data: JSONObject, eTag: String) {
+    val file = File(TBAMatchDataFolder, "${eventKey}.json")
+    if (!file.exists() || file.length() == 0L) {
+        file.createNewFile()
+        file.writeText("{}")
     }
-    teamData = try {
-        JSONObject(String(FileInputStream(File(context.filesDir, "match_data.json")).readBytes()))
-    } catch (e: JSONException) {
-        null
+    val current = readJsonFile(file)
+    if (current.optString("eTag") != eTag) {
+        data.put("eTag", eTag)
+        data.put("timestamp", System.currentTimeMillis())
+        writeJsonFile(file, data)
+    } else {
+        current.put("timestamp", System.currentTimeMillis())
+        writeJsonFile(file, current)
     }
-    openScoutFile(context)
 }
 
-fun openScoutFile(context: Context) {
-
-    var tempScoutData = JSONObject()
-    try {
-        tempScoutData =
-            JSONObject(String(FileInputStream(File(context.filesDir, "match_scouting_data.json")).readBytes()))
-    } catch (_: JSONException) {
-
-    } catch (_: FileNotFoundException) {
-        return
+fun storeTBATeamData(eventKey: String, data: JSONObject, eTag: String) {
+    val file = File(TBATeamDataFolder, "${eventKey}.json")
+    if (!file.exists() || file.length() == 0L) {
+        file.createNewFile()
+        file.writeText("{}")
     }
-
-    repeat (6) {
-        try {
-            val array = tempScoutData[it.toString()] as JSONArray
-            for (i in 0..<array.length()) {
-//                teamDataArray.putIfAbsent(it, HashMap())
-//                teamDataArray[it]?.set(i, array[i] as String)
-            }
-        } catch (_: JSONException) {}
+    val current = readJsonFile(file)
+    if (current.optString("eTag") != eTag) {
+        data.put("eTag", eTag)
+        data.put("timestamp", System.currentTimeMillis())
+        writeJsonFile(file, data)
+    } else {
+        current.put("timestamp", System.currentTimeMillis())
+        writeJsonFile(file, current)
     }
+}
 
+//fun updateTBAMatchDataTimestamp(context: Context, eventKey: String) {
+//    ensureTBAInitialized(context)
+//    val file = File(TBAMatchDataFolder, "${eventKey}.json")
+//    if (file.exists()) {
+//        val current = readJsonFile(file)
+//        current.put("timestamp", System.currentTimeMillis())
+//        writeJsonFile(file, current)
+//    }
+//}
+fun updateTBAMatchDataTimestamp(eventKey: String) {
+    val file = File(TBAMatchDataFolder, "${eventKey}.json")
+    val current = if (file.exists()) readJsonFile(file) else JSONObject()
+    current.put("timestamp", System.currentTimeMillis())
+    writeJsonFile(file, current)
+}
+
+fun updateTBATeamDataTimestamp(eventKey: String) {
+    val file = File(TBATeamDataFolder, "${eventKey}.json")
+    val current = if (file.exists()) readJsonFile(file) else JSONObject()
+    current.put("timestamp", System.currentTimeMillis())
+    writeJsonFile(file, current)
+}
+
+fun getTBAMatchData(eventKey: String): JSONObject {
+    val file = File(TBAMatchDataFolder, "${eventKey}.json")
+    return readJsonFile(file)
+}
+
+fun getTBATeamData(eventKey: String): JSONObject {
+    val file = File(TBATeamDataFolder, "${eventKey}.json")
+    return readJsonFile(file)
+}
+
+fun getTBATeamDataETag(eventKey: String): String {
+    return getTBATeamData(eventKey).optString("eTag", "")
+}
+
+fun getTBAMatchDataETag(eventKey: String): String {
+    return getTBAMatchData(eventKey).optString("eTag", "")
+}
+
+fun isTBAMTeamDataSynced(eventKey: String): Boolean {
+    val file = File(TBATeamDataFolder, "${eventKey}.json")
+    val json = readJsonFile(file)
+    return file.exists() && ((json.optJSONArray("teams")?.length() ?: 0) > 0)
+}
+
+fun isTBAMatchDataSynced(eventKey: String): Boolean {
+    val file = File(TBAMatchDataFolder, "${eventKey}.json")
+    if (!file.exists() || file.length() == 0L) return false
+    return (readJsonFile(file).optJSONArray("matches")?.length() ?: 0) > 0
+}
+
+fun deleteTBAMatchData(eventKey: String) {
+    val file = File(TBAMatchDataFolder, "${eventKey}.json")
+    if (file.exists()) file.delete()
+}
+
+fun deleteAllTBAMatchData() {
+    TBAMatchDataFolder.listFiles()?.forEach { it.delete() }
+}
+
+fun deleteTBATeamData(eventKey: String) {
+    val file = File(TBATeamDataFolder, "${eventKey}.json")
+    if (file.exists()) file.delete()
+}
+
+fun deleteAllTBATeamData() {
+    TBATeamDataFolder.listFiles()?.forEach { it.delete() }
+}
+
+fun isTBAMatchDataOld(eventKey: String): Boolean {
+    val file = File(TBAMatchDataFolder, "${eventKey}.json")
+    if (file.exists()) {
+        val json = readJsonFile(file)
+        return System.currentTimeMillis() - json.optLong("timestamp", 0L) > 3600000
+    }
+    return false
+}
+
+fun getTBAMatchDataTimestamp(eventKey: String): Long {
+    val file = File(TBAMatchDataFolder, "${eventKey}.json")
+    return if (file.exists()) readJsonFile(file).optLong("timestamp", 0L) else 0L
 }
 
 
-fun exportScoutData(context: Context) {
-
-//    val file = File(context.filesDir, "match_scouting_data.json")
-//    file.delete()
-//    file.createNewFile()
-//    val jsonObject = getJsonFromMatchHash()
-
-//    matchScoutArray.values
-//    val writer = FileWriter(file)
-//    writer.write(jsonObject.toString(1))
-//    writer.close()
-}
-
-
-
-fun deleteFile(context: Context){
-    val file = File(context.filesDir, "match_scouting_data.json")
-    file.delete()
-}
-
-/**
- *@param scoutingType should be "match", "strat", or "pit"
- */
-fun sendMatchData(context: Context, client: Client) {
+fun sendMatchData(client: Client) {
 //    println("reached beginning of sendData")
-    exportScoutData(context) // does nothing
 
     val gson = Gson()
 
-    for((key, value) in teamDataArray.entries) {
+    for ((_, value) in teamDataArray.entries) {
         val jsonObject = gson.fromJson(value, JsonObject::class.java)
 
         client.sendData(jsonObject.toString(), "match")
 
-        Log.i("Client", "Message Sent: ${jsonObject.toString()}")
+        Log.i("Client", "Message Sent: $jsonObject")
     }
 
 }
 
-fun sendStratData(context: Context, client: Client) {
+fun sendStratData(client: Client) {
 //    println("reached beginning of sendData")
-    exportScoutData(context) // does nothing
 
     val gson = Gson()
 
-    for((key, value) in stratTeamDataArray.entries) {
+    for ((_, value) in stratTeamDataArray.entries) {
         val jsonObject = gson.fromJson(value, JsonObject::class.java)
 
         client.sendData(jsonObject.toString(), "strat")
 
-        Log.i("Client", "Message Sent: ${jsonObject.toString()}")
+        Log.i("Client", "Message Sent: $jsonObject")
     }
 
 }
 
-fun sendPitsData(context: Context, client: Client) {
-    exportScoutData(context) // does nothing
+fun sendPitsData(client: Client) {
 
     val gson = Gson()
 
-    for((key, value) in pitsTeamDataArray.entries) {
+    for ((_, value) in pitsTeamDataArray.entries) {
 
         val jsonObject = gson.fromJson(value, JsonObject::class.java)
 
         client.sendData(jsonObject.toString(), "pit")
 
-        Log.i("Client", "Message Sent: ${jsonObject}")
+        Log.i("Client", "Message Sent: $jsonObject")
     }
-
-//    var bitmap: Bitmap? = null
-//
-//    println(permPhotosList.toString())
-//    for((index) in permPhotosList.withIndex()) {
-//        println("reached2")
-//        var file = File(ComposeFileProvider.getImageUri(context, parseInt(jsonObject.get("scoutedTeamNumber").asString), "Team${jsonObject.get("scoutedTeamNumber").asString}Photo${index}").toString())
-////            file.delete()
-////            file = Uri.parse(permPhotosList[index]).toFile()
-//
-//        var bos = ByteArrayOutputStream()
-//
-//        // Assuming you're inside a Composable function
-//        val contentResolver = context.contentResolver
-//        val uri = /*Uri.parse(permPhotosList[index])*/ComposeFileProvider.getImageUri(context, parseInt(jsonObject.get("scoutedTeamNumber").asString), "Team${jsonObject.get("scoutedTeamNumber").asString}Photo${index}")
-//        println(uri.toString())
-//        val bitmap = decodeBitmap(ImageDecoder.createSource(contentResolver, uri))
-//        bitmap.compress(Bitmap.CompressFormat.JPEG,0, bos)
-//
-//        val byteArray = bos.toByteArray()
-//
-//        file.writeBytes(byteArray)
-//
-//        client.sendData(file)
-//        println("Image sent")
-//    }
-
-}
-
-@RequiresApi(Build.VERSION_CODES.O)
-fun sendDataUSB(context: Context, deviceName: String) {
-//    exportScoutData(context)
-//
-//    val jsonObject = getJsonFromMatchHash()
-//    val manager = context.getSystemService(USB_SERVICE) as UsbManager
-//
-//    val deviceList = manager.deviceList
-//
-//    val device = deviceList[deviceName]
-//    val connection = manager.openDevice(device)
-//
-//    val endpoint = device?.getInterface(0)?.getEndpoint(5)
-//    if (endpoint?.direction == USB_DIR_OUT) {
-//        Log.i("USB", "Dir is out")
-//    } else {
-//        Log.i("USB", "Dir is in")
-//        return
-//    }
-//
-//
-//    val request = UsbRequest()
-//    request.initialize(connection, endpoint)
-//
-//    val buffer = ByteBuffer.wrap(jsonObject.toString().encodeToByteArray())
-//
-//    request.queue(buffer)
 }

@@ -14,6 +14,8 @@ import com.bumble.appyx.navigation.node.Node
 import com.bumble.appyx.navigation.node.ParentNode
 import com.bumble.appyx.utils.multiplatform.Parcelable
 import com.bumble.appyx.utils.multiplatform.Parcelize
+import com.google.gson.Gson
+import com.google.gson.JsonObject
 import org.tahomarobotics.scouting.Client
 import pages.MainMenu
 import java.lang.Integer.parseInt
@@ -60,7 +62,7 @@ class RootNode(
 
     override fun resolve(interactionTarget: NavTarget, buildContext: BuildContext): Node =
         when (interactionTarget) {
-            NavTarget.LoginPage -> LoginNode(buildContext, backStack, scoutName, comp, numOfPitsPeople)
+            NavTarget.LoginPage -> LoginNode(buildContext, backStack, comp, robotStartPosition)
             NavTarget.MainMenu -> MainMenu(buildContext, backStack, robotStartPosition, scoutName, comp, team)
             NavTarget.MatchScouting -> AutoTeleSelectorNode(buildContext, robotStartPosition, team, backStack)
             NavTarget.PitsScouting -> PitsNode(buildContext, backStack, pitsPerson, numOfPitsPeople)
@@ -86,13 +88,22 @@ val teamDataArray: HashMap<TeamMatchStartKey, String> = hashMapOf<TeamMatchStart
 var client: Client? = null
 
 
+fun createTabletDataOutput(robotStartPosition : Int) : String {
+    val gson = Gson()
+
+    var jsonObject = JsonObject().apply {
+        addProperty("robotStartPosition", robotStartPosition)
+    }
+    return jsonObject.toString()
+}
+
 /**
  * @return int 0 if string has 0 ints and the first 10 digits of an int
  * @author The coolest GPT lead with red hair during the 2024-2025 season
  * *IMPORTANT* - when using it does NOT remove "/n" so you should set it to be a single line
  */
 fun String.betterParseInt(): Int {
-    var stringBuilder = StringBuilder()
+    val stringBuilder = StringBuilder()
     for (c in this) {
         try {
             parseInt(c.toString())
