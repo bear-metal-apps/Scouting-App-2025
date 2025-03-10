@@ -1,6 +1,5 @@
 package pages
 
-import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
@@ -32,13 +31,11 @@ import getCurrentTheme
 import getTeamsOnAlliance
 import kotlinx.coroutines.delay
 import nodes.*
-import org.jetbrains.compose.resources.load
 import org.json.JSONException
 import setTeam
 import java.lang.Integer.parseInt
 import java.util.*
 
-@SuppressLint("SuspiciousIndentation")
 @RequiresApi(Build.VERSION_CODES.R)
 @Composable
 actual fun MatchMenuTop(
@@ -47,8 +44,7 @@ actual fun MatchMenuTop(
     var positionName by remember { mutableStateOf("") }
     var teamColor by remember { mutableStateOf(Color.Black) }
     val context = LocalContext.current
-    var teamNumAsText by remember { mutableStateOf(team.intValue.toString()) }
-    var pageName = mutableListOf("A", "T", "E")
+    val pageName = mutableListOf("A", "T", "E")
 
     var first by remember { mutableStateOf(true) }
 
@@ -106,8 +102,8 @@ actual fun MatchMenuTop(
 //        tempRobotStart.value -= 3
     }
 
-    if(first) {
-        println ("first")
+    if (first) {
+        println("first")
         try {
             team.intValue =
                 getTeamsOnAlliance(match.value.betterParseInt(), isRedAliance.value)[tempRobotStart.value].number
@@ -117,7 +113,12 @@ actual fun MatchMenuTop(
         stringMatch = remember { mutableStateOf(match.value) }
         stringTeam = remember { mutableStateOf(team.intValue.toString()) }
 
-        if(teamDataArray[TeamMatchStartKey(match.value.betterParseInt(), team.intValue, robotStartPosition.intValue)] == null) {
+        if (teamDataArray[TeamMatchStartKey(
+                match.value.betterParseInt(),
+                team.intValue,
+                robotStartPosition.intValue
+            )] == null
+        ) {
             saveData.value = false
         } else {
             saveData.value = true
@@ -162,9 +163,17 @@ actual fun MatchMenuTop(
             TextField(
                 value = stringTeam.value,
                 onValueChange = { value ->
-                    if(saveData.value) {
-                        teamDataArray[TeamMatchStartKey(parseInt(match.value), team.intValue, robotStartPosition.intValue)] = createOutput(mutableIntStateOf(team.intValue), robotStartPosition)
-                        createScoutMatchDataFile(context, match.value, team.intValue, createOutput(mutableIntStateOf(team.intValue), robotStartPosition))
+                    if (saveData.value) {
+                        teamDataArray[TeamMatchStartKey(
+                            parseInt(match.value),
+                            team.intValue,
+                            robotStartPosition.intValue
+                        )] = createOutput(mutableIntStateOf(team.intValue), robotStartPosition)
+                        createScoutMatchDataFile(
+                            match.value,
+                            team.intValue,
+                            createOutput(mutableIntStateOf(team.intValue), robotStartPosition)
+                        )
                     }
 
                     if (value.isNotEmpty()) {
@@ -175,13 +184,18 @@ actual fun MatchMenuTop(
                     }
                     team.intValue = stringTeam.value.betterParseInt()
 
-                    if(teamDataArray[TeamMatchStartKey(match.value.betterParseInt(), team.intValue, robotStartPosition.intValue)] == null) {
+                    if (teamDataArray[TeamMatchStartKey(
+                            match.value.betterParseInt(),
+                            team.intValue,
+                            robotStartPosition.intValue
+                        )] == null
+                    ) {
                         saveData.value = false
                     } else {
                         saveData.value = true
                     }
 
-                    if(value != "")
+                    if (value != "")
                         loadData(parseInt(match.value), team, robotStartPosition)
 
                 },
@@ -215,9 +229,17 @@ actual fun MatchMenuTop(
             TextField(
                 value = stringMatch.value,
                 onValueChange = { value ->
-                    if(saveData.value) {
-                        teamDataArray[TeamMatchStartKey(parseInt(match.value), team.intValue, robotStartPosition.intValue)] = createOutput(mutableIntStateOf(team.intValue), robotStartPosition)
-                        createScoutMatchDataFile(context, match.value, team.intValue, createOutput(mutableIntStateOf(team.intValue), robotStartPosition))
+                    if (saveData.value) {
+                        teamDataArray[TeamMatchStartKey(
+                            parseInt(match.value),
+                            team.intValue,
+                            robotStartPosition.intValue
+                        )] = createOutput(mutableIntStateOf(team.intValue), robotStartPosition)
+                        createScoutMatchDataFile(
+                            match.value,
+                            team.intValue,
+                            createOutput(mutableIntStateOf(team.intValue), robotStartPosition)
+                        )
                     }
 
                     if (value.isNotEmpty()) {
@@ -238,17 +260,22 @@ actual fun MatchMenuTop(
 
                     println(team.value)
 
-                    if(teamDataArray[TeamMatchStartKey(match.value.betterParseInt(), team.intValue, robotStartPosition.intValue)] == null) {
+                    if (teamDataArray[TeamMatchStartKey(
+                            match.value.betterParseInt(),
+                            team.intValue,
+                            robotStartPosition.intValue
+                        )] == null
+                    ) {
                         saveData.value = false
                     } else {
                         saveData.value = true
                     }
 
-                    if(value != "")
+                    if (value != "")
                         loadData(parseInt(match.value), team, robotStartPosition)
 
                 },
-                modifier = Modifier.fillMaxWidth(1/2f),
+                modifier = Modifier.fillMaxWidth(1 / 2f),
                 colors = TextFieldDefaults.colors(
                     unfocusedContainerColor = getCurrentTheme().background,
                     unfocusedTextColor = getCurrentTheme().onPrimary,
@@ -261,7 +288,13 @@ actual fun MatchMenuTop(
                 color = getCurrentTheme().primaryVariant, thickness = 3.dp
             )
             Box(
-                modifier = Modifier.fillMaxHeight().background(if(pageIndex.value == 0) Color.Green.copy(alpha = 0.5f) else if(pageIndex.value == 1) Color.Yellow.copy(alpha = 0.5f) else Color.Red.copy(alpha = 0.5f))
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .background(
+                        if (pageIndex.value == 0) Color.Green.copy(alpha = 0.5f) else if (pageIndex.value == 1) Color.Yellow.copy(
+                            alpha = 0.5f
+                        ) else Color.Red.copy(alpha = 0.5f)
+                    )
             ) {
                 Text(
                     text = pageName[pageIndex.value],
@@ -290,13 +323,13 @@ actual fun MatchMenuBottom(
     var backgroundColor = remember { mutableStateOf(Color.Black) }
     var textColor = remember { mutableStateOf(Color.White) }
 
-    var teleFlash = if(totalAutoCoralAttempts.intValue > 3 && pageIndex.intValue == 0) true else false
+    var teleFlash = totalAutoCoralAttempts.intValue > 3 && pageIndex.intValue == 0
     var teleColor = remember { mutableStateOf(getCurrentTheme().secondary) }
     var teleTextColor = remember { mutableStateOf(Color.Yellow) }
 
-    totalAutoCoralAttempts.intValue = autoCoralLevel4Scored.intValue+ autoCoralLevel3Scored.intValue+
-            autoCoralLevel2Scored.intValue+ autoCoralLevel1Scored.intValue+ autoCoralLevel4Missed.intValue+
-            autoCoralLevel3Missed.intValue+ autoCoralLevel2Missed.intValue+ autoCoralLevel1Missed.intValue
+    totalAutoCoralAttempts.intValue = autoCoralLevel4Scored.intValue + autoCoralLevel3Scored.intValue +
+            autoCoralLevel2Scored.intValue + autoCoralLevel1Scored.intValue + autoCoralLevel4Missed.intValue +
+            autoCoralLevel3Missed.intValue + autoCoralLevel2Missed.intValue + autoCoralLevel1Missed.intValue
 
     LaunchedEffect(teleFlash) {
         while (teleFlash) {
@@ -459,7 +492,13 @@ actual fun MatchMenuBottom(
             modifier = Modifier.fillMaxWidth(1 / 4f)
         ) {
             Text(
-                text = "Auto", color = if (pageIndex.value == 0) Color.White else if(pageIndex.value != 1) Color.Yellow else Color(122, 122, 0), fontSize = 23.sp
+                text = "Auto",
+                color = if (pageIndex.value == 0) Color.White else if (pageIndex.value != 1) Color.Yellow else Color(
+                    122,
+                    122,
+                    0
+                ),
+                fontSize = 23.sp
             )
         }
         OutlinedButton(
@@ -481,8 +520,9 @@ actual fun MatchMenuBottom(
             modifier = Modifier.fillMaxWidth(1 / 3f)
         ) {
             Text(
-                text = "Tele", color = if (nodes.pageIndex.intValue == 1 && !teleFlash) Color.White else if (!teleFlash) Color.Yellow else teleTextColor.value,
-                        fontSize = 23.sp
+                text = "Tele",
+                color = if (nodes.pageIndex.intValue == 1 && !teleFlash) Color.White else if (!teleFlash) Color.Yellow else teleTextColor.value,
+                fontSize = 23.sp
             )
         }
         OutlinedButton(
@@ -504,7 +544,13 @@ actual fun MatchMenuBottom(
             modifier = Modifier.fillMaxWidth(8 / 16f)
         ) {
             Text(
-                text = "End", color = if (pageIndex.value == 2) Color.White else if(pageIndex.value != 0) Color.Yellow else Color(122, 122, 0), fontSize = 23.sp
+                text = "End",
+                color = if (pageIndex.value == 2) Color.White else if (pageIndex.value != 0) Color.Yellow else Color(
+                    122,
+                    122,
+                    0
+                ),
+                fontSize = 23.sp
             )
         }
 
