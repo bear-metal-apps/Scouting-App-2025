@@ -254,24 +254,26 @@ actual class MainMenu actual constructor(
                 shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
                 onClick = {
-                    if (robotStartPosition.value < 6) {
-                        val scope = CoroutineScope(Dispatchers.Default)
-                        scope.launch {
-                            syncTeams(context)
-                            syncMatches(context)
+                    if (scoutName.value != "") {
+                        if (robotStartPosition.value < 6) {
+                            val scope = CoroutineScope(Dispatchers.Default)
+                            scope.launch {
+                                syncTeams(context)
+                                syncMatches(context)
+                            }
+
+                            createScoutMatchDataFolder(context)
+
+                            loadData(parseInt(match.value), team, robotStartPosition)
+                            backStack.push(RootNode.NavTarget.MatchScouting)
+                        } else if (robotStartPosition.value < 8) {
+                            val redAlliance = robotStartPosition.value == 6
+                            setContext(redAlliance)
+                            backStack.push(RootNode.NavTarget.StratScreen)
+                            loadStratData(stratMatch, redAlliance)
+                        } else {
+                            backStack.push(RootNode.NavTarget.PitsScouting)
                         }
-
-                        createScoutMatchDataFolder(context)
-
-                        loadData(parseInt(match.value), team, robotStartPosition)
-                        backStack.push(RootNode.NavTarget.MatchScouting)
-                    } else if (robotStartPosition.value < 8) {
-                        val redAlliance = robotStartPosition.value == 6
-                        setContext(redAlliance)
-                        backStack.push(RootNode.NavTarget.StratScreen)
-                        loadStratData(stratMatch, redAlliance)
-                    } else {
-                        backStack.push(RootNode.NavTarget.PitsScouting)
                     }
                 },
                 modifier = Modifier
