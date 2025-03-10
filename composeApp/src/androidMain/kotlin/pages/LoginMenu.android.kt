@@ -33,6 +33,7 @@ import deleteScoutPitsData
 import deleteScoutStratData
 import getCurrentTheme
 import grabTabletDataFile
+import initFileMaker
 import nodes.RootNode
 import nodes.createTabletDataOutput
 import nodes.permPhotosList
@@ -50,11 +51,14 @@ actual fun LoginMenu(
     comp: MutableState<String>,
     robotStartPosition: MutableIntState
 ) {
+    val context = LocalContext.current
+    
+    initFileMaker(context)
+    
     val logo = File("Logo.png")
     var compDD by remember { mutableStateOf(false) }
     var typeDD by remember { mutableStateOf(false) }
     var deleteData by remember { mutableStateOf(false) }
-    val context = LocalContext.current
     val tbaMatches = listOf(
         "2025wasno",
         "2025wabon",
@@ -511,8 +515,8 @@ actual fun LoginMenu(
                                     reset()
                                     stratReset()
                                     pitsReset()
-                                    deleteAllTBAMatchData(context)
-                                    deleteAllTBATeamData(context)
+                                    deleteAllTBAMatchData()
+                                    deleteAllTBATeamData()
                                     deleteScoutMatchData()
                                     deleteScoutStratData()
                                     deleteScoutPitsData()

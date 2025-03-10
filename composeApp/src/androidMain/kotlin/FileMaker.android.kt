@@ -31,6 +31,36 @@ fun createScoutMatchDataFolder(context: Context) {
     }
 }
 
+fun initFileMaker(context: Context) {
+    // Existing folders for scouting data.
+    createScoutMatchDataFolder(context)
+    createScoutStratDataFolder(context)
+    createScoutPitsDataFolder(context)
+
+    // Initialize TBA folders.
+    tbaDataFolder = File(context.filesDir, "TBAData")
+    if (!tbaDataFolder!!.exists()) {
+        tbaDataFolder!!.mkdirs()
+        println("Made tba data folder")
+    } else {
+        println("tba data folder found")
+    }
+    TBAMatchDataFolder = File(tbaDataFolder, "MatchData")
+    if (!TBAMatchDataFolder.exists()) {
+        TBAMatchDataFolder.mkdirs()
+        println("Made match data subfolder")
+    } else {
+        println("Match data subfolder found")
+    }
+    TBATeamDataFolder = File(tbaDataFolder, "TeamData")
+    if (!TBATeamDataFolder.exists()) {
+        TBATeamDataFolder.mkdirs()
+        println("Made team data subfolder")
+    } else {
+        println("Team data subfolder found")
+    }
+}
+
 fun createScoutStratDataFolder(context: Context) {
     stratFolder = File(context.filesDir, "ScoutStratDataFolder")
 
@@ -262,225 +292,161 @@ fun deleteScoutStratData() {
     }
 }
 
-fun setupTBAFolders(context: Context) {
-    println("Setting up TBA folders")
-    tbaDataFolder = File(context.filesDir, "TBAData")
-
-    if (!tbaDataFolder!!.exists()) {
-        tbaDataFolder!!.mkdirs()
-        println("Made tba data folder")
-    } else {
-        println("tba data folder found")
+object TBAFileManager {
+    fun readJsonFile(file: File, default: JSONObject = JSONObject()): JSONObject {
+        if (!file.exists() || file.length() == 0L) return default
+        return try {
+            JSONObject(file.readText())
+        } catch (e: Exception) {
+            default
+        }
     }
 
-    TBAMatchDataFolder = File(tbaDataFolder, "MatchData")
-    TBATeamDataFolder = File(tbaDataFolder, "TeamData")
-
-    if (!TBAMatchDataFolder.exists()) {
-        TBAMatchDataFolder.mkdirs()
-        println("Made match data subfolder")
-    } else {
-        println("Match data subfolder found")
-    }
-
-    if (!TBATeamDataFolder.exists()) {
-        TBATeamDataFolder.mkdirs()
-        println("Made team data subfolder")
-    } else {
-        println("Team data subfolder found")
+    fun writeJsonFile(file: File, json: JSONObject) {
+        if (file.exists()) file.delete()
+        file.createNewFile()
+        file.writeText(json.toString(4))
     }
 }
 
-fun storeTBAMatchData(context: Context, eventKey: String, data: JSONObject, eTag: String) {
-    setupTBAFolders(context)
-    val file = File(TBAMatchDataFolder, "${eventKey}.json")
 
-    file.createNewFile()
-    if (!(file.exists() && file.length() > 0)) {
-        file.writeText("{ }")
+
+// Private helper functions to centralize JSON file handling.
+private fun readJsonFile(file: File, default: JSONObject = JSONObject()): JSONObject {
+    if (!file.exists() || file.length() == 0L) return default
+    return try {
+        JSONObject(file.readText())
+    } catch (e: Exception) {
+        default
     }
-    val oldJson = JSONObject(file.readText())
+}
 
-    if (oldJson.optString("eTag") != eTag) {
+private fun writeJsonFile(file: File, json: JSONObject) {
+    if (file.exists()) file.delete()
+    file.createNewFile()
+    file.writeText(json.toString(4))
+}
+
+// TBA methods using the new init and JSON helpers.
+fun storeTBAMatchData(eventKey: String, data: JSONObject, eTag: String) {
+    val file = File(TBAMatchDataFolder, "${eventKey}.json")
+    if (!file.exists() || file.length() == 0L) {
+        file.createNewFile()
+        file.writeText("{}")
+    }
+    val current = readJsonFile(file)
+    if (current.optString("eTag") != eTag) {
         data.put("eTag", eTag)
         data.put("timestamp", System.currentTimeMillis())
-
-        file.delete()
-        file.createNewFile()
-
-        file.writeText(data.toString(4))
+        writeJsonFile(file, data)
     } else {
-        oldJson.put("timestamp", System.currentTimeMillis())
-
-        file.delete()
-        file.createNewFile()
-
-        file.writeText(oldJson.toString(4))
+        current.put("timestamp", System.currentTimeMillis())
+        writeJsonFile(file, current)
     }
 }
 
-fun storeTBATeamData(context: Context, eventKey: String, data: JSONObject, eTag: String) {
-    setupTBAFolders(context)
+fun storeTBATeamData(eventKey: String, data: JSONObject, eTag: String) {
     val file = File(TBATeamDataFolder, "${eventKey}.json")
-
-    file.createNewFile()
-    if (!(file.exists() && file.length() > 0)) {
-        file.writeText("{ }")
+    if (!file.exists() || file.length() == 0L) {
+        file.createNewFile()
+        file.writeText("{}")
     }
-    val oldJson = JSONObject(file.readText())
-
-    if (oldJson.optString("eTag") != eTag) {
+    val current = readJsonFile(file)
+    if (current.optString("eTag") != eTag) {
         data.put("eTag", eTag)
         data.put("timestamp", System.currentTimeMillis())
-
-        file.delete()
-        file.createNewFile()
-
-        file.writeText(data.toString(4))
+        writeJsonFile(file, data)
     } else {
-        oldJson.put("timestamp", System.currentTimeMillis())
-
-        file.delete()
-        file.createNewFile()
-
-        file.writeText(oldJson.toString(4))
+        current.put("timestamp", System.currentTimeMillis())
+        writeJsonFile(file, current)
     }
 }
 
-fun updateTBAMatchDataTimestamp(context: Context, eventKey: String) {
-    setupTBAFolders(context)
-    val file = File(TBAMatchDataFolder, "${eventKey}.json")
-    if (file.exists()) {
-        val oldJson = JSONObject(file.readText())
-        oldJson.put("timestamp", System.currentTimeMillis())
-
-        file.delete()
-        file.createNewFile()
-
-        file.writeText(oldJson.toString(4))
-    }
-}
-
-fun updateTBATeamDataTimestamp(context: Context, eventKey: String) {
-    setupTBAFolders(context)
-    val file = File(TBATeamDataFolder, "${eventKey}.json")
-    if (file.exists()) {
-        val oldJson = JSONObject(file.readText())
-        oldJson.put("timestamp", System.currentTimeMillis())
-
-        file.delete()
-        file.createNewFile()
-
-        file.writeText(oldJson.toString(4))
-    }
-}
-
-fun getTBAMatchData(): JSONObject {
-    val file = File(TBAMatchDataFolder, "${compKey}.json")
-    return if (file.exists()) {
-        JSONObject(file.readText())
-    } else {
-        JSONObject()
-    }
-}
-
-fun getTBATeamData(): JSONObject {
-    val file = File(TBATeamDataFolder, "${compKey}.json")
-    return if (file.exists()) {
-        JSONObject(file.readText())
-    } else {
-        JSONObject()
-    }
-}
-
-fun getTBATeamDataETag(context: Context, eventKey: String): String {
-    val data = getTBATeamData()
-    return if (data.has("eTag")) {
-        data.getString("eTag")
-    } else {
-        ""
-    }
-}
-
-fun getTBAMatchDataETag(context: Context, eventKey: String): String {
-    val data = getTBAMatchData()
-    return if (data.has("eTag")) {
-        data.getString("eTag")
-    } else {
-        ""
-    }
-}
-
-fun isTBAMTeamDataSynced(context: Context, eventKey: String): Boolean {
-    setupTBAFolders(context)
-    val file = File(TBATeamDataFolder, "${eventKey}.json")
-    return file.exists() && JSONObject(file.readText()).getJSONArray("teams").length() > 0
-}
-
-fun isTBAMatchDataSynced(context: Context, eventKey: String): Boolean {
-    setupTBAFolders(context)
-    val file = File(TBAMatchDataFolder, "${eventKey}.json")
-    return file.exists() && JSONObject(file.readText()).getJSONArray("matches").length() > 0
-}
-
-fun deleteTBAMatchData(context: Context, eventKey: String) {
-    val file = File(TBAMatchDataFolder, "${eventKey}.json")
-    file.delete()
-}
-
-fun deleteAllTBAMatchData(context: Context) {
-    for (file in TBAMatchDataFolder.listFiles()!!) {
-        file.delete()
-    }
-}
-
-fun deleteTBATeamData(context: Context, eventKey: String) {
-    val file = File(TBATeamDataFolder, "${eventKey}.json")
-    file.delete()
-}
-
-fun deleteAllTBATeamData(context: Context) {
-    for (file in TBATeamDataFolder.listFiles()!!) {
-        file.delete()
-    }
-}
-
-fun isTBAMatchDataOld(context: Context, eventKey: String): Boolean {
-    val file = File(TBAMatchDataFolder, "${eventKey}.json")
-    if (file.exists()) {
-        val json = JSONObject(file.readText())
-
-        return System.currentTimeMillis() - json.getLong("timestamp") > 3600000
-    } else {
-        return false
-    }
-}
-
-fun getTBAMatchDataTimestamp(context: Context, eventKey: String): Long {
-    val file = File(TBAMatchDataFolder, "${eventKey}.json")
-    if (file.exists()) {
-        val json = JSONObject(file.readText())
-        return json.getLong("timestamp")
-    } else {
-        return 0
-    }
-}
-
-//fun openTBATeamData(context: Context, eventKey: String) {
-//    matchData = try {
-//        JSONObject(String(FileInputStream(File(TBATeamDataFolder, "${eventKey}.json")).readBytes()))
-//    } catch (e: JSONException) {
-//        null
+//fun updateTBAMatchDataTimestamp(context: Context, eventKey: String) {
+//    ensureTBAInitialized(context)
+//    val file = File(TBAMatchDataFolder, "${eventKey}.json")
+//    if (file.exists()) {
+//        val current = readJsonFile(file)
+//        current.put("timestamp", System.currentTimeMillis())
+//        writeJsonFile(file, current)
 //    }
 //}
+fun updateTBAMatchDataTimestamp(eventKey: String) {
+    val file = File(TBAMatchDataFolder, "${eventKey}.json")
+    val current = if (file.exists()) readJsonFile(file) else JSONObject()
+    current.put("timestamp", System.currentTimeMillis())
+    writeJsonFile(file, current)
+}
 
-//fun openTBAMatchData(context: Context, eventKey: String) {
-//    teamData = try {
-//        JSONObject(String(FileInputStream(File(TBAMatchDataFolder, "${eventKey}.json")).readBytes()))
-//    } catch (e: JSONException) {
-//        null
-//    }
-//}
+fun updateTBATeamDataTimestamp(eventKey: String) {
+    val file = File(TBATeamDataFolder, "${eventKey}.json")
+    val current = if (file.exists()) readJsonFile(file) else JSONObject()
+    current.put("timestamp", System.currentTimeMillis())
+    writeJsonFile(file, current)
+}
+
+fun getTBAMatchData(eventKey: String): JSONObject {
+    val file = File(TBAMatchDataFolder, "${eventKey}.json")
+    return readJsonFile(file)
+}
+
+fun getTBATeamData(eventKey: String): JSONObject {
+    val file = File(TBATeamDataFolder, "${eventKey}.json")
+    return readJsonFile(file)
+}
+
+fun getTBATeamDataETag(eventKey: String): String {
+    return getTBATeamData(eventKey).optString("eTag", "")
+}
+
+fun getTBAMatchDataETag(eventKey: String): String {
+    return getTBAMatchData(eventKey).optString("eTag", "")
+}
+
+fun isTBAMTeamDataSynced(eventKey: String): Boolean {
+    val file = File(TBATeamDataFolder, "${eventKey}.json")
+    val json = readJsonFile(file)
+    return file.exists() && ((json.optJSONArray("teams")?.length() ?: 0) > 0)
+}
+
+fun isTBAMatchDataSynced(eventKey: String): Boolean {
+    val file = File(TBAMatchDataFolder, "${eventKey}.json")
+    if (!file.exists() || file.length() == 0L) return false
+    return (readJsonFile(file).optJSONArray("matches")?.length() ?: 0) > 0
+}
+
+fun deleteTBAMatchData(eventKey: String) {
+    val file = File(TBAMatchDataFolder, "${eventKey}.json")
+    if (file.exists()) file.delete()
+}
+
+fun deleteAllTBAMatchData() {
+    TBAMatchDataFolder.listFiles()?.forEach { it.delete() }
+}
+
+fun deleteTBATeamData(eventKey: String) {
+    val file = File(TBATeamDataFolder, "${eventKey}.json")
+    if (file.exists()) file.delete()
+}
+
+fun deleteAllTBATeamData() {
+    TBATeamDataFolder.listFiles()?.forEach { it.delete() }
+}
+
+fun isTBAMatchDataOld(eventKey: String): Boolean {
+    val file = File(TBAMatchDataFolder, "${eventKey}.json")
+    if (file.exists()) {
+        val json = readJsonFile(file)
+        return System.currentTimeMillis() - json.optLong("timestamp", 0L) > 3600000
+    }
+    return false
+}
+
+fun getTBAMatchDataTimestamp(eventKey: String): Long {
+    val file = File(TBAMatchDataFolder, "${eventKey}.json")
+    return if (file.exists()) readJsonFile(file).optLong("timestamp", 0L) else 0L
+}
+
 
 fun sendMatchData(client: Client) {
 //    println("reached beginning of sendData")

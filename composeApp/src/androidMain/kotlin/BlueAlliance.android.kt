@@ -12,16 +12,16 @@ import org.tahomarobotics.scouting.TBAInterface
 import java.lang.Integer.parseInt
 
 actual val teamData: JSONObject?
-    get() = getTBATeamData()
+    get() = getTBATeamData(compKey)
 actual val matchData: JSONObject?
-    get() = getTBAMatchData()
+    get() = getTBAMatchData(compKey)
 
 suspend fun syncTeams(context: Context): Boolean {
     var teamSuccessful = false
     val scope = CoroutineScope(Dispatchers.Default)
     val job = scope.launch {
         val response = TBAInterface.getTBAResponse(
-            "/event/$compKey/teams/simple", getTBATeamDataETag(context, compKey)
+            "/event/$compKey/teams/simple", getTBATeamDataETag(compKey)
         )
 
         if (response != null) {
@@ -29,7 +29,6 @@ suspend fun syncTeams(context: Context): Boolean {
                 200 -> {
                     println("Fetching new team data")
                     storeTBATeamData(
-                        context,
                         compKey,
                         JSONObject().put("teams", JSONArray(response.body?.string() ?: "[]")),
                         response.header("ETag") ?: ""
@@ -38,7 +37,7 @@ suspend fun syncTeams(context: Context): Boolean {
                 }
 
                 304 -> {
-                    updateTBATeamDataTimestamp(context, compKey)
+                    updateTBATeamDataTimestamp(compKey)
                     teamSuccessful = true
                     println("Used cached team data")
                 }
@@ -57,7 +56,7 @@ suspend fun syncMatches(context: Context): Boolean {
     val scope = CoroutineScope(Dispatchers.Default)
     val job = scope.launch {
         val response = TBAInterface.getTBAResponse(
-            "/event/$compKey/matches", getTBAMatchDataETag(context, compKey)
+            "/event/$compKey/matches", getTBAMatchDataETag(compKey)
         )
 
         if (response != null) {
@@ -65,7 +64,6 @@ suspend fun syncMatches(context: Context): Boolean {
                 200 -> {
                     println("Fetching new match data")
                     storeTBAMatchData(
-                        context,
                         compKey,
                         JSONObject().put("matches", JSONArray(response.body?.string() ?: "[]")),
                         response.header("ETag") ?: ""
@@ -74,7 +72,7 @@ suspend fun syncMatches(context: Context): Boolean {
                 }
 
                 304 -> {
-                    updateTBAMatchDataTimestamp(context, compKey)
+                    updateTBAMatchDataTimestamp(compKey)
                     matchSuccessful = true
                     println("Used cached match data")
                 }
@@ -92,7 +90,7 @@ actual fun setTeam(
     teamNum: MutableIntState, match: MutableState<String>, robotStartPosition: Int
 ) {
     // Retrieve match data via the new FileMaker method.
-    val matchData = getTBAMatchData()
+    val matchData = getTBAMatchData(compKey)
     if (!matchData.has("matches")) {
         return
     }
@@ -128,7 +126,7 @@ actual fun setTeam(
 actual fun getTeamsOnAlliance(matchNumber: Int, isRedAlliance: Boolean): List<Team> {
     val teams = mutableListOf<Team>()
     // Retrieve match data via the new FileMaker method.
-    val matchData = getTBAMatchData() ?: return teams
+    val matchData = getTBAMatchData(compKey)
     if (!matchData.has("matches")) {
         return teams
     }
@@ -149,7 +147,7 @@ actual fun getTeamsOnAlliance(matchNumber: Int, isRedAlliance: Boolean): List<Te
             val teamKey = alliance.getString(j)
             val teamNumber = teamKey.substring(3).toInt()
             // Retrieve team nickname via the new FileMaker team data method.
-            val nickname = getTBATeamData()?.let { teamData ->
+            val nickname = getTBATeamData(compKey).let { teamData ->
                 val teamsArray = teamData.getJSONArray("teams")
                 (0 until teamsArray.length()).map { index ->
                     teamsArray.getJSONObject(index)

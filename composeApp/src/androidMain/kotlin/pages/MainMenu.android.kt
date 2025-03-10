@@ -37,7 +37,6 @@ import createScoutStratDataFolder
 import defaultPrimaryVariant
 import defaultSecondary
 import getCurrentTheme
-import getTBAMatchDataTimestamp
 import isTBAMTeamDataSynced
 import isTBAMatchDataOld
 import isTBAMatchDataSynced
@@ -74,9 +73,9 @@ actual class MainMenu actual constructor(
         val context = LocalContext.current
         val activity = context as ComponentActivity
         
-        var matchSynced by remember { mutableStateOf(isTBAMatchDataSynced(context, compKey)) }
-        var matchOutOfDate by remember { mutableStateOf(isTBAMatchDataOld(context, compKey)) }
-        var teamSynced by remember { mutableStateOf(isTBAMTeamDataSynced(context, compKey)) }
+        var matchSynced by remember { mutableStateOf(isTBAMatchDataSynced(compKey)) }
+        var matchOutOfDate by remember { mutableStateOf(isTBAMatchDataOld(compKey)) }
+        var teamSynced by remember { mutableStateOf(isTBAMTeamDataSynced(compKey)) }
         
         var exportPopup by remember { mutableStateOf(false) }
 
@@ -191,10 +190,10 @@ actual class MainMenu actual constructor(
                     val scope = CoroutineScope(Dispatchers.Default)
                     scope.launch {
                         syncTeams(context)
-                        teamSynced = isTBAMTeamDataSynced(context, compKey)
+                        teamSynced = isTBAMTeamDataSynced(compKey)
                         syncMatches(context)
-                        matchOutOfDate = isTBAMatchDataOld(context, compKey)
-                        matchSynced = isTBAMatchDataSynced(context, compKey)
+                        matchOutOfDate = isTBAMatchDataOld(compKey)
+                        matchSynced = isTBAMatchDataSynced(compKey)
                     }
 //                    TBAInterface.getTBAData("/event/${compKey}/teams/keys")
                 },
