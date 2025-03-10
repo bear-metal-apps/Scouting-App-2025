@@ -116,7 +116,7 @@ class AutoTeleSelectorNode(
     }
 }
 
-class TeamMatchStartKey(
+data class TeamMatchStartKey(
     var match: Int,
     var team: Int,
     var robotStartPosition: Int

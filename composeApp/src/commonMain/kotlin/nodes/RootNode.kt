@@ -82,7 +82,8 @@ class RootNode(
 
 var numOfPitsPeople = mutableIntStateOf(1234567890)
 var scoutName = mutableStateOf("")
-val teamDataArray: HashMap<TeamMatchStartKey, String> = hashMapOf<TeamMatchStartKey, String>()
+//val teamDataArray: HashMap<TeamMatchStartKey, String> = hashMapOf()
+val teamDataArray: HashMap<String, HashMap<TeamMatchStartKey, String>> = hashMapOf()
 var client: Client? = null
 
 
