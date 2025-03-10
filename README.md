@@ -15,6 +15,8 @@ Bear Metal has been working diligently on the Bear Metal Scouting App, Scouting 
 
 **The app is made to be run on Android devices only.** The app changes from year to year to reflect the First Robotics Competition game for each year.
 
+Please note that the Bear Metal Scouting App, Koala, and the Bear Metal Scouting Server is being continuously developed throughout the season by Bear Metal's General Programming Team, and will receieve frequent updates. If you are actively using the Bear Metal Scouting System to collect, transfer, and manage data for your FRC team, it is highly recommended to update/pull from the Bear Metal Scouting App, Koala, and the Bear Metal Scouting Server before each competition.
+
 The Bear Metal Scouting App contains 3 ways of collecting data about teams and alliances: Match Scouting, Strategy Scouting, and Pits Scouting.
 ### Match Scouting
 Bear Metal's Match Scouting collects data on the quantitative match-based data of teams, such as amount of coral scored at each level, algae processed, etc. Match Scouting contains 3 pages that are identical to the 3 stages of the Reefscape game: Auto, Tele, and Endgame.
@@ -38,11 +40,10 @@ The Bear Metal Scouting Server is an application that processes and visualizes t
 
 ## Features to be Implemented
 Below are the features that are not currently in the Bear Metal Scouting App, but will be committed and pushed to this repository ASAP.
+
 ### Transfering Images from App to Server
 Transfering the images teams can take in the Pits Scouting page of the app cannot be sent to the server. Once this feature has been implemented, teams will be able to transfer their images through Koala just as they can with all other data. However, the transfer of all other Pits Scouting data can be transfered from the Bear Metal Scouting App to the Scouting Server.
 
-### The Blue Alliance Data Syncing with Match Scouting
-Data from www.thebluealliance.com is not able to be downloaded directly from the website to the Match Scouting section of the app. When this feature is pushed, teams' numbers will be synced directly to the Scouting Server, removing the need to manually type in team numbers into the Scouting App. However, currently teams are able to manually type in team numbers into the app. Additionally, syncing data from The Blue Alliance works with the Strategy Scouting section of the Bear Metal Scouting App.
 
 ## Additional Information
 
