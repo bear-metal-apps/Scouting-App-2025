@@ -5,7 +5,10 @@ package composables
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.OutlinedButton
@@ -22,8 +25,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import compKey
 import createScoutMatchDataFile
-import exportScoutData
 import getCurrentTheme
+import nodes.*
 import nodes.TeamMatchStartKey
 import nodes.betterParseInt
 import nodes.createOutput
@@ -31,6 +34,7 @@ import nodes.match
 import nodes.saveData
 import nodes.saveDataPopup
 import nodes.teamDataArray
+import nodes.teleFlash
 import java.lang.Integer.parseInt
 
 @Composable
@@ -58,11 +62,12 @@ actual fun MainMenuAlertDialog(active: MutableState<Boolean>, bob: () -> Unit, t
                             active.value = false
 
                             teamDataArray.get(compKey)?.get(match.value.betterParseInt())?.set(robotStartPosition, createOutput(mutableIntStateOf(team), mutableIntStateOf(robotStartPosition)))
-                            createScoutMatchDataFile(context, match.value, team, createOutput(mutableIntStateOf(team), mutableIntStateOf(robotStartPosition))) // permanent save
+                            createScoutMatchDataFile(match.value, team, createOutput(mutableIntStateOf(team), mutableIntStateOf(robotStartPosition))) // permanent save
 
                             bob.invoke()
-                            exportScoutData(context) // Does nothing
                         }
+
+                        teleFlash.value = false
 
                     },
                     border = BorderStroke(2.dp, getCurrentTheme().secondaryVariant),

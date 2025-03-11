@@ -9,7 +9,6 @@ import nodes.RootNode
 @Composable
 expect fun LoginMenu(
     backStack: BackStack<RootNode.NavTarget>,
-    scoutName: MutableState<String>,
     comp: MutableState<String>,
-    numOfPitsPeople: MutableIntState,
+    robotStartPosition: MutableIntState
 )

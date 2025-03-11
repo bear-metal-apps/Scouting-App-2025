@@ -1,6 +1,5 @@
 package pages
 
-import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
@@ -9,6 +8,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.Redo
+import androidx.compose.material.icons.automirrored.rounded.Undo
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -26,7 +28,6 @@ import com.bumble.appyx.components.backstack.operation.pop
 import com.bumble.appyx.components.backstack.operation.push
 import compKey
 import createScoutMatchDataFile
-import exportScoutData
 import getCurrentTheme
 import getTeamsOnAlliance
 import kotlinx.coroutines.delay
@@ -38,19 +39,15 @@ import setTeam
 import java.lang.Integer.parseInt
 import java.util.*
 
-@SuppressLint("SuspiciousIndentation")
 @RequiresApi(Build.VERSION_CODES.R)
 @Composable
 actual fun MatchMenuTop(
-    match: MutableState<String>,
-    team: MutableIntState,
-    robotStartPosition: MutableIntState
+    match: MutableState<String>, team: MutableIntState, robotStartPosition: MutableIntState
 ) {
     var positionName by remember { mutableStateOf("") }
     var teamColor by remember { mutableStateOf(Color.Black) }
     val context = LocalContext.current
-    var teamNumAsText by remember { mutableStateOf(team.intValue.toString()) }
-    var pageName = mutableListOf("A","T","E")
+    val pageName = mutableListOf("A", "T", "E")
 
     var first by remember { mutableStateOf(true) }
 
@@ -101,18 +98,20 @@ actual fun MatchMenuTop(
         }
     }
 //    tempRobotStart = robotStartPosition
-    if (positionName == "R1" || positionName == "R2" || positionName == "R3"){
+    if (positionName == "R1" || positionName == "R2" || positionName == "R3") {
         isRedAliance.value = true
-    }else{
+    } else {
         isRedAliance.value = false
 //        tempRobotStart.value -= 3
     }
 
-    if(first) {
+    if (first) {
         println("first")
-        try{
-            team.intValue = getTeamsOnAlliance(match.value.betterParseInt(), isRedAliance.value)[tempRobotStart.value].number
-        }catch (e: Exception){}
+        try {
+            team.intValue =
+                getTeamsOnAlliance(match.value.betterParseInt(), isRedAliance.value)[tempRobotStart.value].number
+        } catch (_: Exception) {
+        }
 
         stringMatch = remember { mutableStateOf(match.value) }
         stringTeam = remember { mutableStateOf(team.intValue.toString()) }
@@ -156,8 +155,7 @@ actual fun MatchMenuTop(
             }
 
             VerticalDivider(
-                color = getCurrentTheme().primaryVariant,
-                thickness = 3.dp
+                color = getCurrentTheme().primaryVariant, thickness = 3.dp
             )
 
             TextField(
@@ -168,7 +166,7 @@ actual fun MatchMenuTop(
                         createScoutMatchDataFile(context, match.value, team.intValue, createOutput(mutableIntStateOf(team.intValue), robotStartPosition))
                     }
 
-                    if(value.isNotEmpty()) {
+                    if (value.isNotEmpty()) {
                         val filteredText = value.filter { it.isDigit() }
                         stringTeam.value = filteredText.slice(0..<filteredText.length.coerceAtMost(5))
                     } else {
@@ -182,7 +180,7 @@ actual fun MatchMenuTop(
                         saveData.value = true
                     }
 
-                    if(value != "")
+                    if (value != "")
                         loadData(parseInt(match.value), team, robotStartPosition)
 
                 },
@@ -202,8 +200,7 @@ actual fun MatchMenuTop(
             )
 
             VerticalDivider(
-                color = getCurrentTheme().primaryVariant,
-                thickness = 3.dp
+                color = getCurrentTheme().primaryVariant, thickness = 3.dp
             )
 
             Text(
@@ -219,10 +216,10 @@ actual fun MatchMenuTop(
                 onValueChange = { value ->
                     if(saveData.value) {
                         teamDataArray.get(compKey)?.get(match.value.betterParseInt())?.set(robotStartPosition.intValue, createOutput(mutableIntStateOf(team.intValue), robotStartPosition))
-                        createScoutMatchDataFile(context, match.value, team.intValue, createOutput(mutableIntStateOf(team.intValue), robotStartPosition))
+                        createScoutMatchDataFile(match.value, team.intValue, createOutput(mutableIntStateOf(team.intValue), robotStartPosition))
                     }
 
-                    if(value.isNotEmpty()) {
+                    if (value.isNotEmpty()) {
                         val filteredText = value.filter { it.isDigit() }
                         stringMatch.value = filteredText.slice(0..<filteredText.length.coerceAtMost(5))
                     } else {
@@ -246,27 +243,30 @@ actual fun MatchMenuTop(
                         saveData.value = true
                     }
 
-                    if(value != "")
+                    if (value != "")
                         loadData(parseInt(match.value), team, robotStartPosition)
 
                 },
-                modifier = Modifier.fillMaxWidth(1/2f),
+                modifier = Modifier.fillMaxWidth(1 / 2f),
                 colors = TextFieldDefaults.colors(
                     unfocusedContainerColor = getCurrentTheme().background,
                     unfocusedTextColor = getCurrentTheme().onPrimary,
                     focusedContainerColor = getCurrentTheme().background,
                     focusedTextColor = getCurrentTheme().onPrimary,
                     cursorColor = getCurrentTheme().onSecondary
-                ),
-                singleLine = true,
-                textStyle = TextStyle.Default.copy(fontSize = 28.sp)
+                ), singleLine = true, textStyle = TextStyle.Default.copy(fontSize = 28.sp)
             )
             VerticalDivider(
-                color = getCurrentTheme().primaryVariant,
-                thickness = 3.dp
+                color = getCurrentTheme().primaryVariant, thickness = 3.dp
             )
             Box(
-                modifier = Modifier.fillMaxHeight().background(if(pageIndex.value == 0) Color.Green.copy(alpha = 0.5f) else if(pageIndex.value == 1) Color.Yellow.copy(alpha = 0.5f) else Color.Red.copy(alpha = 0.5f))
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .background(
+                        if (pageIndex.value == 0) Color.Green.copy(alpha = 0.5f) else if (pageIndex.value == 1) Color.Yellow.copy(
+                            alpha = 0.5f
+                        ) else Color.Red.copy(alpha = 0.5f)
+                    )
             ) {
                 Text(
                     text = pageName[pageIndex.value],
@@ -282,15 +282,6 @@ actual fun MatchMenuTop(
 }
 
 
-
-
-
-
-
-
-
-
-
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 actual fun MatchMenuBottom(
@@ -304,16 +295,24 @@ actual fun MatchMenuBottom(
     var backgroundColor = remember { mutableStateOf(Color.Black) }
     var textColor = remember { mutableStateOf(Color.White) }
 
-    var teleFlash = if(totalAutoCoralAttempts.intValue > 3 && pageIndex.intValue == 0) true else false
+    var startTimer = if(totalAutoCoralAttempts.intValue > 0 && pageIndex.intValue == 0) true else false
     var teleColor = remember { mutableStateOf(getCurrentTheme().secondary) }
     var teleTextColor = remember { mutableStateOf(Color.Yellow) }
 
-    totalAutoCoralAttempts.intValue = autoCoralLevel4Scored.intValue+ autoCoralLevel3Scored.intValue+
-            autoCoralLevel2Scored.intValue+ autoCoralLevel1Scored.intValue+ autoCoralLevel4Missed.intValue+
-            autoCoralLevel3Missed.intValue+ autoCoralLevel2Missed.intValue+ autoCoralLevel1Missed.intValue
+    totalAutoCoralAttempts.intValue = autoCoralLevel4Scored.intValue + autoCoralLevel3Scored.intValue +
+            autoCoralLevel2Scored.intValue + autoCoralLevel1Scored.intValue + autoCoralLevel4Missed.intValue +
+            autoCoralLevel3Missed.intValue + autoCoralLevel2Missed.intValue + autoCoralLevel1Missed.intValue
 
-    LaunchedEffect(teleFlash) {
-        while (teleFlash) {
+    LaunchedEffect(startTimer) {
+        while (startTimer) {
+            delay(15000)
+            teleFlash.value = true
+            startTimer = false
+        }
+    }
+
+    LaunchedEffect(teleFlash.value) {
+        while (teleFlash.value) {
             teleColor.value = Color.Green.copy(alpha = 0.8f)
             teleTextColor.value = Color.White
             delay(200)
@@ -325,16 +324,18 @@ actual fun MatchMenuBottom(
 
     val context = LocalContext.current
 
-    fun getColors(state: ToggleableState) = when(state){
-        ToggleableState.On ->{
+    fun getColors(state: ToggleableState) = when (state) {
+        ToggleableState.On -> {
             backgroundColor.value = Color(0, 204, 102)
             textColor.value = Color.White
         }
+
         ToggleableState.Indeterminate -> {
             backgroundColor.value = Color.Yellow
             textColor.value = Color.Black
         }
-        ToggleableState.Off ->{
+
+        ToggleableState.Off -> {
             backgroundColor.value = Color.Black
             textColor.value = Color.White
         }
@@ -345,109 +346,108 @@ actual fun MatchMenuBottom(
         ToggleableState.Indeterminate -> ToggleableState.Off
         ToggleableState.On -> ToggleableState.Indeterminate
     }
+
     fun getOldState(state: ToggleableState) = when (state) {
         ToggleableState.Off -> ToggleableState.Indeterminate
         ToggleableState.Indeterminate -> ToggleableState.On
         ToggleableState.On -> ToggleableState.Off
     }
     Row(Modifier.fillMaxWidth()) {
-        Row(modifier = Modifier.fillMaxWidth(2 / 8f)){
-        OutlinedButton(
-            border = BorderStroke(1.dp, color = Color.Yellow),
-            shape = RoundedCornerShape(1.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = getCurrentTheme().secondary),
-            onClick = {
-                val action: Array<Any> = try {
-                    undoList.pop()
-                } catch (e: EmptyStackException) {
-                    arrayOf("empty")
-                }
-                when ((action[0] as String).lowercase()) {
-                    "number" -> {
-                        (action[1] as MutableIntState).value = action[2] as Int
-                        redoList.push(arrayOf(action[0], action[1], action[2] as Int + 1))
+        Row(modifier = Modifier.fillMaxWidth(2 / 8f)) {
+            OutlinedButton(
+                border = BorderStroke(1.dp, color = Color.Yellow),
+                shape = RoundedCornerShape(1.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = getCurrentTheme().secondary),
+                onClick = {
+                    val action: Array<Any> = try {
+                        undoList.pop()
+                    } catch (e: EmptyStackException) {
+                        arrayOf("empty")
                     }
+                    when ((action[0] as String).lowercase()) {
+                        "number" -> {
+                            (action[1] as MutableIntState).value = action[2] as Int
+                            redoList.push(arrayOf(action[0], action[1], action[2] as Int + 1))
+                        }
 
-                    "tristate" -> {
-                        (action[1] as MutableState<ToggleableState>).value = action[2] as ToggleableState
-                        (action[3] as MutableState<Color>).value = action[4] as Color
-                        (action[5] as MutableState<Color>).value = action[6] as Color
-                        redoList.push(
-                            arrayOf(
-                                action[0],
-                                action[1],
-                                getNewState((action[1] as MutableState<ToggleableState>).value),
-                                action[3],
-                                action[4],
-                                action[5],
-                                action[6]
+                        "tristate" -> {
+                            (action[1] as MutableState<ToggleableState>).value = action[2] as ToggleableState
+                            (action[3] as MutableState<Color>).value = action[4] as Color
+                            (action[5] as MutableState<Color>).value = action[6] as Color
+                            redoList.push(
+                                arrayOf(
+                                    action[0],
+                                    action[1],
+                                    getNewState((action[1] as MutableState<ToggleableState>).value),
+                                    action[3],
+                                    action[4],
+                                    action[5],
+                                    action[6]
+                                )
                             )
-                        )
+                        }
                     }
-                }
 
                 if(saveData.value) {
                     teamDataArray.get(compKey)?.get(match.value.betterParseInt())?.set(robotStartPosition.intValue, createOutput(team, robotStartPosition))
                 }
 
-            },
-            modifier = Modifier.fillMaxWidth(1 / 2f)
-        ) {
-            Text(
-                "U",
-                color = Color.Yellow,
-                fontSize = 23.sp
-            )
-        }
-        OutlinedButton(
-            border = BorderStroke(1.dp, color = Color.Yellow),
-            shape = RoundedCornerShape(1.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = getCurrentTheme().secondary),
-            onClick = {
-                val action: Array<Any> = try {
-                    redoList.pop()
-                } catch (e: EmptyStackException) {
-                    arrayOf("empty")
-                }
-                when ((action[0] as String).lowercase()) {
-                    "number" -> {
-                        (action[1] as MutableIntState).value = action[2] as Int
-                        undoList.push(arrayOf(action[0], action[1], action[2] as Int - 1))
+                },
+                modifier = Modifier.fillMaxWidth(1 / 2f)
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Rounded.Undo, contentDescription = "Undo",
+                    tint = Color.Yellow, modifier = Modifier.size(23.dp)
+                )
+            }
+            OutlinedButton(
+                border = BorderStroke(1.dp, color = Color.Yellow),
+                shape = RoundedCornerShape(1.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = getCurrentTheme().secondary),
+                onClick = {
+                    val action: Array<Any> = try {
+                        redoList.pop()
+                    } catch (e: EmptyStackException) {
+                        arrayOf("empty")
                     }
+                    when ((action[0] as String).lowercase()) {
+                        "number" -> {
+                            (action[1] as MutableIntState).value = action[2] as Int
+                            undoList.push(arrayOf(action[0], action[1], action[2] as Int - 1))
+                        }
 
-                    "tristate" -> {
-                        var temp = getOldState((action[1] as MutableState<ToggleableState>).value)
-                        getColors(temp)
-                        undoList.push(
-                            arrayOf(
-                                "tristate",
-                                action[1],
-                                temp,
-                                action[3],
-                                backgroundColor.value,
-                                action[5],
-                                textColor.value
+                        "tristate" -> {
+                            var temp = getOldState((action[1] as MutableState<ToggleableState>).value)
+                            getColors(temp)
+                            undoList.push(
+                                arrayOf(
+                                    "tristate",
+                                    action[1],
+                                    temp,
+                                    action[3],
+                                    backgroundColor.value,
+                                    action[5],
+                                    textColor.value
+                                )
                             )
-                        )
-                        (action[3] as MutableState<Color>).value = backgroundColor.value
-                        (action[5] as MutableState<Color>).value = textColor.value
+                            (action[3] as MutableState<Color>).value = backgroundColor.value
+                            (action[5] as MutableState<Color>).value = textColor.value
 
+                        }
                     }
-                }
 
                 if(saveData.value) {
                     teamDataArray.get(compKey)?.get(match.value.betterParseInt())?.set(robotStartPosition.intValue, createOutput(team, robotStartPosition))                }
 
-            },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(
-                "R",
-                color = Color.Yellow,
-                fontSize = 23.sp
-            )
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Rounded.Redo, contentDescription = "Redo",
+                    tint = Color.Yellow, modifier = Modifier.size(23.dp)
+                )
+            }
         }
-    }
         OutlinedButton(
             border = BorderStroke(1.dp, color = Color.Yellow),
             shape = RoundedCornerShape(1.dp),
@@ -465,7 +465,11 @@ actual fun MatchMenuBottom(
         ) {
             Text(
                 text = "Auto",
-                color = if (pageIndex.value == 0) Color.White else if(pageIndex.value != 1) Color.Yellow else Color(122, 122, 0),
+                color = if (pageIndex.value == 0) Color.White else if (pageIndex.value != 1) Color.Yellow else Color(
+                    122,
+                    122,
+                    0
+                ),
                 fontSize = 23.sp
             )
         }
@@ -473,20 +477,20 @@ actual fun MatchMenuBottom(
             border = BorderStroke(1.dp, color = Color.Yellow),
             shape = RoundedCornerShape(1.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = if (nodes.pageIndex.intValue == 1 && !teleFlash) Color.Yellow.copy(alpha = 0.5f) else if (!teleFlash) getCurrentTheme().secondary else teleColor.value
+                containerColor = if (nodes.pageIndex.intValue == 1 && !teleFlash.value) Color.Yellow.copy(alpha = 0.5f) else if (!teleFlash.value) getCurrentTheme().secondary else teleColor.value
             ),
             onClick = {
-                teleFlash = false
+                teleFlash.value = false
                 backStack.push(AutoTeleSelectorNode.NavTarget.TeleScouting)
                 pageIndex.value = 1
                 if(saveData.value) {
                     teamDataArray.get(compKey)?.get(match.value.betterParseInt())?.set(robotStartPosition.intValue, createOutput(team, robotStartPosition))                }
             },
-            modifier = Modifier.fillMaxWidth(1/3f)
+            modifier = Modifier.fillMaxWidth(1 / 3f)
         ) {
             Text(
                 text = "Tele",
-                color = if (nodes.pageIndex.intValue == 1 && !teleFlash) Color.White else if (!teleFlash) Color.Yellow else teleTextColor.value,
+                color = if (nodes.pageIndex.intValue == 1 && !teleFlash.value) Color.White else if (!teleFlash.value) Color.Yellow else teleTextColor.value,
                         fontSize = 23.sp
             )
         }
@@ -503,11 +507,15 @@ actual fun MatchMenuBottom(
                 if(saveData.value) {
                     teamDataArray.get(compKey)?.get(match.value.betterParseInt())?.set(robotStartPosition.intValue, createOutput(team, robotStartPosition))                }
             },
-            modifier = Modifier.fillMaxWidth(8/16f)
+            modifier = Modifier.fillMaxWidth(8 / 16f)
         ) {
             Text(
                 text = "End",
-                color = if (pageIndex.value == 2) Color.White else if(pageIndex.value != 0) Color.Yellow else Color(122, 122, 0),
+                color = if (pageIndex.value == 2) Color.White else if (pageIndex.value != 0) Color.Yellow else Color(
+                    122,
+                    122,
+                    0
+                ),
                 fontSize = 23.sp
             )
         }
@@ -523,29 +531,28 @@ actual fun MatchMenuBottom(
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(
-                text = "Main",
-                maxLines = 1,
-                color = Color.Yellow,
-                fontSize = 23.sp
+                text = "Main", maxLines = 1, color = Color.Yellow, fontSize = 23.sp
             )
         }
     }
 
-    if(saveDataPopup.value) {
+    if (saveDataPopup.value) {
         BasicAlertDialog(
-            onDismissRequest = { saveDataPopup.value = false },
-            modifier = Modifier
+            onDismissRequest = { saveDataPopup.value = false }, modifier = Modifier
                 .clip(
                     RoundedCornerShape(5.dp)
                 )
                 .border(BorderStroke(3.dp, getCurrentTheme().primaryVariant), RoundedCornerShape(5.dp))
                 .background(getCurrentTheme().secondary)
         ) {
-            Box(modifier = Modifier
-                .fillMaxWidth(8f / 10f)
-                .padding(5.dp)
-                .fillMaxHeight(1 / 8f)) {
-                Text(text = "Save data for team ${team.intValue}, match ${match.value}?",
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(8f / 10f)
+                    .padding(5.dp)
+                    .fillMaxHeight(1 / 8f)
+            ) {
+                Text(
+                    text = "Save data for team ${team.intValue}, match ${match.value}?",
                     modifier = Modifier
                         .padding(5.dp)
                         .align(Alignment.TopCenter)
@@ -554,22 +561,25 @@ actual fun MatchMenuBottom(
                     onClick = {
                         if(saveDataSit.value) {
                             teamDataArray.get(compKey)?.get(match.value.betterParseInt())?.set(robotStartPosition.intValue, createOutput(team, robotStartPosition))
-                            createScoutMatchDataFile(context, match.value, team.intValue, createOutput(team, robotStartPosition))
+                            createScoutMatchDataFile(match.value, team.intValue, createOutput(team, robotStartPosition))
                             println(teamDataArray)
                             mainMenuBackStack.pop()
 
                             saveData.value = true
                         } else {
                             teamDataArray.get(compKey)?.get(match.value.betterParseInt())?.set(robotStartPosition.intValue, createOutput(team, robotStartPosition))
-                            createScoutMatchDataFile(context, match.value, team.intValue, createOutput(team, robotStartPosition))
+                            createScoutMatchDataFile(match.value, team.intValue, createOutput(team, robotStartPosition))
                             match.value = (parseInt(match.value) + 1).toString()
                             stringMatch.value = match.value
                             reset()
                             backStack.push(AutoTeleSelectorNode.NavTarget.AutoScouting)
 
-                            try{
-                                team.intValue = getTeamsOnAlliance(match.value.betterParseInt(), isRedAliance.value)[tempRobotStart.value].number
-                            }catch (e: Exception){}
+                            try {
+                                team.intValue = getTeamsOnAlliance(
+                                    match.value.betterParseInt(), isRedAliance.value
+                                )[tempRobotStart.value].number
+                            } catch (_: Exception) {
+                            }
                             stringTeam.value = team.intValue.toString()
 
                             loadData(parseInt(match.value), team, robotStartPosition)
@@ -577,16 +587,19 @@ actual fun MatchMenuBottom(
                             saveData.value = false
                         }
                         saveDataPopup.value = false
+                        teleFlash.value = false
                     },
                     border = BorderStroke(2.dp, getCurrentTheme().secondaryVariant),
-                    colors = androidx.compose.material.ButtonDefaults.outlinedButtonColors(backgroundColor = getCurrentTheme().secondary, contentColor = getCurrentTheme().onSecondary),
+                    colors = androidx.compose.material.ButtonDefaults.outlinedButtonColors(
+                        backgroundColor = getCurrentTheme().secondary, contentColor = getCurrentTheme().onSecondary
+                    ),
                     modifier = Modifier.align(Alignment.BottomStart)
                 ) {
                     Text(text = "Yes", color = getCurrentTheme().error)
                 }
                 androidx.compose.material.OutlinedButton(
                     onClick = {
-                        if(saveDataSit.value) {
+                        if (saveDataSit.value) {
                             println(teamDataArray)
                             mainMenuBackStack.pop()
                         } else {
@@ -595,9 +608,12 @@ actual fun MatchMenuBottom(
                             reset()
                             backStack.push(AutoTeleSelectorNode.NavTarget.AutoScouting)
 
-                            try{
-                                team.intValue = getTeamsOnAlliance(match.value.betterParseInt(), isRedAliance.value)[tempRobotStart.value].number
-                            }catch (e: Exception){}
+                            try {
+                                team.intValue = getTeamsOnAlliance(
+                                    match.value.betterParseInt(), isRedAliance.value
+                                )[tempRobotStart.value].number
+                            } catch (e: Exception) {
+                            }
                             stringTeam.value = team.intValue.toString()
 
                             loadData(parseInt(match.value), team, robotStartPosition)
@@ -605,9 +621,12 @@ actual fun MatchMenuBottom(
                         }
                         saveDataPopup.value = false
                         saveData.value = false
+                        teleFlash.value = false
                     },
                     border = BorderStroke(2.dp, getCurrentTheme().secondaryVariant),
-                    colors = androidx.compose.material.ButtonDefaults.outlinedButtonColors(backgroundColor = getCurrentTheme().secondary, contentColor = getCurrentTheme().onSecondary),
+                    colors = androidx.compose.material.ButtonDefaults.outlinedButtonColors(
+                        backgroundColor = getCurrentTheme().secondary, contentColor = getCurrentTheme().onSecondary
+                    ),
                     modifier = Modifier.align(Alignment.BottomEnd)
                 ) {
                     Text(text = "No", color = getCurrentTheme().error)
@@ -621,6 +640,7 @@ actual fun MatchMenuBottom(
 //    }
 
 }
-var tempRobotStart : MutableState<Int> = mutableStateOf(0)
+
+var tempRobotStart: MutableState<Int> = mutableStateOf(0)
 var isRedAliance = mutableStateOf(false)
-var teams = getTeamsOnAlliance(match.value.betterParseInt(),isRedAliance.value)
+var teams = getTeamsOnAlliance(match.value.betterParseInt(), isRedAliance.value)

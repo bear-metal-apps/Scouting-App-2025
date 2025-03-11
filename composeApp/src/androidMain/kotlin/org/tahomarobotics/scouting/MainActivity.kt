@@ -9,11 +9,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.ExperimentalUnitApi
-import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsControllerCompat
 import com.bumble.appyx.navigation.integration.NodeActivity
 import com.bumble.appyx.navigation.integration.NodeHost
 import com.bumble.appyx.navigation.platform.AndroidLifecycle
@@ -26,27 +22,23 @@ import defaultPrimary
 import defaultSecondary
 import defaultSurface
 import nodes.RootNode
-import openScoutFile
 
 @ExperimentalUnitApi
 @ExperimentalAnimationApi
 @ExperimentalComposeUiApi
 class MainActivity : NodeActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        supportActionBar?.hide()
+        
         setContent {
-
-            openScoutFile(LocalContext.current)
-
             MaterialTheme(
                 colorScheme = defaultScheme
             ) {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colorScheme.background) {
                     NodeHost(
-                        lifecycle = AndroidLifecycle(LocalLifecycleOwner.current.lifecycle),
+                        lifecycle = AndroidLifecycle(androidx.lifecycle.compose.LocalLifecycleOwner.current.lifecycle),
                         integrationPoint = appyxV2IntegrationPoint,
                     ) {
                         RootNode(

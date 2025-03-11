@@ -10,20 +10,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
-import com.bumble.appyx.components.backstack.operation.push
 import com.bumble.appyx.navigation.integration.DesktopNodeHost
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.setMain
 import nodes.RootNode
 
 
 @OptIn(ExperimentalCoroutinesApi::class)
 fun main() = application {
-    val mainThreadSurrogate:CoroutineDispatcher = Dispatchers.Default
+    val mainThreadSurrogate: CoroutineDispatcher = Dispatchers.Default
     Dispatchers.setMain(mainThreadSurrogate)
 
     val events: Channel<Events> = Channel()

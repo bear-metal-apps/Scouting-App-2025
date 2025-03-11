@@ -1,49 +1,62 @@
 package pages
 
+//import androidx.compose.material.*
 import android.content.Context
-import android.hardware.usb.UsbManager
-import android.util.Log
+import android.content.Intent
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.provider.Settings
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.HelpOutline
+import androidx.compose.material.icons.rounded.CheckCircleOutline
+import androidx.compose.material.icons.rounded.ChevronLeft
+import androidx.compose.material.icons.rounded.ErrorOutline
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-//import androidx.compose.material.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
+import androidx.core.content.ContextCompat.startActivity
 import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.components.backstack.operation.push
 import com.bumble.appyx.navigation.modality.BuildContext
 import com.bumble.appyx.navigation.node.Node
 import compKey
 import createScoutMatchDataFolder
+import createScoutPitsDataFolder
+import createScoutStratDataFolder
+import defaultPrimaryVariant
 import defaultSecondary
 import getCurrentTheme
-import getLastSynced
+import isTBAMTeamDataSynced
+import isTBAMatchDataOld
+import isTBAMatchDataSynced
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import matchData
+import loadMatchDataFiles
+import loadPitsDataFiles
+import loadStratDataFiles
 import nodes.*
 import org.jetbrains.compose.resources.ExperimentalResourceApi
-import org.jetbrains.compose.resources.painterResource
 import org.tahomarobotics.scouting.Client
-import org.tahomarobotics.scouting.TBAInterface
-import sendDataUSB
 import sendMatchData
 import sendPitsData
 import sendStratData
-import setTeam
-import sync
-import teamData
+import syncMatches
+import syncTeams
 import java.lang.Integer.parseInt
+
 
 actual class MainMenu actual constructor(
     buildContext: BuildContext,
@@ -58,327 +71,157 @@ actual class MainMenu actual constructor(
     @Composable
     actual override fun View(modifier: Modifier) {
         val context = LocalContext.current
-        var selectedPlacement by remember { mutableStateOf(false) }
-        var matchSyncedResource by remember { mutableStateOf(if (matchData == null) "crossmark.png" else "checkmark.png") }
-        var teamSyncedResource by remember { mutableStateOf(if (teamData == null) "crossmark.png" else "checkmark.png") }
-        var serverDialogOpen by remember { mutableStateOf(false) }
-
-        var ipAddressErrorDialog by remember { mutableStateOf(false) }
-        var deviceListOpen by remember { mutableStateOf(false) }
-        val manager = context.getSystemService(Context.USB_SERVICE) as UsbManager
-
-        var setEventCode by remember { mutableStateOf(false) }
-        var tempCompKey by remember { mutableStateOf(compKey) }
-
-        val deviceList = manager.deviceList
-
+        val activity = context as ComponentActivity
+        
+        var matchSynced by remember { mutableStateOf(isTBAMatchDataSynced(compKey)) }
+        var matchOutOfDate by remember { mutableStateOf(isTBAMatchDataOld(compKey)) }
+        var teamSynced by remember { mutableStateOf(isTBAMTeamDataSynced(compKey)) }
+        
         var exportPopup by remember { mutableStateOf(false) }
 
-        Column(modifier = Modifier.verticalScroll(ScrollState(0))) {
-            DropdownMenu(expanded = deviceListOpen, onDismissRequest = { deviceListOpen = false }) {
-                deviceList.forEach { (name, _) ->
-                    Log.i("USB", name)
-                    DropdownMenuItem(text = { Text(name) }, onClick = { sendDataUSB(context, name) })
-                }
+        var isInternetAvailable by remember { mutableStateOf(isInternetAvailable(context)) }
+        LaunchedEffect(Unit) {
+            while (true) {
+                isInternetAvailable = isInternetAvailable(context)
+                delay(1000) // Check every second
             }
-            if (setEventCode) {
-                Dialog(onDismissRequest = {
-                    setEventCode = false
-                    compKey = tempCompKey
-                }) {
-                    Column {
-                        Text("Enter new event code")
-                        TextField(tempCompKey, { tempCompKey = it })
-                    }
-                }
-            }
+        }
+
+        var first by remember { mutableStateOf(true) }
+
+        if (first) {
+            createScoutMatchDataFolder(context)
+            loadMatchDataFiles()
+
+            createScoutPitsDataFolder(context)
+            loadPitsDataFiles()
+
+            createScoutStratDataFolder(context)
+            loadStratDataFiles()
+
+            first = false
+        }
+        
+        Column(
+            modifier = Modifier
+                .verticalScroll(ScrollState(0))
+                .padding(8.dp)
+        ) {
             Box(modifier = Modifier.fillMaxWidth()) {
                 OutlinedButton(
+                    border = BorderStroke(3.dp, Color.Yellow),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
                     onClick = {
                         backStack.push(RootNode.NavTarget.LoginPage)
-                    }, modifier = Modifier
-                        .scale(0.75f)
+                    },
+                    modifier = Modifier
                         .align(Alignment.CenterStart)
+                        .padding(8.dp, 0.dp, 8.dp, 0.dp)
                 ) {
-                    Text(text = "Login", color = getCurrentTheme().onPrimary)
+                    Icon(Icons.Rounded.ChevronLeft, "Back")
                 }
 
+                var textLabel = ""
+                when (robotStartPosition.value) {
+                    0 -> textLabel = "Red 1 Match"
+                    1 -> textLabel = "Red 2 Match"
+                    2 -> textLabel = "Red 3 Match"
+                    3 -> textLabel = "Blue 1 Match"
+                    4 -> textLabel = "Blue 2 Match"
+                    5 -> textLabel = "Blue 3 Match"
+                    6 -> textLabel = "Red Strat"
+                    7 -> textLabel = "Blue Strat"
+                    8 -> textLabel = "Pits"
+                }
                 Text(
-                    text = "Bear Metal Scout App", fontSize = 25.sp, modifier = Modifier.align(Alignment.Center)
+                    text = textLabel,
+                    fontSize = 32.sp,
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .padding(8.dp)
                 )
 
                 OutlinedButton(
+                    border = BorderStroke(3.dp, Color.Yellow),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
                     onClick = {
                         backStack.push(RootNode.NavTarget.Settings)
-                    }, modifier = Modifier
-                        .scale(0.75f)
+                    },
+                    modifier = Modifier
                         .align(Alignment.CenterEnd)
+                        .padding(8.dp, 0.dp, 8.dp, 0.dp)
                 ) {
                     Text(text = "Settings", color = getCurrentTheme().onPrimary)
                 }
 
             }
-            HorizontalDivider(color = getCurrentTheme().onSurface, thickness = 2.dp)
-            Text(
-                text = "Hello ${scoutName.value}",
-                color = getCurrentTheme().onPrimary,
-                modifier = Modifier.align(Alignment.CenterHorizontally)
+
+            HorizontalDivider(
+                color = defaultPrimaryVariant,
+                thickness = 3.dp,
+                modifier = Modifier.padding(8.dp)
             )
+            
+            androidx.compose.material.OutlinedTextField(
+                value = scoutName.value,
+                onValueChange = { scoutName.value = it },
+                label = { Text("Scout First and Last Name", color = getCurrentTheme().onPrimary) },
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = Color.Cyan,
+                    unfocusedBorderColor = Color.Yellow,
+                    cursorColor = getCurrentTheme().onPrimary,
+                    textColor = getCurrentTheme().onPrimary,
+                    backgroundColor = defaultSecondary,
+                ),
+                shape = RoundedCornerShape(12.dp),
+                modifier = Modifier
+                    .padding(8.dp)
+                    .fillMaxWidth(0.6f)
+                    .align(Alignment.CenterHorizontally)
+            )
+            
             OutlinedButton(
                 border = BorderStroke(3.dp, Color.Yellow),
-                shape = RoundedCornerShape(25.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
-                contentPadding = PaddingValues(horizontal = 60.dp, vertical = 5.dp),
-                onClick = {
-                    val scope = CoroutineScope(Dispatchers.Default)
-                    scope.launch {
-                        sync(false, context)
-                    }
-
-                    selectedPlacement = true
-
-                    createScoutMatchDataFolder(context)
-                },
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(horizontal = 50.dp, vertical = 50.dp),
-            ) {
-                Text(
-                    text = "Match", color = getCurrentTheme().onPrimary, fontSize = 35.sp
-                )
-            }
-
-            Box(
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .offset((-100).dp, (-50).dp)
-            ) {
-                DropdownMenu(
-                    expanded = selectedPlacement,
-                    onDismissRequest = { selectedPlacement = false },
-                    modifier = Modifier
-                        .size(200.dp, 332.dp)
-                        .background(color = Color(0, 0, 0))
-                ) {
-                    Row {
-                        DropdownMenuItem(
-                            onClick = {
-                                robotStartPosition.intValue = 0
-                                loadData(parseInt(match.value), team, robotStartPosition)
-                                backStack.push(RootNode.NavTarget.MatchScouting)
-//                                try {
-//                                    setTeam(team, match, robotStartPosition.intValue)
-//                                } catch (e: JSONException) {
-//                                    openError.value = true
-//                                }
-                            },
-                            modifier = Modifier
-                                .border(BorderStroke(color = Color.Yellow, width = 3.dp))
-                                .size(100.dp, 100.dp)
-                                .background(color = Color(60, 30, 30)),
-                            text = { Text("R1", fontSize = 22.sp, color = Color.White) })
-                        DropdownMenuItem(
-                            onClick = {
-                                robotStartPosition.intValue = 3
-                                loadData(parseInt(match.value), team, robotStartPosition)
-                                backStack.push(RootNode.NavTarget.MatchScouting)
-//                                try {
-//                                    setTeam(team, match, robotStartPosition.intValue)
-//                                } catch (e: JSONException) {
-//                                    openError.value = true
-//                                }
-                            },
-                            modifier = Modifier
-                                .border(BorderStroke(color = Color.Yellow, width = 3.dp))
-                                .size(100.dp, 100.dp)
-                                .background(color = Color(30, 30, 60)),
-                            text = { Text("B1", fontSize = 22.sp, color = Color.White) })
-                    }
-                    Row {
-                        DropdownMenuItem(
-                            onClick = {
-                                robotStartPosition.intValue = 1
-                                loadData(parseInt(match.value), team, robotStartPosition)
-                                backStack.push(RootNode.NavTarget.MatchScouting)
-//                                try {
-//                                    setTeam(team, match, robotStartPosition.intValue)
-//                                } catch (e: JSONException) {
-//                                    openError.value = true
-//                                }
-                            },
-                            modifier = Modifier
-                                .border(BorderStroke(color = Color.Yellow, width = 3.dp))
-                                .size(100.dp, 100.dp)
-                                .background(color = Color(60, 30, 30)),
-                            text = { Text("R2", fontSize = 22.sp, color = Color.White) })
-                        DropdownMenuItem(
-                            onClick = {
-                                robotStartPosition.intValue = 4
-                                loadData(parseInt(match.value), team, robotStartPosition)
-                                backStack.push(RootNode.NavTarget.MatchScouting)
-//                                try {
-//                                    setTeam(team, match, robotStartPosition.intValue)
-//                                } catch (e: JSONException) {
-//                                    openError.value = true
-//                                }
-                            },
-                            modifier = Modifier
-                                .border(BorderStroke(color = Color.Yellow, width = 3.dp))
-                                .size(100.dp, 100.dp)
-                                .background(color = Color(30, 30, 60)),
-                            text = { Text("B2", fontSize = 22.sp, color = Color.White) })
-                    }
-                    Row {
-                        DropdownMenuItem(
-                            onClick = {
-                                robotStartPosition.intValue = 2
-                                loadData(parseInt(match.value), team, robotStartPosition)
-                                backStack.push(RootNode.NavTarget.MatchScouting)
-//                                try {
-//                                    setTeam(team, match, robotStartPosition.intValue)
-//                                } catch (e: JSONException) {
-//                                    openError.value = true
-//                                }
-                            },
-                            modifier = Modifier
-                                .border(BorderStroke(color = Color.Yellow, width = 3.dp))
-                                .size(100.dp, 100.dp)
-                                .background(color = Color(60, 30, 30)),
-                            text = { Text("R3", fontSize = 22.sp, color = Color.White) })
-                        DropdownMenuItem(
-                            onClick = {
-                                robotStartPosition.intValue = 5
-                                loadData(parseInt(match.value), team, robotStartPosition)
-                                backStack.push(RootNode.NavTarget.MatchScouting)
-//                                try {
-//                                    setTeam(team, match, robotStartPosition.intValue)
-//                                } catch (e: JSONException) {
-//                                    openError.value = true
-//                                }
-                            },
-                            modifier = Modifier
-                                .border(BorderStroke(color = Color.Yellow, width = 3.dp))
-                                .size(100.dp, 100.dp)
-                                .background(color = Color(30, 30, 60)),
-                            text = { Text("B3", fontSize = 22.sp, color = Color.White) })
-                    }
-                }
-            }
-
-            var selectedAlliance by remember { mutableStateOf(false) }
-            OutlinedButton(
-                border = BorderStroke(3.dp, Color.Yellow),
-                shape = RoundedCornerShape(25.dp),
-                contentPadding = PaddingValues(horizontal = 80.dp, vertical = 5.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
-                onClick = {
-                    selectedAlliance = true
-                },
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(horizontal = 50.dp, vertical = 50.dp),
-
-                ) {
-                Text(
-                    text = "Strategy", color = getCurrentTheme().onPrimary, fontSize = 35.sp
-                )
-            }
-            Box(
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .offset((-75).dp, (-50).dp)
-            ) {
-                DropdownMenu(
-                    expanded = selectedAlliance,
-                    onDismissRequest = { selectedAlliance = false },
-                    modifier = Modifier.background(color = Color(0, 0, 0))
-                ) {
-                    DropdownMenuItem(
-                        onClick = {
-                            selectedAlliance = false
-                            setContext(true)
-//                            isRedAlliance = true
-                            backStack.push(RootNode.NavTarget.StratScreen)
-
-                            loadStratData(stratMatch, true)
-                        },
-                        modifier = Modifier
-                            .border(BorderStroke(color = Color.Yellow, width = 3.dp))
-                            .background(color = Color(60, 30, 30)),
-                        text = { Text("Red Alliance", fontSize = 22.sp, color = Color.White) })
-                    DropdownMenuItem(
-                        onClick = {
-                            selectedAlliance = false
-                            setContext(false)
-//                            isRedAlliance = false
-                            backStack.push(RootNode.NavTarget.StratScreen)
-
-                            loadStratData(stratMatch, false)
-                        },
-                        modifier = Modifier
-                            .border(BorderStroke(color = Color.Yellow, width = 3.dp))
-                            .background(color = Color(30, 30, 60)),
-                        text = { Text("Blue Alliance", fontSize = 22.sp, color = Color.White) })
-                }
-            }
-
-            OutlinedButton(
-                border = BorderStroke(3.dp, Color.Yellow),
-                shape = RoundedCornerShape(25.dp),
-                contentPadding = PaddingValues(horizontal = 80.dp, vertical = 5.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
-                onClick = {
-                    backStack.push(RootNode.NavTarget.PitsScouting)
-                },
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(horizontal = 50.dp, vertical = 50.dp),
-
-                ) {
-                Text(
-                    text = "Pits", color = getCurrentTheme().onPrimary, fontSize = 35.sp
-                )
-            }
-
-            OutlinedButton(
-                border = BorderStroke(3.dp, Color.Yellow),
-                shape = RoundedCornerShape(25.dp),
-                contentPadding = PaddingValues(horizontal = 10.dp, vertical = 15.dp),
+                shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
                 onClick = {
                     val scope = CoroutineScope(Dispatchers.Default)
                     scope.launch {
-                        sync(true, context)
-                        teamSyncedResource = if (teamData != null) "checkmark.png" else "crossmark.png"
-                        matchSyncedResource = if (matchData != null) "checkmark.png" else "crossmark.png"
+                        syncTeams(context)
+                        teamSynced = isTBAMTeamDataSynced(compKey)
+                        syncMatches(context)
+                        matchOutOfDate = isTBAMatchDataOld(compKey)
+                        matchSynced = isTBAMatchDataSynced(compKey)
                     }
 //                    TBAInterface.getTBAData("/event/${compKey}/teams/keys")
                 },
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
-                    .padding(horizontal = 50.dp, vertical = 50.dp),
+                    .padding(12.dp),
             ) {
                 Column {
                     Text(
                         text = "Sync",
                         color = getCurrentTheme().onPrimary,
-                        fontSize = 35.sp,
-                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                        fontSize = 24.sp,
+                        modifier = Modifier
+                            .align(Alignment.CenterHorizontally)
+                            .padding(8.dp)
                     )
+                    
+                    Box(
+                        Modifier
+                            .fillMaxWidth(1f / 2f)
+                            .padding(0.dp, 8.dp, 0.dp, 0.dp)
+                    ) {
+                        Text("Robot List", modifier = Modifier.align(Alignment.CenterStart))
 
-                    Text(
-                        text = "Last synced ${getLastSynced()}",
-                        fontSize = 12.sp,
-                    )
-
-                    Spacer(modifier = Modifier.height(10.dp))
-
-                    Box(Modifier.fillMaxWidth(1f / 2f)) {
-                        Text("Robot List")
-
-                        Image(
-                            painterResource(res = teamSyncedResource),
-                            contentDescription = "status",
+                        Icon(
+                            if (teamSynced) Icons.Rounded.CheckCircleOutline else Icons.Rounded.ErrorOutline,
+                            contentDescription = "team sync status",
+                            tint = if (teamSynced) Color.Green else Color.Red,
                             modifier = Modifier
                                 .size(30.dp)
                                 .align(Alignment.CenterEnd)
@@ -387,12 +230,17 @@ actual class MainMenu actual constructor(
 
                     Spacer(modifier = Modifier.height(10.dp))
 
-                    Box(Modifier.fillMaxWidth(1f / 2f)) {
-                        Text("Match List")
-
-                        Image(
-                            painterResource(res = matchSyncedResource),
-                            contentDescription = "status",
+                    Box(
+                        Modifier
+                            .fillMaxWidth(1f / 2f)
+                            .padding(0.dp, 0.dp, 0.dp, 8.dp)
+                    ) {
+                        Text("Match List", modifier = Modifier.align(Alignment.CenterStart))
+                        
+                        Icon(
+                            if (matchSynced) Icons.Rounded.CheckCircleOutline else if (matchOutOfDate) Icons.AutoMirrored.Rounded.HelpOutline else Icons.Rounded.ErrorOutline,
+                            contentDescription = "match sync status",
+                            tint = if (matchSynced) Color.Green else if (matchOutOfDate) Color.Yellow else Color.Red,
                             modifier = Modifier
                                 .size(30.dp)
                                 .align(Alignment.CenterEnd)
@@ -403,153 +251,187 @@ actual class MainMenu actual constructor(
 
             OutlinedButton(
                 border = BorderStroke(3.dp, Color.Yellow),
-                shape = RoundedCornerShape(25.dp),
-                contentPadding = PaddingValues(horizontal = 10.dp, vertical = 15.dp),
+                shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
                 onClick = {
-                    exportPopup = true
-                }) {
-                Text("Export")
+                    if (scoutName.value != "") {
+                        if (robotStartPosition.value < 6) {
+                            val scope = CoroutineScope(Dispatchers.Default)
+                            scope.launch {
+                                syncTeams(context)
+                                syncMatches(context)
+                            }
+
+                            createScoutMatchDataFolder(context)
+
+                            loadData(parseInt(match.value), team, robotStartPosition)
+                            backStack.push(RootNode.NavTarget.MatchScouting)
+                        } else if (robotStartPosition.value < 8) {
+                            val redAlliance = robotStartPosition.value == 6
+                            setContext(redAlliance)
+                            backStack.push(RootNode.NavTarget.StratScreen)
+                            loadStratData(stratMatch, redAlliance)
+                        } else {
+                            backStack.push(RootNode.NavTarget.PitsScouting)
+                        }
+                    }
+                },
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(8.dp),
+            ) {
+                Text(
+                    text = "Start Scouting", color = getCurrentTheme().onPrimary
+                )
             }
 
-            Box(modifier = Modifier.fillMaxSize()) {
-                OutlinedButton(
-                    border = BorderStroke(3.dp, Color.Yellow),
-                    shape = RoundedCornerShape(25.dp),
-                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 15.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
-                    onClick = {
-                        setEventCode = true
-                        teamSyncedResource = "crossmark.png"
-                        matchSyncedResource = "crossmark.png"
-                    },
-                    modifier = Modifier.align(Alignment.CenterEnd)
-                ) {
-                    Text("Set custom event key", fontSize = 9.sp)
-                }
-            }
-            Text(tempCompKey)
+            OutlinedButton(
+                border = BorderStroke(3.dp, Color.Yellow),
+                shape = RoundedCornerShape(12.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
+                onClick = {
+                    // Step 1: Turn on WiFi if not on already
+                    if (!isInternetAvailable(context)) {
+                        val panelIntent = Intent(Settings.ACTION_WIFI_SETTINGS)
+                        startActivity(context, panelIntent, null)
+                    }
+                    // Step 2: Connect to the server
+                    exportPopup = true
+                },
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(8.dp),
+            ) { Text(text = "Export Data", color = getCurrentTheme().onPrimary) }
         }
 
         if (exportPopup) {
             BasicAlertDialog(
-                onDismissRequest = { exportPopup = false }, modifier = Modifier
+                onDismissRequest = { }, modifier = Modifier
                     .clip(
                         RoundedCornerShape(5.dp)
                     )
                     .border(BorderStroke(3.dp, getCurrentTheme().primaryVariant), RoundedCornerShape(5.dp))
                     .background(getCurrentTheme().secondary)
             ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth(8f / 10f)
-                        .padding(5.dp)
-                        .fillMaxHeight(2 / 8f)
-                ) {
-                    Text(
-                        text = "What do you want to export?",
-                        modifier = Modifier
-                            .padding(5.dp)
-                            .align(Alignment.TopCenter)
-                    )
                     Column(
-                        modifier = Modifier.align(Alignment.Center)
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .fillMaxWidth()
                     ) {
-                        androidx.compose.material.OutlinedButton(
-                            onClick = {
-                                val scope = CoroutineScope(Dispatchers.Default)
-                                scope.launch {
-                                    if (client == null) client = Client()
-
-                                    if (!client!!.isConnected) {
-                                        client!!.discoverAndConnect()
-                                    }
-                                }
-                                scope.launch {
-                                    while (client == null || client?.isConnected != true) {
-//                                     println("client is null or not connected")
-                                    }
-                                    sendMatchData(
-                                        context = context,
-                                        client = client!!,
-                                    )
-                                }
-                                exportPopup = false
-                            },
-                            border = BorderStroke(2.dp, getCurrentTheme().secondaryVariant),
-                            colors = androidx.compose.material.ButtonDefaults.outlinedButtonColors(
-                                backgroundColor = getCurrentTheme().secondary,
-                                contentColor = getCurrentTheme().onSecondary
-                            ),
-                            modifier = Modifier.align(Alignment.CenterHorizontally)
+                        Row(
+                            Modifier
+                                .fillMaxWidth()
                         ) {
-                            Text(text = "Match", color = getCurrentTheme().error)
-                        }
-                        androidx.compose.material.OutlinedButton(
-                            onClick = {
-                                val scope = CoroutineScope(Dispatchers.Default)
-                                scope.launch {
-                                    if (client == null) client = Client()
+                            Icon(
+                                if (isInternetAvailable) Icons.Rounded.CheckCircleOutline else Icons.Rounded.ErrorOutline,
+                                contentDescription = "team sync status",
+                                tint = if (isInternetAvailable) Color.Green else Color.Red,
+                                modifier = Modifier
+                                    .size(32.dp)
+                                    .align(Alignment.CenterVertically)
+                            )
+                            Text("WiFi Connection", modifier = Modifier
+                                .align(Alignment.CenterVertically)
+                                .padding(8.dp)
+                            )
+                            Spacer(modifier = Modifier.weight(1f))
+                            if (!isInternetAvailable(context)) {
+                                androidx.compose.material.OutlinedButton(
+                                    onClick = {
+                                        val panelIntent = Intent(Settings.ACTION_WIFI_SETTINGS)
+                                        startActivity(context, panelIntent, null)
+                                    },
+                                    border = BorderStroke(3.dp, getCurrentTheme().secondaryVariant),
+                                    shape = RoundedCornerShape(12.dp),
+                                    colors = androidx.compose.material.ButtonDefaults.outlinedButtonColors(
+                                        backgroundColor = defaultSecondary,
+                                        contentColor = getCurrentTheme().onPrimary
+                                    ),
+                                    modifier = Modifier
+                                        .align(Alignment.CenterVertically)
+                                        .padding(8.dp)
+                                        
+                                ) {
+                                    Text(text = "Settings", color = getCurrentTheme().onPrimary)
+                                }
+                            }
 
-                                    if (!client!!.isConnected) {
-                                        client!!.discoverAndConnect()
-                                    }
-                                }
-                                scope.launch {
-                                    while (client == null || client?.isConnected != true) {
-//                                     println("client is null or not connected")
-                                    }
-                                    sendStratData(
-                                        context = context,
-                                        client = client!!,
-                                    )
-                                }
-                                exportPopup = false
-                            },
-                            border = BorderStroke(2.dp, getCurrentTheme().secondaryVariant),
-                            colors = androidx.compose.material.ButtonDefaults.outlinedButtonColors(
-                                backgroundColor = getCurrentTheme().secondary,
-                                contentColor = getCurrentTheme().onSecondary
-                            ),
-                            modifier = Modifier.align(Alignment.CenterHorizontally)
-                        ) {
-                            Text(text = "Strat", color = getCurrentTheme().error)
                         }
 
-                        androidx.compose.material.OutlinedButton(
-                            onClick = {
-                                val scope = CoroutineScope(Dispatchers.Default)
-                                scope.launch {
-                                    if (client == null) client = Client()
+                        Row(modifier = Modifier.fillMaxWidth()) {
+                            if (isInternetAvailable) {
+                                androidx.compose.material.OutlinedButton(
+                                    onClick = {
+                                        val scope = CoroutineScope(Dispatchers.Default)
+                                        scope.launch {
+                                            if (client == null) client = Client()
 
-                                    if (!client!!.isConnected) {
-                                        client!!.discoverAndConnect()
-                                    }
+                                            if (!client!!.isConnected) {
+                                                client!!.discoverAndConnect()
+                                            }
+                                        }
+                                        scope.launch {
+                                            while (client == null || client?.isConnected != true) {
+                                                //                                     println("client is null or not connected")
+                                            }
+                                            if (robotStartPosition.value < 6) {
+                                                sendMatchData(
+                                                    client = client!!,
+                                                )
+                                                client!!.disconnect()
+
+                                            } else if (robotStartPosition.value < 8) {
+                                                sendStratData(
+                                                    client = client!!,
+                                                )
+                                            } else {
+                                                sendPitsData(
+                                                    client = client!!,
+                                                )
+                                            }
+                                        }
+                                    },
+                                    border = BorderStroke(2.dp, getCurrentTheme().secondaryVariant),
+                                    colors = androidx.compose.material.ButtonDefaults.outlinedButtonColors(
+                                        backgroundColor = getCurrentTheme().secondary,
+                                        contentColor = getCurrentTheme().onSecondary
+                                    ),
+                                    modifier = Modifier.align(Alignment.CenterVertically)
+                                ) {
+                                    Text(text = "Export", color = getCurrentTheme().error)
                                 }
-                                scope.launch {
-                                    while (client == null || client?.isConnected != true) {
-//                                     println("client is null or not connected")
+                            }
+                            Spacer(modifier = Modifier.weight(1f))
+                            androidx.compose.material.OutlinedButton(
+                                onClick = {
+                                    if (isInternetAvailable(context)) {
+                                        val panelIntent = Intent(Settings.ACTION_WIFI_SETTINGS)
+                                        startActivity(context, panelIntent, null)
                                     }
-                                    sendPitsData(
-                                        context = context,
-                                        client = client!!,
-                                    )
-                                }
-                                exportPopup = false
-                            },
-                            border = BorderStroke(2.dp, getCurrentTheme().secondaryVariant),
-                            colors = androidx.compose.material.ButtonDefaults.outlinedButtonColors(
-                                backgroundColor = getCurrentTheme().secondary,
-                                contentColor = getCurrentTheme().onSecondary
-                            ),
-                            modifier = Modifier.align(Alignment.CenterHorizontally)
-                        ) {
-                            Text(text = "Pits", color = getCurrentTheme().error)
+                                    exportPopup = false
+                                },
+                                border = BorderStroke(2.dp, getCurrentTheme().secondaryVariant),
+                                colors = androidx.compose.material.ButtonDefaults.outlinedButtonColors(
+                                    backgroundColor = getCurrentTheme().secondary,
+                                    contentColor = getCurrentTheme().onSecondary
+                                ),
+                                modifier = Modifier.align(Alignment.CenterVertically)
+                            ) {
+                                Text(text = "Done", color = getCurrentTheme().error)
+                            }
                         }
                     }
-                }
+                
             }
         }
     }
 }
+
 val openError = mutableStateOf(false)
+
+fun isInternetAvailable(context: Context): Boolean {
+    val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    val activeNetwork = connectivityManager.activeNetwork ?: return false
+    val networkCapabilities = connectivityManager.getNetworkCapabilities(activeNetwork) ?: return false
+    return networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+}

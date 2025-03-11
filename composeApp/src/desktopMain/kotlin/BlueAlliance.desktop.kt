@@ -8,6 +8,9 @@ import java.io.FileNotFoundException
 import java.time.Instant
 import java.util.*
 
+actual val teamData: JSONObject? = null
+actual val matchData: JSONObject? = null
+
 /**
  * Updates match data
  *
