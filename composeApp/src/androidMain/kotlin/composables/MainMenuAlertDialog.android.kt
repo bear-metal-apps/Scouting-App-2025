@@ -26,6 +26,13 @@ import androidx.compose.ui.unit.dp
 import createScoutMatchDataFile
 import getCurrentTheme
 import nodes.*
+import nodes.TeamMatchStartKey
+import nodes.createOutput
+import nodes.match
+import nodes.saveData
+import nodes.saveDataPopup
+import nodes.teamDataArray
+import nodes.teleFlash
 import java.lang.Integer.parseInt
 
 @Composable
@@ -60,7 +67,10 @@ actual fun MainMenuAlertDialog(active: MutableState<Boolean>, bob: () -> Unit, t
                             ) // permanent save
 
                             bob.invoke()
+                            exportScoutData(context) // Does nothing
                         }
+
+                        teleFlash.value = false
 
                     },
                     border = BorderStroke(2.dp, getCurrentTheme().secondaryVariant),

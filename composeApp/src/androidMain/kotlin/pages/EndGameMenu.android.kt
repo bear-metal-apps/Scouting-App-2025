@@ -129,6 +129,7 @@ actual fun EndGameMenu(
                         saveDataPopup.value = true
                         saveDataSit.value = false
                     }
+                    teleFlash.value = false
                 },
                 modifier = Modifier.align(Alignment.CenterHorizontally).padding(top = 10.dp)
             ) {
