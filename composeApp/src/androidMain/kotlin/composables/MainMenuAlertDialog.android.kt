@@ -20,10 +20,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import compKey
 import createScoutMatchDataFile
 import exportScoutData
 import getCurrentTheme
 import nodes.TeamMatchStartKey
+import nodes.betterParseInt
 import nodes.createOutput
 import nodes.match
 import nodes.saveData
@@ -55,7 +57,7 @@ actual fun MainMenuAlertDialog(active: MutableState<Boolean>, bob: () -> Unit, t
                         } else {
                             active.value = false
 
-                            teamDataArray[TeamMatchStartKey(parseInt(match.value), team, robotStartPosition)] = createOutput(mutableIntStateOf(team), mutableIntStateOf(robotStartPosition))
+                            teamDataArray.get(compKey)?.get(match.value.betterParseInt())?.set(robotStartPosition, createOutput(mutableIntStateOf(team), mutableIntStateOf(robotStartPosition)))
                             createScoutMatchDataFile(context, match.value, team, createOutput(mutableIntStateOf(team), mutableIntStateOf(robotStartPosition))) // permanent save
 
                             bob.invoke()

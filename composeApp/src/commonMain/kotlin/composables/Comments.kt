@@ -17,7 +17,9 @@ import defaultOnBackground
 import defaultOnPrimary
 import defaultPrimaryVariant
 import androidx.compose.ui.graphics.Color
+import compKey
 import nodes.TeamMatchStartKey
+import nodes.betterParseInt
 import nodes.createOutput
 import nodes.jsonObject
 import nodes.match
@@ -49,10 +51,10 @@ fun Comments(text: MutableState<String>) {
 //                    if (text.value.length > 150)
 //                        text.value = oldText
                     saveData.value = true
-                    teamDataArray[TeamMatchStartKey(match.value.toInt(), jsonObject.get("team").asInt, jsonObject.get("robotStartPosition").asInt)] = createOutput(
+                    teamDataArray.get(compKey)?.get(match.value.betterParseInt())?.set(jsonObject.get("robotStartPosition").asInt, createOutput(
                         mutableIntStateOf(jsonObject.get("team").asInt), mutableIntStateOf(
                             jsonObject.get("robotStartPosition").asInt)
-                    )
+                    ))
                 },
                 modifier = Modifier
                     .size(400.dp, 75.dp),

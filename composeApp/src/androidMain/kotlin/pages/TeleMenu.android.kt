@@ -9,6 +9,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.components.backstack.operation.pop
+import compKey
 import composables.CheckBox
 import composables.EnumerableValue
 import keyboardAsState
@@ -28,12 +29,6 @@ actual fun TeleMenu(
     val isScrollEnabled = remember{ mutableStateOf(true) }
     val isKeyboardOpen by keyboardAsState()
     val context = LocalContext.current
-    fun bob() {
-        backStack.pop()
-        val tempHash = HashMap<TeamMatchStartKey, String>()
-        tempHash[TeamMatchStartKey(match.value.betterParseInt(), team.intValue, robotStartPosition.intValue)] = createOutput(team, robotStartPosition)
-        teamDataArray[""] = tempHash
-    }
 
     if (!isKeyboardOpen) {
         isScrollEnabled.value = true

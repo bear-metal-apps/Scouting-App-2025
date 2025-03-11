@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.components.backstack.operation.pop
+import compKey
 import composables.CheckBox
 import composables.EnumerableValue
 import composables.TriStateCheckBox
@@ -41,6 +42,7 @@ import nodes.autoCoralLevel4Scored
 import nodes.autoNetMissed
 import nodes.autoNetScored
 import nodes.autoStop
+import nodes.betterParseInt
 import nodes.collectCoral
 import nodes.createOutput
 import nodes.groundCollectionAlgae
@@ -65,7 +67,7 @@ actual fun AutoMenu(
     val context = LocalContext.current
     fun bob() {
         mainMenuBackStack.pop()
-        teamDataArray[TeamMatchStartKey(parseInt(match.value), team.intValue, robotStartPosition.intValue)] = createOutput(team, robotStartPosition)
+        teamDataArray.get(compKey)?.get(match.value.betterParseInt())?.set(robotStartPosition.intValue, createOutput(team, robotStartPosition))
     }
 
     val isScrollEnabled = remember { mutableStateOf(true) }

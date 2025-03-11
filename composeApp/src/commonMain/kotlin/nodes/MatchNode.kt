@@ -96,7 +96,8 @@ class AutoTeleSelectorNode(
                 mainMenuDialog,
                 bob = {
                     mainMenuBackStack.pop()
-                    teamDataArray[TeamMatchStartKey(parseInt(match.value), team.intValue, robotStartPosition.intValue)] = createOutput(team, robotStartPosition)
+                    teamDataArray.get(compKey)?.get(match.value.betterParseInt())?.set(robotStartPosition.intValue, createOutput(
+                        team, robotStartPosition))
                 },
                 team.intValue,
                 robotStartPosition.intValue)
@@ -364,9 +365,9 @@ fun loadData(match: Int, team: MutableIntState, robotStartPosition: MutableIntSt
 
     val gson = Gson()
 
-    if(teamDataArray[TeamMatchStartKey(match, team.value, robotStartPosition.intValue)] != null) {
+    if(teamDataArray.get(compKey)?.get(match)?.get(robotStartPosition.intValue)?.isNotEmpty()!!) {
 
-        jsonObject = gson.fromJson(teamDataArray[TeamMatchStartKey(match, team.value, robotStartPosition.intValue)].toString(), JsonObject::class.java)
+        jsonObject = gson.fromJson(teamDataArray.get(compKey)?.get(match)?.get(robotStartPosition.intValue).toString(), JsonObject::class.java)
 
         team.intValue = jsonObject.get("team").asInt
         compKey = jsonObject.get("event_key").asString
@@ -428,7 +429,7 @@ fun loadData(match: Int, team: MutableIntState, robotStartPosition: MutableIntSt
     } else {
         reset()
         if(saveData.value) {
-            teamDataArray[TeamMatchStartKey(match, team.intValue, robotStartPosition.intValue)] = createOutput(team, robotStartPosition)
+            teamDataArray.get(compKey)?.get(match)?.set(robotStartPosition.intValue, createOutput(team, robotStartPosition))
         }
     }
 }

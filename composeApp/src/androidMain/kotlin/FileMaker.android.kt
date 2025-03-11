@@ -142,11 +142,7 @@ fun loadMatchDataFiles(context: Context) {
                 matchFolder?.listFiles()?.toList()?.get(index)?.readText(),
                 JsonObject::class.java
             )
-            teamDataArray[TeamMatchStartKey(
-                parseInt(jsonObject.get("match").asString),
-                jsonObject.get("team").asInt,
-                jsonObject.get("robotStartPosition").asInt
-            )] = jsonObject.toString()
+            teamDataArray.get(compKey)?.get(jsonObject.get("match").asInt)?.set(jsonObject.get("robotStartPosition").asInt, jsonObject.toString())
 
             println(matchFolder?.listFiles()?.toList()?.get(index).toString())
         }
@@ -329,11 +325,15 @@ fun sendMatchData(context: Context, client: Client) {
     val gson = Gson()
 
     for((key, value) in teamDataArray.entries) {
-        val jsonObject = gson.fromJson(value, JsonObject::class.java)
+        for((key1, value1) in value.entries) {
+            for ((key2, value2) in value1.entries) {
+                val jsonObject = gson.fromJson(value2, JsonObject::class.java)
 
-        client.sendData(jsonObject.toString(), "match")
+                client.sendData(jsonObject.toString(), "match")
 
-        Log.i("Client", "Message Sent: ${jsonObject.toString()}")
+                Log.i("Client", "Message Sent: ${jsonObject.toString()}")
+            }
+        }
     }
 
 }

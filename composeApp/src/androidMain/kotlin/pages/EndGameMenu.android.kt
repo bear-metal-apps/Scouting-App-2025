@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.sp
 import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.components.backstack.operation.pop
 import com.bumble.appyx.components.backstack.operation.push
+import compKey
 import composables.Cage
 import composables.Comments
 import composables.EndGameCheckBox
@@ -63,7 +64,7 @@ actual fun EndGameMenu(
 
     fun bob() {
         mainMenuBackStack.pop()
-        teamDataArray[TeamMatchStartKey(parseInt(match.value), team.intValue, robotStartPosition.intValue)] = createOutput(team, robotStartPosition)
+        teamDataArray.get(compKey)?.get(match.value.betterParseInt())?.set(robotStartPosition.intValue, createOutput(team, robotStartPosition))
     }
 
     if(!isKeyboardOpen){
@@ -95,7 +96,7 @@ actual fun EndGameMenu(
                         playedDefense.value = !playedDefense.value
 
                         saveData.value = true
-                        teamDataArray[TeamMatchStartKey(parseInt(match.value), team.intValue, robotStartPosition.intValue)] = createOutput(team, robotStartPosition)
+                        teamDataArray.get(compKey)?.get(match.value.betterParseInt())?.set(robotStartPosition.intValue, createOutput(team, robotStartPosition))
                     },
                     modifier = Modifier.align(Alignment.CenterVertically),
                 )
@@ -110,7 +111,8 @@ actual fun EndGameMenu(
                 onClick = {
                     if(saveData.value) {
                         //Save temp data
-                        teamDataArray[TeamMatchStartKey(parseInt(match.value), team.intValue, robotStartPosition.intValue)] = createOutput(team, robotStartPosition)
+                        teamDataArray.get(compKey)?.get(match.value.betterParseInt())?.set(robotStartPosition.intValue, createOutput(team, robotStartPosition))
+
                         //Save permanent data
                         createScoutMatchDataFile(context, match.value, team.intValue, createOutput(team, robotStartPosition))
                         match.value = (parseInt(match.value) + 1).toString()
