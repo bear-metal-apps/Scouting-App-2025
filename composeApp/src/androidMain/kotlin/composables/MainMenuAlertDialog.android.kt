@@ -67,7 +67,6 @@ actual fun MainMenuAlertDialog(active: MutableState<Boolean>, bob: () -> Unit, t
                             ) // permanent save
 
                             bob.invoke()
-                            exportScoutData(context) // Does nothing
                         }
 
                         teleFlash.value = false
