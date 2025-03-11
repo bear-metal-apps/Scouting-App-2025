@@ -12,6 +12,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,9 +26,14 @@ import defaultOnPrimary
 import defaultSecondary
 import getCurrentTheme
 import minus
+import nodes.TeamMatchStartKey
+import nodes.createOutput
+import nodes.jsonObject
+import nodes.match
 import nodes.redoList
 import nodes.undoList
 import nodes.saveData
+import nodes.teamDataArray
 
 @Composable
 actual fun EnumerableValue(label: String, value: MutableIntState, alignment: Alignment, flashColor: Color, backgroundColor: Color, miniMinus : Boolean, modifier: Modifier) {
@@ -44,6 +50,8 @@ actual fun EnumerableValue(label: String, value: MutableIntState, alignment: Ali
             value.value += 1
             redoList.push(arrayOf("number" ,value, value.value))
             saveData.value = true
+            teamDataArray[TeamMatchStartKey(match.value.toInt(), jsonObject.get("team").asInt, jsonObject.get("robotStartPosition").asInt)] = createOutput(
+                mutableIntStateOf(jsonObject.get("team").asInt), mutableIntStateOf(jsonObject.get("robotStartPosition").asInt))
         },
         interactionSource = interact,
         contentPadding = PaddingValues(0.dp, 0.dp),
@@ -68,6 +76,8 @@ actual fun EnumerableValue(label: String, value: MutableIntState, alignment: Ali
                             redoList.push(arrayOf("number", value, value.value))
                         }
                         saveData.value = true
+                        teamDataArray[TeamMatchStartKey(match.value.toInt(), jsonObject.get("team").asInt, jsonObject.get("robotStartPosition").asInt)] = createOutput(
+                            mutableIntStateOf(jsonObject.get("team").asInt), mutableIntStateOf(jsonObject.get("robotStartPosition").asInt))
                     },
                     interactionSource = interact,
                     modifier = Modifier.align(alignment).padding(0.dp).offset(0.dp,2.dp)

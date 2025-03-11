@@ -3,8 +3,11 @@ package nodes
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableIntState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.state.ToggleableState
 import com.bumble.appyx.components.backstack.BackStack
@@ -151,6 +154,8 @@ var saveDataPopup = mutableStateOf(false)
 var saveDataSit = mutableStateOf(false) // False = nextMatch, True = MainMenu
 
 
+var teleFlash = mutableStateOf(false)
+
 var undoList = Stack<Array<Any>>()
 var redoList = Stack<Array<Any>>()
 var jsonObject: JsonObject = JsonObject()
@@ -158,9 +163,6 @@ var jsonObject: JsonObject = JsonObject()
 var pageIndex = mutableIntStateOf(0)
 
 val match = mutableStateOf("1")
-
-var tempMatch = match.value
-var tempTeam: Int = 0
 
 var stringMatch = mutableStateOf("")
 var stringTeam = mutableStateOf("")
@@ -198,6 +200,7 @@ val teleLTwoMissed = mutableIntStateOf(0)
 val teleLOneMissed = mutableIntStateOf(0)
 var lostComms = mutableIntStateOf(0)
 var playedDefense = mutableStateOf(false)
+var penalties = mutableIntStateOf(0)
 
 // Endgame
 var park = mutableStateOf(false)
@@ -205,19 +208,15 @@ var deep = mutableStateOf(false)
 var shallow = mutableStateOf(false)
 var notes = mutableStateOf("")
 
+var totalAutoCoralAttempts = mutableIntStateOf(0)
 
-fun createOutput(team: MutableIntState, robotStartPosition: MutableIntState): String {
+fun stateToInt(state: ToggleableState) = when (state) {
+    ToggleableState.Off -> 0
+    ToggleableState.Indeterminate -> 1
+    ToggleableState.On -> 2
+}
 
-    fun stateToInt(state: ToggleableState) = when (state) {
-        ToggleableState.Off -> 0
-        ToggleableState.Indeterminate -> 1
-        ToggleableState.On -> 2
-    }
-
-    if (notes.value.isEmpty()) {
-        notes.value = "No Comments"
-    }
-    notes.value = notes.value.replace(":", "")
+fun createJson(team: MutableIntState, robotStartPosition: MutableIntState) {
 
     jsonObject = JsonObject().apply {
         addProperty("team", team.intValue.toString())
@@ -251,6 +250,80 @@ fun createOutput(team: MutableIntState, robotStartPosition: MutableIntState): St
         })
         add("tele", JsonObject().apply {
             addProperty("lost_comms", lostComms.intValue)
+            addProperty("penalties", penalties.intValue)
+//            addProperty("played_defense", playedDefense.value)
+            add("algae", JsonObject().apply {
+                addProperty("reef_removed", teleReefAlgaeCollected.value)
+                addProperty("processed", teleProcessed.intValue)
+            })
+            add("coral", JsonObject().apply {
+                addProperty("reef_level1", teleLOne.intValue)
+                addProperty("reef_level2", teleLTwo.intValue)
+                addProperty("reef_level3", teleLThree.intValue)
+                addProperty("reef_level4", teleLFour.intValue)
+                addProperty("reef_level1_missed", teleLOneMissed.intValue)
+                addProperty("reef_level2_missed", teleLTwoMissed.intValue)
+                addProperty("reef_level3_missed", teleLThreeMissed.intValue)
+                addProperty("reef_level4_missed", teleLFourMissed.intValue)
+
+            })
+            add("net", JsonObject().apply {
+                addProperty("scored", teleNet.intValue)
+                addProperty("missed", teleNetMissed.intValue)
+            })
+        })
+//        add("endgame", JsonObject().apply {
+//            addProperty("park", park.value)
+//            addProperty("deep", deep.value)
+//            addProperty("shallow", shallow.value)
+//        })
+    }
+
+    println("Created Match JSON")
+}
+
+fun createOutput(team: MutableIntState, robotStartPosition: MutableIntState): String {
+
+    println("saved data")
+
+    if (notes.value.isEmpty()) {
+        notes.value = "No Comments"
+    }
+//    notes.value = notes.value.replace(":", "")
+
+    jsonObject = JsonObject().apply {
+        addProperty("team", team.intValue.toString())
+        addProperty("event_key", compKey)
+        addProperty("match", match.value)
+        addProperty("scout_name", scoutName.value)
+        addProperty("notes", notes.value)
+        addProperty("robotStartPosition", robotStartPosition.intValue)
+        add("auto", JsonObject().apply {
+            addProperty("stop", autoStop.intValue)
+            add("algae", JsonObject().apply {
+                addProperty("ground_collection", stateToInt(groundCollectionAlgae.value))
+                addProperty("removed", algaeRemoved.intValue)
+                addProperty("processed", algaeProcessed.intValue)
+            })
+            add("coral", JsonObject().apply {
+                addProperty("collection", collectCoral.value)
+                addProperty("reef_level1", autoCoralLevel1Scored.intValue)
+                addProperty("reef_level2", autoCoralLevel2Scored.intValue)
+                addProperty("reef_level3", autoCoralLevel3Scored.intValue)
+                addProperty("reef_level4", autoCoralLevel4Scored.intValue)
+                addProperty("reef_level1_missed", autoCoralLevel1Missed.intValue)
+                addProperty("reef_level2_missed", autoCoralLevel2Missed.intValue)
+                addProperty("reef_level3_missed", autoCoralLevel3Missed.intValue)
+                addProperty("reef_level4_missed", autoCoralLevel4Missed.intValue)
+            })
+            add("net", JsonObject().apply {
+                addProperty("scored", autoNetScored.intValue)
+                addProperty("missed", autoNetMissed.intValue)
+            })
+        })
+        add("tele", JsonObject().apply {
+            addProperty("lost_comms", lostComms.intValue)
+            addProperty("penalties", penalties.intValue)
 //            addProperty("played_defense", playedDefense.value)
             add("algae", JsonObject().apply {
                 addProperty("reef_collected", teleReefAlgaeCollected.value)
@@ -326,6 +399,7 @@ fun loadData(match: Int, team: MutableIntState, robotStartPosition: MutableIntSt
         autoNetScored.intValue = jsonObject.getAsJsonObject("auto").getAsJsonObject("net").get("scored").asInt
         autoNetMissed.intValue = jsonObject.getAsJsonObject("auto").getAsJsonObject("net").get("missed").asInt
         autoStop.intValue = jsonObject.getAsJsonObject("auto").get("stop").asInt
+        penalties.intValue = jsonObject.getAsJsonObject("tele").get("penalties").asInt
         teleNet.intValue = jsonObject.getAsJsonObject("tele").getAsJsonObject("net").get("scored").asInt
         teleNetMissed.intValue = jsonObject.getAsJsonObject("tele").getAsJsonObject("net").get("missed").asInt
         teleLFour.intValue = jsonObject.getAsJsonObject("tele").getAsJsonObject("coral").get("reef_level4").asInt
@@ -349,6 +423,9 @@ fun loadData(match: Int, team: MutableIntState, robotStartPosition: MutableIntSt
 //        deep.value = jsonObject.getAsJsonObject("endgame").get("deep").asBoolean
 //        shallow.value = jsonObject.getAsJsonObject("endgame").get("shallow").asBoolean
         notes.value = if(jsonObject.get("notes").asString == "No Comments") "" else jsonObject.get("notes").asString
+
+        saveData.value = true
+
     } else {
         reset()
         if(saveData.value) {
@@ -389,6 +466,7 @@ fun reset() {
     teleLOneMissed.intValue = 0
     lostComms.intValue = 0
     playedDefense.value = false
+    penalties.intValue = 0
     park.value = false
     deep.value = false
     shallow.value = false

@@ -38,7 +38,9 @@ import createScoutMatchDataFile
 import defaultSecondary
 import getTeamsOnAlliance
 import keyboardAsState
+import kotlinx.coroutines.runBlocking
 import nodes.*
+import org.jetbrains.compose.resources.load
 import org.json.JSONException
 import org.tahomarobotics.scouting.TBAInterface
 import setTeam
@@ -93,6 +95,7 @@ actual fun EndGameMenu(
                         playedDefense.value = !playedDefense.value
 
                         saveData.value = true
+                        teamDataArray[TeamMatchStartKey(parseInt(match.value), team.intValue, robotStartPosition.intValue)] = createOutput(team, robotStartPosition)
                     },
                     modifier = Modifier.align(Alignment.CenterVertically),
                 )
@@ -120,10 +123,14 @@ actual fun EndGameMenu(
                             team.intValue = getTeamsOnAlliance(match.value.betterParseInt(), isRedAliance.value)[tempRobotStart.value].number
                         }catch (e: Exception){}
                         stringTeam.value = team.intValue.toString()
+
+                        loadData(parseInt(match.value), team, robotStartPosition)
+
                     } else {
                         saveDataPopup.value = true
                         saveDataSit.value = false
                     }
+                    teleFlash.value = false
                 },
                 modifier = Modifier.align(Alignment.CenterHorizontally).padding(top = 10.dp)
             ) {
