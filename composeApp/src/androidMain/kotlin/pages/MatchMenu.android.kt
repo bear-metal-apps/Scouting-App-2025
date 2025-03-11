@@ -254,11 +254,33 @@ actual fun MatchMenuTop(
                 singleLine = true,
                 textStyle = TextStyle.Default.copy(fontSize = 28.sp)
             )
-//            if (matchNumberButtons.value){
+            if (matchNumberButtons.value){
                 Column(modifier = Modifier.fillMaxHeight()) {
                     OutlinedButton(
                         onClick = {
-//                            tempMatch = match.value + 1
+                            tempMatch = (match.value.betterParseInt() + 1).toString()
+                            stringMatch.value = (match.value.betterParseInt() + 1).toString()
+                            match.value = (match.value.betterParseInt() + 1).toString()
+
+                            if(saveData.value) {
+                                teamDataArray[TeamMatchStartKey(parseInt(tempMatch), tempTeam, robotStartPosition.intValue)] = createOutput(mutableIntStateOf(tempTeam), robotStartPosition)
+                                createScoutMatchDataFile(context, tempMatch, tempTeam, createOutput(mutableIntStateOf(tempTeam), robotStartPosition))
+                            }
+                            saveData.value = false
+
+                            try {
+                                setTeam(team, nodes.match, robotStartPosition.intValue)
+                            } catch (e: JSONException) {
+                                openError.value = true
+                            }
+                            stringTeam.value = team.intValue.toString()
+
+                            loadData(parseInt(match.value), team, robotStartPosition)
+
+                            exportScoutData(context) // Does nothing
+
+                            tempTeam = team.intValue
+
                         },
                         modifier = Modifier.width(50.dp).fillMaxHeight(1/2f),
                         shape = RoundedCornerShape(1.dp)
@@ -267,7 +289,31 @@ actual fun MatchMenuTop(
                     }
                     OutlinedButton(
                         onClick = {
-//                            tempMatch = match.value - 1
+                            if(match.value.betterParseInt() != 1){
+                                tempMatch = (match.value.betterParseInt() - 1).toString()
+                                stringMatch.value = (match.value.betterParseInt() - 1).toString()
+                                match.value = (match.value.betterParseInt() - 1).toString()
+                            }
+
+
+                            if(saveData.value) {
+                                teamDataArray[TeamMatchStartKey(parseInt(tempMatch), tempTeam, robotStartPosition.intValue)] = createOutput(mutableIntStateOf(tempTeam), robotStartPosition)
+                                createScoutMatchDataFile(context, tempMatch, tempTeam, createOutput(mutableIntStateOf(tempTeam), robotStartPosition))
+                            }
+                            saveData.value = false
+
+                            try {
+                                setTeam(team, nodes.match, robotStartPosition.intValue)
+                            } catch (e: JSONException) {
+                                openError.value = true
+                            }
+                            stringTeam.value = team.intValue.toString()
+
+                            loadData(parseInt(match.value), team, robotStartPosition)
+
+                            exportScoutData(context) // Does nothing
+
+                            tempTeam = team.intValue
                         },
                         modifier = Modifier.width(50.dp).fillMaxHeight(),
                         shape = RoundedCornerShape(1.dp)
@@ -275,7 +321,7 @@ actual fun MatchMenuTop(
                         Text("-")
                     }
                 }
-//        }
+        }
             VerticalDivider(
                 color = getCurrentTheme().primaryVariant,
                 thickness = 3.dp
@@ -377,8 +423,8 @@ actual fun MatchMenuBottom(
                         )
                     }
                     "checkbox" -> {
-                        (action[1] as MutableState<Boolean>).value = action[2] as Boolean
-                        redoList.push(arrayOf(action[0], action[1], !(action[2] as Boolean)))
+                        (action[1] as MutableIntState).value = if((action[2] as Int) == 0){ 1 }else{ 0 }
+                        redoList.push(arrayOf(action[0], action[1], action[2]))
                     }
                 }
 
@@ -430,8 +476,8 @@ actual fun MatchMenuBottom(
 
                     }
                     "checkbox" -> {
-                        (action[1] as MutableState<Boolean>).value = action[2] as Boolean
-                        redoList.push(arrayOf(action[0], action[1], !(action[2] as Boolean)))
+                        (action[1] as MutableIntState).value = action[2] as Int
+                        undoList.push(arrayOf(action[0], action[1], if((action[2] as Int) == 0){ 1 }else{ 0 }))
                     }
                 }
 

@@ -29,3 +29,11 @@ val defaultOnError = Color(6,9,13)
 
 val defaultGamePiece1 = Color(50, 45, 35)
 val defaultGamePiece2 = Color(5, 0, 48)
+
+
+operator fun Color.minus(color: Color): Color {
+    return Color(this.red - color.red,this.green - color.green,this.blue - color.blue)
+}
+operator fun Color.plus(color: Color): Color {
+    return Color(this.red + color.red,this.green + color.green,this.blue + color.blue)
+}

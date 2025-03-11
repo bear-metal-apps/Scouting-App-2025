@@ -80,8 +80,8 @@ val defaultScheme = darkColorScheme(
     surface = defaultSurface,
     onSurface = defaultOnSurface,
     outline = defaultSecondary,
-    surfaceContainerLow = defaultGamePiece1,
-    surfaceContainerLowest = defaultGamePiece2,
 )
+var algaeColor = Color(2, 78, 85)
+var coralColor = Color(85, 70, 50)//#FFE5B4
 
 

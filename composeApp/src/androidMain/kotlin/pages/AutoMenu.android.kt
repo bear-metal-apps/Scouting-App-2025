@@ -48,6 +48,8 @@ import nodes.miniMinus
 import nodes.pageIndex
 import nodes.saveData
 import nodes.teamDataArray
+import org.tahomarobotics.scouting.algaeColor
+import org.tahomarobotics.scouting.coralColor
 import java.lang.Integer.parseInt
 
 @SuppressLint("UnrememberedMutableState")
@@ -73,8 +75,6 @@ actual fun AutoMenu(
     if (!isKeyboardOpen) {
         isScrollEnabled.value = true
     }
-    val algaeColor = Color(2, 78, 85)
-    val coralColor = Color(85, 70, 50)//#FFE5B4
 
 //    val flippingAuto = remember { mutableStateOf(false)}
 //    val rotateAuto = remember { mutableStateOf(false)}
@@ -216,7 +216,7 @@ actual fun AutoMenu(
                         value = collectCoral,
                         flashColor = Color.Green,
                         backgroundColor = coralColor,
-                        alignment = Alignment.CenterEnd,
+                        alignment = Alignment.BottomEnd,
                         miniMinus = miniMinus.value,
                         modifier = Modifier
                             .weight(1f)

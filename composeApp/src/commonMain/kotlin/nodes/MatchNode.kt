@@ -157,9 +157,6 @@ var jsonObject: JsonObject = JsonObject()
 
 var pageIndex = mutableIntStateOf(0)
 
-//Settings variables
-val miniMinus = mutableStateOf(true)
-
 val match = mutableStateOf("1")
 
 var tempMatch = match.value

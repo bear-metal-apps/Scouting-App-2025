@@ -13,6 +13,8 @@ import composables.CheckBox
 import composables.EnumerableValue
 import keyboardAsState
 import nodes.*
+import org.tahomarobotics.scouting.algaeColor
+import org.tahomarobotics.scouting.coralColor
 import java.lang.Integer.parseInt
 
 @Composable
@@ -24,12 +26,8 @@ actual fun TeleMenu(
     team: MutableIntState,
     robotStartPosition: MutableIntState
 ) {
-    val scrollState = rememberScrollState(0)
     val isScrollEnabled = remember{ mutableStateOf(true) }
     val isKeyboardOpen by keyboardAsState()
-    val context = LocalContext.current
-    val algaeColor = Color(5, 48, 45)
-    val coralColor = Color(50, 45, 35)//#FFE5B4
     fun bob() {
         backStack.pop()
         teamDataArray[TeamMatchStartKey(parseInt(match.value), team.intValue, robotStartPosition.intValue)] = createOutput(team, robotStartPosition)
