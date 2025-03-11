@@ -302,7 +302,7 @@ actual fun MatchMenuBottom(
     var backgroundColor = remember { mutableStateOf(Color.Black) }
     var textColor = remember { mutableStateOf(Color.White) }
 
-    var teleFlash = if(totalAutoCoralAttempts.intValue > 3 && pageIndex.intValue == 0) true else false
+    var startTimer = if(totalAutoCoralAttempts.intValue > 0 && pageIndex.intValue == 0) true else false
     var teleColor = remember { mutableStateOf(getCurrentTheme().secondary) }
     var teleTextColor = remember { mutableStateOf(Color.Yellow) }
 
@@ -310,8 +310,16 @@ actual fun MatchMenuBottom(
             autoCoralLevel2Scored.intValue+ autoCoralLevel1Scored.intValue+ autoCoralLevel4Missed.intValue+
             autoCoralLevel3Missed.intValue+ autoCoralLevel2Missed.intValue+ autoCoralLevel1Missed.intValue
 
-    LaunchedEffect(teleFlash) {
-        while (teleFlash) {
+    LaunchedEffect(startTimer) {
+        while (startTimer) {
+            delay(15000)
+            teleFlash.value = true
+            startTimer = false
+        }
+    }
+
+    LaunchedEffect(teleFlash.value) {
+        while (teleFlash.value) {
             teleColor.value = Color.Green.copy(alpha = 0.8f)
             teleTextColor.value = Color.White
             delay(200)
@@ -473,10 +481,10 @@ actual fun MatchMenuBottom(
             border = BorderStroke(1.dp, color = Color.Yellow),
             shape = RoundedCornerShape(1.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = if (nodes.pageIndex.intValue == 1 && !teleFlash) Color.Yellow.copy(alpha = 0.5f) else if (!teleFlash) getCurrentTheme().secondary else teleColor.value
+                containerColor = if (nodes.pageIndex.intValue == 1 && !teleFlash.value) Color.Yellow.copy(alpha = 0.5f) else if (!teleFlash.value) getCurrentTheme().secondary else teleColor.value
             ),
             onClick = {
-                teleFlash = false
+                teleFlash.value = false
                 backStack.push(AutoTeleSelectorNode.NavTarget.TeleScouting)
                 pageIndex.value = 1
                 if(saveData.value) {
@@ -487,7 +495,7 @@ actual fun MatchMenuBottom(
         ) {
             Text(
                 text = "Tele",
-                color = if (nodes.pageIndex.intValue == 1 && !teleFlash) Color.White else if (!teleFlash) Color.Yellow else teleTextColor.value,
+                color = if (nodes.pageIndex.intValue == 1 && !teleFlash.value) Color.White else if (!teleFlash.value) Color.Yellow else teleTextColor.value,
                         fontSize = 23.sp
             )
         }
@@ -579,6 +587,7 @@ actual fun MatchMenuBottom(
                             saveData.value = false
                         }
                         saveDataPopup.value = false
+                        teleFlash.value = false
                     },
                     border = BorderStroke(2.dp, getCurrentTheme().secondaryVariant),
                     colors = androidx.compose.material.ButtonDefaults.outlinedButtonColors(backgroundColor = getCurrentTheme().secondary, contentColor = getCurrentTheme().onSecondary),
@@ -607,6 +616,7 @@ actual fun MatchMenuBottom(
                         }
                         saveDataPopup.value = false
                         saveData.value = false
+                        teleFlash.value = false
                     },
                     border = BorderStroke(2.dp, getCurrentTheme().secondaryVariant),
                     colors = androidx.compose.material.ButtonDefaults.outlinedButtonColors(backgroundColor = getCurrentTheme().secondary, contentColor = getCurrentTheme().onSecondary),
