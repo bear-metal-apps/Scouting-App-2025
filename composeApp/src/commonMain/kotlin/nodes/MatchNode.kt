@@ -28,6 +28,7 @@ import pages.MatchMenuBottom
 import pages.MatchMenuTop
 import java.lang.Integer.parseInt
 import java.util.*
+import kotlin.collections.HashMap
 
 
 class AutoTeleSelectorNode(
@@ -369,7 +370,7 @@ fun loadData(match: Int, team: MutableIntState, robotStartPosition: MutableIntSt
 
     val gson = Gson()
 
-    if(teamDataArray.get(compKey)?.get(match)?.get(robotStartPosition.intValue)?.isNotEmpty()!!) {
+    if(!teamDataArray.getOrPut(compKey) { hashMapOf() }.getOrPut(match) { hashMapOf() } .get(robotStartPosition.intValue).isNullOrEmpty()) {
 
         jsonObject = gson.fromJson(teamDataArray.get(compKey)?.get(match)?.get(robotStartPosition.intValue).toString(), JsonObject::class.java)
 
@@ -433,7 +434,7 @@ fun loadData(match: Int, team: MutableIntState, robotStartPosition: MutableIntSt
     } else {
         reset()
         if(saveData.value) {
-            teamDataArray.get(compKey)?.get(match)?.set(robotStartPosition.intValue, createOutput(team, robotStartPosition))
+            teamDataArray.getOrPut(compKey) { hashMapOf() }.getOrPut(match) { hashMapOf() }.getOrPut(robotStartPosition.intValue) {createOutput(team, robotStartPosition) }
         }
     }
 }

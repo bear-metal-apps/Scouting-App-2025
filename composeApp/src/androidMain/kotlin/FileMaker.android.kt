@@ -449,10 +449,8 @@ fun sendMatchData(client: Client) {
 
     val gson = Gson()
 
-    for ((_, value) in teamDataArray.entries) {
-        val jsonObject = gson.fromJson(value, JsonObject::class.java)
-    for((key, value) in teamDataArray.entries) {
-        for((key1, value1) in value.entries) {
+    for ((key, value) in teamDataArray.entries) {
+        for ((key1, value1) in value.entries) {
             for ((key2, value2) in value1.entries) {
                 val jsonObject = gson.fromJson(value2, JsonObject::class.java)
 
@@ -464,11 +462,10 @@ fun sendMatchData(client: Client) {
         Log.i("Client", "Message Sent: $jsonObject")
     }
 
+
 }
 
 fun sendStratData(client: Client) {
-//    println("reached beginning of sendData")
-
     val gson = Gson()
 
     for ((_, value) in stratTeamDataArray.entries) {

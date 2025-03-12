@@ -116,7 +116,7 @@ actual fun MatchMenuTop(
         stringMatch = remember { mutableStateOf(match.value) }
         stringTeam = remember { mutableStateOf(team.intValue.toString()) }
 
-        if(teamDataArray.get(compKey)?.get(match.value.betterParseInt())?.get(robotStartPosition.intValue)?.isEmpty()!!) {
+        if(teamDataArray.getOrPut(compKey) { hashMapOf() }.getOrPut(match.value.betterParseInt()) { hashMapOf() } .get(robotStartPosition.intValue).isNullOrEmpty()) {
             saveData.value = false
         } else {
             saveData.value = true
@@ -163,7 +163,7 @@ actual fun MatchMenuTop(
                 onValueChange = { value ->
                     if(saveData.value) {
                         teamDataArray.get(compKey)?.get(match.value.betterParseInt())?.set(robotStartPosition.intValue, createOutput(mutableIntStateOf(team.intValue), robotStartPosition))
-                        createScoutMatchDataFile(context, match.value, team.intValue, createOutput(mutableIntStateOf(team.intValue), robotStartPosition))
+                        createScoutMatchDataFile(match.value, team.intValue, createOutput(mutableIntStateOf(team.intValue), robotStartPosition))
                     }
 
                     if (value.isNotEmpty()) {
