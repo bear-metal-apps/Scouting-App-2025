@@ -62,7 +62,7 @@ actual fun MainMenuAlertDialog(active: MutableState<Boolean>, bob: () -> Unit, t
                             active.value = false
 
                             teamDataArray.get(compKey)?.get(match.value.betterParseInt())?.set(robotStartPosition, createOutput(mutableIntStateOf(team), mutableIntStateOf(robotStartPosition)))
-                            createScoutMatchDataFile(match.value, team, createOutput(mutableIntStateOf(team), mutableIntStateOf(robotStartPosition))) // permanent save
+                            createScoutMatchDataFile(compKey, match.value, team, createOutput(mutableIntStateOf(team), mutableIntStateOf(robotStartPosition))) // permanent save
 
                             bob.invoke()
                         }

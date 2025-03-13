@@ -31,19 +31,13 @@ import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.components.backstack.operation.pop
 import com.bumble.appyx.components.backstack.operation.push
 import compKey
-import composables.Cage
 import composables.Comments
 import composables.EndGameCheckBox
 import createScoutMatchDataFile
 import defaultSecondary
 import getTeamsOnAlliance
 import keyboardAsState
-import kotlinx.coroutines.runBlocking
 import nodes.*
-import org.jetbrains.compose.resources.load
-import org.json.JSONException
-import org.tahomarobotics.scouting.TBAInterface
-import setTeam
 import java.lang.Integer.parseInt
 
 
@@ -113,11 +107,11 @@ actual fun EndGameMenu(
                         teamDataArray.get(compKey)?.get(match.value.betterParseInt())?.set(robotStartPosition.intValue, createOutput(team, robotStartPosition))
 
                         //Save permanent data
-                        createScoutMatchDataFile(match.value, team.intValue, createOutput(team, robotStartPosition))
+                        createScoutMatchDataFile(compKey, match.value, team.intValue, createOutput(team, robotStartPosition))
                         match.value = (parseInt(match.value) + 1).toString()
                         stringMatch.value = match.value
                         reset()
-                        saveData.value = false
+                        matchFirst.value = true
                         backStack.push(AutoTeleSelectorNode.NavTarget.AutoScouting)
 
                         //Grab team from TBA for next match
@@ -126,7 +120,7 @@ actual fun EndGameMenu(
                         }catch (e: Exception){}
                         stringTeam.value = team.intValue.toString()
 
-                        loadData(parseInt(match.value), team, robotStartPosition)
+//                        loadData(parseInt(match.value), team, robotStartPosition)
 
                     } else {
                         saveDataPopup.value = true

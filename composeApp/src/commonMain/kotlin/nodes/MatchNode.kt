@@ -3,11 +3,8 @@ package nodes
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableIntState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.state.ToggleableState
 import com.bumble.appyx.components.backstack.BackStack
@@ -26,9 +23,7 @@ import compKey
 import composables.MainMenuAlertDialog
 import pages.MatchMenuBottom
 import pages.MatchMenuTop
-import java.lang.Integer.parseInt
 import java.util.*
-import kotlin.collections.HashMap
 
 
 class AutoTeleSelectorNode(
@@ -172,6 +167,11 @@ val match = mutableStateOf("1")
 var stringMatch = mutableStateOf("")
 var stringTeam = mutableStateOf("")
 
+/**
+ * This value is briefly set to true if it is the first time the user is loading the data of the current match.
+ */
+var matchFirst = mutableStateOf(true)
+
 // Auto
 var collectCoral = mutableIntStateOf(0)
 var groundCollectionAlgae = mutableStateOf(ToggleableState.Off)
@@ -283,8 +283,6 @@ fun createJson(team: MutableIntState, robotStartPosition: MutableIntState) {
 //            addProperty("shallow", shallow.value)
 //        })
     }
-
-    println("Created Match JSON")
 }
 
 fun createOutput(team: MutableIntState, robotStartPosition: MutableIntState): String {

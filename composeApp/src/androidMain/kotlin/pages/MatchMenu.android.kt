@@ -32,8 +32,6 @@ import getCurrentTheme
 import getTeamsOnAlliance
 import kotlinx.coroutines.delay
 import nodes.*
-import okhttp3.internal.toNonNegativeInt
-import org.jetbrains.compose.resources.load
 import org.json.JSONException
 import setTeam
 import java.lang.Integer.parseInt
@@ -48,8 +46,6 @@ actual fun MatchMenuTop(
     var teamColor by remember { mutableStateOf(Color.Black) }
     val context = LocalContext.current
     val pageName = mutableListOf("A", "T", "E")
-
-    var first by remember { mutableStateOf(true) }
 
     when (robotStartPosition.intValue) {
         0 -> {
@@ -105,8 +101,7 @@ actual fun MatchMenuTop(
 //        tempRobotStart.value -= 3
     }
 
-    if (first) {
-        println("first")
+    if (matchFirst.value) {
         try {
             team.intValue =
                 getTeamsOnAlliance(match.value.betterParseInt(), isRedAliance.value)[tempRobotStart.value].number
@@ -118,6 +113,7 @@ actual fun MatchMenuTop(
 
         if(teamDataArray.getOrPut(compKey) { hashMapOf() }.getOrPut(match.value.betterParseInt()) { hashMapOf() } .get(robotStartPosition.intValue).isNullOrEmpty()) {
             saveData.value = false
+            println("save data is false")
         } else {
             saveData.value = true
         }
@@ -127,7 +123,7 @@ actual fun MatchMenuTop(
             parseInt(match.value), team, robotStartPosition
         )
 
-        first = false
+        matchFirst.value = false
     }
 
     Column() {
@@ -163,7 +159,7 @@ actual fun MatchMenuTop(
                 onValueChange = { value ->
                     if(saveData.value) {
                         teamDataArray.get(compKey)?.get(match.value.betterParseInt())?.set(robotStartPosition.intValue, createOutput(mutableIntStateOf(team.intValue), robotStartPosition))
-                        createScoutMatchDataFile(match.value, team.intValue, createOutput(mutableIntStateOf(team.intValue), robotStartPosition))
+                        createScoutMatchDataFile(compKey, match.value, team.intValue, createOutput(mutableIntStateOf(team.intValue), robotStartPosition))
                     }
 
                     if (value.isNotEmpty()) {
@@ -174,14 +170,16 @@ actual fun MatchMenuTop(
                     }
                     team.intValue = stringTeam.value.betterParseInt()
 
-                    if(teamDataArray.get(compKey)?.get(match.value.betterParseInt())?.get(robotStartPosition.intValue)?.isEmpty()!!) {
+                    if(teamDataArray.getOrPut(compKey) { hashMapOf() }.getOrPut(match.value.betterParseInt()) { hashMapOf() }.get(robotStartPosition.intValue).isNullOrEmpty()) {
                         saveData.value = false
                     } else {
                         saveData.value = true
                     }
 
-                    if (value != "")
+                    if (value != "") {
                         loadData(parseInt(match.value), team, robotStartPosition)
+                        println("laod dat")
+                    }
 
                 },
                 colors = TextFieldDefaults.colors(
@@ -216,7 +214,7 @@ actual fun MatchMenuTop(
                 onValueChange = { value ->
                     if(saveData.value) {
                         teamDataArray.get(compKey)?.get(match.value.betterParseInt())?.set(robotStartPosition.intValue, createOutput(mutableIntStateOf(team.intValue), robotStartPosition))
-                        createScoutMatchDataFile(match.value, team.intValue, createOutput(mutableIntStateOf(team.intValue), robotStartPosition))
+                        createScoutMatchDataFile(compKey, match.value, team.intValue, createOutput(mutableIntStateOf(team.intValue), robotStartPosition))
                     }
 
                     if (value.isNotEmpty()) {
@@ -237,7 +235,7 @@ actual fun MatchMenuTop(
 
                     println(team.value)
 
-                    if(teamDataArray.get(compKey)?.get(match.value.betterParseInt())?.get(robotStartPosition.intValue)?.isEmpty()!!) {
+                    if(teamDataArray.getOrPut(compKey) { hashMapOf() }.getOrPut(match.value.betterParseInt()) { hashMapOf() }.get(robotStartPosition.intValue).isNullOrEmpty()) {
                         saveData.value = false
                     } else {
                         saveData.value = true
@@ -561,17 +559,18 @@ actual fun MatchMenuBottom(
                     onClick = {
                         if(saveDataSit.value) {
                             teamDataArray.get(compKey)?.get(match.value.betterParseInt())?.set(robotStartPosition.intValue, createOutput(team, robotStartPosition))
-                            createScoutMatchDataFile(match.value, team.intValue, createOutput(team, robotStartPosition))
+                            createScoutMatchDataFile(compKey, match.value, team.intValue, createOutput(team, robotStartPosition))
                             println(teamDataArray)
                             mainMenuBackStack.pop()
 
                             saveData.value = true
                         } else {
-                            teamDataArray.get(compKey)?.get(match.value.betterParseInt())?.set(robotStartPosition.intValue, createOutput(team, robotStartPosition))
-                            createScoutMatchDataFile(match.value, team.intValue, createOutput(team, robotStartPosition))
+                            teamDataArray.getOrPut(compKey) { hashMapOf() }.getOrPut(match.value.betterParseInt()) { hashMapOf() }.set(robotStartPosition.intValue, createOutput(team, robotStartPosition))
+                            createScoutMatchDataFile(compKey, match.value, team.intValue, createOutput(team, robotStartPosition))
                             match.value = (parseInt(match.value) + 1).toString()
                             stringMatch.value = match.value
                             reset()
+                            matchFirst.value = true
                             backStack.push(AutoTeleSelectorNode.NavTarget.AutoScouting)
 
                             try {
@@ -606,6 +605,7 @@ actual fun MatchMenuBottom(
                             match.value = (parseInt(match.value) + 1).toString()
                             stringMatch.value = match.value
                             reset()
+                            matchFirst.value = true
                             backStack.push(AutoTeleSelectorNode.NavTarget.AutoScouting)
 
                             try {

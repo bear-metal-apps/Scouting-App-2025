@@ -27,6 +27,7 @@ import androidx.core.view.HapticFeedbackConstantsCompat
 import androidx.core.view.ViewCompat
 import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.components.backstack.operation.pop
+import compKey
 import createScoutStratDataFile
 import defaultOnPrimary
 import defaultSecondary
@@ -207,6 +208,7 @@ actual fun StratMenu(
                                         stratTeamDataArray[TeamsAllianceKey(stratMatch, isRedAlliance)] = createStratOutput(
                                             stratMatch)
                                         createScoutStratDataFile(
+                                            compKey,
                                             stratMatch.toString(),
                                             isRedAlliance,
                                             createStratOutput(stratMatch)
@@ -269,6 +271,7 @@ actual fun StratMenu(
                                 if(saveStratData.value && isSynced()) {
                                     stratTeamDataArray[TeamsAllianceKey(stratMatch, isRedAlliance)] = createStratOutput(stratMatch)
                                     createScoutStratDataFile(
+                                        compKey,
                                         stratMatch.toString(), isRedAlliance, createStratOutput(
                                             stratMatch)
                                     )
@@ -340,7 +343,7 @@ actual fun StratMenu(
 
                     if(saveStratData.value && isSynced()) {
                         stratTeamDataArray[TeamsAllianceKey(stratMatch, isRedAlliance)] = createStratOutput(stratMatch)
-                        createScoutStratDataFile(stratMatch.toString(), isRedAlliance, createStratOutput(stratMatch))
+                        createScoutStratDataFile(compKey, stratMatch.toString(), isRedAlliance, createStratOutput(stratMatch))
                         saveStratData.value = false
                         nextMatch()
                         mutableMatchNum = stratMatch
@@ -391,6 +394,7 @@ actual fun StratMenu(
                         if(saveStratDataSit.value) {
                             stratTeamDataArray[TeamsAllianceKey(stratMatch, isRedAlliance)] = createStratOutput(stratMatch)
                             createScoutStratDataFile(
+                                compKey,
                                 stratMatch.toString(), isRedAlliance, createStratOutput(
                                     stratMatch)
                             )
@@ -399,6 +403,7 @@ actual fun StratMenu(
                         } else {
                             stratTeamDataArray[TeamsAllianceKey(stratMatch, isRedAlliance)] = createStratOutput(stratMatch)
                             createScoutStratDataFile(
+                                compKey,
                                 stratMatch.toString(), isRedAlliance, createStratOutput(
                                     stratMatch)
                             )

@@ -94,8 +94,8 @@ fun createScoutPitsDataFolder(context: Context) {
 }
 
 
-fun createScoutMatchDataFile(match: String, team: Int, data: String) {
-    val file = File(matchFolder, "Match${match}Team${team}.json")
+fun createScoutMatchDataFile(compKey: String, match: String, team: Int, data: String) {
+    val file = File(matchFolder, "Comp${compKey}Match${match}Team${team}.json")
     file.delete()
     file.createNewFile()
 
@@ -103,15 +103,15 @@ fun createScoutMatchDataFile(match: String, team: Int, data: String) {
 
     file.forEachLine {
         try {
-            println("Saved file Match${match}Team${team}.json: $it")
+            println("Saved file Comp${compKey}Match${match}Team${team}.json: $it")
         } catch (e: Exception) {
             println(e.message)
         }
     }
 }
 
-fun createScoutStratDataFile(match: String, isRed: Boolean, data: String) {
-    val file = File(stratFolder, "Match${match}${if (isRed) "RedAlliance" else "BlueAlliance"}.json")
+fun createScoutStratDataFile(compKey: String, match: String, isRed: Boolean, data: String) {
+    val file = File(stratFolder, "Comp${compKey}Match${match}${if (isRed) "RedAlliance" else "BlueAlliance"}.json")
     file.delete()
     file.createNewFile()
 
@@ -119,15 +119,15 @@ fun createScoutStratDataFile(match: String, isRed: Boolean, data: String) {
 
     file.forEachLine {
         try {
-            println("Saved file Match${match}${if (isRed) "RedAlliance" else "BlueAlliance"}.json: $it")
+            println("Saved file Comp${compKey}Match${match}${if (isRed) "RedAlliance" else "BlueAlliance"}.json: $it")
         } catch (e: Exception) {
             println(e.message)
         }
     }
 }
 
-fun createScoutPitsDataFile(team: Int, data: String) {
-    val file = File(pitsFolder, "Team${team}.json")
+fun createScoutPitsDataFile(compKey: String, team: Int, data: String) {
+    val file = File(pitsFolder, "Comp${compKey}Team${team}.json")
     file.delete()
     file.createNewFile()
 
@@ -135,7 +135,7 @@ fun createScoutPitsDataFile(team: Int, data: String) {
 
     file.forEachLine {
         try {
-            println("Saved file Team${team}.json: $it")
+            println("Saved file Comp${compKey}Team${team}.json: $it")
         } catch (e: Exception) {
             println(e.message)
         }
@@ -174,7 +174,7 @@ fun loadMatchDataFiles() {
                 matchFolder?.listFiles()?.toList()?.get(index)?.readText(),
                 JsonObject::class.java
             )
-            teamDataArray.get(compKey)?.get(jsonObject.get("match").asInt)?.set(jsonObject.get("robotStartPosition").asInt, jsonObject.toString())
+            teamDataArray.getOrPut(jsonObject.get("event_key").asString) { hashMapOf() }.getOrPut(jsonObject.get("match").asInt) { hashMapOf() } .set(jsonObject.get("robotStartPosition").asInt, jsonObject.toString())
 
             println(matchFolder?.listFiles()?.toList()?.get(index).toString())
         }
@@ -461,7 +461,6 @@ fun sendMatchData(client: Client) {
         }
         Log.i("Client", "Message Sent: $jsonObject")
     }
-
 
 }
 

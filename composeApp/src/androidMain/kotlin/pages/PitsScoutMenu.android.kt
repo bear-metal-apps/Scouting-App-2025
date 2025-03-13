@@ -33,6 +33,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.components.backstack.operation.push
+import compKey
 import composables.downloadPitsPhotos
 import createScoutPitsDataFile
 import defaultError
@@ -932,6 +933,7 @@ actual fun PitsScoutMenu(
 
                             pitsTeamDataArray[parseInt(scoutedTeamNumber.value)] = createPitsOutput(mutableIntStateOf(parseInt(scoutedTeamNumber.value)))
                             createScoutPitsDataFile(
+                                compKey,
                                 parseInt(scoutedTeamNumber.value),
                                 pitsTeamDataArray[parseInt(scoutedTeamNumber.value)]!!
                             )
