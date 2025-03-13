@@ -9,6 +9,7 @@ import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
@@ -27,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat.startActivity
 import com.bumble.appyx.components.backstack.BackStack
+import com.bumble.appyx.components.backstack.operation.pop
 import com.bumble.appyx.components.backstack.operation.push
 import com.bumble.appyx.navigation.modality.BuildContext
 import com.bumble.appyx.navigation.node.Node
@@ -43,6 +45,7 @@ import isTBAMatchDataSynced
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import loadMatchDataFiles
 import loadPitsDataFiles
@@ -72,11 +75,26 @@ actual class MainMenu actual constructor(
     actual override fun View(modifier: Modifier) {
         val context = LocalContext.current
         val activity = context as ComponentActivity
-        
+
         var matchSynced by remember { mutableStateOf(isTBAMatchDataSynced(compKey)) }
         var matchOutOfDate by remember { mutableStateOf(isTBAMatchDataOld(compKey)) }
         var teamSynced by remember { mutableStateOf(isTBAMTeamDataSynced(compKey)) }
-        
+
+        var selectedPlacement by remember { mutableStateOf(false) }
+        var matchSyncedResource by remember { mutableStateOf(if (matchData == null) "crossmark.png" else "checkmark.png") }
+        var teamSyncedResource by remember { mutableStateOf(if (teamData == null) "crossmark.png" else "checkmark.png") }
+        var serverDialogOpen by remember { mutableStateOf(false) }
+        var noMatchTeamData = mutableStateOf(false)
+
+        var ipAddressErrorDialog by remember { mutableStateOf(false) }
+        var deviceListOpen by remember { mutableStateOf(false) }
+        val manager = context.getSystemService(Context.USB_SERVICE) as UsbManager
+
+        var setEventCode by remember { mutableStateOf(false) }
+        var tempCompKey by remember { mutableStateOf(compKey) }
+
+        val deviceList = manager.deviceList
+
         var exportPopup by remember { mutableStateOf(false) }
 
         var isInternetAvailable by remember { mutableStateOf(isInternetAvailable(context)) }
@@ -101,7 +119,7 @@ actual class MainMenu actual constructor(
 
             first = false
         }
-        
+
         Column(
             modifier = Modifier
                 .verticalScroll(ScrollState(0))
@@ -163,7 +181,7 @@ actual class MainMenu actual constructor(
                 thickness = 3.dp,
                 modifier = Modifier.padding(8.dp)
             )
-            
+
             androidx.compose.material.OutlinedTextField(
                 value = scoutName.value,
                 onValueChange = { scoutName.value = it },
@@ -181,7 +199,7 @@ actual class MainMenu actual constructor(
                     .fillMaxWidth(0.6f)
                     .align(Alignment.CenterHorizontally)
             )
-            
+
             OutlinedButton(
                 border = BorderStroke(3.dp, Color.Yellow),
                 shape = RoundedCornerShape(12.dp),
@@ -210,7 +228,7 @@ actual class MainMenu actual constructor(
                             .align(Alignment.CenterHorizontally)
                             .padding(8.dp)
                     )
-                    
+
                     Box(
                         Modifier
                             .fillMaxWidth(1f / 2f)
@@ -236,7 +254,7 @@ actual class MainMenu actual constructor(
                             .padding(0.dp, 0.dp, 0.dp, 8.dp)
                     ) {
                         Text("Match List", modifier = Modifier.align(Alignment.CenterStart))
-                        
+
                         Icon(
                             if (matchSynced) Icons.Rounded.CheckCircleOutline else if (matchOutOfDate) Icons.AutoMirrored.Rounded.HelpOutline else Icons.Rounded.ErrorOutline,
                             contentDescription = "match sync status",
@@ -350,7 +368,7 @@ actual class MainMenu actual constructor(
                                     modifier = Modifier
                                         .align(Alignment.CenterVertically)
                                         .padding(8.dp)
-                                        
+
                                 ) {
                                     Text(text = "Settings", color = getCurrentTheme().onPrimary)
                                 }
@@ -421,7 +439,7 @@ actual class MainMenu actual constructor(
                             }
                         }
                     }
-                
+
             }
         }
     }

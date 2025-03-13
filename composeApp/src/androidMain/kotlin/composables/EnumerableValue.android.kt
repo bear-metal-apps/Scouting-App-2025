@@ -25,6 +25,7 @@ import com.bumble.appyx.interactions.core.ui.property.impl.BackgroundColor
 import defaultOnPrimary
 import defaultSecondary
 import getCurrentTheme
+import minus
 import nodes.TeamMatchStartKey
 import nodes.createOutput
 import nodes.jsonObject
@@ -53,7 +54,7 @@ actual fun EnumerableValue(label: String, value: MutableIntState, alignment: Ali
                 mutableIntStateOf(jsonObject.get("team").asInt), mutableIntStateOf(jsonObject.get("robotStartPosition").asInt))
         },
         interactionSource = interact,
-        contentPadding = PaddingValues(5.dp, 5.dp),
+        contentPadding = PaddingValues(0.dp, 0.dp),
         modifier = modifier
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
@@ -61,26 +62,25 @@ actual fun EnumerableValue(label: String, value: MutableIntState, alignment: Ali
                 text = "$label \n\n ${value.value}",
                 fontSize = 24.sp,
                 color = getCurrentTheme().onPrimary,
-                modifier = Modifier.align(Alignment.CenterStart).padding(0.dp)
+                modifier = Modifier.align(Alignment.CenterStart).padding(5.dp)
             )
             if (miniMinus) {
                 OutlinedButton(
                     border = BorderStroke(1.dp, color = getCurrentTheme().primaryVariant),
                     shape = RoundedCornerShape(2.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = if (pressed) flashColor else backgroundColor),
+                    colors = ButtonDefaults.buttonColors(containerColor = if (pressed) flashColor else (backgroundColor - Color(20,20,20))),
                     onClick = {
                         if(value.value != 0){
                             undoList.push(arrayOf("number", value, value.value))
                             value.value -= 1
                             redoList.push(arrayOf("number", value, value.value))
                         }
-
                         saveData.value = true
                         teamDataArray[TeamMatchStartKey(match.value.toInt(), jsonObject.get("team").asInt, jsonObject.get("robotStartPosition").asInt)] = createOutput(
                             mutableIntStateOf(jsonObject.get("team").asInt), mutableIntStateOf(jsonObject.get("robotStartPosition").asInt))
                     },
                     interactionSource = interact,
-                    modifier = Modifier.align(alignment)
+                    modifier = Modifier.align(alignment).padding(0.dp).offset(0.dp,2.dp)
                 ) {
                     Text(
                         text = "-",
@@ -92,6 +92,8 @@ actual fun EnumerableValue(label: String, value: MutableIntState, alignment: Ali
         }
     }
 }
+
+
 
 //
 //@Composable

@@ -116,6 +116,7 @@ actual fun CheckBox(
                 saveData.value = true
                 teamDataArray[TeamMatchStartKey(match.value.toInt(), jsonObject.get("team").asInt, jsonObject.get("robotStartPosition").asInt)] = createOutput(
                     mutableIntStateOf(jsonObject.get("team").asInt), mutableIntStateOf(jsonObject.get("robotStartPosition").asInt))
+                undoList.push(arrayOf("checkBox" ,ifChecked, ifChecked.value))
             },
             modifier = Modifier.align(Alignment.Center).fillMaxSize(),
         )

@@ -101,6 +101,7 @@ fun createTabletDataOutput(robotStartPosition : Int) : String {
  * @return int 0 if string has 0 ints and the first 10 digits of an int
  * @author The coolest GPT lead with red hair during the 2024-2025 season
  * *IMPORTANT* - when using it does NOT remove "/n" so you should set it to be a single line
+ * defaults to coerce to 10
  */
 fun String.betterParseInt(): Int {
     val stringBuilder = StringBuilder()
@@ -113,6 +114,31 @@ fun String.betterParseInt(): Int {
         }
     }
     if (stringBuilder.length >= 10) {
+        stringBuilder.deleteCharAt(stringBuilder.lastIndex)
+    }
+    if (stringBuilder.toString().isNotEmpty()) {
+        return parseInt(stringBuilder.toString())
+    } else {
+        return 0
+    }
+}
+
+/**
+ * @return int 0 if string has 0 ints and the first 10 digits of an int
+ * @author The coolest GPT lead with red hair during the 2024-2025 season
+ * *IMPORTANT* - when using it does NOT remove "/n" so you should set it to be a single line
+ */
+fun String.betterParseInt(coerce: Int): Int {
+    var stringBuilder = StringBuilder()
+    for (c in this) {
+        try {
+            parseInt(c.toString())
+            stringBuilder.append(parseInt(c.toString()))
+        } catch (e: NumberFormatException) {
+            //Remove from original string
+        }
+    }
+    if (stringBuilder.length >= coerce) {
         stringBuilder.deleteCharAt(stringBuilder.lastIndex)
     }
     if (stringBuilder.toString().isNotEmpty()) {
