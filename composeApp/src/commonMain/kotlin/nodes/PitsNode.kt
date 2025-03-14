@@ -69,7 +69,6 @@ var pitsImgJsonObj = JsonArray()
 fun createPitsOutput(team: MutableIntState): String {
 
     println("saved data")
-    println(pitsTeamDataArray)
 
     fun stateToInt(state: ToggleableState) = when (state) {
         ToggleableState.Off -> 0

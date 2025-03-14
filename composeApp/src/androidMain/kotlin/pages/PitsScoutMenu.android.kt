@@ -933,6 +933,7 @@ actual fun PitsScoutMenu(
                             photoArray.removeAll(removeList)
 
                             pitsTeamDataArray.getOrPut(compKey){ hashMapOf() }.set(scoutedTeamNumber.value.betterParseInt(), createPitsOutput(mutableIntStateOf(parseInt(scoutedTeamNumber.value))))
+                            println(pitsTeamDataArray)
                             createScoutPitsDataFile(
                                 compKey,
                                 parseInt(scoutedTeamNumber.value),
