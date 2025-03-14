@@ -53,8 +53,6 @@ actual fun StratMenu(
     var first by remember { mutableStateOf(true) }
 
     if(first) {
-//        tempStratMatch = stratMatch
-
         saveStratData.value = false
 
         first = false
@@ -205,8 +203,7 @@ actual fun StratMenu(
                                 value = if (mutableMatchNum.toString() == "0") "" else mutableMatchNum.toString(),
                                 onValueChange = {
                                     if(saveStratData.value && isSynced()) {
-                                        stratTeamDataArray[TeamsAllianceKey(stratMatch, isRedAlliance)] = createStratOutput(
-                                            stratMatch)
+                                        stratTeamDataArray.getOrPut(compKey) { hashMapOf() }.getOrPut(stratMatch) { hashMapOf() }.set(isRedAlliance , createStratOutput(stratMatch))
                                         createScoutStratDataFile(
                                             compKey,
                                             stratMatch.toString(),
@@ -269,7 +266,7 @@ actual fun StratMenu(
                                 saveStratDataSit.value = true
 
                                 if(saveStratData.value && isSynced()) {
-                                    stratTeamDataArray[TeamsAllianceKey(stratMatch, isRedAlliance)] = createStratOutput(stratMatch)
+                                    stratTeamDataArray.getOrPut(compKey) { hashMapOf() }.getOrPut(stratMatch) { hashMapOf() }.set(isRedAlliance, createStratOutput(stratMatch))
                                     createScoutStratDataFile(
                                         compKey,
                                         stratMatch.toString(), isRedAlliance, createStratOutput(
@@ -342,7 +339,7 @@ actual fun StratMenu(
                     saveStratDataSit.value = false
 
                     if(saveStratData.value && isSynced()) {
-                        stratTeamDataArray[TeamsAllianceKey(stratMatch, isRedAlliance)] = createStratOutput(stratMatch)
+                        stratTeamDataArray.getOrPut(compKey) { hashMapOf() }.getOrPut(stratMatch) { hashMapOf() }.set(isRedAlliance, createStratOutput(stratMatch))
                         createScoutStratDataFile(compKey, stratMatch.toString(), isRedAlliance, createStratOutput(stratMatch))
                         saveStratData.value = false
                         nextMatch()
@@ -392,7 +389,7 @@ actual fun StratMenu(
                 androidx.compose.material.OutlinedButton(
                     onClick = {
                         if(saveStratDataSit.value) {
-                            stratTeamDataArray[TeamsAllianceKey(stratMatch, isRedAlliance)] = createStratOutput(stratMatch)
+                            stratTeamDataArray.getOrPut(compKey) { hashMapOf() }.getOrPut(stratMatch) { hashMapOf() }.set(isRedAlliance, createStratOutput(stratMatch))
                             createScoutStratDataFile(
                                 compKey,
                                 stratMatch.toString(), isRedAlliance, createStratOutput(
@@ -401,7 +398,7 @@ actual fun StratMenu(
                             backStack.pop()
                             saveStratData.value = false
                         } else {
-                            stratTeamDataArray[TeamsAllianceKey(stratMatch, isRedAlliance)] = createStratOutput(stratMatch)
+                            stratTeamDataArray.getOrPut(compKey) { hashMapOf() }.getOrPut(stratMatch) { hashMapOf() }.set(isRedAlliance, createStratOutput(stratMatch))
                             createScoutStratDataFile(
                                 compKey,
                                 stratMatch.toString(), isRedAlliance, createStratOutput(
@@ -450,12 +447,12 @@ actual fun StratMenu(
     }
 
     // Saves data into temp stratTeamDataArray whenever the app recomposes.
-    if(stratTeamDataArray[TeamsAllianceKey(stratMatch, isRedAlliance)] != null && isSynced()) {
-        stratTeamDataArray[TeamsAllianceKey(stratMatch, isRedAlliance)] = createStratOutput(stratMatch)
+    if(!stratTeamDataArray.getOrPut(compKey) { hashMapOf() }.getOrPut(stratMatch){ hashMapOf() }.get(isRedAlliance).isNullOrEmpty() && isSynced()) {
+        stratTeamDataArray.getOrPut(compKey) { hashMapOf() }.getOrPut(stratMatch) { hashMapOf() }.set(isRedAlliance, createStratOutput(stratMatch))
         loadStratData(stratMatch, isRedAlliance)
     } else if(isSynced()) {
         if(saveStratData.value) {
-            stratTeamDataArray[TeamsAllianceKey(stratMatch, isRedAlliance)] = createStratOutput(stratMatch)
+            stratTeamDataArray.getOrPut(compKey) { hashMapOf() }.getOrPut(stratMatch) { hashMapOf() }.set(isRedAlliance, createStratOutput(stratMatch))
         }
     }
 

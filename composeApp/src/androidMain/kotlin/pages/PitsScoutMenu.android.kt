@@ -45,6 +45,7 @@ import nodes.algaeBarge
 import nodes.algaeProcess
 import nodes.algaeRemoval
 import nodes.bargePreferred
+import nodes.betterParseInt
 import nodes.collectPreference
 import nodes.comments
 import nodes.coralHigh
@@ -212,12 +213,12 @@ actual fun PitsScoutMenu(
 
                                     photoArray.add(uri.toString())
 
-                                    for(img in permPhotosList) {
+                                    for(img in permPhotosList.getOrPut(compKey){ mutableListOf() }) {
                                         if(img == uri.toString()) {
                                             permPhotosList.remove(uri.toString())
                                         }
                                     }
-                                    permPhotosList.add(uri.toString())
+                                    permPhotosList.getOrPut(compKey){ mutableListOf() }.add(uri.toString())
                                 } catch (e: NumberFormatException) {
                                     teamNumberPopup = true
                                 }
@@ -921,7 +922,7 @@ actual fun PitsScoutMenu(
                             val removeList = mutableListOf<String>()
 
                             println("photos:")
-                            println(photoArray[0])
+                            photoArray.forEach{ println(it) }
                             photoArray.forEach {
                                 val startIndex = it.indexOf("/", 56)
                                 addList.add(it.substring(startIndex+1))
@@ -931,11 +932,11 @@ actual fun PitsScoutMenu(
                             photoArray.addAll(addList)
                             photoArray.removeAll(removeList)
 
-                            pitsTeamDataArray[parseInt(scoutedTeamNumber.value)] = createPitsOutput(mutableIntStateOf(parseInt(scoutedTeamNumber.value)))
+                            pitsTeamDataArray.getOrPut(compKey){ hashMapOf() }.set(scoutedTeamNumber.value.betterParseInt(), createPitsOutput(mutableIntStateOf(parseInt(scoutedTeamNumber.value))))
                             createScoutPitsDataFile(
                                 compKey,
                                 parseInt(scoutedTeamNumber.value),
-                                pitsTeamDataArray[parseInt(scoutedTeamNumber.value)]!!
+                                pitsTeamDataArray.get(compKey)?.get(scoutedTeamNumber.value.betterParseInt())!!
                             )
 
                             pitsReset()

@@ -190,12 +190,11 @@ fun loadStratDataFiles() {
             stratJsonObject = gson.fromJson(
                 stratFolder?.listFiles()?.toList()?.get(index)?.readText(), JsonObject::class.java
             )
-            stratTeamDataArray[TeamsAllianceKey(
-                stratJsonObject.get("match").asInt,
-                stratJsonObject.get("is_red_alliance").asBoolean
-            )] = stratJsonObject.toString()
+            stratTeamDataArray.getOrPut(stratJsonObject.get("event_key").asString) { hashMapOf() }.getOrPut(
+                stratJsonObject.get("match").asInt){ hashMapOf() }.set(stratJsonObject.get("is_red_alliance").asBoolean, stratJsonObject.toString())
 
             println(stratFolder?.listFiles()?.toList()?.get(index).toString())
+            println(stratFolder?.listFiles()?.toList()?.get(index)?.readText())
         }
     }
 }
@@ -214,24 +213,18 @@ fun loadPitsDataFiles() {
                 pitsFolder?.listFiles()?.toList()?.get(index)?.readText(),
                 JsonObject::class.java
             )
-            pitsTeamDataArray[
-                jsonObject.get("team").asInt
-            ] = jsonObject.toString()
+            pitsTeamDataArray.getOrPut(compKey){ hashMapOf() }.set(scoutedTeamNumber.value.betterParseInt(), jsonObject.toString())
 
             println(pitsFolder?.listFiles()?.toList()?.get(index).toString())
-            println(
-                pitsTeamDataArray[
-                    jsonObject.get("team").asInt
-                ]
-            )
+            println(pitsFolder?.listFiles()?.toList()?.get(index)?.readText())
         }
     }
 
     println("Loading pits image paths...")
 
     for ((outerIndex, value) in imagesFolder?.listFiles()?.withIndex()!!) {
-        permPhotosList.add(value.path)
-        println(permPhotosList[outerIndex])
+        permPhotosList.getOrPut(compKey){ mutableListOf() }.add(value.path)
+//        println(permPhotosList[outerIndex])
     }
 }
 
@@ -445,34 +438,35 @@ fun getTBAMatchDataTimestamp(eventKey: String): Long {
 
 
 fun sendMatchData(client: Client) {
-//    println("reached beginning of sendData")
+    println("reached beginning of sendData")
 
     val gson = Gson()
 
-    for ((key, value) in teamDataArray.entries) {
+    val array = teamDataArray.getOrPut(compKey) { hashMapOf() }
+    for ((key, value) in array.entries) {
         for ((key1, value1) in value.entries) {
-            for ((key2, value2) in value1.entries) {
-                val jsonObject = gson.fromJson(value2, JsonObject::class.java)
+            val jsonObject = gson.fromJson(value1, JsonObject::class.java)
 
-                client.sendData(jsonObject.toString(), "match")
+            client.sendData(jsonObject.toString(), "match")
 
-                Log.i("Client", "Message Sent: ${jsonObject.toString()}")
-            }
+            Log.i("Client", "Message Sent: ${jsonObject.toString()}")
         }
-        Log.i("Client", "Message Sent: $jsonObject")
     }
-
 }
 
 fun sendStratData(client: Client) {
     val gson = Gson()
 
-    for ((_, value) in stratTeamDataArray.entries) {
-        val jsonObject = gson.fromJson(value, JsonObject::class.java)
+    val array = stratTeamDataArray.getOrPut(compKey) { hashMapOf() }
+    for((key, value) in array.entries) {
+        for((key1, value1) in value.entries) {
+            val jsonObject = gson.fromJson(value1, JsonObject::class.java)
 
-        client.sendData(jsonObject.toString(), "strat")
+            client.sendData(jsonObject.toString(), "strat")
 
-        Log.i("Client", "Message Sent: $jsonObject")
+            Log.i("Client", "Message Sent: $jsonObject")
+
+        }
     }
 
 }
@@ -481,8 +475,10 @@ fun sendPitsData(client: Client) {
 
     val gson = Gson()
 
-    for ((_, value) in pitsTeamDataArray.entries) {
-
+//    println(pitsTeamDataArray)
+    val array = pitsTeamDataArray.getOrPut(compKey) { hashMapOf() }
+    for((key, value) in array.entries) {
+        println(pitsTeamDataArray)
         val jsonObject = gson.fromJson(value, JsonObject::class.java)
 
         client.sendData(jsonObject.toString(), "pit")
