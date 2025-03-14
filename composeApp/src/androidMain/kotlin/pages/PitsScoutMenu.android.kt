@@ -1,10 +1,8 @@
-@file:Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 @file:OptIn(ExperimentalMaterial3Api::class, ExperimentalResourceApi::class)
 
 package pages
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -39,42 +37,14 @@ import defaultError
 import defaultOnPrimary
 import defaultPrimaryVariant
 import getCurrentTheme
-import nodes.RootNode
-import nodes.algaeBarge
-import nodes.algaeProcess
-import nodes.algaeRemoval
-import nodes.bargePreferred
-import nodes.collectPreference
-import nodes.comments
-import nodes.coralHigh
-import nodes.coralLow
-import nodes.createPitsOutput
-import nodes.cycleTime
-import nodes.defensePreferred
-import nodes.driveType
-import nodes.l1
-import nodes.l2
-import nodes.l3
-import nodes.l4
-import nodes.motorType
-import nodes.permPhotosList
-import nodes.photoArray
-import nodes.pitsReset
-import nodes.pitsTeamDataArray
-import nodes.processPreferred
-import nodes.rigidity
-import nodes.scoutedTeamName
-import nodes.scoutedTeamNumber
-import nodes.weight
+import nodes.*
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import org.tahomarobotics.scouting.ComposeFileProvider
 import java.io.File
 import java.lang.Integer.parseInt
 
-@SuppressLint("NewApi", "Recycle")
 @OptIn(ExperimentalResourceApi::class)
-@Suppress("VARIABLE_WITH_REDUNDANT_INITIALIZER")
 @Composable
 actual fun PitsScoutMenu(
     backStack: BackStack<RootNode.NavTarget>,
@@ -113,6 +83,7 @@ actual fun PitsScoutMenu(
 
         var dropDownExpanded by remember { mutableStateOf(false) }
         var dropDown2Expanded by remember { mutableStateOf(false) }
+        var gearRatioExpanded by remember { mutableStateOf(false) }
         var collectPrefDD by remember { mutableStateOf(false) }
 
 //        LazyColumn(
@@ -531,7 +502,132 @@ actual fun PitsScoutMenu(
                     }
                 }
 
+            if (motorType.value == "Kraken") {
                 Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(10.dp, 2.5.dp)
+                        .border(BorderStroke(2.dp, Color.Yellow), shape = RoundedCornerShape(5.dp))
+                ) {
+                    Text(
+                        text = "Drive Motor Gear Ratio:  ",
+                        modifier = Modifier
+                            .padding(15.dp)
+                            .align(Alignment.CenterStart)
+                    )
+                    ExposedDropdownMenuBox(
+                        modifier = Modifier
+                            .width(200.dp)
+                            .padding(15.dp)
+                            .align(Alignment.CenterEnd),
+                        expanded = gearRatioExpanded,
+                        onExpandedChange = { it ->
+                            gearRatioExpanded = it
+                        }
+                    ) {
+                        TextField(
+                            modifier = Modifier
+                                .menuAnchor(),
+                            value = driveGearRatio.value,
+                            onValueChange = {
+                                driveGearRatio.value = it
+                            },
+                            readOnly = true,
+                            trailingIcon = {
+                                ExposedDropdownMenuDefaults.TrailingIcon(expanded = gearRatioExpanded)
+                            },
+                            textStyle = TextStyle(color = Color.White)
+                        )
+                        ExposedDropdownMenu(
+                            expanded = gearRatioExpanded,
+                            onDismissRequest = {
+                                gearRatioExpanded = false
+                            }
+                        ) {
+                            HorizontalDivider(
+                                color = getCurrentTheme().onSurface,
+                                thickness = 3.dp
+                            )
+
+                            DropdownMenuItem(
+                                {
+                                    Text(
+                                        text = "L1",
+                                        color = Color.White
+                                    )
+                                },
+                                onClick = {
+                                    driveGearRatio.value = "L1"
+                                    gearRatioExpanded = false
+                                }
+                            )
+
+                            HorizontalDivider(
+                                color = getCurrentTheme().onSurface,
+                                thickness = 3.dp
+                            )
+
+                            DropdownMenuItem(
+                                {
+                                    Text(
+                                        text = "L2",
+                                        color = Color.White
+                                    )
+                                },
+                                onClick = {
+                                    driveGearRatio.value = "L2"
+                                    gearRatioExpanded = false
+                                }
+                            )
+
+                            HorizontalDivider(
+                                color = getCurrentTheme().onSurface,
+                                thickness = 3.dp
+                            )
+
+                            DropdownMenuItem(
+                                {
+                                    Text(
+                                        text = "L3",
+                                        color = Color.White
+                                    )
+                                },
+                                onClick = {
+                                    driveGearRatio.value = "L3"
+                                    gearRatioExpanded = false
+                                }
+                            )
+
+                            HorizontalDivider(
+                                color = getCurrentTheme().onSurface,
+                                thickness = 3.dp
+                            )
+
+                            DropdownMenuItem(
+                                {
+                                    Text(
+                                        text = "L4",
+                                        color = Color.White
+                                    )
+                                },
+                                onClick = {
+                                    driveGearRatio.value = "L4"
+                                    gearRatioExpanded = false
+                                }
+                            )
+
+                            HorizontalDivider(
+                                color = getCurrentTheme().onSurface,
+                                thickness = 3.dp
+                            )
+
+                        }
+                    }
+                }
+            }
+
+
+            Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(10.dp, 2.5.dp)
