@@ -920,7 +920,7 @@ actual fun PitsScoutMenu(
                             val removeList = mutableListOf<String>()
 
                             println("photos:")
-                            println(photoArray[0])
+                            photoArray.forEach { println(it) }
                             photoArray.forEach {
                                 val startIndex = it.indexOf("/", 56)
                                 addList.add(it.substring(startIndex+1))
