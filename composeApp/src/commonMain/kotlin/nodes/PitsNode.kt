@@ -19,7 +19,7 @@ class PitsNode(
     buildContext: BuildContext,
     private val backStack: BackStack<RootNode.NavTarget>,
     private val pitsPerson: MutableState<String>,
-    private val NumOfPitsPeople: MutableIntState
+    private val numOfPitsPeople: MutableIntState
 ) : Node(buildContext) {
 
     @Composable
@@ -28,7 +28,7 @@ class PitsNode(
             backStack,
             pitsPerson,
             scoutName,
-            NumOfPitsPeople
+            numOfPitsPeople
         )
     }
 
@@ -38,6 +38,7 @@ var scoutedTeamName = mutableStateOf("")
 var scoutedTeamNumber = mutableStateOf("")
 val photoArray = mutableListOf<String>()
 var driveType = mutableStateOf("")
+var driveGearRatio = mutableStateOf("")
 var motorType = mutableStateOf("")
 var auto = mutableStateOf("")
 var width = mutableStateOf("")
@@ -105,6 +106,7 @@ fun createPitsOutput(team: MutableIntState): String {
             addProperty("Photo${index}", value)
         }
         addProperty("driveType", driveType.value)
+        addProperty("motorGearRatio", driveGearRatio.value)
         addProperty("motorType", motorType.value)
         addProperty("auto", auto.value)
         addProperty("width", width.value)
@@ -136,6 +138,7 @@ fun pitsReset(){
     scoutedTeamNumber.value = ""
     photoArray.clear()
     driveType.value = ""
+    driveGearRatio.value = ""
     motorType.value = ""
     auto.value = ""
     width.value = ""
