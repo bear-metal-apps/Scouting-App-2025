@@ -213,7 +213,7 @@ fun loadPitsDataFiles() {
                 pitsFolder?.listFiles()?.toList()?.get(index)?.readText(),
                 JsonObject::class.java
             )
-            pitsTeamDataArray.getOrPut(compKey){ hashMapOf() }.set(scoutedTeamNumber.value.betterParseInt(), jsonObject.toString())
+            pitsTeamDataArray.getOrPut(compKey){ hashMapOf() }.set(jsonObject.get("team").asInt, jsonObject.toString())
 
             println(pitsFolder?.listFiles()?.toList()?.get(index).toString())
             println(pitsFolder?.listFiles()?.toList()?.get(index)?.readText())

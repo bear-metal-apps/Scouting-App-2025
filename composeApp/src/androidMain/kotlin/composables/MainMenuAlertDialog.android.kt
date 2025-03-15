@@ -27,7 +27,6 @@ import compKey
 import createScoutMatchDataFile
 import getCurrentTheme
 import nodes.*
-import nodes.TeamMatchStartKey
 import nodes.betterParseInt
 import nodes.createOutput
 import nodes.match

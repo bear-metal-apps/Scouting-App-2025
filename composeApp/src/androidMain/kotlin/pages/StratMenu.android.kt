@@ -53,7 +53,7 @@ actual fun StratMenu(
     var first by remember { mutableStateOf(true) }
 
     if(first) {
-        saveStratData.value = false
+//        saveStratData.value = false
 
         first = false
     }
@@ -85,7 +85,12 @@ actual fun StratMenu(
                                 containerColor = defaultSecondary,
                                 contentColor = defaultOnPrimary
                             ),
-                            onClick = { humanNetScored.value += 1; saveStratData.value = true }
+                            onClick = {
+                                humanNetScored.value += 1
+
+                                saveStratData.value = true
+                                stratTeamDataArray.getOrPut(compKey) { hashMapOf() }.getOrPut(stratMatch) { hashMapOf() }.set(nodes.isRedAlliance, createStratOutput(stratMatch))
+                            }
                         ) {
                             Box(
                                 modifier = Modifier
@@ -114,7 +119,12 @@ actual fun StratMenu(
                                 containerColor = defaultSecondary,
                                 contentColor = defaultOnPrimary
                             ),
-                            onClick = { humanNetMissed.value += 1; saveStratData.value = true }
+                            onClick = {
+                                humanNetMissed.value += 1
+
+                                saveStratData.value = true
+                                stratTeamDataArray.getOrPut(compKey) { hashMapOf() }.getOrPut(stratMatch) { hashMapOf() }.set(nodes.isRedAlliance, createStratOutput(stratMatch))
+                            }
                         ) {
                             Box(
                                 modifier = Modifier
@@ -148,7 +158,9 @@ actual fun StratMenu(
                             onClick = {
                                 humanNetScored.value -= 1
                                 if (humanNetScored.value < 0) humanNetScored.value = 0
+
                                 saveStratData.value = true
+                                stratTeamDataArray.getOrPut(compKey) { hashMapOf() }.getOrPut(stratMatch) { hashMapOf() }.set(nodes.isRedAlliance, createStratOutput(stratMatch))
                             }
                         ) {
                             Text(
@@ -170,7 +182,9 @@ actual fun StratMenu(
                             onClick = {
                                 humanNetMissed.value -= 1
                                 if (humanNetMissed.value < 0) humanNetMissed.value = 0
+
                                 saveStratData.value = true
+                                stratTeamDataArray.getOrPut(compKey) { hashMapOf() }.getOrPut(stratMatch) { hashMapOf() }.set(isRedAlliance, createStratOutput(stratMatch))
                             }
                         ) {
                             Text(
@@ -217,9 +231,9 @@ actual fun StratMenu(
                                     val newMatchNum = it.betterParseInt()
                                     mutableMatchNum = newMatchNum
                                     updateMatchNum(newMatchNum)
-                                    loadStratData(newMatchNum, isRedAlliance)
+                                    if(newMatchNum != 0)
+                                        loadStratData(newMatchNum, isRedAlliance)
 
-//                                    tempStratMatch = stratMatch
                                 },
                                 keyboardOptions = KeyboardOptions.Default.copy(
                                     keyboardType = KeyboardType.Number
@@ -446,15 +460,15 @@ actual fun StratMenu(
         }
     }
 
-    // Saves data into temp stratTeamDataArray whenever the app recomposes.
-    if(!stratTeamDataArray.getOrPut(compKey) { hashMapOf() }.getOrPut(stratMatch){ hashMapOf() }.get(isRedAlliance).isNullOrEmpty() && isSynced()) {
-        stratTeamDataArray.getOrPut(compKey) { hashMapOf() }.getOrPut(stratMatch) { hashMapOf() }.set(isRedAlliance, createStratOutput(stratMatch))
-        loadStratData(stratMatch, isRedAlliance)
-    } else if(isSynced()) {
-        if(saveStratData.value) {
-            stratTeamDataArray.getOrPut(compKey) { hashMapOf() }.getOrPut(stratMatch) { hashMapOf() }.set(isRedAlliance, createStratOutput(stratMatch))
-        }
-    }
+//    // Saves data into temp stratTeamDataArray whenever the app recomposes.
+//    if(!stratTeamDataArray.getOrPut(compKey) { hashMapOf() }.getOrPut(stratMatch){ hashMapOf() }.get(isRedAlliance).isNullOrEmpty() && isSynced()) {
+//        stratTeamDataArray.getOrPut(compKey) { hashMapOf() }.getOrPut(stratMatch) { hashMapOf() }.set(isRedAlliance, createStratOutput(stratMatch))
+//        loadStratData(stratMatch, isRedAlliance)
+//    } else if(isSynced()) {
+//        if(saveStratData.value) {
+//            stratTeamDataArray.getOrPut(compKey) { hashMapOf() }.getOrPut(stratMatch) { hashMapOf() }.set(isRedAlliance, createStratOutput(stratMatch))
+//        }
+//    }
 
 }
 
@@ -522,13 +536,14 @@ fun teamList(
                                             view,
                                             HapticFeedbackConstantsCompat.GESTURE_START
                                         )
-                                        saveStratData.value = true
                                     },
                                     onDragStopped = {
                                         ViewCompat.performHapticFeedback(
                                             view,
                                             HapticFeedbackConstantsCompat.GESTURE_END
                                         )
+                                        saveStratData.value = true
+                                        stratTeamDataArray.getOrPut(compKey) { hashMapOf() }.getOrPut(stratMatch) { hashMapOf() }.set(isRedAlliance, createStratOutput(stratMatch))
                                     }
                                 ),
                                 onClick = { }
