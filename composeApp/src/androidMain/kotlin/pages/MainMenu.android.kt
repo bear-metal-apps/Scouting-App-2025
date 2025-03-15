@@ -101,8 +101,6 @@ actual class MainMenu actual constructor(
             createScoutStratDataFolder(context)
             loadStratDataFiles()
 
-            println(pitsTeamDataArray)
-
             first = false
         }
         

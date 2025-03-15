@@ -350,7 +350,7 @@ fun loadData(match: Int, team: MutableIntState, robotStartPosition: MutableIntSt
         team.intValue = jsonObject.get("team").asInt
         compKey = jsonObject.get("event_key").asString
 //        match.value = parseInt(jsonObject.get("match").asString)
-        scoutName.value = jsonObject.get("scout_name").asString
+//        scoutName.value = jsonObject.get("scout_name").asString
         robotStartPosition.intValue = jsonObject.get("robotStartPosition").asInt
         groundCollectionAlgae.value =
             intToState(jsonObject.getAsJsonObject("auto").getAsJsonObject("algae").get("ground_collection").asInt)

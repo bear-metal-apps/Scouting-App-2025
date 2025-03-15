@@ -478,7 +478,6 @@ fun sendPitsData(client: Client) {
 //    println(pitsTeamDataArray)
     val array = pitsTeamDataArray.getOrPut(compKey) { hashMapOf() }
     for((key, value) in array.entries) {
-        println(pitsTeamDataArray)
         val jsonObject = gson.fromJson(value, JsonObject::class.java)
 
         client.sendData(jsonObject.toString(), "pit")
