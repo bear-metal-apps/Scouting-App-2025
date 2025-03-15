@@ -26,7 +26,6 @@ import compKey
 import defaultOnPrimary
 import defaultSecondary
 import getCurrentTheme
-import nodes.TeamMatchStartKey
 import nodes.betterParseInt
 import nodes.createOutput
 import nodes.jsonObject

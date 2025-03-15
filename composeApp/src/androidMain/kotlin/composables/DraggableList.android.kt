@@ -16,6 +16,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
+import compKey
+import nodes.createStratOutput
+import nodes.isRedAlliance
+import nodes.saveStratData
+import nodes.stratMatch
+import nodes.stratTeamDataArray
 import kotlin.math.roundToInt
 
 @Composable
@@ -68,6 +74,10 @@ fun DraggableText(label: String, range: IntRange, color : Color, fillAmount : Fl
                             lastIndex = 2
                         }
                     }
+
+                    saveStratData.value = true
+                    stratTeamDataArray.getOrPut(compKey) { hashMapOf() }.getOrPut(stratMatch) { hashMapOf() }.set(isRedAlliance, createStratOutput(stratMatch))
+
                 },
                 state = rememberDraggableState { delta ->
                     if (offsetY > range.first && offsetY < range.last){

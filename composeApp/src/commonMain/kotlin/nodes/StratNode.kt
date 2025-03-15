@@ -39,35 +39,15 @@ var stratTeamDataArray = HashMap<String, HashMap<Int, HashMap<Boolean, String>>>
 var saveStratData = mutableStateOf(false)
 
 var saveStratDataPopup = mutableStateOf(false)
-var saveStratDataSit = mutableStateOf(false) // false = nextMatch, true = main menu
+
+/**
+ * True = the user is exiting the match using the main menu button.
+ *
+ * False = the user is exiting the match using the next match button.
+ */
+var saveStratDataSit = mutableStateOf(false) // false = nextMatch, true = main men
 
 
-//class TeamsAllianceKey(
-//    val match: Int,
-//    val isRed: Boolean
-//) {
-//    // Need to override equals() and hashCode() when using an object as a hashMap key:
-//
-//    override fun hashCode(): Int {
-//        return Objects.hash(match, isRed)
-//    }
-//
-//    override fun equals(other: Any?): Boolean {
-//        if (this === other) return true
-//        if (javaClass != other?.javaClass) return false
-//
-//        other as TeamsAllianceKey
-//
-//        if (match != other.match) return false
-//        if (isRed != other.isRed) return false
-//
-//        return true
-//    }
-//
-//    override fun toString(): String {
-//        return "$match, ${if (isRed) "Red Alliance" else "Blue Alliance"}"
-//    }
-//}
 
 var isRedAlliance: Boolean = false
 var stratMatch: Int = 1
@@ -194,6 +174,9 @@ fun loadStratData(match: Int, isRed: Boolean) {
                 }
             }
         }
+
+        saveStratData.value = true
+
     } else {
         stratReset()
         if(saveStratData.value && isSynced()) {

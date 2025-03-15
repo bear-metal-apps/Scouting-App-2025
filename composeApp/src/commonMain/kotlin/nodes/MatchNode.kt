@@ -115,39 +115,14 @@ class AutoTeleSelectorNode(
     }
 }
 
-data class TeamMatchStartKey(
-    var match: Int,
-    var team: Int,
-    var robotStartPosition: Int
-) {
-
-    // Need to override equals() and hashCode() when using an object as a hashMap key:
-
-    override fun hashCode(): Int {
-        return Objects.hash(match, team, robotStartPosition)
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as TeamMatchStartKey
-
-        if (match != other.match) return false
-        if (team != other.team) return false
-        if(robotStartPosition != other.robotStartPosition) return false
-
-        return true
-    }
-
-    override fun toString(): String {
-        return "${match}, $team"
-    }
-
-}
-
 var saveData = mutableStateOf(false)
 var saveDataPopup = mutableStateOf(false)
+
+/**
+ * True = the user is exiting the match using the main menu button.
+ *
+ * False = the user is exiting the match using the next match button.
+ */
 var saveDataSit = mutableStateOf(false) // False = nextMatch, True = MainMenu
 
 
