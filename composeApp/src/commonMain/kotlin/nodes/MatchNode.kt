@@ -231,7 +231,7 @@ fun createJson(team: MutableIntState, robotStartPosition: MutableIntState) {
         add("tele", JsonObject().apply {
             addProperty("lost_comms", lostComms.intValue)
             addProperty("penalties", penalties.intValue)
-//            addProperty("played_defense", playedDefense.value)
+            addProperty("played_defense", playedDefense.value)
             add("algae", JsonObject().apply {
                 addProperty("reef_removed", teleReefAlgaeCollected.value)
                 addProperty("processed", teleProcessed.intValue)
@@ -302,7 +302,7 @@ fun createOutput(team: MutableIntState, robotStartPosition: MutableIntState): St
         add("tele", JsonObject().apply {
             addProperty("lost_comms", lostComms.intValue)
             addProperty("penalties", penalties.intValue)
-//            addProperty("played_defense", playedDefense.value)
+            addProperty("played_defense", playedDefense.value)
             add("algae", JsonObject().apply {
                 addProperty("reef_collected", teleReefAlgaeCollected.value)
                 addProperty("processed", teleProcessed.intValue)
@@ -396,7 +396,7 @@ fun loadData(match: Int, team: MutableIntState, robotStartPosition: MutableIntSt
         teleLOneMissed.intValue =
             jsonObject.getAsJsonObject("tele").getAsJsonObject("coral").get("reef_level1_missed").asInt
         lostComms.intValue = jsonObject.getAsJsonObject("tele").get("lost_comms").asInt
-//        playedDefense.value = jsonObject.getAsJsonObject("tele").get("played_defense").asBoolean
+        playedDefense.value = jsonObject.getAsJsonObject("tele").get("played_defense").asBoolean
 //        park.value = jsonObject.getAsJsonObject("endgame").get("park").asBoolean
 //        deep.value = jsonObject.getAsJsonObject("endgame").get("deep").asBoolean
 //        shallow.value = jsonObject.getAsJsonObject("endgame").get("shallow").asBoolean
