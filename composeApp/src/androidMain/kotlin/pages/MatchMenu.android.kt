@@ -259,17 +259,9 @@ actual fun MatchMenuTop(
                 Column(modifier = Modifier.fillMaxHeight()) {
                     OutlinedButton(
                         onClick = {
-                            if (saveData.value) {
-                                teamDataArray[TeamMatchStartKey(
-                                    parseInt(match.value),
-                                    team.intValue,
-                                    robotStartPosition.intValue
-                                )] = createOutput(mutableIntStateOf(team.intValue), robotStartPosition)
-                                createScoutMatchDataFile(
-                                    match.value,
-                                    team.intValue,
-                                    createOutput(mutableIntStateOf(team.intValue), robotStartPosition)
-                                )
+                            if(saveData.value) {
+                                teamDataArray.get(compKey)?.get(match.value.betterParseInt())?.set(robotStartPosition.intValue, createOutput(mutableIntStateOf(team.intValue), robotStartPosition))
+                                createScoutMatchDataFile(compKey, match.value, team.intValue, createOutput(mutableIntStateOf(team.intValue), robotStartPosition))
                             }
 
                             match.value = (match.value.betterParseInt() + 1).toString()
@@ -282,18 +274,14 @@ actual fun MatchMenuTop(
                             }
                             stringTeam.value = team.intValue.toString()
 
-                            if (teamDataArray[TeamMatchStartKey(
-                                    match.value.betterParseInt(),
-                                    team.intValue,
-                                    robotStartPosition.intValue
-                                )] == null
-                            ) {
+                            println(team.value)
+
+                            if(teamDataArray.getOrPut(compKey) { hashMapOf() }.getOrPut(match.value.betterParseInt()) { hashMapOf() }.get(robotStartPosition.intValue).isNullOrEmpty()) {
                                 saveData.value = false
                             } else {
                                 saveData.value = true
                             }
-                            loadData(parseInt(match.value), team, robotStartPosition)
-
+                                loadData(parseInt(match.value), team, robotStartPosition)
                         },
                         modifier = Modifier.width(50.dp).fillMaxHeight(1/2f),
                         shape = RoundedCornerShape(1.dp)
@@ -302,20 +290,12 @@ actual fun MatchMenuTop(
                     }
                     OutlinedButton(
                         onClick = {
-                            if (saveData.value) {
-                                teamDataArray[TeamMatchStartKey(
-                                    parseInt(match.value),
-                                    team.intValue,
-                                    robotStartPosition.intValue
-                                )] = createOutput(mutableIntStateOf(team.intValue), robotStartPosition)
-                                createScoutMatchDataFile(
-                                    match.value,
-                                    team.intValue,
-                                    createOutput(mutableIntStateOf(team.intValue), robotStartPosition)
-                                )
+                            if(saveData.value) {
+                                teamDataArray.get(compKey)?.get(match.value.betterParseInt())?.set(robotStartPosition.intValue, createOutput(mutableIntStateOf(team.intValue), robotStartPosition))
+                                createScoutMatchDataFile(compKey, match.value, team.intValue, createOutput(mutableIntStateOf(team.intValue), robotStartPosition))
                             }
 
-                            if (match.value.betterParseInt() != 1) {
+                            if(match.value.betterParseInt() > 0){
                                 match.value = (match.value.betterParseInt() - 1).toString()
                                 stringMatch.value = match.value
                             }
@@ -327,12 +307,9 @@ actual fun MatchMenuTop(
                             }
                             stringTeam.value = team.intValue.toString()
 
-                            if (teamDataArray[TeamMatchStartKey(
-                                    match.value.betterParseInt(),
-                                    team.intValue,
-                                    robotStartPosition.intValue
-                                )] == null
-                            ) {
+                            println(team.value)
+
+                            if(teamDataArray.getOrPut(compKey) { hashMapOf() }.getOrPut(match.value.betterParseInt()) { hashMapOf() }.get(robotStartPosition.intValue).isNullOrEmpty()) {
                                 saveData.value = false
                             } else {
                                 saveData.value = true
