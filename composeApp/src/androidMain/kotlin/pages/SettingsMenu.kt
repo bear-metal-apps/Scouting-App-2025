@@ -7,15 +7,14 @@ import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Switch
-import androidx.compose.material.SwitchDefaults
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ChevronLeft
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.graphicsLayer
@@ -73,14 +72,6 @@ actual fun SettingsMenu(
                     .padding(8.dp)
             )
         }
-
-        HorizontalDivider(
-            color = defaultPrimaryVariant,
-            thickness = 3.dp,
-            modifier = Modifier.padding(8.dp)
-        )
-
-        Spacer(modifier = Modifier.padding(20.dp))
         HorizontalDivider(thickness = 2.dp, color = getCurrentTheme().primaryVariant)
         Text(
             text = "Appearance",
@@ -90,29 +81,30 @@ actual fun SettingsMenu(
                 .align(Alignment.CenterHorizontally)
         )
         HorizontalDivider(thickness = 2.dp, color = getCurrentTheme().primaryVariant)
-        Row {
-            DropdownMenu(
-                expanded = themeExpanded,
-                onDismissRequest = { themeExpanded = false },
-            ) {
-            }
-
-            OutlinedButton(
-                onClick = {
-                    themeExpanded = true
-                },
-                colors = ButtonDefaults.outlinedButtonColors(
-                    backgroundColor = getCurrentTheme().secondary,
-                    contentColor = getCurrentTheme().onPrimary
-                ),
-                shape = RoundedCornerShape(5.dp),
-            ) {
-                Text(
-                    text = "Theme",
-                    color = getCurrentTheme().onPrimary
-                )
-            }
-        }
+//        Row {
+//            DropdownMenu(
+//                expanded = themeExpanded,
+//                onDismissRequest = { themeExpanded = false },
+//            ) {
+//            ) {
+//            }
+//
+//            OutlinedButton(
+//                onClick = {
+//                    themeExpanded = true
+//                },
+//                colors = ButtonDefaults.outlinedButtonColors(
+//                    backgroundColor = getCurrentTheme().secondary,
+//                    contentColor = getCurrentTheme().onPrimary
+//                ),
+//                shape = RoundedCornerShape(5.dp),
+//            ) {
+//                Text(
+//                    text = "Theme",
+//                    color = getCurrentTheme().onPrimary
+//                )
+//            }
+//        }
         Row {
             Switch(
                 checked = highContrast.value,
@@ -194,6 +186,7 @@ actual fun SettingsMenu(
                     .padding(28.dp)
             )
         }
+        HorizontalDivider(thickness = 2.dp, color = getCurrentTheme().primaryVariant)
 //        Text(
 //            text = "Current Rank:",
 //            fontSize = 35.sp,
@@ -211,95 +204,6 @@ actual fun SettingsMenu(
 //        Spacer(modifier = Modifier.padding(20.dp))
 //        HorizontalDivider(thickness = 2.dp, color = getCurrentTheme().primaryVariant)
         Text(
-            text = "Appearance",
-            fontSize = 24.sp,
-            color = getCurrentTheme().onPrimary,
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(8.dp)
-        )
-        HorizontalDivider(
-            color = defaultPrimaryVariant,
-            thickness = 3.dp,
-            modifier = Modifier.padding(8.dp)
-        )
-//        Row {
-//            DropdownMenu(
-//                expanded = themeExpanded,
-//                onDismissRequest = { themeExpanded = false },
-//            ) {
-//            }
-//
-//            OutlinedButton(
-//                onClick = {
-//                    themeExpanded = true
-//                },
-//                colors = ButtonDefaults.outlinedButtonColors(
-//                    backgroundColor = getCurrentTheme().secondary,
-//                    contentColor = getCurrentTheme().onPrimary
-//                ),
-//                shape = RoundedCornerShape(5.dp),
-//            ) {
-//                Text(
-//                    text = "Theme",
-//                    color = getCurrentTheme().onPrimary
-//                )
-//            }
-//        }
-
-        Row {
-            Switch(
-                checked = effectsChecked,
-                onCheckedChange = { effectsChecked = !effectsChecked },
-                colors = SwitchDefaults.colors(
-                    checkedThumbColor = getCurrentTheme().primaryVariant,
-                    checkedTrackColor = getCurrentTheme().secondaryVariant,
-                    uncheckedThumbColor = getCurrentTheme().error,
-                    uncheckedTrackColor = getCurrentTheme().onPrimary,
-                ),
-                modifier = Modifier
-                    .padding(8.dp)
-                    .align(Alignment.CenterVertically)
-            )
-            Text(
-                text = "Effects",
-                color = getCurrentTheme().onPrimary,
-                modifier = Modifier
-                    .padding(8.dp)
-                    .align(Alignment.CenterVertically)
-            )
-        }
-
-//        HorizontalDivider(
-//            color = defaultPrimaryVariant,
-//            thickness = 3.dp,
-//            modifier = Modifier.padding(8.dp)
-//        )
-//
-//        Text(
-//            text = "Accessibility",
-//            fontSize = 24.sp,
-//            color = getCurrentTheme().onPrimary,
-//            modifier = Modifier
-//                .align(Alignment.CenterHorizontally)
-//                .padding(8.dp)
-//        )
-//        HorizontalDivider(
-//            color = defaultPrimaryVariant,
-//            thickness = 3.dp,
-//            modifier = Modifier.padding(8.dp)
-//        )
-        //
-//        Text(
-//            text = "TODO Put algae and coral column move-ability to here",
-//            fontSize = 18.sp,
-//            color = getCurrentTheme().onPrimary,
-//            modifier = Modifier,
-//        )
-        Row {
-        HorizontalDivider(thickness = 2.dp, color = getCurrentTheme().primaryVariant)
-
-        Text(
             text = "Accessibility",
             fontSize = 35.sp,
             color = getCurrentTheme().onPrimary,
@@ -307,13 +211,12 @@ actual fun SettingsMenu(
                 .align(Alignment.CenterHorizontally)
         )
         HorizontalDivider(thickness = 2.dp, color = getCurrentTheme().primaryVariant)
-
-        Text(
-            text = "TODO Put algae and coral column move-ability to here",
-            fontSize = 18.sp,
-            color = getCurrentTheme().onPrimary,
-            modifier = Modifier,
-        )
+//        Text(
+//            text = "TODO Put algae and coral column move-ability to here",
+//            fontSize = 18.sp,
+//            color = getCurrentTheme().onPrimary,
+//            modifier = Modifier,
+//        )
         Row {
             Switch(
                 checked = miniMinus.value,
@@ -325,16 +228,15 @@ actual fun SettingsMenu(
                     uncheckedTrackColor = getCurrentTheme().onPrimary,
                 ),
                 modifier = Modifier
-                    .padding(8.dp)
-                    .align(Alignment.CenterVertically)
+                    .scale(2f)
+                    .padding(25.dp)
 
             )
             Text(
                 text = "Mini-Minus Buttons",
+                fontSize = 25.sp,
                 color = getCurrentTheme().onPrimary,
                 modifier = Modifier
-                    .padding(8.dp)
-                    .align(Alignment.CenterVertically)
                     .padding(28.dp)
             )
         }
@@ -361,19 +263,12 @@ actual fun SettingsMenu(
                     .padding(28.dp)
             )
         }
-
-        HorizontalDivider(
-            color = defaultPrimaryVariant,
-            thickness = 3.dp,
-            modifier = Modifier.padding(8.dp)
-        )
-
-        androidx.compose.material3.OutlinedButton(
+        HorizontalDivider(thickness = 2.dp, color = getCurrentTheme().primaryVariant)
+        OutlinedButton(
             border = BorderStroke(3.dp, Color.Yellow),
             shape = RoundedCornerShape(12.dp),
-            colors = androidx.compose.material3.ButtonDefaults.buttonColors(containerColor = defaultSecondary),
+            colors = ButtonDefaults.buttonColors(backgroundColor = defaultSecondary),
             onClick = {
-                effectsChecked = false
                 theme = themeDefault()
             },
             modifier = Modifier
@@ -386,25 +281,6 @@ actual fun SettingsMenu(
             )
         }
         HorizontalDivider(thickness = 2.dp, color = getCurrentTheme().primaryVariant)
-        OutlinedButton(
-            onClick = {
-                theme = themeDefault()
-            },
-            colors = ButtonDefaults.outlinedButtonColors(
-                backgroundColor = getCurrentTheme().secondary,
-                contentColor = getCurrentTheme().onPrimary
-            ),
-            shape = RoundedCornerShape(5.dp),
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-        ) {
-            Text(
-                text = "Reset to Default",
-                color = getCurrentTheme().onPrimary,
-                fontSize = 35.sp,
-            )
-        }
-
         //TODO subway surfers gameplay goes here
 //        var context = LocalContext.current
 //        val mediaPlayer = MediaPlayer.create(context, R.)
@@ -414,6 +290,7 @@ actual fun SettingsMenu(
 //            mediaPlayer
 //            mediaPlayer.release()       // Free resources after playing
 //            }
+        }
     }
-}
+
 
