@@ -52,10 +52,12 @@ import loadPitsDataFiles
 import loadStratDataFiles
 import nodes.*
 import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.json.JSONException
 import org.tahomarobotics.scouting.Client
 import sendMatchData
 import sendPitsData
 import sendStratData
+import setTeam
 import syncMatches
 import syncTeams
 import java.lang.Integer.parseInt
@@ -283,6 +285,13 @@ actual class MainMenu actual constructor(
                             createScoutMatchDataFolder(context)
 
                             loadData(parseInt(match.value), team, robotStartPosition)
+                            try {
+                                setTeam(team, nodes.match, robotStartPosition.intValue)
+                            } catch (e: JSONException) {
+                                openError.value = true
+                            }
+                            stringTeam.value = team.value.toString()
+
                             backStack.push(RootNode.NavTarget.MatchScouting)
                         } else if (robotStartPosition.value < 8) {
                             val redAlliance = robotStartPosition.value == 6

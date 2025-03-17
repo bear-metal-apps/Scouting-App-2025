@@ -15,9 +15,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import compKey
 import getCurrentTheme
-import nodes.TeamMatchStartKey
 import nodes.autoStop
+import nodes.betterParseInt
 import nodes.createOutput
 import nodes.jsonObject
 import nodes.match
@@ -25,6 +26,7 @@ import nodes.redoList
 import nodes.saveData
 import nodes.teamDataArray
 import nodes.undoList
+import pages.tempRobotStart
 
 @Composable
 actual fun TriStateCheckBox(
@@ -74,8 +76,8 @@ actual fun TriStateCheckBox(
             }
 
             saveData.value = true
-            teamDataArray[TeamMatchStartKey(match.value.toInt(), jsonObject.get("team").asInt, jsonObject.get("robotStartPosition").asInt)] = createOutput(
-                mutableIntStateOf(jsonObject.get("team").asInt), mutableIntStateOf(jsonObject.get("robotStartPosition").asInt))
+            teamDataArray.get(compKey)?.get(match.value.betterParseInt())?.set(jsonObject.get("robotStartPosition").asInt, createOutput(mutableIntStateOf(jsonObject.get("team").asInt), mutableIntStateOf(
+                jsonObject.get("robotStartPosition").asInt)))
         },
         contentPadding = PaddingValues(5.dp, 5.dp),
         modifier = modifier
@@ -114,6 +116,8 @@ actual fun CheckBox(
                     ifChecked.value = 0
                 }
                 saveData.value = true
+                teamDataArray.get(compKey)?.get(match.value.betterParseInt())?.set(jsonObject.get("robotStartPosition").asInt, createOutput(mutableIntStateOf(jsonObject.get("team").asInt), mutableIntStateOf(
+                    jsonObject.get("robotStartPosition").asInt)))
                 teamDataArray[TeamMatchStartKey(match.value.toInt(), jsonObject.get("team").asInt, jsonObject.get("robotStartPosition").asInt)] = createOutput(
                     mutableIntStateOf(jsonObject.get("team").asInt), mutableIntStateOf(jsonObject.get("robotStartPosition").asInt))
                 undoList.push(arrayOf("checkBox" ,ifChecked, ifChecked.value))

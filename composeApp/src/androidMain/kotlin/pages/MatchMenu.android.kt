@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.sp
 import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.components.backstack.operation.pop
 import com.bumble.appyx.components.backstack.operation.push
+import compKey
 import createScoutMatchDataFile
 import getCurrentTheme
 import getTeamsOnAlliance
@@ -45,8 +46,6 @@ actual fun MatchMenuTop(
     var teamColor by remember { mutableStateOf(Color.Black) }
     val context = LocalContext.current
     val pageName = mutableListOf("A", "T", "E")
-
-    var first by remember { mutableStateOf(true) }
 
     when (robotStartPosition.intValue) {
         0 -> {
@@ -102,8 +101,7 @@ actual fun MatchMenuTop(
 //        tempRobotStart.value -= 3
     }
 
-    if (first) {
-        println("first")
+    if (matchFirst.value) {
         try {
             team.intValue =
                 getTeamsOnAlliance(match.value.betterParseInt(), isRedAliance.value)[tempRobotStart.value].number
@@ -113,13 +111,9 @@ actual fun MatchMenuTop(
         stringMatch = remember { mutableStateOf(match.value) }
         stringTeam = remember { mutableStateOf(team.intValue.toString()) }
 
-        if (teamDataArray[TeamMatchStartKey(
-                match.value.betterParseInt(),
-                team.intValue,
-                robotStartPosition.intValue
-            )] == null
-        ) {
+        if(teamDataArray.getOrPut(compKey) { hashMapOf() }.getOrPut(match.value.betterParseInt()) { hashMapOf() } .get(robotStartPosition.intValue).isNullOrEmpty()) {
             saveData.value = false
+            println("save data is false")
         } else {
             saveData.value = true
         }
@@ -129,7 +123,7 @@ actual fun MatchMenuTop(
             parseInt(match.value), team, robotStartPosition
         )
 
-        first = false
+        matchFirst.value = false
     }
 
     Column() {
@@ -163,17 +157,9 @@ actual fun MatchMenuTop(
             TextField(
                 value = stringTeam.value,
                 onValueChange = { value ->
-                    if (saveData.value) {
-                        teamDataArray[TeamMatchStartKey(
-                            parseInt(match.value),
-                            team.intValue,
-                            robotStartPosition.intValue
-                        )] = createOutput(mutableIntStateOf(team.intValue), robotStartPosition)
-                        createScoutMatchDataFile(
-                            match.value,
-                            team.intValue,
-                            createOutput(mutableIntStateOf(team.intValue), robotStartPosition)
-                        )
+                    if(saveData.value) {
+                        teamDataArray.get(compKey)?.get(match.value.betterParseInt())?.set(robotStartPosition.intValue, createOutput(mutableIntStateOf(team.intValue), robotStartPosition))
+                        createScoutMatchDataFile(compKey, match.value, team.intValue, createOutput(mutableIntStateOf(team.intValue), robotStartPosition))
                     }
 
                     if (value.isNotEmpty()) {
@@ -184,19 +170,16 @@ actual fun MatchMenuTop(
                     }
                     team.intValue = stringTeam.value.betterParseInt()
 
-                    if (teamDataArray[TeamMatchStartKey(
-                            match.value.betterParseInt(),
-                            team.intValue,
-                            robotStartPosition.intValue
-                        )] == null
-                    ) {
+                    if(teamDataArray.getOrPut(compKey) { hashMapOf() }.getOrPut(match.value.betterParseInt()) { hashMapOf() }.get(robotStartPosition.intValue).isNullOrEmpty()) {
                         saveData.value = false
                     } else {
                         saveData.value = true
                     }
 
-                    if (value != "")
+                    if (value != "") {
                         loadData(parseInt(match.value), team, robotStartPosition)
+                        println("laod dat")
+                    }
 
                 },
                 colors = TextFieldDefaults.colors(
@@ -229,17 +212,9 @@ actual fun MatchMenuTop(
             TextField(
                 value = stringMatch.value,
                 onValueChange = { value ->
-                    if (saveData.value) {
-                        teamDataArray[TeamMatchStartKey(
-                            parseInt(match.value),
-                            team.intValue,
-                            robotStartPosition.intValue
-                        )] = createOutput(mutableIntStateOf(team.intValue), robotStartPosition)
-                        createScoutMatchDataFile(
-                            match.value,
-                            team.intValue,
-                            createOutput(mutableIntStateOf(team.intValue), robotStartPosition)
-                        )
+                    if(saveData.value) {
+                        teamDataArray.get(compKey)?.get(match.value.betterParseInt())?.set(robotStartPosition.intValue, createOutput(mutableIntStateOf(team.intValue), robotStartPosition))
+                        createScoutMatchDataFile(compKey, match.value, team.intValue, createOutput(mutableIntStateOf(team.intValue), robotStartPosition))
                     }
 
                     if(value.isNotEmpty()) {
@@ -261,12 +236,7 @@ actual fun MatchMenuTop(
 
                     println(team.value)
 
-                    if (teamDataArray[TeamMatchStartKey(
-                            match.value.betterParseInt(),
-                            team.intValue,
-                            robotStartPosition.intValue
-                        )] == null
-                    ) {
+                    if(teamDataArray.getOrPut(compKey) { hashMapOf() }.getOrPut(match.value.betterParseInt()) { hashMapOf() }.get(robotStartPosition.intValue).isNullOrEmpty()) {
                         saveData.value = false
                     } else {
                         saveData.value = true
@@ -512,11 +482,9 @@ actual fun MatchMenuBottom(
                         }
                     }
 
-                    if (saveData.value) {
-                        teamDataArray[TeamMatchStartKey(
-                            parseInt(match.value), team.intValue, robotStartPosition.intValue
-                        )] = createOutput(team, robotStartPosition)
-                    }
+                if(saveData.value) {
+                    teamDataArray.get(compKey)?.get(match.value.betterParseInt())?.set(robotStartPosition.intValue, createOutput(team, robotStartPosition))
+                }
 
                 },
                 modifier = Modifier.fillMaxWidth(1 / 2f)
@@ -566,11 +534,8 @@ actual fun MatchMenuBottom(
                         }
                     }
 
-                    if (saveData.value) {
-                        teamDataArray[TeamMatchStartKey(
-                            parseInt(match.value), team.intValue, robotStartPosition.intValue
-                        )] = createOutput(team, robotStartPosition)
-                    }
+                if(saveData.value) {
+                    teamDataArray.get(compKey)?.get(match.value.betterParseInt())?.set(robotStartPosition.intValue, createOutput(team, robotStartPosition))                }
 
                 },
                 modifier = Modifier.fillMaxWidth()
@@ -592,10 +557,7 @@ actual fun MatchMenuBottom(
                 backStack.push(AutoTeleSelectorNode.NavTarget.AutoScouting)
                 pageIndex.value = 0
                 if (saveData.value) {
-                    teamDataArray[TeamMatchStartKey(
-                        parseInt(match.value), team.intValue, robotStartPosition.intValue
-                    )] = createOutput(team, robotStartPosition)
-                }
+                    teamDataArray.get(compKey)?.get(match.value.betterParseInt())?.set(robotStartPosition.intValue, createOutput(team, robotStartPosition))                }
             },
             modifier = Modifier.fillMaxWidth(1 / 4f)
         ) {
@@ -619,11 +581,8 @@ actual fun MatchMenuBottom(
                 teleFlash.value = false
                 backStack.push(AutoTeleSelectorNode.NavTarget.TeleScouting)
                 pageIndex.value = 1
-                if (saveData.value) {
-                    teamDataArray[TeamMatchStartKey(
-                        parseInt(match.value), team.intValue, robotStartPosition.intValue
-                    )] = createOutput(team, robotStartPosition)
-                }
+                if(saveData.value) {
+                    teamDataArray.get(compKey)?.get(match.value.betterParseInt())?.set(robotStartPosition.intValue, createOutput(team, robotStartPosition))                }
             },
             modifier = Modifier.fillMaxWidth(1 / 3f)
         ) {
@@ -643,11 +602,8 @@ actual fun MatchMenuBottom(
                 totalAutoCoralAttempts.value = 0
                 backStack.push(AutoTeleSelectorNode.NavTarget.EndGameScouting)
                 pageIndex.value = 2
-                if (saveData.value) {
-                    teamDataArray[TeamMatchStartKey(
-                        parseInt(match.value), team.intValue, robotStartPosition.intValue
-                    )] = createOutput(team, robotStartPosition)
-                }
+                if(saveData.value) {
+                    teamDataArray.get(compKey)?.get(match.value.betterParseInt())?.set(robotStartPosition.intValue, createOutput(team, robotStartPosition))                }
             },
             modifier = Modifier.fillMaxWidth(8 / 16f)
         ) {
@@ -701,23 +657,20 @@ actual fun MatchMenuBottom(
                 )
                 androidx.compose.material.OutlinedButton(
                     onClick = {
-                        if (saveDataSit.value) {
-                            teamDataArray[TeamMatchStartKey(
-                                parseInt(match.value), team.intValue, robotStartPosition.intValue
-                            )] = createOutput(team, robotStartPosition)
-                            createScoutMatchDataFile(match.value, team.intValue, createOutput(team, robotStartPosition))
+                        if(saveDataSit.value) {
+                            teamDataArray.get(compKey)?.get(match.value.betterParseInt())?.set(robotStartPosition.intValue, createOutput(team, robotStartPosition))
+                            createScoutMatchDataFile(compKey, match.value, team.intValue, createOutput(team, robotStartPosition))
                             println(teamDataArray)
                             mainMenuBackStack.pop()
 
                             saveData.value = true
                         } else {
-                            teamDataArray[TeamMatchStartKey(
-                                parseInt(match.value), team.intValue, robotStartPosition.intValue
-                            )] = createOutput(team, robotStartPosition)
-                            createScoutMatchDataFile(match.value, team.intValue, createOutput(team, robotStartPosition))
+                            teamDataArray.getOrPut(compKey) { hashMapOf() }.getOrPut(match.value.betterParseInt()) { hashMapOf() }.set(robotStartPosition.intValue, createOutput(team, robotStartPosition))
+                            createScoutMatchDataFile(compKey, match.value, team.intValue, createOutput(team, robotStartPosition))
                             match.value = (parseInt(match.value) + 1).toString()
                             stringMatch.value = match.value
                             reset()
+                            matchFirst.value = true
                             backStack.push(AutoTeleSelectorNode.NavTarget.AutoScouting)
 
                             try {
@@ -752,6 +705,7 @@ actual fun MatchMenuBottom(
                             match.value = (parseInt(match.value) + 1).toString()
                             stringMatch.value = match.value
                             reset()
+                            matchFirst.value = true
                             backStack.push(AutoTeleSelectorNode.NavTarget.AutoScouting)
 
                             try {

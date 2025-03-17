@@ -94,8 +94,8 @@ fun createScoutPitsDataFolder(context: Context) {
 }
 
 
-fun createScoutMatchDataFile(match: String, team: Int, data: String) {
-    val file = File(matchFolder, "Match${match}Team${team}.json")
+fun createScoutMatchDataFile(compKey: String, match: String, team: Int, data: String) {
+    val file = File(matchFolder, "Comp${compKey}Match${match}Team${team}.json")
     file.delete()
     file.createNewFile()
 
@@ -103,15 +103,15 @@ fun createScoutMatchDataFile(match: String, team: Int, data: String) {
 
     file.forEachLine {
         try {
-            println("Saved file Match${match}Team${team}.json: $it")
+            println("Saved file Comp${compKey}Match${match}Team${team}.json: $it")
         } catch (e: Exception) {
             println(e.message)
         }
     }
 }
 
-fun createScoutStratDataFile(match: String, isRed: Boolean, data: String) {
-    val file = File(stratFolder, "Match${match}${if (isRed) "RedAlliance" else "BlueAlliance"}.json")
+fun createScoutStratDataFile(compKey: String, match: String, isRed: Boolean, data: String) {
+    val file = File(stratFolder, "Comp${compKey}Match${match}${if (isRed) "RedAlliance" else "BlueAlliance"}.json")
     file.delete()
     file.createNewFile()
 
@@ -119,15 +119,15 @@ fun createScoutStratDataFile(match: String, isRed: Boolean, data: String) {
 
     file.forEachLine {
         try {
-            println("Saved file Match${match}${if (isRed) "RedAlliance" else "BlueAlliance"}.json: $it")
+            println("Saved file Comp${compKey}Match${match}${if (isRed) "RedAlliance" else "BlueAlliance"}.json: $it")
         } catch (e: Exception) {
             println(e.message)
         }
     }
 }
 
-fun createScoutPitsDataFile(team: Int, data: String) {
-    val file = File(pitsFolder, "Team${team}.json")
+fun createScoutPitsDataFile(compKey: String, team: Int, data: String) {
+    val file = File(pitsFolder, "Comp${compKey}Team${team}.json")
     file.delete()
     file.createNewFile()
 
@@ -135,7 +135,7 @@ fun createScoutPitsDataFile(team: Int, data: String) {
 
     file.forEachLine {
         try {
-            println("Saved file Team${team}.json: $it")
+            println("Saved file Comp${compKey}Team${team}.json: $it")
         } catch (e: Exception) {
             println(e.message)
         }
@@ -174,11 +174,7 @@ fun loadMatchDataFiles() {
                 matchFolder?.listFiles()?.toList()?.get(index)?.readText(),
                 JsonObject::class.java
             )
-            teamDataArray[TeamMatchStartKey(
-                parseInt(jsonObject.get("match").asString),
-                jsonObject.get("team").asInt,
-                jsonObject.get("robotStartPosition").asInt
-            )] = jsonObject.toString()
+            teamDataArray.getOrPut(jsonObject.get("event_key").asString) { hashMapOf() }.getOrPut(jsonObject.get("match").asInt) { hashMapOf() } .set(jsonObject.get("robotStartPosition").asInt, jsonObject.toString())
 
             println(matchFolder?.listFiles()?.toList()?.get(index).toString())
         }
@@ -194,12 +190,11 @@ fun loadStratDataFiles() {
             stratJsonObject = gson.fromJson(
                 stratFolder?.listFiles()?.toList()?.get(index)?.readText(), JsonObject::class.java
             )
-            stratTeamDataArray[TeamsAllianceKey(
-                stratJsonObject.get("match").asInt,
-                stratJsonObject.get("is_red_alliance").asBoolean
-            )] = stratJsonObject.toString()
+            stratTeamDataArray.getOrPut(stratJsonObject.get("event_key").asString) { hashMapOf() }.getOrPut(
+                stratJsonObject.get("match").asInt){ hashMapOf() }.set(stratJsonObject.get("is_red_alliance").asBoolean, stratJsonObject.toString())
 
             println(stratFolder?.listFiles()?.toList()?.get(index).toString())
+            println(stratFolder?.listFiles()?.toList()?.get(index)?.readText())
         }
     }
 }
@@ -218,24 +213,18 @@ fun loadPitsDataFiles() {
                 pitsFolder?.listFiles()?.toList()?.get(index)?.readText(),
                 JsonObject::class.java
             )
-            pitsTeamDataArray[
-                jsonObject.get("team").asInt
-            ] = jsonObject.toString()
+            pitsTeamDataArray.getOrPut(compKey){ hashMapOf() }.set(jsonObject.get("team").asInt, jsonObject.toString())
 
             println(pitsFolder?.listFiles()?.toList()?.get(index).toString())
-            println(
-                pitsTeamDataArray[
-                    jsonObject.get("team").asInt
-                ]
-            )
+            println(pitsFolder?.listFiles()?.toList()?.get(index)?.readText())
         }
     }
 
     println("Loading pits image paths...")
 
     for ((outerIndex, value) in imagesFolder?.listFiles()?.withIndex()!!) {
-        permPhotosList.add(value.path)
-        println(permPhotosList[outerIndex])
+        permPhotosList.getOrPut(compKey){ mutableListOf() }.add(value.path)
+//        println(permPhotosList[outerIndex])
     }
 }
 
@@ -449,31 +438,35 @@ fun getTBAMatchDataTimestamp(eventKey: String): Long {
 
 
 fun sendMatchData(client: Client) {
-//    println("reached beginning of sendData")
+    println("reached beginning of sendData")
 
     val gson = Gson()
 
-    for ((_, value) in teamDataArray.entries) {
-        val jsonObject = gson.fromJson(value, JsonObject::class.java)
+    val array = teamDataArray.getOrPut(compKey) { hashMapOf() }
+    for ((key, value) in array.entries) {
+        for ((key1, value1) in value.entries) {
+            val jsonObject = gson.fromJson(value1, JsonObject::class.java)
 
-        client.sendData(jsonObject.toString(), "match")
+            client.sendData(jsonObject.toString(), "match")
 
-        Log.i("Client", "Message Sent: $jsonObject")
+            Log.i("Client", "Message Sent: ${jsonObject.toString()}")
+        }
     }
-
 }
 
 fun sendStratData(client: Client) {
-//    println("reached beginning of sendData")
-
     val gson = Gson()
 
-    for ((_, value) in stratTeamDataArray.entries) {
-        val jsonObject = gson.fromJson(value, JsonObject::class.java)
+    val array = stratTeamDataArray.getOrPut(compKey) { hashMapOf() }
+    for((key, value) in array.entries) {
+        for((key1, value1) in value.entries) {
+            val jsonObject = gson.fromJson(value1, JsonObject::class.java)
 
-        client.sendData(jsonObject.toString(), "strat")
+            client.sendData(jsonObject.toString(), "strat")
 
-        Log.i("Client", "Message Sent: $jsonObject")
+            Log.i("Client", "Message Sent: $jsonObject")
+
+        }
     }
 
 }
@@ -482,8 +475,9 @@ fun sendPitsData(client: Client) {
 
     val gson = Gson()
 
-    for ((_, value) in pitsTeamDataArray.entries) {
-
+//    println(pitsTeamDataArray)
+    val array = pitsTeamDataArray.getOrPut(compKey) { hashMapOf() }
+    for((key, value) in array.entries) {
         val jsonObject = gson.fromJson(value, JsonObject::class.java)
 
         client.sendData(jsonObject.toString(), "pit")

@@ -12,11 +12,35 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.components.backstack.operation.pop
+import compKey
 import composables.CheckBox
 import composables.EnumerableValue
 import composables.TriStateCheckBox
 import keyboardAsState
 import nodes.*
+import nodes.AutoTeleSelectorNode
+import nodes.RootNode
+import nodes.algaeProcessed
+import nodes.algaeRemoved
+import nodes.autoCoralLevel1Missed
+import nodes.autoCoralLevel1Scored
+import nodes.autoCoralLevel2Missed
+import nodes.autoCoralLevel2Scored
+import nodes.autoCoralLevel3Missed
+import nodes.autoCoralLevel3Scored
+import nodes.autoCoralLevel4Missed
+import nodes.autoCoralLevel4Scored
+import nodes.autoNetMissed
+import nodes.autoNetScored
+import nodes.autoStop
+import nodes.betterParseInt
+import nodes.collectCoral
+import nodes.createOutput
+import nodes.groundCollectionAlgae
+import nodes.miniMinus
+import nodes.pageIndex
+import nodes.saveData
+import nodes.teamDataArray
 import nodes.AutoTeleSelectorNode
 import nodes.RootNode
 import nodes.TeamMatchStartKey
@@ -59,7 +83,7 @@ actual fun AutoMenu(
     val context = LocalContext.current
     fun bob() {
         mainMenuBackStack.pop()
-        teamDataArray[TeamMatchStartKey(parseInt(match.value), team.intValue, robotStartPosition.intValue)] = createOutput(team, robotStartPosition)
+        teamDataArray.get(compKey)?.get(match.value.betterParseInt())?.set(robotStartPosition.intValue, createOutput(team, robotStartPosition))
     }
 
     val isScrollEnabled = remember { mutableStateOf(true) }

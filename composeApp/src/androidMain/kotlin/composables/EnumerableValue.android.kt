@@ -22,11 +22,13 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bumble.appyx.interactions.core.ui.property.impl.BackgroundColor
+import compKey
 import defaultOnPrimary
 import defaultSecondary
 import getCurrentTheme
 import minus
 import nodes.TeamMatchStartKey
+import nodes.betterParseInt
 import nodes.createOutput
 import nodes.jsonObject
 import nodes.match
@@ -50,8 +52,8 @@ actual fun EnumerableValue(label: String, value: MutableIntState, alignment: Ali
             value.value += 1
             redoList.push(arrayOf("number" ,value, value.value))
             saveData.value = true
-            teamDataArray[TeamMatchStartKey(match.value.toInt(), jsonObject.get("team").asInt, jsonObject.get("robotStartPosition").asInt)] = createOutput(
-                mutableIntStateOf(jsonObject.get("team").asInt), mutableIntStateOf(jsonObject.get("robotStartPosition").asInt))
+            teamDataArray.get(compKey)?.get(match.value.betterParseInt())?.set(jsonObject.get("robotStartPosition").asInt, createOutput(mutableIntStateOf(jsonObject.get("team").asInt), mutableIntStateOf(
+                jsonObject.get("robotStartPosition").asInt)))
         },
         interactionSource = interact,
         contentPadding = PaddingValues(0.dp, 0.dp),
@@ -76,8 +78,8 @@ actual fun EnumerableValue(label: String, value: MutableIntState, alignment: Ali
                             redoList.push(arrayOf("number", value, value.value))
                         }
                         saveData.value = true
-                        teamDataArray[TeamMatchStartKey(match.value.toInt(), jsonObject.get("team").asInt, jsonObject.get("robotStartPosition").asInt)] = createOutput(
-                            mutableIntStateOf(jsonObject.get("team").asInt), mutableIntStateOf(jsonObject.get("robotStartPosition").asInt))
+                        teamDataArray.get(compKey)?.get(match.value.betterParseInt())?.set(jsonObject.get("robotStartPosition").asInt, createOutput(mutableIntStateOf(jsonObject.get("team").asInt), mutableIntStateOf(
+                            jsonObject.get("robotStartPosition").asInt)))
                     },
                     interactionSource = interact,
                     modifier = Modifier.align(alignment).padding(0.dp).offset(0.dp,2.dp)

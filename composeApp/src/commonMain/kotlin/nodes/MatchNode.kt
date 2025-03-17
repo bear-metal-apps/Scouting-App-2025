@@ -3,11 +3,8 @@ package nodes
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableIntState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.state.ToggleableState
 import com.bumble.appyx.components.backstack.BackStack
@@ -26,7 +23,6 @@ import compKey
 import composables.MainMenuAlertDialog
 import pages.MatchMenuBottom
 import pages.MatchMenuTop
-import java.lang.Integer.parseInt
 import java.util.*
 
 
@@ -98,7 +94,8 @@ class AutoTeleSelectorNode(
                 mainMenuDialog,
                 bob = {
                     mainMenuBackStack.pop()
-                    teamDataArray[TeamMatchStartKey(parseInt(match.value), team.intValue, robotStartPosition.intValue)] = createOutput(team, robotStartPosition)
+                    teamDataArray.get(compKey)?.get(match.value.betterParseInt())?.set(robotStartPosition.intValue, createOutput(
+                        team, robotStartPosition))
                 },
                 team.intValue,
                 robotStartPosition.intValue)
@@ -118,39 +115,14 @@ class AutoTeleSelectorNode(
     }
 }
 
-class TeamMatchStartKey(
-    var match: Int,
-    var team: Int,
-    var robotStartPosition: Int
-) {
-
-    // Need to override equals() and hashCode() when using an object as a hashMap key:
-
-    override fun hashCode(): Int {
-        return Objects.hash(match, team, robotStartPosition)
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as TeamMatchStartKey
-
-        if (match != other.match) return false
-        if (team != other.team) return false
-        if(robotStartPosition != other.robotStartPosition) return false
-
-        return true
-    }
-
-    override fun toString(): String {
-        return "${match}, $team"
-    }
-
-}
-
 var saveData = mutableStateOf(false)
 var saveDataPopup = mutableStateOf(false)
+
+/**
+ * True = the user is exiting the match using the main menu button.
+ *
+ * False = the user is exiting the match using the next match button.
+ */
 var saveDataSit = mutableStateOf(false) // False = nextMatch, True = MainMenu
 
 
@@ -164,6 +136,11 @@ val match = mutableStateOf("1")
 
 var stringMatch = mutableStateOf("")
 var stringTeam = mutableStateOf("")
+
+/**
+ * This value is briefly set to true if it is the first time the user is loading the data of the current match.
+ */
+var matchFirst = mutableStateOf(true)
 
 // Auto
 var collectCoral = mutableIntStateOf(0)
@@ -276,8 +253,6 @@ fun createJson(team: MutableIntState, robotStartPosition: MutableIntState) {
 //            addProperty("shallow", shallow.value)
 //        })
     }
-
-    println("Created Match JSON")
 }
 
 fun createOutput(team: MutableIntState, robotStartPosition: MutableIntState): String {
@@ -363,14 +338,14 @@ fun loadData(match: Int, team: MutableIntState, robotStartPosition: MutableIntSt
 
     val gson = Gson()
 
-    if(teamDataArray[TeamMatchStartKey(match, team.value, robotStartPosition.intValue)] != null) {
+    if(!teamDataArray.getOrPut(compKey) { hashMapOf() }.getOrPut(match) { hashMapOf() } .get(robotStartPosition.intValue).isNullOrEmpty()) {
 
-        jsonObject = gson.fromJson(teamDataArray[TeamMatchStartKey(match, team.value, robotStartPosition.intValue)].toString(), JsonObject::class.java)
+        jsonObject = gson.fromJson(teamDataArray.get(compKey)?.get(match)?.get(robotStartPosition.intValue).toString(), JsonObject::class.java)
 
         team.intValue = jsonObject.get("team").asInt
         compKey = jsonObject.get("event_key").asString
 //        match.value = parseInt(jsonObject.get("match").asString)
-        scoutName.value = jsonObject.get("scout_name").asString
+//        scoutName.value = jsonObject.get("scout_name").asString
         robotStartPosition.intValue = jsonObject.get("robotStartPosition").asInt
         groundCollectionAlgae.value =
             intToState(jsonObject.getAsJsonObject("auto").getAsJsonObject("algae").get("ground_collection").asInt)
@@ -427,7 +402,7 @@ fun loadData(match: Int, team: MutableIntState, robotStartPosition: MutableIntSt
     } else {
         reset()
         if(saveData.value) {
-            teamDataArray[TeamMatchStartKey(match, team.intValue, robotStartPosition.intValue)] = createOutput(team, robotStartPosition)
+            teamDataArray.getOrPut(compKey) { hashMapOf() }.getOrPut(match) { hashMapOf() }.getOrPut(robotStartPosition.intValue) {createOutput(team, robotStartPosition) }
         }
     }
 }

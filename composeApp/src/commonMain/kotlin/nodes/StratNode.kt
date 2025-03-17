@@ -16,6 +16,7 @@ import getTeamsOnAlliance
 import isSynced
 import pages.StratMenu
 import java.util.*
+import kotlin.collections.HashMap
 
 class StratNode(
     buildContext: BuildContext,
@@ -32,40 +33,21 @@ class StratNode(
 var stratJsonObject: JsonObject =
     JsonObject() // Don't know if there needs to be another json for strat, but just being safe for now!
 
-var stratTeamDataArray = HashMap<TeamsAllianceKey, String>()
+//var stratTeamDataArray = HashMap<TeamsAllianceKey, String>()
+var stratTeamDataArray = HashMap<String, HashMap<Int, HashMap<Boolean, String>>>()
 
 var saveStratData = mutableStateOf(false)
 
 var saveStratDataPopup = mutableStateOf(false)
-var saveStratDataSit = mutableStateOf(false) // false = nextMatch, true = main menu
+
+/**
+ * True = the user is exiting the match using the main menu button.
+ *
+ * False = the user is exiting the match using the next match button.
+ */
+var saveStratDataSit = mutableStateOf(false) // false = nextMatch, true = main men
 
 
-class TeamsAllianceKey(
-    val match: Int,
-    val isRed: Boolean
-) {
-    // Need to override equals() and hashCode() when using an object as a hashMap key:
-
-    override fun hashCode(): Int {
-        return Objects.hash(match, isRed)
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as TeamsAllianceKey
-
-        if (match != other.match) return false
-        if (isRed != other.isRed) return false
-
-        return true
-    }
-
-    override fun toString(): String {
-        return "$match, ${if (isRed) "Red Alliance" else "Blue Alliance"}"
-    }
-}
 
 var isRedAlliance: Boolean = false
 var stratMatch: Int = 1
@@ -154,8 +136,8 @@ fun loadStratData(match: Int, isRed: Boolean) {
     val gson = Gson()
     val currentTeams: List<Team>
 
-    if (stratTeamDataArray[TeamsAllianceKey(match, isRed)] != null) {
-        stratJsonObject = gson.fromJson(stratTeamDataArray[TeamsAllianceKey(match, isRed)], JsonObject::class.java)
+    if (!stratTeamDataArray.getOrPut(compKey) { hashMapOf() }.getOrPut(stratMatch) { hashMapOf() }.get(isRed).isNullOrEmpty()) {
+        stratJsonObject = gson.fromJson(stratTeamDataArray.getOrPut(compKey) { hashMapOf() }.get(stratMatch)?.get(isRed), JsonObject::class.java)
 
         currentTeams = getTeamsOnAlliance(match, isRed)
 
@@ -192,10 +174,13 @@ fun loadStratData(match: Int, isRed: Boolean) {
                 }
             }
         }
+
+        saveStratData.value = true
+
     } else {
         stratReset()
         if(saveStratData.value && isSynced()) {
-            stratTeamDataArray[TeamsAllianceKey(stratMatch, isRed)] = createStratOutput(stratMatch)
+            stratTeamDataArray.getOrPut(compKey) { hashMapOf() }.getOrPut(stratMatch) { hashMapOf() }.set(isRed, createStratOutput(stratMatch))
         }
     }
 }

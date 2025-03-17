@@ -2,6 +2,7 @@ package nodes
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
@@ -84,7 +85,8 @@ class RootNode(
 
 var numOfPitsPeople = mutableIntStateOf(1234567890)
 var scoutName = mutableStateOf("")
-val teamDataArray: HashMap<TeamMatchStartKey, String> = hashMapOf<TeamMatchStartKey, String>()
+//val teamDataArray: HashMap<TeamMatchStartKey, String> = hashMapOf()
+val teamDataArray: HashMap<String, HashMap<Int, HashMap<Int, String>>> = hashMapOf()
 var client: Client? = null
 
 

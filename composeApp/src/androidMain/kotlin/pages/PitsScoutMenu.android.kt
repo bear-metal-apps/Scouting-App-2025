@@ -1,4 +1,3 @@
-@file:Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 @file:OptIn(ExperimentalMaterial3Api::class, ExperimentalResourceApi::class)
 
 package pages
@@ -33,17 +32,20 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.components.backstack.operation.push
+import compKey
 import composables.downloadPitsPhotos
 import createScoutPitsDataFile
 import defaultError
 import defaultOnPrimary
 import defaultPrimaryVariant
 import getCurrentTheme
+import nodes.*
 import nodes.RootNode
 import nodes.algaeBarge
 import nodes.algaeProcess
 import nodes.algaeRemoval
 import nodes.bargePreferred
+import nodes.betterParseInt
 import nodes.collectPreference
 import nodes.comments
 import nodes.coralHigh
@@ -113,6 +115,7 @@ actual fun PitsScoutMenu(
 
         var dropDownExpanded by remember { mutableStateOf(false) }
         var dropDown2Expanded by remember { mutableStateOf(false) }
+        var gearRatioExpanded by remember { mutableStateOf(false) }
         var collectPrefDD by remember { mutableStateOf(false) }
 
 //        LazyColumn(
@@ -211,12 +214,12 @@ actual fun PitsScoutMenu(
 
                                     photoArray.add(uri.toString())
 
-                                    for(img in permPhotosList) {
+                                    for(img in permPhotosList.getOrPut(compKey){ mutableListOf() }) {
                                         if(img == uri.toString()) {
                                             permPhotosList.remove(uri.toString())
                                         }
                                     }
-                                    permPhotosList.add(uri.toString())
+                                    permPhotosList.getOrPut(compKey){ mutableListOf() }.add(uri.toString())
                                 } catch (e: NumberFormatException) {
                                     teamNumberPopup = true
                                 }
@@ -531,7 +534,132 @@ actual fun PitsScoutMenu(
                     }
                 }
 
+            if (motorType.value == "Kraken") {
                 Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(10.dp, 2.5.dp)
+                        .border(BorderStroke(2.dp, Color.Yellow), shape = RoundedCornerShape(5.dp))
+                ) {
+                    Text(
+                        text = "Drive Motor Gear Ratio:  ",
+                        modifier = Modifier
+                            .padding(15.dp)
+                            .align(Alignment.CenterStart)
+                    )
+                    ExposedDropdownMenuBox(
+                        modifier = Modifier
+                            .width(200.dp)
+                            .padding(15.dp)
+                            .align(Alignment.CenterEnd),
+                        expanded = gearRatioExpanded,
+                        onExpandedChange = { it ->
+                            gearRatioExpanded = it
+                        }
+                    ) {
+                        TextField(
+                            modifier = Modifier
+                                .menuAnchor(),
+                            value = driveGearRatio.value,
+                            onValueChange = {
+                                driveGearRatio.value = it
+                            },
+                            readOnly = true,
+                            trailingIcon = {
+                                ExposedDropdownMenuDefaults.TrailingIcon(expanded = gearRatioExpanded)
+                            },
+                            textStyle = TextStyle(color = Color.White)
+                        )
+                        ExposedDropdownMenu(
+                            expanded = gearRatioExpanded,
+                            onDismissRequest = {
+                                gearRatioExpanded = false
+                            }
+                        ) {
+                            HorizontalDivider(
+                                color = getCurrentTheme().onSurface,
+                                thickness = 3.dp
+                            )
+
+                            DropdownMenuItem(
+                                {
+                                    Text(
+                                        text = "L1",
+                                        color = Color.White
+                                    )
+                                },
+                                onClick = {
+                                    driveGearRatio.value = "L1"
+                                    gearRatioExpanded = false
+                                }
+                            )
+
+                            HorizontalDivider(
+                                color = getCurrentTheme().onSurface,
+                                thickness = 3.dp
+                            )
+
+                            DropdownMenuItem(
+                                {
+                                    Text(
+                                        text = "L2",
+                                        color = Color.White
+                                    )
+                                },
+                                onClick = {
+                                    driveGearRatio.value = "L2"
+                                    gearRatioExpanded = false
+                                }
+                            )
+
+                            HorizontalDivider(
+                                color = getCurrentTheme().onSurface,
+                                thickness = 3.dp
+                            )
+
+                            DropdownMenuItem(
+                                {
+                                    Text(
+                                        text = "L3",
+                                        color = Color.White
+                                    )
+                                },
+                                onClick = {
+                                    driveGearRatio.value = "L3"
+                                    gearRatioExpanded = false
+                                }
+                            )
+
+                            HorizontalDivider(
+                                color = getCurrentTheme().onSurface,
+                                thickness = 3.dp
+                            )
+
+                            DropdownMenuItem(
+                                {
+                                    Text(
+                                        text = "L4",
+                                        color = Color.White
+                                    )
+                                },
+                                onClick = {
+                                    driveGearRatio.value = "L4"
+                                    gearRatioExpanded = false
+                                }
+                            )
+
+                            HorizontalDivider(
+                                color = getCurrentTheme().onSurface,
+                                thickness = 3.dp
+                            )
+
+                        }
+                    }
+                }
+            }
+
+
+            Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(10.dp, 2.5.dp)
@@ -920,7 +1048,7 @@ actual fun PitsScoutMenu(
                             val removeList = mutableListOf<String>()
 
                             println("photos:")
-                            println(photoArray[0])
+                            photoArray.forEach{ println(it) }
                             photoArray.forEach {
                                 val startIndex = it.indexOf("/", 56)
                                 addList.add(it.substring(startIndex+1))
@@ -930,10 +1058,12 @@ actual fun PitsScoutMenu(
                             photoArray.addAll(addList)
                             photoArray.removeAll(removeList)
 
-                            pitsTeamDataArray[parseInt(scoutedTeamNumber.value)] = createPitsOutput(mutableIntStateOf(parseInt(scoutedTeamNumber.value)))
+                            pitsTeamDataArray.getOrPut(compKey){ hashMapOf() }.set(scoutedTeamNumber.value.betterParseInt(), createPitsOutput(mutableIntStateOf(parseInt(scoutedTeamNumber.value))))
+                            println(pitsTeamDataArray)
                             createScoutPitsDataFile(
+                                compKey,
                                 parseInt(scoutedTeamNumber.value),
-                                pitsTeamDataArray[parseInt(scoutedTeamNumber.value)]!!
+                                pitsTeamDataArray.get(compKey)?.get(scoutedTeamNumber.value.betterParseInt())!!
                             )
 
                             pitsReset()

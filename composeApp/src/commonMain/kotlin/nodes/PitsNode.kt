@@ -19,7 +19,7 @@ class PitsNode(
     buildContext: BuildContext,
     private val backStack: BackStack<RootNode.NavTarget>,
     private val pitsPerson: MutableState<String>,
-    private val NumOfPitsPeople: MutableIntState
+    private val numOfPitsPeople: MutableIntState
 ) : Node(buildContext) {
 
     @Composable
@@ -28,7 +28,7 @@ class PitsNode(
             backStack,
             pitsPerson,
             scoutName,
-            NumOfPitsPeople
+            numOfPitsPeople
         )
     }
 
@@ -38,6 +38,7 @@ var scoutedTeamName = mutableStateOf("")
 var scoutedTeamNumber = mutableStateOf("")
 val photoArray = mutableListOf<String>()
 var driveType = mutableStateOf("")
+var driveGearRatio = mutableStateOf("")
 var motorType = mutableStateOf("")
 var auto = mutableStateOf("")
 var width = mutableStateOf("")
@@ -60,13 +61,15 @@ var defensePreferred = mutableStateOf(false)
 var collectPreference = mutableStateOf("None Selected")
 var comments = mutableStateOf("")
 
-var permPhotosList = mutableListOf<String>()
+var permPhotosList = HashMap<String, MutableList<String>>()
 
-val pitsTeamDataArray : HashMap<Int, String> = hashMapOf()
+val pitsTeamDataArray : HashMap<String, HashMap<Int, String>> = hashMapOf()
 
 var pitsImgJsonObj = JsonArray()
 
 fun createPitsOutput(team: MutableIntState): String {
+
+    println("saved data")
 
     fun stateToInt(state: ToggleableState) = when (state) {
         ToggleableState.Off -> 0
@@ -79,11 +82,11 @@ fun createPitsOutput(team: MutableIntState): String {
 
     var gson = Gson()
 
-    if(pitsTeamDataArray[team.intValue] == null) {
-        pitsTeamDataArray[team.intValue] = "{}"
-        jsonObject = gson.fromJson(pitsTeamDataArray[team.intValue].toString(), JsonObject::class.java)
+    if(pitsTeamDataArray.getOrPut(compKey){ hashMapOf() }.get(team.intValue).isNullOrEmpty()) {
+        pitsTeamDataArray.getOrPut(compKey){ hashMapOf() }.set(team.intValue, "{}")
+        jsonObject = gson.fromJson(pitsTeamDataArray.get(compKey)?.get(team.intValue).toString(), JsonObject::class.java)
     } else {
-        jsonObject = gson.fromJson(pitsTeamDataArray[team.intValue].toString(), JsonObject::class.java)
+        jsonObject = gson.fromJson(pitsTeamDataArray.get(compKey)?.get(team.intValue).toString(), JsonObject::class.java)
     }
 
     //Adds Uris from permPhotosList to a JsonArray that is permanently stored as a file
@@ -102,6 +105,7 @@ fun createPitsOutput(team: MutableIntState): String {
             addProperty("Photo${index}", value)
         }
         addProperty("driveType", driveType.value)
+        addProperty("motorGearRatio", driveGearRatio.value)
         addProperty("motorType", motorType.value)
         addProperty("auto", auto.value)
         addProperty("width", width.value)
@@ -124,7 +128,7 @@ fun createPitsOutput(team: MutableIntState): String {
         addProperty("collectPreference", collectPreference.value)
         addProperty("comments", comments.value)
     }
-    println(gson.toJson(photoArray))
+//    println(gson.toJson(photoArray))
     return jsonObject.toString()
 }
 
@@ -133,6 +137,7 @@ fun pitsReset(){
     scoutedTeamNumber.value = ""
     photoArray.clear()
     driveType.value = ""
+    driveGearRatio.value = ""
     motorType.value = ""
     auto.value = ""
     width.value = ""

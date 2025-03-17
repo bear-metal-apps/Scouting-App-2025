@@ -10,7 +10,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.unit.sp
-import nodes.TeamMatchStartKey
+import compKey
+import nodes.betterParseInt
 import nodes.createOutput
 import nodes.jsonObject
 import nodes.match
@@ -43,9 +44,8 @@ actual fun EndGameCheckBox(
                 checkBox2Checked.value = false
 
                 saveData.value = true
-                teamDataArray[TeamMatchStartKey(match.value.toInt(), jsonObject.get("team").asInt, jsonObject.get("robotStartPosition").asInt)] = createOutput(
-                    mutableIntStateOf(jsonObject.get("team").asInt), mutableIntStateOf(jsonObject.get("robotStartPosition").asInt)
-                )
+                teamDataArray.get(compKey)?.get(match.value.betterParseInt())?.set(jsonObject.get("robotStartPosition").asInt, createOutput(mutableIntStateOf(jsonObject.get("team").asInt), mutableIntStateOf(
+                    jsonObject.get("robotStartPosition").asInt)))
             },
             modifier = Modifier.align(Alignment.CenterVertically),
         )

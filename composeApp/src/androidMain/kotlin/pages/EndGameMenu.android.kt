@@ -30,18 +30,14 @@ import androidx.compose.ui.unit.sp
 import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.components.backstack.operation.pop
 import com.bumble.appyx.components.backstack.operation.push
+import compKey
 import composables.Comments
 import composables.EndGameCheckBox
 import createScoutMatchDataFile
 import defaultSecondary
 import getTeamsOnAlliance
 import keyboardAsState
-import kotlinx.coroutines.runBlocking
 import nodes.*
-import org.jetbrains.compose.resources.load
-import org.json.JSONException
-import org.tahomarobotics.scouting.TBAInterface
-import setTeam
 import java.lang.Integer.parseInt
 
 
@@ -61,7 +57,7 @@ actual fun EndGameMenu(
 
     fun bob() {
         mainMenuBackStack.pop()
-        teamDataArray[TeamMatchStartKey(parseInt(match.value), team.intValue, robotStartPosition.intValue)] = createOutput(team, robotStartPosition)
+        teamDataArray.get(compKey)?.get(match.value.betterParseInt())?.set(robotStartPosition.intValue, createOutput(team, robotStartPosition))
     }
 
     if(!isKeyboardOpen){
@@ -93,7 +89,7 @@ actual fun EndGameMenu(
                         playedDefense.value = !playedDefense.value
 
                         saveData.value = true
-                        teamDataArray[TeamMatchStartKey(parseInt(match.value), team.intValue, robotStartPosition.intValue)] = createOutput(team, robotStartPosition)
+                        teamDataArray.get(compKey)?.get(match.value.betterParseInt())?.set(robotStartPosition.intValue, createOutput(team, robotStartPosition))
                     },
                     modifier = Modifier.align(Alignment.CenterVertically),
                 )
@@ -108,12 +104,13 @@ actual fun EndGameMenu(
                 onClick = {
                     if(saveData.value) {
                         //Save temp data
-                        teamDataArray[TeamMatchStartKey(parseInt(match.value), team.intValue, robotStartPosition.intValue)] = createOutput(team, robotStartPosition)
+                        teamDataArray.get(compKey)?.get(match.value.betterParseInt())?.set(robotStartPosition.intValue, createOutput(team, robotStartPosition))
+
                         //Save permanent data
-                        createScoutMatchDataFile(match.value, team.intValue, createOutput(team, robotStartPosition))
+                        createScoutMatchDataFile(compKey, match.value, team.intValue, createOutput(team, robotStartPosition))
                         match.value = (parseInt(match.value) + 1).toString()
                         reset()
-                        saveData.value = false
+                        matchFirst.value = true
                         backStack.push(AutoTeleSelectorNode.NavTarget.AutoScouting)
 
                         //Grab team from TBA for next match
@@ -122,7 +119,7 @@ actual fun EndGameMenu(
                         }catch (e: Exception){}
                         stringTeam.value = team.intValue.toString()
 
-                        loadData(parseInt(match.value), team, robotStartPosition)
+//                        loadData(parseInt(match.value), team, robotStartPosition)
 
                     } else {
                         saveDataPopup.value = true
