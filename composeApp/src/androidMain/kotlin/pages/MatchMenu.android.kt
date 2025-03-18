@@ -544,19 +544,14 @@ actual fun MatchMenuBottom(
     var backgroundColor = remember { mutableStateOf(Color.Black) }
     var textColor = remember { mutableStateOf(Color.White) }
 
-    var startTimer = if(totalAutoCoralAttempts.intValue > 0 && pageIndex.intValue == 0) true else false
     var teleColor = remember { mutableStateOf(getCurrentTheme().secondary) }
     var teleTextColor = remember { mutableStateOf(Color.Yellow) }
 
-    totalAutoCoralAttempts.intValue = autoCoralLevel4Scored.intValue + autoCoralLevel3Scored.intValue +
-            autoCoralLevel2Scored.intValue + autoCoralLevel1Scored.intValue + autoCoralLevel4Missed.intValue +
-            autoCoralLevel3Missed.intValue + autoCoralLevel2Missed.intValue + autoCoralLevel1Missed.intValue
-
-    LaunchedEffect(startTimer) {
-        while (startTimer) {
+    LaunchedEffect(startTimer.value) {
+        while (startTimer.value) {
             delay(15000)
             teleFlash.value = true
-            startTimer = false
+            startTimer.value = false
         }
     }
 

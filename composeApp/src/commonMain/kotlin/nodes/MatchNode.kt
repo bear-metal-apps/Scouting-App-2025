@@ -137,6 +137,8 @@ var pageIndex = mutableIntStateOf(0)
 //Settings variables
 val miniMinus = mutableStateOf(true)
 
+var startTimer = mutableStateOf(false)
+
 val match = mutableStateOf("1")
 
 var stringMatch = mutableStateOf("")

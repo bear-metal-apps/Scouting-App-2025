@@ -289,6 +289,9 @@ actual fun AutoMenu(
                         .weight(0.5f)
                         .fillMaxWidth()
                 )
+                if(autoStop.value == 1){
+                    startTimer.value = true
+                }
             }
         }
 
