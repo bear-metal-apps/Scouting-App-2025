@@ -152,11 +152,13 @@ actual fun MatchMenuTop(
                     border = BorderStroke(0.dp, Color.Transparent),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = teamColor,
-                        contentColor = Color.White
+                        contentColor = Color.White,
+                        disabledContentColor = Color.White
                     ),
                     onClick = {
-                        robotStartPositionPopUp = true
-                    }
+                            robotStartPositionPopUp = true
+                    },
+                    enabled = canChangeRobotStartPosition.value
                 ) {
                     Text(
                         text = positionName,

@@ -23,6 +23,7 @@ import defaultPrimaryVariant
 import defaultSecondary
 import getCurrentTheme
 import nodes.RootNode
+import nodes.canChangeRobotStartPosition
 import nodes.miniMinus
 import theme
 import themeDefault
@@ -191,12 +192,49 @@ actual fun SettingsMenu(
                     .align(Alignment.CenterVertically)
             )
         }
-        
+
         HorizontalDivider(
             color = defaultPrimaryVariant,
             thickness = 3.dp,
             modifier = Modifier.padding(8.dp)
         )
+        Text(
+            text = "Functionality",
+            fontSize = 24.sp,
+            color = getCurrentTheme().onPrimary,
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .padding(8.dp)
+        )
+        HorizontalDivider(
+            color = defaultPrimaryVariant,
+            thickness = 3.dp,
+            modifier = Modifier.padding(8.dp)
+        )
+
+        Row {
+            Switch(
+                checked = canChangeRobotStartPosition.value,
+                onCheckedChange = { canChangeRobotStartPosition.value = !canChangeRobotStartPosition.value },
+                colors = SwitchDefaults.colors(
+                    checkedThumbColor = getCurrentTheme().primaryVariant,
+                    checkedTrackColor = getCurrentTheme().secondaryVariant,
+                    uncheckedThumbColor = getCurrentTheme().error,
+                    uncheckedTrackColor = getCurrentTheme().onPrimary,
+                ),
+                modifier = Modifier
+                    .padding(8.dp)
+                    .align(Alignment.CenterVertically)
+
+            )
+            Text(
+                text = "Can change robot start position in match scouting",
+                color = getCurrentTheme().onPrimary,
+                modifier = Modifier
+                    .padding(8.dp)
+                    .align(Alignment.CenterVertically)
+            )
+        }
 
         androidx.compose.material3.OutlinedButton(
             border = BorderStroke(3.dp, Color.Yellow),
@@ -205,6 +243,7 @@ actual fun SettingsMenu(
             onClick = {
                 effectsChecked = false
                 theme = themeDefault()
+                canChangeRobotStartPosition.value = false
             },
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
@@ -215,5 +254,6 @@ actual fun SettingsMenu(
                 color = getCurrentTheme().onPrimary
             )
         }
+
     }
 }

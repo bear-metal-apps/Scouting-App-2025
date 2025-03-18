@@ -3,6 +3,7 @@ package nodes
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.navigation.modality.BuildContext
@@ -20,6 +21,6 @@ class SettingsNode(
         SettingsMenu(mainMenuBackStack)
     }
 
-
-
 }
+
+var canChangeRobotStartPosition = mutableStateOf(false)
