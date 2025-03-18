@@ -18,22 +18,27 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import blueAlliance
 import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.components.backstack.operation.pop
 import com.bumble.appyx.components.backstack.operation.push
 import compKey
 import createScoutMatchDataFile
+import defaultPrimaryVariant
 import getCurrentTheme
 import getTeamsOnAlliance
 import kotlinx.coroutines.delay
 import nodes.*
 import org.json.JSONException
+import redAlliance
 import setTeam
+import writeTabletDataFile
 import java.lang.Integer.parseInt
 import java.util.*
 
@@ -46,6 +51,8 @@ actual fun MatchMenuTop(
     var teamColor by remember { mutableStateOf(Color.Black) }
     val context = LocalContext.current
     val pageName = mutableListOf("A", "T", "E")
+
+    var robotStartPositionPopUp by remember { mutableStateOf(false) }
 
     when (robotStartPosition.intValue) {
         0 -> {
@@ -113,7 +120,6 @@ actual fun MatchMenuTop(
 
         if(teamDataArray.getOrPut(compKey) { hashMapOf() }.getOrPut(match.value.betterParseInt()) { hashMapOf() } .get(robotStartPosition.intValue).isNullOrEmpty()) {
             saveData.value = false
-            println("save data is false")
         } else {
             saveData.value = true
         }
@@ -140,14 +146,257 @@ actual fun MatchMenuTop(
                     .align(Alignment.CenterVertically)
                     .fillMaxHeight()
             ) {
-                Text(
-                    text = positionName,
-                    modifier = Modifier
-                        .scale(1.2f)
-                        .padding(horizontal = 25.dp)
-                        .align(Alignment.Center),
-                    fontSize = 28.sp
-                )
+                OutlinedButton (
+                    modifier = Modifier.width(80.dp).fillMaxHeight().align(Alignment.Center),
+                    shape = RectangleShape,
+                    border = BorderStroke(0.dp, Color.Transparent),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = teamColor,
+                        contentColor = Color.White
+                    ),
+                    onClick = {
+                        robotStartPositionPopUp = true
+                    }
+                ) {
+                    Text(
+                        text = positionName,
+                        modifier = Modifier
+                            .scale(1.2f)
+//                            .padding(horizontal = 25.dp)
+                            .align(Alignment.CenterVertically),
+                        fontSize = 24.sp
+//                        color = Color.White
+                    )
+                }
+                DropdownMenu(
+                    expanded = robotStartPositionPopUp,
+                    onDismissRequest = { robotStartPositionPopUp = false; },
+                    modifier = Modifier.background(color = getCurrentTheme().onSurface)
+                ) {
+                    DropdownMenuItem(
+                        onClick = {
+
+                            val newRobotStartPosition = 0
+
+                            if(saveData.value) {
+                                teamDataArray.getOrPut(compKey) { hashMapOf() }.getOrPut(match.value.betterParseInt()) { hashMapOf() }.set(robotStartPosition.intValue, createOutput(mutableIntStateOf(team.intValue), robotStartPosition))
+                                createScoutMatchDataFile(compKey, match.value, team.intValue, createOutput(mutableIntStateOf(team.intValue), robotStartPosition))
+                            }
+
+                            robotStartPosition.value = newRobotStartPosition
+                            writeTabletDataFile(context, createTabletDataOutput(newRobotStartPosition))
+                            robotStartPositionPopUp = false
+
+                            try {
+                                setTeam(team, nodes.match, robotStartPosition.intValue)
+                            } catch (e: JSONException) {
+                                openError.value = true
+                            }
+                            stringTeam.value = team.intValue.toString()
+
+                            if(teamDataArray.getOrPut(compKey) { hashMapOf() }.getOrPut(match.value.betterParseInt()) { hashMapOf() }.get(robotStartPosition.intValue).isNullOrEmpty()) {
+                                saveData.value = false
+                            } else {
+                                saveData.value = true
+                            }
+
+                            loadData(match.value.betterParseInt(), team, mutableIntStateOf(newRobotStartPosition))
+
+                        },
+                        text = {
+                            Text(
+                                text = "Red 1",
+                                color = getCurrentTheme().onPrimary
+                            )
+                        },
+                        modifier = Modifier.background(color = redAlliance)
+                    )
+                    DropdownMenuItem(
+                        onClick = {
+                            val newRobotStartPosition = 1
+
+                            if(saveData.value) {
+                                teamDataArray.getOrPut(compKey) { hashMapOf() }.getOrPut(match.value.betterParseInt()) { hashMapOf() }.set(robotStartPosition.intValue, createOutput(mutableIntStateOf(team.intValue), robotStartPosition))
+                                createScoutMatchDataFile(compKey, match.value, team.intValue, createOutput(mutableIntStateOf(team.intValue), robotStartPosition))
+                            }
+
+                            robotStartPosition.value = newRobotStartPosition
+                            writeTabletDataFile(context, createTabletDataOutput(newRobotStartPosition))
+                            robotStartPositionPopUp = false
+
+                            try {
+                                setTeam(team, nodes.match, robotStartPosition.intValue)
+                            } catch (e: JSONException) {
+                                openError.value = true
+                            }
+                            stringTeam.value = team.intValue.toString()
+
+                            if(teamDataArray.getOrPut(compKey) { hashMapOf() }.getOrPut(match.value.betterParseInt()) { hashMapOf() }.get(robotStartPosition.intValue).isNullOrEmpty()) {
+                                saveData.value = false
+                            } else {
+                                saveData.value = true
+                            }
+
+                            loadData(match.value.betterParseInt(), team, mutableIntStateOf(newRobotStartPosition))
+                        },
+                        text = {
+                            Text(
+                                text = "Red 2",
+                                color = getCurrentTheme().onPrimary
+                            )
+                        },
+                        modifier = Modifier.background(color = redAlliance)
+                    )
+                    DropdownMenuItem(
+                        onClick = {
+                            val newRobotStartPosition = 2
+
+                            if(saveData.value) {
+                                teamDataArray.getOrPut(compKey) { hashMapOf() }.getOrPut(match.value.betterParseInt()) { hashMapOf() }.set(robotStartPosition.intValue, createOutput(mutableIntStateOf(team.intValue), robotStartPosition))
+                                createScoutMatchDataFile(compKey, match.value, team.intValue, createOutput(mutableIntStateOf(team.intValue), robotStartPosition))
+                            }
+
+                            robotStartPosition.value = newRobotStartPosition
+                            writeTabletDataFile(context, createTabletDataOutput(newRobotStartPosition))
+                            robotStartPositionPopUp = false
+
+                            try {
+                                setTeam(team, nodes.match, robotStartPosition.intValue)
+                            } catch (e: JSONException) {
+                                openError.value = true
+                            }
+                            stringTeam.value = team.intValue.toString()
+
+                            if(teamDataArray.getOrPut(compKey) { hashMapOf() }.getOrPut(match.value.betterParseInt()) { hashMapOf() }.get(robotStartPosition.intValue).isNullOrEmpty()) {
+                                saveData.value = false
+                            } else {
+                                saveData.value = true
+                            }
+
+                            loadData(match.value.betterParseInt(), team, mutableIntStateOf(newRobotStartPosition))
+                        },
+                        text = {
+                            Text(
+                                text = "Red 3",
+                                color = getCurrentTheme().onPrimary
+                            )
+                        },
+                        modifier = Modifier.background(color = redAlliance)
+                    )
+                    HorizontalDivider(
+                        color = defaultPrimaryVariant,
+                        thickness = 3.dp,
+                        modifier = Modifier.padding(8.dp)
+                    )
+                    DropdownMenuItem(
+                        onClick = {
+                            val newRobotStartPosition = 3
+
+                            if(saveData.value) {
+                                teamDataArray.getOrPut(compKey) { hashMapOf() }.getOrPut(match.value.betterParseInt()) { hashMapOf() }.set(robotStartPosition.intValue, createOutput(mutableIntStateOf(team.intValue), robotStartPosition))
+                                createScoutMatchDataFile(compKey, match.value, team.intValue, createOutput(mutableIntStateOf(team.intValue), robotStartPosition))
+                            }
+
+                            robotStartPosition.value = newRobotStartPosition
+                            writeTabletDataFile(context, createTabletDataOutput(newRobotStartPosition))
+                            robotStartPositionPopUp = false
+
+                            try {
+                                setTeam(team, nodes.match, robotStartPosition.intValue)
+                            } catch (e: JSONException) {
+                                openError.value = true
+                            }
+                            stringTeam.value = team.intValue.toString()
+
+                            if(teamDataArray.getOrPut(compKey) { hashMapOf() }.getOrPut(match.value.betterParseInt()) { hashMapOf() }.get(robotStartPosition.intValue).isNullOrEmpty()) {
+                                saveData.value = false
+                            } else {
+                                saveData.value = true
+                            }
+
+                            loadData(match.value.betterParseInt(), team, mutableIntStateOf(newRobotStartPosition))
+                        },
+                        text = {
+                            Text(
+                                text = "Blue 1",
+                                color = getCurrentTheme().onPrimary
+                            )
+                        },
+                        modifier = Modifier.background(color = blueAlliance)
+                    )
+                    DropdownMenuItem(
+                        onClick = {
+                            val newRobotStartPosition = 4
+
+                            if(saveData.value) {
+                                teamDataArray.getOrPut(compKey) { hashMapOf() }.getOrPut(match.value.betterParseInt()) { hashMapOf() }.set(robotStartPosition.intValue, createOutput(mutableIntStateOf(team.intValue), robotStartPosition))
+                                createScoutMatchDataFile(compKey, match.value, team.intValue, createOutput(mutableIntStateOf(team.intValue), robotStartPosition))
+                            }
+
+                            robotStartPosition.value = newRobotStartPosition
+                            writeTabletDataFile(context, createTabletDataOutput(newRobotStartPosition))
+                            robotStartPositionPopUp = false
+
+                            try {
+                                setTeam(team, nodes.match, robotStartPosition.intValue)
+                            } catch (e: JSONException) {
+                                openError.value = true
+                            }
+                            stringTeam.value = team.intValue.toString()
+
+                            if(teamDataArray.getOrPut(compKey) { hashMapOf() }.getOrPut(match.value.betterParseInt()) { hashMapOf() }.get(robotStartPosition.intValue).isNullOrEmpty()) {
+                                saveData.value = false
+                            } else {
+                                saveData.value = true
+                            }
+
+                            loadData(match.value.betterParseInt(), team, mutableIntStateOf(newRobotStartPosition))
+                        },
+                        text = {
+                            Text(
+                                text = "Blue 2",
+                                color = getCurrentTheme().onPrimary
+                            )
+                        },
+                        modifier = Modifier.background(color = blueAlliance)
+                    )
+                    DropdownMenuItem(
+                        onClick = {
+                            val newRobotStartPosition = 5
+
+                            if(saveData.value) {
+                                teamDataArray.getOrPut(compKey) { hashMapOf() }.getOrPut(match.value.betterParseInt()) { hashMapOf() }.set(robotStartPosition.intValue, createOutput(mutableIntStateOf(team.intValue), robotStartPosition))
+                                createScoutMatchDataFile(compKey, match.value, team.intValue, createOutput(mutableIntStateOf(team.intValue), robotStartPosition))
+                            }
+
+                            robotStartPosition.value = newRobotStartPosition
+                            writeTabletDataFile(context, createTabletDataOutput(newRobotStartPosition))
+                            robotStartPositionPopUp = false
+
+                            try {
+                                setTeam(team, nodes.match, robotStartPosition.intValue)
+                            } catch (e: JSONException) {
+                                openError.value = true
+                            }
+                            stringTeam.value = team.intValue.toString()
+
+                            if(teamDataArray.getOrPut(compKey) { hashMapOf() }.getOrPut(match.value.betterParseInt()) { hashMapOf() }.get(robotStartPosition.intValue).isNullOrEmpty()) {
+                                saveData.value = false
+                            } else {
+                                saveData.value = true
+                            }
+
+                            loadData(match.value.betterParseInt(), team, mutableIntStateOf(newRobotStartPosition))
+                        },
+                        text = {
+                            Text(
+                                text = "Blue 3",
+                                color = getCurrentTheme().onPrimary
+                            )
+                        },
+                        modifier = Modifier.background(color = blueAlliance)
+                    )
+                }
             }
 
             VerticalDivider(
@@ -540,7 +789,10 @@ actual fun MatchMenuBottom(
                 .clip(
                     RoundedCornerShape(5.dp)
                 )
-                .border(BorderStroke(3.dp, getCurrentTheme().primaryVariant), RoundedCornerShape(5.dp))
+                .border(
+                    BorderStroke(3.dp, getCurrentTheme().primaryVariant),
+                    RoundedCornerShape(5.dp)
+                )
                 .background(getCurrentTheme().secondary)
         ) {
             Box(
