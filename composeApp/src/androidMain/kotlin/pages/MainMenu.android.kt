@@ -6,6 +6,7 @@ import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.provider.Settings
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -30,6 +31,8 @@ import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.components.backstack.operation.push
 import com.bumble.appyx.navigation.modality.BuildContext
 import com.bumble.appyx.navigation.node.Node
+import com.google.gson.Gson
+import com.google.gson.JsonObject
 import compKey
 import createScoutMatchDataFolder
 import createScoutPitsDataFolder
@@ -371,6 +374,7 @@ actual class MainMenu actual constructor(
                             if (isInternetAvailable) {
                                 androidx.compose.material.OutlinedButton(
                                     onClick = {
+
                                         val scope = CoroutineScope(Dispatchers.Default)
                                         scope.launch {
                                             if (client == null) client = Client()

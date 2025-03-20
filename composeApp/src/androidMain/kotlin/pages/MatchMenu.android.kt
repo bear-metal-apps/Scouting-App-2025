@@ -129,6 +129,8 @@ actual fun MatchMenuTop(
             parseInt(match.value), team, robotStartPosition
         )
 
+        teleFlash.value = false
+
         matchFirst.value = false
     }
 
