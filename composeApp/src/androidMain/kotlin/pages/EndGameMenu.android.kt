@@ -109,7 +109,6 @@ actual fun EndGameMenu(
                         //Save permanent data
                         createScoutMatchDataFile(compKey, match.value, team.intValue, createOutput(team, robotStartPosition))
                         match.value = (parseInt(match.value) + 1).toString()
-                        stringMatch.value = match.value
                         reset()
                         matchFirst.value = true
                         backStack.push(AutoTeleSelectorNode.NavTarget.AutoScouting)

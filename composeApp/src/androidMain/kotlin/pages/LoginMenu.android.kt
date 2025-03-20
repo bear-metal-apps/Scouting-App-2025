@@ -24,8 +24,6 @@ import com.google.gson.Gson
 import com.google.gson.JsonObject
 import compKey
 import createTabletDataFile
-import defaultPrimaryVariant
-import defaultSecondary
 import deleteAllTBAMatchData
 import deleteAllTBATeamData
 import deleteScoutMatchData
@@ -91,7 +89,7 @@ actual fun LoginMenu(
                 .padding(8.dp)
         )
         HorizontalDivider(
-            color = defaultPrimaryVariant,
+            color = getCurrentTheme().primaryVariant,
             thickness = 3.dp,
             modifier = Modifier.padding(8.dp)
         )
@@ -104,7 +102,7 @@ actual fun LoginMenu(
                 OutlinedButton(
                     onClick = { compDD = true },
                     shape = RoundedCornerShape(12.dp),
-                    border = BorderStroke(3.dp, color = defaultPrimaryVariant),
+                    border = BorderStroke(3.dp, color = getCurrentTheme().primaryVariant),
                     colors = ButtonDefaults.buttonColors(containerColor = getCurrentTheme().primary)
                 ) {
                     Box(modifier = Modifier.fillMaxWidth()) {
@@ -223,7 +221,7 @@ actual fun LoginMenu(
                             comp.value = it
                             compKey = it
                         },
-                        placeholder = { Text("Custom Competition Key") },
+                        placeholder = { Text("TBA Competition Key") },
                         shape = RoundedCornerShape(12.dp),
                         singleLine = true,
                         colors = OutlinedTextFieldDefaults.colors(
@@ -247,7 +245,7 @@ actual fun LoginMenu(
                 OutlinedButton(
                     onClick = { typeDD = true },
                     shape = RoundedCornerShape(12.dp),
-                    border = BorderStroke(3.dp, color = defaultPrimaryVariant),
+                    border = BorderStroke(3.dp, color = getCurrentTheme().primaryVariant),
                     colors = ButtonDefaults.buttonColors(containerColor = if (robotStartPosition.value < 3) redAlliance else if (robotStartPosition.value < 6) blueAlliance else if (robotStartPosition.value == 6) redAlliance else blueAlliance)
                 ) {
                     Box(modifier = Modifier.fillMaxWidth()) {
@@ -338,7 +336,7 @@ actual fun LoginMenu(
                         modifier = Modifier.background(color = redAlliance)
                     )
                     HorizontalDivider(
-                        color = defaultPrimaryVariant,
+                        color = getCurrentTheme().primaryVariant,
                         thickness = 3.dp,
                         modifier = Modifier.padding(8.dp)
                     )
@@ -400,7 +398,7 @@ actual fun LoginMenu(
                         modifier = Modifier.background(color = blueAlliance)
                     )
                     HorizontalDivider(
-                        color = defaultPrimaryVariant,
+                        color = getCurrentTheme().primaryVariant,
                         thickness = 3.dp,
                         modifier = Modifier.padding(8.dp)
                     )
@@ -415,14 +413,14 @@ actual fun LoginMenu(
                                 color = getCurrentTheme().onPrimary
                             )
                         },
-                        modifier = Modifier.background(color = defaultSecondary)
+                        modifier = Modifier.background(color = getCurrentTheme().secondary)
                     )
                 }
 
             }
         }
 //        HorizontalDivider(
-//            color = defaultPrimaryVariant,
+//            color = getCurrentTheme().primaryVariant,
 //            thickness = 3.dp,
 //            modifier = Modifier.padding(8.dp)
 //        )
@@ -437,9 +435,9 @@ actual fun LoginMenu(
                     if (comp.value != "")
                         backStack.push(RootNode.NavTarget.MainMenu)
                 },
-                border = BorderStroke(color = defaultPrimaryVariant, width = 3.dp),
+                border = BorderStroke(color = getCurrentTheme().primaryVariant, width = 3.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = defaultSecondary,
+                    containerColor = getCurrentTheme().secondary,
                     contentColor = getCurrentTheme().onPrimary,
                     disabledContainerColor = getCurrentTheme().primary,
                 ),
@@ -457,8 +455,8 @@ actual fun LoginMenu(
             }
             OutlinedButton(
                 onClick = { deleteData = true },
-                border = BorderStroke(color = defaultPrimaryVariant, width = 3.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = getCurrentTheme().primary),
+                border = BorderStroke(color = getCurrentTheme().primaryVariant, width = 3.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = getCurrentTheme().secondary),
                 shape = RoundedCornerShape(12.dp),
                 modifier = Modifier
                     .align(Alignment.CenterStart)

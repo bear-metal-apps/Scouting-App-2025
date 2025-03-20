@@ -14,6 +14,8 @@ import composables.CheckBox
 import composables.EnumerableValue
 import keyboardAsState
 import nodes.*
+import org.tahomarobotics.scouting.algaeColor
+import org.tahomarobotics.scouting.coralColor
 import java.lang.Integer.parseInt
 
 @Composable
@@ -25,7 +27,6 @@ actual fun TeleMenu(
     team: MutableIntState,
     robotStartPosition: MutableIntState
 ) {
-    val scrollState = rememberScrollState(0)
     val isScrollEnabled = remember{ mutableStateOf(true) }
     val isKeyboardOpen by keyboardAsState()
     val context = LocalContext.current
@@ -55,7 +56,7 @@ actual fun TeleMenu(
                         label = "Score L4",
                         value = teleLFour,
                         flashColor = Color.Green,
-                        backgroundColor = Color(60, 0, 255),
+                        backgroundColor = coralColor,
                         alignment = Alignment.BottomEnd,
                         miniMinus = miniMinus.value,
                         modifier = Modifier
@@ -66,7 +67,7 @@ actual fun TeleMenu(
                         label = "Miss L4",
                         value = teleLFourMissed,
                         flashColor = Color.Red,
-                        backgroundColor = Color(60, 0, 255),
+                        backgroundColor = coralColor,
                         alignment = Alignment.BottomEnd,
                         miniMinus = miniMinus.value,
                         modifier = Modifier
@@ -83,7 +84,7 @@ actual fun TeleMenu(
                     label = "Score L3",
                     value = teleLThree,
                     flashColor = Color.Green,
-                    backgroundColor = Color(55, 0, 236),
+                    backgroundColor = coralColor,
                     alignment = Alignment.BottomEnd,
                     miniMinus = miniMinus.value,
                     modifier = Modifier
@@ -94,7 +95,7 @@ actual fun TeleMenu(
                         label = "Miss L3",
                         value = teleLThreeMissed,
                         flashColor = Color.Red,
-                        backgroundColor = Color(55, 0, 236),
+                        backgroundColor = coralColor,
                         alignment = Alignment.BottomEnd,
                         miniMinus = miniMinus.value,
                         modifier = Modifier
@@ -112,7 +113,7 @@ actual fun TeleMenu(
                         label = "Score L2",
                         value = teleLTwo,
                         flashColor = Color.Green,
-                        backgroundColor = Color(50, 0, 215),
+                        backgroundColor = coralColor,
                         alignment = Alignment.BottomEnd,
                         miniMinus = miniMinus.value,
                         modifier = Modifier
@@ -123,7 +124,7 @@ actual fun TeleMenu(
                         label = "Miss L2",
                         value = teleLTwoMissed,
                         flashColor = Color.Red,
-                        backgroundColor = Color(50, 0, 215),
+                        backgroundColor = coralColor,
                         alignment = Alignment.BottomEnd,
                         miniMinus = miniMinus.value,
                         modifier = Modifier
@@ -141,7 +142,7 @@ actual fun TeleMenu(
                         label = "Score L1",
                         value = teleLOne,
                         flashColor = Color.Green,
-                        backgroundColor = Color(45, 0, 193),
+                        backgroundColor = coralColor,
                         alignment = Alignment.BottomEnd,
                         miniMinus = miniMinus.value,
                         modifier = Modifier
@@ -152,7 +153,7 @@ actual fun TeleMenu(
                         label = "Miss L1",
                         value = teleLOneMissed,
                         flashColor = Color.Red,
-                        backgroundColor = Color(45, 0, 193),
+                        backgroundColor = coralColor,
                         alignment = Alignment.BottomEnd,
                         miniMinus = miniMinus.value,
                         modifier = Modifier
@@ -169,7 +170,7 @@ actual fun TeleMenu(
                         label = "Algae Removed",
                         value = teleRemoved,
                         flashColor = Color.Blue,
-                        backgroundColor = Color(0, 131, 52),
+                        backgroundColor = algaeColor,
                         alignment = Alignment.BottomEnd,
                         miniMinus = miniMinus.value,
                         modifier = Modifier
@@ -180,7 +181,7 @@ actual fun TeleMenu(
                         label = "Algae Processed",
                         value = teleProcessed,
                         flashColor = Color.Blue,
-                        backgroundColor = Color(0, 131, 52),
+                        backgroundColor = algaeColor,
                         alignment = Alignment.BottomEnd,
                         miniMinus = miniMinus.value,
                         modifier = Modifier
@@ -200,7 +201,7 @@ actual fun TeleMenu(
                     label = "Net Miss",
                     value = teleNetMissed,
                     flashColor = Color.Red,
-                    backgroundColor = Color(0, 131, 52),
+                    backgroundColor = algaeColor,
                     alignment = Alignment.BottomEnd,
                     miniMinus = miniMinus.value,
                     modifier = Modifier
@@ -212,7 +213,7 @@ actual fun TeleMenu(
                     label = "Net Score",
                     value = teleNet,
                     flashColor = Color.Green,
-                    backgroundColor = Color(0, 131, 52),
+                    backgroundColor = algaeColor,
                     alignment = Alignment.BottomEnd,
                     miniMinus = miniMinus.value,
                     modifier = Modifier

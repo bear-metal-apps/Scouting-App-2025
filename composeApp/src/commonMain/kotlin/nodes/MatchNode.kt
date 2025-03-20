@@ -125,17 +125,15 @@ var saveDataPopup = mutableStateOf(false)
  */
 var saveDataSit = mutableStateOf(false) // False = nextMatch, True = MainMenu
 
-
-var teleFlash = mutableStateOf(false)
-
 var undoList = Stack<Array<Any>>()
 var redoList = Stack<Array<Any>>()
 var jsonObject: JsonObject = JsonObject()
 
 var pageIndex = mutableIntStateOf(0)
 
-//Settings variables
-val miniMinus = mutableStateOf(true)
+val teleFlash = mutableStateOf(true)
+
+var startTimer = mutableStateOf(false)
 
 val match = mutableStateOf("1")
 
@@ -171,7 +169,7 @@ val teleLFour = mutableIntStateOf(0)
 val teleLThree = mutableIntStateOf(0)
 val teleLTwo = mutableIntStateOf(0)
 val teleLOne = mutableIntStateOf(0)
-val teleReefAlgaeCollected = mutableStateOf(0)
+val teleReefAlgaeRemoved = mutableStateOf(0)
 val teleRemoved = mutableIntStateOf(0)
 val teleProcessed = mutableIntStateOf(0)
 val teleLFourMissed = mutableIntStateOf(0)
@@ -233,7 +231,7 @@ fun createJson(team: MutableIntState, robotStartPosition: MutableIntState) {
             addProperty("penalties", penalties.intValue)
             addProperty("played_defense", playedDefense.value)
             add("algae", JsonObject().apply {
-                addProperty("reef_removed", teleReefAlgaeCollected.value)
+                addProperty("reef_removed", teleReefAlgaeRemoved.value)
                 addProperty("processed", teleProcessed.intValue)
             })
             add("coral", JsonObject().apply {
@@ -304,7 +302,7 @@ fun createOutput(team: MutableIntState, robotStartPosition: MutableIntState): St
             addProperty("penalties", penalties.intValue)
             addProperty("played_defense", playedDefense.value)
             add("algae", JsonObject().apply {
-                addProperty("reef_collected", teleReefAlgaeCollected.value)
+                addProperty("reef_removed", teleReefAlgaeRemoved.value)
                 addProperty("processed", teleProcessed.intValue)
             })
             add("coral", JsonObject().apply {
@@ -384,8 +382,8 @@ fun loadData(match: Int, team: MutableIntState, robotStartPosition: MutableIntSt
         teleLThree.intValue = jsonObject.getAsJsonObject("tele").getAsJsonObject("coral").get("reef_level3").asInt
         teleLTwo.intValue = jsonObject.getAsJsonObject("tele").getAsJsonObject("coral").get("reef_level2").asInt
         teleLOne.intValue = jsonObject.getAsJsonObject("tele").getAsJsonObject("coral").get("reef_level1").asInt
-        teleReefAlgaeCollected.value =
-            jsonObject.getAsJsonObject("tele").getAsJsonObject("algae").get("reef_collected").asInt
+        teleReefAlgaeRemoved.value =
+            jsonObject.getAsJsonObject("tele").getAsJsonObject("algae").get("reef_removed").asInt
         teleProcessed.intValue = jsonObject.getAsJsonObject("tele").getAsJsonObject("algae").get("processed").asInt
         teleLFourMissed.intValue =
             jsonObject.getAsJsonObject("tele").getAsJsonObject("coral").get("reef_level4_missed").asInt
@@ -435,7 +433,7 @@ fun reset() {
     teleLThree.intValue = 0
     teleLTwo.intValue = 0
     teleLOne.intValue = 0
-    teleReefAlgaeCollected.value = 0
+    teleReefAlgaeRemoved.value = 0
     teleRemoved.intValue = 0
     teleProcessed.intValue = 0
     teleLFourMissed.intValue = 0

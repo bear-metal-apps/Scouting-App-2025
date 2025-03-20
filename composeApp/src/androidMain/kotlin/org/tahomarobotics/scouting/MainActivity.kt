@@ -14,6 +14,8 @@ import com.bumble.appyx.navigation.integration.NodeActivity
 import com.bumble.appyx.navigation.integration.NodeHost
 import com.bumble.appyx.navigation.platform.AndroidLifecycle
 import defaultBackground
+import defaultGamePiece1
+import defaultGamePiece2
 import defaultOnBackground
 import defaultOnPrimary
 import defaultOnSecondary
@@ -69,6 +71,9 @@ val defaultScheme = darkColorScheme(
     onBackground = defaultOnBackground,
     surface = defaultSurface,
     onSurface = defaultOnSurface,
-    outline = defaultSecondary
+    outline = defaultSecondary,
 )
+var algaeColor = Color(2, 78, 85)
+var coralColor = Color(85, 70, 50)//#FFE5B4
+
 
