@@ -20,7 +20,12 @@ class SettingsNode(
     override fun View(modifier: Modifier) {
         SettingsMenu(mainMenuBackStack)
     }
-
 }
 
+//Settings variables
+val miniMinus = mutableStateOf(true)
+val highContrast = mutableStateOf(true)
+val effects = mutableStateOf(true)
+val teleFlash = mutableStateOf(true)
+val matchNumberButtons = mutableStateOf(true)
 var canChangeRobotStartPosition = mutableStateOf(false)

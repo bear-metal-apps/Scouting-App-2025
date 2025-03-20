@@ -19,7 +19,8 @@ fun themeDefault(): Colors {
         onSecondary = defaultOnSecondary,
         onBackground = defaultOnBackground,
         onSurface = defaultOnSurface,
-        onError = defaultOnError
+        onError = defaultOnError,
+
     )
     return theme
 }
