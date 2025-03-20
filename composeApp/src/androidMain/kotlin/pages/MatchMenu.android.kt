@@ -619,7 +619,7 @@ actual fun MatchMenuBottom(
     var teleTextColor = remember { mutableStateOf(Color.Yellow) }
 
     LaunchedEffect(startTimer.value) {
-        while (startTimer.value) {
+        while (startTimer.value && canTeleFlash.value) {
             delay(15000)
             teleFlash.value = true
             startTimer.value = false

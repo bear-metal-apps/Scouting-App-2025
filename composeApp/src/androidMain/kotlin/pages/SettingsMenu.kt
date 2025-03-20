@@ -166,8 +166,8 @@ actual fun SettingsMenu(
         Row {
 
             Switch(
-                checked = teleFlash.value,
-                onCheckedChange = { teleFlash.value = !teleFlash.value },
+                checked = canTeleFlash.value,
+                onCheckedChange = { canTeleFlash.value = !canTeleFlash.value },
                 colors = SwitchDefaults.colors(
                     checkedThumbColor = getCurrentTheme().primaryVariant,
                     checkedTrackColor = getCurrentTheme().secondaryVariant,
@@ -265,25 +265,6 @@ actual fun SettingsMenu(
             )
         }
 
-        HorizontalDivider(
-            color = defaultPrimaryVariant,
-            thickness = 3.dp,
-            modifier = Modifier.padding(8.dp)
-        )
-        Text(
-            text = "Functionality",
-            fontSize = 24.sp,
-            color = getCurrentTheme().onPrimary,
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(8.dp)
-        )
-        HorizontalDivider(
-            color = defaultPrimaryVariant,
-            thickness = 3.dp,
-            modifier = Modifier.padding(8.dp)
-        )
-
         Row {
             Switch(
                 checked = canChangeRobotStartPosition.value,
@@ -295,16 +276,16 @@ actual fun SettingsMenu(
                     uncheckedTrackColor = getCurrentTheme().onPrimary,
                 ),
                 modifier = Modifier
-                    .padding(8.dp)
-                    .align(Alignment.CenterVertically)
+                    .scale(2f)
+                    .padding(25.dp)
 
             )
             Text(
                 text = "Can change robot start position in match scouting",
+                fontSize = 25.sp,
                 color = getCurrentTheme().onPrimary,
                 modifier = Modifier
-                    .padding(8.dp)
-                    .align(Alignment.CenterVertically)
+                    .padding(28.dp)
             )
         }
 

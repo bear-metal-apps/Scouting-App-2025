@@ -125,17 +125,13 @@ var saveDataPopup = mutableStateOf(false)
  */
 var saveDataSit = mutableStateOf(false) // False = nextMatch, True = MainMenu
 
-
-var teleFlash = mutableStateOf(false)
-
 var undoList = Stack<Array<Any>>()
 var redoList = Stack<Array<Any>>()
 var jsonObject: JsonObject = JsonObject()
 
 var pageIndex = mutableIntStateOf(0)
 
-//Settings variables
-val miniMinus = mutableStateOf(true)
+val teleFlash = mutableStateOf(true)
 
 var startTimer = mutableStateOf(false)
 
