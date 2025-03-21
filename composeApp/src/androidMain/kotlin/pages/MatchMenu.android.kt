@@ -470,13 +470,14 @@ actual fun MatchMenuTop(
                         createScoutMatchDataFile(compKey, match.value, team.intValue, createOutput(mutableIntStateOf(team.intValue), robotStartPosition))
                     }
 
-                    if (value.isNotEmpty()) {
-                        val filteredText = value.filter { it.isDigit() }
-                        stringMatch.value = filteredText.slice(0..<filteredText.length.coerceAtMost(5))
+                    if(value.isNotEmpty()) {
+                        stringMatch.value = value.betterParseInt(5).toString()
+                        match.value = stringMatch.value.betterParseInt().toString()
                     } else {
                         stringMatch.value = ""
+                        match.value = "0"
                     }
-                    match.value = stringMatch.value.betterParseInt().toString()
+
                     println(match.value)
 
                     try {
@@ -507,6 +508,74 @@ actual fun MatchMenuTop(
                     cursorColor = getCurrentTheme().onSecondary
                 ), singleLine = true, textStyle = TextStyle.Default.copy(fontSize = 28.sp)
             )
+            if (matchNumberButtons.value){
+                Column(modifier = Modifier.fillMaxHeight()) {
+                    OutlinedButton(
+                        onClick = {
+                            if(saveData.value) {
+                                teamDataArray.get(compKey)?.get(match.value.betterParseInt())?.set(robotStartPosition.intValue, createOutput(mutableIntStateOf(team.intValue), robotStartPosition))
+                                createScoutMatchDataFile(compKey, match.value, team.intValue, createOutput(mutableIntStateOf(team.intValue), robotStartPosition))
+                            }
+
+                            match.value = (match.value.betterParseInt() + 1).toString()
+                            stringMatch.value = match.value
+
+                            try {
+                                setTeam(team, nodes.match, robotStartPosition.intValue)
+                            } catch (e: JSONException) {
+                                openError.value = true
+                            }
+                            stringTeam.value = team.intValue.toString()
+
+                            println(team.value)
+
+                            if(teamDataArray.getOrPut(compKey) { hashMapOf() }.getOrPut(match.value.betterParseInt()) { hashMapOf() }.get(robotStartPosition.intValue).isNullOrEmpty()) {
+                                saveData.value = false
+                            } else {
+                                saveData.value = true
+                            }
+                                loadData(parseInt(match.value), team, robotStartPosition)
+                        },
+                        modifier = Modifier.width(50.dp).fillMaxHeight(1/2f),
+                        shape = RoundedCornerShape(1.dp)
+                    ) {
+                        Text("+")
+                    }
+                    OutlinedButton(
+                        onClick = {
+                            if(saveData.value) {
+                                teamDataArray.get(compKey)?.get(match.value.betterParseInt())?.set(robotStartPosition.intValue, createOutput(mutableIntStateOf(team.intValue), robotStartPosition))
+                                createScoutMatchDataFile(compKey, match.value, team.intValue, createOutput(mutableIntStateOf(team.intValue), robotStartPosition))
+                            }
+
+                            if(match.value.betterParseInt() > 0){
+                                match.value = (match.value.betterParseInt() - 1).toString()
+                                stringMatch.value = match.value
+                            }
+
+                            try {
+                                setTeam(team, nodes.match, robotStartPosition.intValue)
+                            } catch (e: JSONException) {
+                                openError.value = true
+                            }
+                            stringTeam.value = team.intValue.toString()
+
+                            println(team.value)
+
+                            if(teamDataArray.getOrPut(compKey) { hashMapOf() }.getOrPut(match.value.betterParseInt()) { hashMapOf() }.get(robotStartPosition.intValue).isNullOrEmpty()) {
+                                saveData.value = false
+                            } else {
+                                saveData.value = true
+                            }
+                            loadData(parseInt(match.value), team, robotStartPosition)
+                        },
+                        modifier = Modifier.width(50.dp).fillMaxHeight(),
+                        shape = RoundedCornerShape(1.dp)
+                    ) {
+                        Text("-")
+                    }
+                }
+        }
             VerticalDivider(
                 color = getCurrentTheme().primaryVariant, thickness = 3.dp
             )
@@ -632,6 +701,10 @@ actual fun MatchMenuBottom(
                                 )
                             )
                         }
+                        "checkbox" -> {
+                            (action[1] as MutableIntState).value = if((action[2] as Int) == 0){ 1 }else{ 0 }
+                            redoList.push(arrayOf(action[0], action[1], action[2]))
+                        }
                     }
 
                 if(saveData.value) {
@@ -679,6 +752,10 @@ actual fun MatchMenuBottom(
                             (action[3] as MutableState<Color>).value = backgroundColor.value
                             (action[5] as MutableState<Color>).value = textColor.value
 
+                        }
+                        "checkbox" -> {
+                            (action[1] as MutableIntState).value = action[2] as Int
+                            undoList.push(arrayOf(action[0], action[1], if((action[2] as Int) == 0){ 1 }else{ 0 }))
                         }
                     }
 

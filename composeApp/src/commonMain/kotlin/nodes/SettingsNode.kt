@@ -23,4 +23,10 @@ class SettingsNode(
 
 }
 
+//Settings variables
+val miniMinus = mutableStateOf(true)
+val highContrast = mutableStateOf(true)
+val effects = mutableStateOf(true)
+val teleFlash = mutableStateOf(true)
+val matchNumberButtons = mutableStateOf(true)
 var canChangeRobotStartPosition = mutableStateOf(false)

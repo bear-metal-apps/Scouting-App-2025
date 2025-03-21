@@ -10,10 +10,12 @@ import androidx.compose.material.SwitchDefaults
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ChevronLeft
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -119,11 +121,19 @@ actual fun SettingsMenu(
 //                )
 //            }
 //        }
-
         Row {
             Switch(
-                checked = effectsChecked,
-                onCheckedChange = { effectsChecked = !effectsChecked },
+                checked = highContrast.value,
+                onCheckedChange = {
+                    highContrast.value = !highContrast.value
+                    if (highContrast.value) {
+                        algaeColor = Color(0, 131, 52)
+                        coralColor = Color(60, 0, 255)
+                    } else {
+                        algaeColor = Color(2, 78, 85)
+                        coralColor = Color(85, 70, 50)//#FFE5B4
+                    }
+                },
                 colors = SwitchDefaults.colors(
                     checkedThumbColor = getCurrentTheme().primaryVariant,
                     checkedTrackColor = getCurrentTheme().secondaryVariant,
@@ -131,38 +141,92 @@ actual fun SettingsMenu(
                     uncheckedTrackColor = getCurrentTheme().onPrimary,
                 ),
                 modifier = Modifier
-                    .padding(8.dp)
-                    .align(Alignment.CenterVertically)
+                    .scale(2f)
+                    .padding(25.dp)
+
             )
             Text(
-                text = "Effects",
+                text = "High Contrast",
+                fontSize = 25.sp,
                 color = getCurrentTheme().onPrimary,
                 modifier = Modifier
-                    .padding(8.dp)
-                    .align(Alignment.CenterVertically)
+                    .padding(28.dp)
             )
         }
 
-//        HorizontalDivider(
-//            color = defaultPrimaryVariant,
-//            thickness = 3.dp,
-//            modifier = Modifier.padding(8.dp)
-//        )
-//        
+        Row {
+
+            Switch(
+                checked = effects.value,
+                onCheckedChange = { effects.value = !effects.value },
+                colors = SwitchDefaults.colors(
+                    checkedThumbColor = getCurrentTheme().primaryVariant,
+                    checkedTrackColor = getCurrentTheme().secondaryVariant,
+                    uncheckedThumbColor = getCurrentTheme().error,
+                    uncheckedTrackColor = getCurrentTheme().onPrimary,
+                ),
+                modifier = Modifier
+                    .scale(2f)
+                    .padding(25.dp)
+
+            )
+            Text(
+                text = "Effects",
+                fontSize = 25.sp,
+                color = getCurrentTheme().onPrimary,
+                modifier = Modifier
+                    .padding(28.dp)
+            )
+        }
+        Row {
+
+            Switch(
+                checked = teleFlash.value,
+                onCheckedChange = { teleFlash.value = !teleFlash.value },
+                colors = SwitchDefaults.colors(
+                    checkedThumbColor = getCurrentTheme().primaryVariant,
+                    checkedTrackColor = getCurrentTheme().secondaryVariant,
+                    uncheckedThumbColor = getCurrentTheme().error,
+                    uncheckedTrackColor = getCurrentTheme().onPrimary,
+                ),
+                modifier = Modifier
+                    .scale(2f)
+                    .padding(25.dp)
+
+            )
+            Text(
+                text = "Tele Flash",
+                fontSize = 25.sp,
+                color = getCurrentTheme().onPrimary,
+                modifier = Modifier
+                    .padding(28.dp)
+            )
+        }
+        HorizontalDivider(thickness = 2.dp, color = getCurrentTheme().primaryVariant)
 //        Text(
-//            text = "Accessibility",
-//            fontSize = 24.sp,
+//            text = "Current Rank:",
+//            fontSize = 35.sp,
 //            color = getCurrentTheme().onPrimary,
-//            modifier = Modifier
-//                .align(Alignment.CenterHorizontally)
-//                .padding(8.dp)
 //        )
-//        HorizontalDivider(
-//            color = defaultPrimaryVariant,
-//            thickness = 3.dp,
-//            modifier = Modifier.padding(8.dp)
+//        HorizontalDivider(thickness = 2.dp, color = getCurrentTheme().primaryVariant)
+//
+//        Text(
+//            text = "TODO put ranked photo for the scout right here and an xp bar",
+//            fontSize = 18.sp,
+//            color = getCurrentTheme().onPrimary,
+//            modifier = Modifier,
 //        )
-        //
+//
+//        Spacer(modifier = Modifier.padding(20.dp))
+//        HorizontalDivider(thickness = 2.dp, color = getCurrentTheme().primaryVariant)
+        Text(
+            text = "Accessibility",
+            fontSize = 35.sp,
+            color = getCurrentTheme().onPrimary,
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+        )
+        HorizontalDivider(thickness = 2.dp, color = getCurrentTheme().primaryVariant)
 //        Text(
 //            text = "TODO Put algae and coral column move-ability to here",
 //            fontSize = 18.sp,
@@ -180,68 +244,30 @@ actual fun SettingsMenu(
                     uncheckedTrackColor = getCurrentTheme().onPrimary,
                 ),
                 modifier = Modifier
-                    .padding(8.dp)
-                    .align(Alignment.CenterVertically)
+                    .scale(2f)
+                    .padding(25.dp)
 
             )
             Text(
                 text = "Mini-Minus Buttons",
+                fontSize = 25.sp,
                 color = getCurrentTheme().onPrimary,
                 modifier = Modifier
-                    .padding(8.dp)
-                    .align(Alignment.CenterVertically)
+                    .padding(28.dp)
             )
         }
-
+        
         HorizontalDivider(
             color = defaultPrimaryVariant,
             thickness = 3.dp,
             modifier = Modifier.padding(8.dp)
         )
-        Text(
-            text = "Functionality",
-            fontSize = 24.sp,
-            color = getCurrentTheme().onPrimary,
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(8.dp)
-        )
-        HorizontalDivider(
-            color = defaultPrimaryVariant,
-            thickness = 3.dp,
-            modifier = Modifier.padding(8.dp)
-        )
-
-        Row {
-            Switch(
-                checked = canChangeRobotStartPosition.value,
-                onCheckedChange = { canChangeRobotStartPosition.value = !canChangeRobotStartPosition.value },
-                colors = SwitchDefaults.colors(
-                    checkedThumbColor = getCurrentTheme().primaryVariant,
-                    checkedTrackColor = getCurrentTheme().secondaryVariant,
-                    uncheckedThumbColor = getCurrentTheme().error,
-                    uncheckedTrackColor = getCurrentTheme().onPrimary,
-                ),
-                modifier = Modifier
-                    .padding(8.dp)
-                    .align(Alignment.CenterVertically)
-
-            )
-            Text(
-                text = "Can change robot start position in match scouting",
-                color = getCurrentTheme().onPrimary,
-                modifier = Modifier
-                    .padding(8.dp)
-                    .align(Alignment.CenterVertically)
-            )
-        }
 
         androidx.compose.material3.OutlinedButton(
             border = BorderStroke(3.dp, Color.Yellow),
             shape = RoundedCornerShape(12.dp),
-            colors = androidx.compose.material3.ButtonDefaults.buttonColors(containerColor = defaultSecondary),
+            colors = ButtonDefaults.buttonColors(backgroundColor = defaultSecondary),
             onClick = {
-                effectsChecked = false
                 theme = themeDefault()
                 canChangeRobotStartPosition.value = false
             },
@@ -257,3 +283,5 @@ actual fun SettingsMenu(
 
     }
 }
+
+

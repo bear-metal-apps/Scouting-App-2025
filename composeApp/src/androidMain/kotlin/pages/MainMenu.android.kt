@@ -77,11 +77,11 @@ actual class MainMenu actual constructor(
     actual override fun View(modifier: Modifier) {
         val context = LocalContext.current
         val activity = context as ComponentActivity
-        
+
         var matchSynced by remember { mutableStateOf(isTBAMatchDataSynced(compKey)) }
         var matchOutOfDate by remember { mutableStateOf(isTBAMatchDataOld(compKey)) }
         var teamSynced by remember { mutableStateOf(isTBAMTeamDataSynced(compKey)) }
-        
+
         var exportPopup by remember { mutableStateOf(false) }
 
         var isInternetAvailable by remember { mutableStateOf(isInternetAvailable(context)) }
@@ -106,7 +106,7 @@ actual class MainMenu actual constructor(
 
             first = false
         }
-        
+
         Column(
             modifier = Modifier
                 .verticalScroll(ScrollState(0))
@@ -168,7 +168,7 @@ actual class MainMenu actual constructor(
                 thickness = 3.dp,
                 modifier = Modifier.padding(8.dp)
             )
-            
+
             androidx.compose.material.OutlinedTextField(
                 value = scoutName.value,
                 onValueChange = { scoutName.value = it },
@@ -186,7 +186,7 @@ actual class MainMenu actual constructor(
                     .fillMaxWidth(0.6f)
                     .align(Alignment.CenterHorizontally)
             )
-            
+
             OutlinedButton(
                 border = BorderStroke(3.dp, Color.Yellow),
                 shape = RoundedCornerShape(12.dp),
@@ -215,7 +215,7 @@ actual class MainMenu actual constructor(
                             .align(Alignment.CenterHorizontally)
                             .padding(8.dp)
                     )
-                    
+
                     Box(
                         Modifier
                             .fillMaxWidth(1f / 2f)
@@ -241,7 +241,7 @@ actual class MainMenu actual constructor(
                             .padding(0.dp, 0.dp, 0.dp, 8.dp)
                     ) {
                         Text("Match List", modifier = Modifier.align(Alignment.CenterStart))
-                        
+
                         Icon(
                             if (matchSynced) Icons.Rounded.CheckCircleOutline else if (matchOutOfDate) Icons.AutoMirrored.Rounded.HelpOutline else Icons.Rounded.ErrorOutline,
                             contentDescription = "match sync status",
@@ -374,7 +374,6 @@ actual class MainMenu actual constructor(
                             if (isInternetAvailable) {
                                 androidx.compose.material.OutlinedButton(
                                     onClick = {
-
                                         val scope = CoroutineScope(Dispatchers.Default)
                                         scope.launch {
                                             if (client == null) client = Client()
