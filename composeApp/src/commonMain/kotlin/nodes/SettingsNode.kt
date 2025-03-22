@@ -28,3 +28,14 @@ val highContrast = mutableStateOf(true)
 val effects = mutableStateOf(true)
 val teleFlash = mutableStateOf(true)
 val matchNumberButtons = mutableStateOf(true)
+
+//Rank Variables
+var xpPerMatch = 100f
+val maxXpList = mutableListOf(
+    1500f,
+    3300f,
+    5175f,
+    6975f,
+    8550f,
+    9900f
+)

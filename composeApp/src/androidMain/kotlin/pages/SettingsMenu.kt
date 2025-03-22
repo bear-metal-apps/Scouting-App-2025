@@ -5,6 +5,7 @@ import android.media.MediaPlayer
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
@@ -22,6 +23,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.components.backstack.operation.pop
 import defaultPrimaryVariant
@@ -40,11 +42,15 @@ import minus
 import org.tahomarobotics.scouting.R
 import themeDefault
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 actual fun SettingsMenu(
     mainMenuBackStack: BackStack<RootNode.NavTarget>,
 ) {
     var themeExpanded by remember { mutableStateOf(false) }
+    var totalScoutXP = mutableStateOf(5000f)
+    var rankImage = mutableStateOf("")
+    var updatedXP = mutableStateOf(false)
 
     Column(modifier = Modifier
         .verticalScroll(ScrollState(0))
@@ -187,22 +193,34 @@ actual fun SettingsMenu(
             )
         }
         HorizontalDivider(thickness = 2.dp, color = getCurrentTheme().primaryVariant)
-//        Text(
-//            text = "Current Rank:",
-//            fontSize = 35.sp,
-//            color = getCurrentTheme().onPrimary,
-//        )
-//        HorizontalDivider(thickness = 2.dp, color = getCurrentTheme().primaryVariant)
-//
-//        Text(
-//            text = "TODO put ranked photo for the scout right here and an xp bar",
-//            fontSize = 18.sp,
-//            color = getCurrentTheme().onPrimary,
-//            modifier = Modifier,
-//        )
-//
-//        Spacer(modifier = Modifier.padding(20.dp))
-//        HorizontalDivider(thickness = 2.dp, color = getCurrentTheme().primaryVariant)
+        Text(
+            text = "Current Rank:",
+            fontSize = 35.sp,
+            color = getCurrentTheme().onPrimary,
+        )
+        HorizontalDivider(thickness = 2.dp, color = getCurrentTheme().primaryVariant)
+//        AsyncImage()
+        var xpInRank = 500f
+        var rankIndex = 0
+        OutlinedButton(
+            onClick = {
+                rankIndex = updateScoutXP(totalScoutXP, rankImage, updatedXP)
+                xpInRank =  totalScoutXP.value - maxXpList[rankIndex-1]
+            },
+            modifier = Modifier.fillMaxWidth((xpInRank/ maxXpList[rankIndex])),
+            shape = CircleShape,
+            border = BorderStroke(2.dp, getCurrentTheme().primaryVariant),
+            colors = ButtonDefaults.outlinedButtonColors(
+                backgroundColor = Color.Green
+            ),
+        ){
+            if (!updatedXP.value){
+                Text("$xpInRank/${maxXpList[rankIndex]} XP")
+                updatedXP.value = !updatedXP.value
+            }
+
+        }
+        HorizontalDivider(thickness = 2.dp, color = getCurrentTheme().primaryVariant)
         Text(
             text = "Accessibility",
             fontSize = 35.sp,
@@ -211,12 +229,12 @@ actual fun SettingsMenu(
                 .align(Alignment.CenterHorizontally)
         )
         HorizontalDivider(thickness = 2.dp, color = getCurrentTheme().primaryVariant)
-//        Text(
-//            text = "TODO Put algae and coral column move-ability to here",
-//            fontSize = 18.sp,
-//            color = getCurrentTheme().onPrimary,
-//            modifier = Modifier,
-//        )
+        Text(
+            text = "TODO Put algae and coral column move-ability to here",
+            fontSize = 18.sp,
+            color = getCurrentTheme().onPrimary,
+            modifier = Modifier,
+        )
         Row {
             Switch(
                 checked = miniMinus.value,
@@ -292,5 +310,55 @@ actual fun SettingsMenu(
 //            }
         }
     }
+
+/**
+ * @return the function returns Max Xp for current rank
+ * */
+fun updateScoutXP(totalScoutXp : MutableState<Float>, rankImage : MutableState<String>, updateXP: MutableState<Boolean>): Int {
+    updateXP.value = !updateXP.value
+    if(totalScoutXp.value < maxXpList[0]){
+    //PolyCarb
+        rankImage.value = "PolyCarb.png"
+        xpPerMatch = 100f
+        return 0
+
+    } else if(totalScoutXp.value < maxXpList[1]){
+    //Copper
+        rankImage.value = "Copper.png"
+        xpPerMatch = 90f
+        return 1
+
+    }else if(totalScoutXp.value < maxXpList[2]){
+    //Aluminum
+        rankImage.value = "Aluminum.png"
+        xpPerMatch = 75f
+        return 2
+
+    } else if(totalScoutXp.value < maxXpList[3]){
+    //Titanium
+        rankImage.value = "Titanium.png"
+        xpPerMatch = 60f
+        return 3
+
+    }else if(totalScoutXp.value < maxXpList[4]){
+    //Gold
+        rankImage.value = "Gold.png"
+        xpPerMatch = 45f
+        return 4
+
+    }else if(totalScoutXp.value < maxXpList[5]){
+    //StainlessSteel
+        rankImage.value = "StainlessSteel.png"
+        xpPerMatch = 30f
+        return 5
+
+    }else{
+    //BearMetalRank
+        rankImage.value = "BearMetalRank.png"
+        xpPerMatch = 15f
+        return 6
+    }
+}
+
 
 
