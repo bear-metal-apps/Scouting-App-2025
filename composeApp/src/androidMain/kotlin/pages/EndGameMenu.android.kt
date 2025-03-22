@@ -103,6 +103,9 @@ actual fun EndGameMenu(
                 colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
                 onClick = {
                     if(saveData.value) {
+                        teleFlash.value = false
+                        startTimer.value = false
+
                         //Save temp data
                         teamDataArray.get(compKey)?.get(match.value.betterParseInt())?.set(robotStartPosition.intValue, createOutput(team, robotStartPosition))
 

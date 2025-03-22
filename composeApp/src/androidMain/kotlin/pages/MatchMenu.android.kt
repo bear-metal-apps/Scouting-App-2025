@@ -620,9 +620,11 @@ actual fun MatchMenuBottom(
 
     LaunchedEffect(startTimer.value) {
         while (startTimer.value && canTeleFlash.value && pageIndex.value == 0) {
+            println("start timer!")
             delay(15000)
             teleFlash.value = true
             startTimer.value = false
+            println("timer ends!")
         }
     }
 
@@ -900,6 +902,8 @@ actual fun MatchMenuBottom(
                             stringMatch.value = match.value
                             reset()
                             matchFirst.value = true
+                            teleFlash.value = false
+                            startTimer.value = false
                             backStack.push(AutoTeleSelectorNode.NavTarget.AutoScouting)
 
                             try {
@@ -935,6 +939,8 @@ actual fun MatchMenuBottom(
                             stringMatch.value = match.value
                             reset()
                             matchFirst.value = true
+                            teleFlash.value = false
+                            startTimer.value = false
                             backStack.push(AutoTeleSelectorNode.NavTarget.AutoScouting)
 
                             try {
@@ -950,7 +956,6 @@ actual fun MatchMenuBottom(
                         }
                         saveDataPopup.value = false
                         saveData.value = false
-                        teleFlash.value = false
                     },
                     border = BorderStroke(2.dp, getCurrentTheme().secondaryVariant),
                     colors = androidx.compose.material.ButtonDefaults.outlinedButtonColors(
