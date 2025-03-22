@@ -302,6 +302,12 @@ actual class MainMenu actual constructor(
                 shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
                 onClick = {
+                    val array = teamDataArray.getOrPut(compKey) { hashMapOf() }
+                    for ((key, value) in array.entries) {
+                        for ((key1, value1) in value.entries) {
+                            println(value1)
+                        }
+                    }
                     // Step 1: Turn on WiFi if not on already
                     if (!isInternetAvailable(context)) {
                         val panelIntent = Intent(Settings.ACTION_WIFI_SETTINGS)
