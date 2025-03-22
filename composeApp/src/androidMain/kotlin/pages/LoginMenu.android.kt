@@ -29,12 +29,19 @@ import deleteAllTBATeamData
 import deleteScoutMatchData
 import deleteScoutPitsData
 import deleteScoutStratData
+import deleteTabletDataFile
 import getCurrentTheme
 import grabTabletDataFile
 import initFileMaker
 import nodes.RootNode
+import nodes.canChangeRobotStartPosition
+import nodes.canTeleFlash
 import nodes.createJson
 import nodes.createTabletDataOutput
+import nodes.effects
+import nodes.highContrast
+import nodes.matchNumberButtons
+import nodes.miniMinus
 import nodes.permPhotosList
 import nodes.pitsReset
 import nodes.reset
@@ -51,8 +58,9 @@ actual fun LoginMenu(
     robotStartPosition: MutableIntState
 ) {
     val context = LocalContext.current
-    
+
     initFileMaker(context)
+    createTabletDataFile(context)
     
     val logo = File("Logo.png")
     var compDD by remember { mutableStateOf(false) }
@@ -66,11 +74,10 @@ actual fun LoginMenu(
         "2025hop"
     )
 
-    createTabletDataFile(context)
     // Cannot get robotStartPosition variable in rootnode from FileMaker.kt, so doing some logic here:
     val gson = Gson()
     val tabletData = gson.fromJson(grabTabletDataFile(), JsonObject::class.java)
-    if (tabletData != null && tabletData != JsonObject() && tabletData.has("robotStartPosition")) {
+    if (!tabletData.isJsonNull && !tabletData.isEmpty && tabletData != JsonObject() && tabletData.has("robotStartPosition")) {
         if (robotStartPosition.intValue != 8) {
             robotStartPosition.intValue = tabletData.get("robotStartPosition").asInt
             println("loaded robot start position: ${robotStartPosition.intValue}")
