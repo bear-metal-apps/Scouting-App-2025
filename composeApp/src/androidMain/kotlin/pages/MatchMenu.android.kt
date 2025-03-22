@@ -619,7 +619,7 @@ actual fun MatchMenuBottom(
     var teleTextColor = remember { mutableStateOf(Color.Yellow) }
 
     LaunchedEffect(startTimer.value) {
-        while (startTimer.value && canTeleFlash.value) {
+        while (startTimer.value && canTeleFlash.value && pageIndex.value == 0) {
             delay(15000)
             teleFlash.value = true
             startTimer.value = false
@@ -804,6 +804,7 @@ actual fun MatchMenuBottom(
             ),
             onClick = {
                 teleFlash.value = false
+                startTimer.value = false
                 backStack.push(AutoTeleSelectorNode.NavTarget.TeleScouting)
                 pageIndex.value = 1
                 if(saveData.value) {
