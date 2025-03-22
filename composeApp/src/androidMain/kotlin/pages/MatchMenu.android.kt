@@ -549,7 +549,7 @@ actual fun MatchMenuTop(
                                 createScoutMatchDataFile(compKey, match.value, team.intValue, createOutput(mutableIntStateOf(team.intValue), robotStartPosition))
                             }
 
-                            if(match.value.betterParseInt() > 0){
+                            if(match.value.betterParseInt() > 1){
                                 match.value = (match.value.betterParseInt() - 1).toString()
                                 stringMatch.value = match.value
                             }
