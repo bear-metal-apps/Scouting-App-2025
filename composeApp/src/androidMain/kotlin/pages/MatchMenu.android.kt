@@ -499,7 +499,7 @@ actual fun MatchMenuTop(
                         loadData(parseInt(match.value), team, robotStartPosition)
 
                 },
-                modifier = Modifier.fillMaxWidth(1 / 2f),
+                modifier = Modifier.fillMaxWidth(1 / 2f).align(Alignment.CenterVertically),
                 colors = TextFieldDefaults.colors(
                     unfocusedContainerColor = getCurrentTheme().background,
                     unfocusedTextColor = getCurrentTheme().onPrimary,
