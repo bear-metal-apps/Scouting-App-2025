@@ -536,10 +536,11 @@ actual fun MatchMenuTop(
                             }
                             loadData(parseInt(match.value), team, robotStartPosition)
                         },
-                        modifier = Modifier.width(50.dp).fillMaxHeight(1/2f),
-                        shape = RoundedCornerShape(1.dp)
+                        modifier = Modifier.width(150.dp).fillMaxHeight(1/2f),
+                        shape = RoundedCornerShape(1.dp),
+                        contentPadding = PaddingValues(0.dp)
                     ) {
-                        Text("+")
+                        Text("+", color = Color.White, fontSize = 18.sp)
                     }
                     OutlinedButton(
                         onClick = {
@@ -570,9 +571,10 @@ actual fun MatchMenuTop(
                             loadData(parseInt(match.value), team, robotStartPosition)
                         },
                         modifier = Modifier.width(50.dp).fillMaxHeight(),
-                        shape = RoundedCornerShape(1.dp)
+                        shape = RoundedCornerShape(1.dp),
+                        contentPadding = PaddingValues(0.dp),
                     ) {
-                        Text("-")
+                        Text("-", color = Color.White, fontSize = 18.sp)
                     }
                 }
         }
