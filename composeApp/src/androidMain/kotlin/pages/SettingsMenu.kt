@@ -1,13 +1,13 @@
 package pages
 
 import androidx.compose.foundation.BorderStroke
+import android.media.MediaPlayer
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Switch
-import androidx.compose.material.SwitchDefaults
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ChevronLeft
 import androidx.compose.material3.ButtonDefaults
@@ -17,6 +17,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bumble.appyx.components.backstack.BackStack
@@ -32,6 +36,12 @@ import nodes.highContrast
 import nodes.matchNumberButtons
 import nodes.miniMinus
 import nodes.teleFlash
+import org.tahomarobotics.scouting.algaeColor
+import org.tahomarobotics.scouting.coralColor
+import kotlinx.coroutines.delay
+import nodes.*
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.painterResource
 import org.tahomarobotics.scouting.algaeColor
 import org.tahomarobotics.scouting.coralColor
 import theme
@@ -70,35 +80,13 @@ actual fun SettingsMenu(
                     .padding(8.dp)
             )
         }
-
-        HorizontalDivider(
-            color = defaultPrimaryVariant,
-            thickness = 3.dp,
-            modifier = Modifier.padding(8.dp)
-        )
-//        Text(
-//            text = "Current Rank:",
-//            fontSize = 35.sp,
-//            color = getCurrentTheme().onPrimary,
-//        )
-//        HorizontalDivider(thickness = 2.dp, color = getCurrentTheme().primaryVariant)
-//
-//        Text(
-//            text = "TODO put ranked photo for the scout right here and an xp bar",
-//            fontSize = 18.sp,
-//            color = getCurrentTheme().onPrimary,
-//            modifier = Modifier,
-//        )
-//
-//        Spacer(modifier = Modifier.padding(20.dp))
-//        HorizontalDivider(thickness = 2.dp, color = getCurrentTheme().primaryVariant)
+        HorizontalDivider(thickness = 2.dp, color = getCurrentTheme().primaryVariant)
         Text(
             text = "Appearance",
-            fontSize = 24.sp,
+            fontSize = 35.sp,
             color = getCurrentTheme().onPrimary,
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
-                .padding(8.dp)
         )
         HorizontalDivider(
             color = defaultPrimaryVariant,
@@ -109,6 +97,7 @@ actual fun SettingsMenu(
 //            DropdownMenu(
 //                expanded = themeExpanded,
 //                onDismissRequest = { themeExpanded = false },
+//            ) {
 //            ) {
 //            }
 //
@@ -311,18 +300,19 @@ actual fun SettingsMenu(
                     .padding(28.dp)
             )
         }
-        
+
         HorizontalDivider(
             color = defaultPrimaryVariant,
             thickness = 3.dp,
             modifier = Modifier.padding(8.dp)
         )
 
-        androidx.compose.material3.OutlinedButton(
+        OutlinedButton(
             border = BorderStroke(3.dp, Color.Yellow),
             shape = RoundedCornerShape(12.dp),
             colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
             onClick = {
+                effectsChecked = false
                 theme = themeDefault()
                 canChangeRobotStartPosition.value = false
             },
@@ -335,8 +325,17 @@ actual fun SettingsMenu(
                 color = getCurrentTheme().onPrimary
             )
         }
-
+        HorizontalDivider(thickness = 2.dp, color = getCurrentTheme().primaryVariant)
+        //TODO subway surfers gameplay goes here
+//        var context = LocalContext.current
+//        val mediaPlayer = MediaPlayer.create(context, R.)
+//        LaunchedEffect(key1 = true) {  // LaunchedEffect needs a key; true is simple and static
+//            mediaPlayer.start()         // Play the jingle
+//            delay(3000)                 // Adjust to match the length of your jingle
+//            mediaPlayer
+//            mediaPlayer.release()       // Free resources after playing
+//            }
+        }
     }
-}
 
 
