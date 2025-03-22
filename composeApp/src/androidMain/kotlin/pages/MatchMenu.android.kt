@@ -534,7 +534,7 @@ actual fun MatchMenuTop(
                             } else {
                                 saveData.value = true
                             }
-                                loadData(parseInt(match.value), team, robotStartPosition)
+                            loadData(parseInt(match.value), team, robotStartPosition)
                         },
                         modifier = Modifier.width(50.dp).fillMaxHeight(1/2f),
                         shape = RoundedCornerShape(1.dp)
