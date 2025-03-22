@@ -73,7 +73,7 @@ val defaultScheme = darkColorScheme(
     onSurface = defaultOnSurface,
     outline = defaultSecondary,
 )
-var algaeColor = Color(2, 78, 85)
-var coralColor = Color(85, 70, 50)//#FFE5B4
+var algaeColor = Color(0, 131, 52)
+var coralColor = Color(60, 0, 255)
 
 

@@ -125,6 +125,7 @@ var saveDataPopup = mutableStateOf(false)
  */
 var saveDataSit = mutableStateOf(false) // False = nextMatch, True = MainMenu
 
+var startTimer = mutableStateOf(false)
 
 var teleFlash = mutableStateOf(false)
 
@@ -133,9 +134,6 @@ var redoList = Stack<Array<Any>>()
 var jsonObject: JsonObject = JsonObject()
 
 var pageIndex = mutableIntStateOf(0)
-
-//Settings variables
-val miniMinus = mutableStateOf(true)
 
 val match = mutableStateOf("1")
 

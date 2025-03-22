@@ -26,7 +26,14 @@ import defaultSecondary
 import getCurrentTheme
 import nodes.RootNode
 import nodes.canChangeRobotStartPosition
+import nodes.canTeleFlash
+import nodes.effects
+import nodes.highContrast
+import nodes.matchNumberButtons
 import nodes.miniMinus
+import nodes.teleFlash
+import org.tahomarobotics.scouting.algaeColor
+import org.tahomarobotics.scouting.coralColor
 import theme
 import themeDefault
 
@@ -181,8 +188,8 @@ actual fun SettingsMenu(
         Row {
 
             Switch(
-                checked = teleFlash.value,
-                onCheckedChange = { teleFlash.value = !teleFlash.value },
+                checked = canTeleFlash.value,
+                onCheckedChange = { canTeleFlash.value = !canTeleFlash.value },
                 colors = SwitchDefaults.colors(
                     checkedThumbColor = getCurrentTheme().primaryVariant,
                     checkedTrackColor = getCurrentTheme().secondaryVariant,
@@ -256,6 +263,54 @@ actual fun SettingsMenu(
                     .padding(28.dp)
             )
         }
+
+        Row {
+            Switch(
+                checked = matchNumberButtons.value,
+                onCheckedChange = { matchNumberButtons.value = !matchNumberButtons.value },
+                colors = SwitchDefaults.colors(
+                    checkedThumbColor = getCurrentTheme().primaryVariant,
+                    checkedTrackColor = getCurrentTheme().secondaryVariant,
+                    uncheckedThumbColor = getCurrentTheme().error,
+                    uncheckedTrackColor = getCurrentTheme().onPrimary,
+                ),
+                modifier = Modifier
+                    .scale(2f)
+                    .padding(25.dp)
+
+            )
+            Text(
+                text = "Match Increment Buttons",
+                fontSize = 25.sp,
+                color = getCurrentTheme().onPrimary,
+                modifier = Modifier
+                    .padding(28.dp)
+            )
+        }
+
+        Row {
+            Switch(
+                checked = canChangeRobotStartPosition.value,
+                onCheckedChange = { canChangeRobotStartPosition.value = !canChangeRobotStartPosition.value },
+                colors = SwitchDefaults.colors(
+                    checkedThumbColor = getCurrentTheme().primaryVariant,
+                    checkedTrackColor = getCurrentTheme().secondaryVariant,
+                    uncheckedThumbColor = getCurrentTheme().error,
+                    uncheckedTrackColor = getCurrentTheme().onPrimary,
+                ),
+                modifier = Modifier
+                    .scale(2f)
+                    .padding(25.dp)
+
+            )
+            Text(
+                text = "Can change robot start position in match scouting",
+                fontSize = 25.sp,
+                color = getCurrentTheme().onPrimary,
+                modifier = Modifier
+                    .padding(28.dp)
+            )
+        }
         
         HorizontalDivider(
             color = defaultPrimaryVariant,
@@ -266,7 +321,7 @@ actual fun SettingsMenu(
         androidx.compose.material3.OutlinedButton(
             border = BorderStroke(3.dp, Color.Yellow),
             shape = RoundedCornerShape(12.dp),
-            colors = ButtonDefaults.buttonColors(backgroundColor = defaultSecondary),
+            colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
             onClick = {
                 theme = themeDefault()
                 canChangeRobotStartPosition.value = false

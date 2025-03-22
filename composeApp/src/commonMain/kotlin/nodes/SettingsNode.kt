@@ -27,6 +27,6 @@ class SettingsNode(
 val miniMinus = mutableStateOf(true)
 val highContrast = mutableStateOf(true)
 val effects = mutableStateOf(true)
-val teleFlash = mutableStateOf(true)
 val matchNumberButtons = mutableStateOf(true)
+val canTeleFlash = mutableStateOf(true)
 var canChangeRobotStartPosition = mutableStateOf(false)
