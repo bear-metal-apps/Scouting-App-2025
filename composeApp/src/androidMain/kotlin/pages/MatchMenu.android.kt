@@ -7,6 +7,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.Redo
@@ -21,6 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bumble.appyx.components.backstack.BackStack
@@ -31,6 +33,7 @@ import createScoutMatchDataFile
 import getCurrentTheme
 import getTeamsOnAlliance
 import kotlinx.coroutines.delay
+import minus
 import nodes.*
 import org.json.JSONException
 import setTeam
@@ -345,6 +348,18 @@ actual fun MatchMenuTop(
             }
         }
         HorizontalDivider(color = getCurrentTheme().primaryVariant, thickness = 3.dp)
+        if(activeXPBar.value){
+            Text(
+                text = "${xpInRank.value}/${maxXpList[rankIndex]}",
+                maxLines = 1,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth(xpInRank.value/maxXpList[rankIndex])
+                    .background((Color.Green - Color(15,15,15)), CircleShape)
+            )
+            HorizontalDivider(color = getCurrentTheme().primaryVariant, thickness = 3.dp)
+        }
+
     }
 }
 

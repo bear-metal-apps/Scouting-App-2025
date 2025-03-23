@@ -1,13 +1,10 @@
 package pages
 
-import androidx.compose.foundation.BorderStroke
 import android.media.MediaPlayer
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ChevronLeft
@@ -50,7 +47,8 @@ actual fun SettingsMenu(
     var themeExpanded by remember { mutableStateOf(false) }
     var totalScoutXP = mutableStateOf(5000f)
     var rankImage = mutableStateOf("")
-    var updatedXP = mutableStateOf(false)
+    var updatedXP = mutableStateOf(true)
+
 
     Column(modifier = Modifier
         .verticalScroll(ScrollState(0))
@@ -200,23 +198,24 @@ actual fun SettingsMenu(
         )
         HorizontalDivider(thickness = 2.dp, color = getCurrentTheme().primaryVariant)
 //        AsyncImage()
-        var xpInRank = 500f
-        var rankIndex = 0
-        OutlinedButton(
-            onClick = {
-                rankIndex = updateScoutXP(totalScoutXP, rankImage, updatedXP)
-                xpInRank =  totalScoutXP.value - maxXpList[rankIndex-1]
-            },
-            modifier = Modifier.fillMaxWidth((xpInRank/ maxXpList[rankIndex])),
-            shape = CircleShape,
-            border = BorderStroke(2.dp, getCurrentTheme().primaryVariant),
-            colors = ButtonDefaults.outlinedButtonColors(
-                backgroundColor = Color.Green
-            ),
-        ){
-            if (!updatedXP.value){
-                Text("$xpInRank/${maxXpList[rankIndex]} XP")
-                updatedXP.value = !updatedXP.value
+        if (updatedXP.value){
+            OutlinedButton(
+                onClick = {
+                    //SyncScoutData
+                    updateScoutXP(totalScoutXP, rankImage, updatedXP)
+                    updatedXP.value = true
+                },
+                modifier = Modifier.fillMaxWidth(xpInRank.value.div(maxXpList[rankIndex].minus(maxXpList[rankIndex-1]))),
+                shape = CircleShape,
+                colors = ButtonDefaults.outlinedButtonColors(
+                    backgroundColor = Color.Green//getCurrentTheme().primary
+                ),
+                border = BorderStroke(2.dp, getCurrentTheme().primaryVariant),
+            ){
+                Text(
+                    text = "${xpInRank.value}/${maxXpList[rankIndex].minus(maxXpList[rankIndex-1])} XP",
+                    )
+
             }
 
         }
@@ -310,55 +309,6 @@ actual fun SettingsMenu(
 //            }
         }
     }
-
-/**
- * @return the function returns Max Xp for current rank
- * */
-fun updateScoutXP(totalScoutXp : MutableState<Float>, rankImage : MutableState<String>, updateXP: MutableState<Boolean>): Int {
-    updateXP.value = !updateXP.value
-    if(totalScoutXp.value < maxXpList[0]){
-    //PolyCarb
-        rankImage.value = "PolyCarb.png"
-        xpPerMatch = 100f
-        return 0
-
-    } else if(totalScoutXp.value < maxXpList[1]){
-    //Copper
-        rankImage.value = "Copper.png"
-        xpPerMatch = 90f
-        return 1
-
-    }else if(totalScoutXp.value < maxXpList[2]){
-    //Aluminum
-        rankImage.value = "Aluminum.png"
-        xpPerMatch = 75f
-        return 2
-
-    } else if(totalScoutXp.value < maxXpList[3]){
-    //Titanium
-        rankImage.value = "Titanium.png"
-        xpPerMatch = 60f
-        return 3
-
-    }else if(totalScoutXp.value < maxXpList[4]){
-    //Gold
-        rankImage.value = "Gold.png"
-        xpPerMatch = 45f
-        return 4
-
-    }else if(totalScoutXp.value < maxXpList[5]){
-    //StainlessSteel
-        rankImage.value = "StainlessSteel.png"
-        xpPerMatch = 30f
-        return 5
-
-    }else{
-    //BearMetalRank
-        rankImage.value = "BearMetalRank.png"
-        xpPerMatch = 15f
-        return 6
-    }
-}
 
 
 
