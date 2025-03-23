@@ -6,7 +6,6 @@ import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.provider.Settings
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -31,8 +30,6 @@ import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.components.backstack.operation.push
 import com.bumble.appyx.navigation.modality.BuildContext
 import com.bumble.appyx.navigation.node.Node
-import com.google.gson.Gson
-import com.google.gson.JsonObject
 import compKey
 import createScoutMatchDataFolder
 import createScoutPitsDataFolder
@@ -426,6 +423,7 @@ actual class MainMenu actual constructor(
                                     val panelIntent = Intent(Settings.ACTION_WIFI_SETTINGS)
                                     startActivity(context, panelIntent, null)
                                 }
+                                scoutName.value = ""
                                 exportPopup = false
                             },
                             border = BorderStroke(2.dp, getCurrentTheme().secondaryVariant),
