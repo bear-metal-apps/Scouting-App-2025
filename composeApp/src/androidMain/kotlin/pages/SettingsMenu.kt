@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.components.backstack.operation.pop
+import createSettingsDataFile
 import defaultPrimaryVariant
 import defaultSecondary
 import getCurrentTheme
@@ -44,6 +45,7 @@ import org.tahomarobotics.scouting.algaeColor
 import org.tahomarobotics.scouting.coralColor
 import theme
 import themeDefault
+import writeSettingsDataFile
 
 @Composable
 actual fun SettingsMenu(
@@ -51,6 +53,8 @@ actual fun SettingsMenu(
 ) {
     var themeExpanded by remember { mutableStateOf(false) }
     var effectsChecked by remember { mutableStateOf(false) }
+
+    var context = LocalContext.current
 
     Column(modifier = Modifier
         .verticalScroll(ScrollState(0))
@@ -61,6 +65,8 @@ actual fun SettingsMenu(
                 shape = RoundedCornerShape(12.dp),
                 colors = androidx.compose.material3.ButtonDefaults.buttonColors(containerColor = defaultSecondary),
                 onClick = {
+                    writeSettingsDataFile(createSettingsDataOutput())
+                    createTabletDataOutput(0)
                     mainMenuBackStack.pop()
                 },
                 modifier = Modifier

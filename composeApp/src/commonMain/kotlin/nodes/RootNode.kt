@@ -89,8 +89,7 @@ var scoutName = mutableStateOf("")
 val teamDataArray: HashMap<String, HashMap<Int, HashMap<Int, String>>> = hashMapOf()
 var client: Client? = null
 
-
-fun createTabletDataOutput(robotStartPosition : Int) : String {
+fun createTabletDataOutput(robotStartPosition: Int) : String{
     val gson = Gson()
 
     var jsonObject = JsonObject().apply {
