@@ -35,6 +35,7 @@ var totalScoutXp = mutableStateOf(3700f)
 var xpPerMatch = 100f
 val xpInRank = mutableStateOf(1800f)
 var rankIndex = 1
+var updatedXP = mutableStateOf(true)
 val maxXpList = mutableListOf(
     1500f,
     3300f,
@@ -43,54 +44,62 @@ val maxXpList = mutableListOf(
     8550f,
     9900f
 )
+var xpLeft = maxXpList[rankIndex]
+
+var scoutingRanks = HashMap<String, ArrayList<Float>>()
 
 /**
  *
  * */
-fun updateScoutXP(totalScoutXp : MutableState<Float>, rankImage : MutableState<String>, updateXP: MutableState<Boolean>){
+fun updateScoutXP(totalScoutXp : MutableState<Float>, updateXP: MutableState<Boolean>){
     updateXP.value = false
     if(totalScoutXp.value < maxXpList[0]){
         //PolyCarb
-        rankImage.value = "PolyCarb.png"
         xpPerMatch = 100f
         rankIndex =  0
+        xpLeft = totalScoutXp.value
 
     } else if(totalScoutXp.value < maxXpList[1]){
         //Copper
-        rankImage.value = "Copper.png"
         xpPerMatch = 90f
         rankIndex =  1
+        xpLeft = maxXpList[rankIndex].minus(maxXpList[rankIndex-1])
 
     }else if(totalScoutXp.value < maxXpList[2]){
         //Aluminum
-        rankImage.value = "Aluminum.png"
         xpPerMatch = 75f
         rankIndex =  2
+        xpLeft = maxXpList[rankIndex].minus(maxXpList[rankIndex-1])
 
     } else if(totalScoutXp.value < maxXpList[3]){
         //Titanium
-        rankImage.value = "Titanium.png"
         xpPerMatch = 60f
         rankIndex =  3
+        xpLeft = maxXpList[rankIndex].minus(maxXpList[rankIndex-1])
 
     }else if(totalScoutXp.value < maxXpList[4]){
         //Gold
-        rankImage.value = "Gold.png"
         xpPerMatch = 45f
         rankIndex =  4
+        xpLeft = maxXpList[rankIndex].minus(maxXpList[rankIndex-1])
 
     }else if(totalScoutXp.value < maxXpList[5]){
         //StainlessSteel
-        rankImage.value = "StainlessSteel.png"
         xpPerMatch = 30f
         rankIndex =  5
+        xpLeft = maxXpList[rankIndex].minus(maxXpList[rankIndex-1])
 
     }else{
         //BearMetalRank
-        rankImage.value = "BearMetalRank.png"
         xpPerMatch = 15f
         rankIndex =  6
+        xpLeft = maxXpList[rankIndex].minus(maxXpList[rankIndex-1])
 
     }
-    xpInRank.value = totalScoutXp.value - maxXpList[rankIndex-1]
+    try {
+        xpInRank.value = totalScoutXp.value - maxXpList[rankIndex-1]
+    }catch (e: IndexOutOfBoundsException){
+        xpInRank.value = totalScoutXp.value
+    }
+    updatedXP.value = true
 }

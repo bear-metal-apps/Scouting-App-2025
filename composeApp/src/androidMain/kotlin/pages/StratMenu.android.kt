@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -21,6 +22,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.HapticFeedbackConstantsCompat
@@ -33,6 +35,7 @@ import defaultOnPrimary
 import defaultSecondary
 import getCurrentTheme
 import isSynced
+import minus
 import nodes.*
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
@@ -65,7 +68,20 @@ actual fun StratMenu(
                     .height(100.dp)
                     .padding(0.dp)
             ) {
-                Row(Modifier.fillMaxWidth()) {
+                Column {
+                    HorizontalDivider(color = getCurrentTheme().primaryVariant, thickness = 3.dp)
+                    if (activeXPBar.value && updatedXP.value) {
+                        Text(
+                            text = "${xpInRank.value}/${maxXpList[rankIndex].minus(maxXpList[rankIndex - 1])} XP",
+                            maxLines = 1,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier
+                                .fillMaxWidth(xpInRank.value.div(maxXpList[rankIndex].minus(maxXpList[rankIndex - 1])))
+                                .background((Color.Green - Color(15, 15, 15)), CircleShape)
+                        )
+                        HorizontalDivider(color = getCurrentTheme().primaryVariant, thickness = 3.dp)
+                    }
+                    Row(Modifier.fillMaxWidth()) {
 //                    Text(
 //                        text = "Human Net",
 //                        fontSize = 12.sp,
@@ -74,231 +90,248 @@ actual fun StratMenu(
 //                            .rotate(-90f)
 //                            .align(Alignment.CenterVertically)
 //                    )
-                    Column(modifier = Modifier.padding(0.dp)) {
-                        OutlinedButton(
-                            modifier = Modifier
-                                .width(150.dp)
-                                .fillMaxHeight(0.5f),
-                            border = BorderStroke(2.dp, color = Color.Yellow),
-                            shape = RectangleShape,
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = defaultSecondary,
-                                contentColor = defaultOnPrimary
-                            ),
-                            onClick = {
-                                humanNetScored.value += 1
-
-                                saveStratData.value = true
-                                stratTeamDataArray.getOrPut(compKey) { hashMapOf() }.getOrPut(stratMatch) { hashMapOf() }.set(nodes.isRedAlliance, createStratOutput(stratMatch))
-                            }
-                        ) {
-                            Box(
+                        Column(modifier = Modifier.padding(0.dp)) {
+                            OutlinedButton(
                                 modifier = Modifier
-                                    .align(Alignment.CenterVertically)
-                                    .fillMaxWidth()
-                            ) {
-                                Text(
-                                    text = "Scored",
-                                    fontSize = 12.sp,
-                                    modifier = Modifier.align(Alignment.CenterStart)
-                                )
-                                Text(
-                                    text = humanNetScored.value.toString(),
-                                    fontSize = 12.sp,
-                                    modifier = Modifier.align(Alignment.CenterEnd)
-                                )
-                            }
-                        }
-                        OutlinedButton(
-                            modifier = Modifier
-                                .width(150.dp)
-                                .fillMaxHeight(),
-                            border = BorderStroke(2.dp, color = Color.Yellow),
-                            shape = RectangleShape,
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = defaultSecondary,
-                                contentColor = defaultOnPrimary
-                            ),
-                            onClick = {
-                                humanNetMissed.value += 1
-
-                                saveStratData.value = true
-                                stratTeamDataArray.getOrPut(compKey) { hashMapOf() }.getOrPut(stratMatch) { hashMapOf() }.set(nodes.isRedAlliance, createStratOutput(stratMatch))
-                            }
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .align(Alignment.CenterVertically)
-                                    .fillMaxWidth()
-                            ) {
-                                Text(
-                                    text = "Missed",
-                                    fontSize = 12.sp,
-                                    modifier = Modifier.align(Alignment.CenterStart)
-                                )
-                                Text(
-                                    text = humanNetMissed.value.toString(),
-                                    fontSize = 12.sp,
-                                    modifier = Modifier.align(Alignment.CenterEnd)
-                                )
-                            }
-                        }
-                    }
-                    Column(modifier = Modifier.padding(0.dp)) {
-                        OutlinedButton(
-                            modifier = Modifier
-                                .width(50.dp)
-                                .fillMaxHeight(0.5f),
-                            border = BorderStroke(2.dp, color = Color.Yellow),
-                            shape = RectangleShape,
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = defaultSecondary,
-                                contentColor = defaultOnPrimary
-                            ),
-                            onClick = {
-                                humanNetScored.value -= 1
-                                if (humanNetScored.value < 0) humanNetScored.value = 0
-
-                                saveStratData.value = true
-                                stratTeamDataArray.getOrPut(compKey) { hashMapOf() }.getOrPut(stratMatch) { hashMapOf() }.set(nodes.isRedAlliance, createStratOutput(stratMatch))
-                            }
-                        ) {
-                            Text(
-                                text = "-",
-                                fontSize = 12.sp,
-                                modifier = Modifier.align(Alignment.CenterVertically)
-                            )
-                        }
-                        OutlinedButton(
-                            modifier = Modifier
-                                .width(50.dp)
-                                .fillMaxHeight(),
-                            border = BorderStroke(2.dp, color = Color.Yellow),
-                            shape = RectangleShape,
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = defaultSecondary,
-                                contentColor = defaultOnPrimary
-                            ),
-                            onClick = {
-                                humanNetMissed.value -= 1
-                                if (humanNetMissed.value < 0) humanNetMissed.value = 0
-
-                                saveStratData.value = true
-                                stratTeamDataArray.getOrPut(compKey) { hashMapOf() }.getOrPut(stratMatch) { hashMapOf() }.set(isRedAlliance, createStratOutput(stratMatch))
-                            }
-                        ) {
-                            Text(
-                                text = "-",
-                                fontSize = 12.sp,
-                                modifier = Modifier.align(Alignment.CenterVertically)
-                            )
-                        }
-                    }
-                    Spacer(modifier = Modifier.weight(1f))
-                    OutlinedButton(
-                        modifier = Modifier
-                            .width(150.dp)
-                            .fillMaxHeight(1f),
-                        border = BorderStroke(2.dp, color = Color.Yellow),
-                        shape = RectangleShape,
-                        enabled = false,
-                        colors = ButtonDefaults.buttonColors(
-                            disabledContainerColor = defaultSecondary,
-                            disabledContentColor = defaultOnPrimary
-                        ),
-                        onClick = { }
-                    ) {
-                        Column(modifier = Modifier.padding(0.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(
-                                text = "Current Match",
-                                fontSize = 12.sp
-                            )
-                            androidx.compose.material.TextField(
-                                value = if (mutableMatchNum.toString() == "0") "" else mutableMatchNum.toString(),
-                                onValueChange = {
-                                    if(saveStratData.value && isSynced()) {
-                                        stratTeamDataArray.getOrPut(compKey) { hashMapOf() }.getOrPut(stratMatch) { hashMapOf() }.set(isRedAlliance , createStratOutput(stratMatch))
-                                        createScoutStratDataFile(
-                                            compKey,
-                                            stratMatch.toString(),
-                                            isRedAlliance,
-                                            createStratOutput(stratMatch)
-                                        )
-                                    }
-
-                                    saveStratData.value = false
-
-                                    val newMatchNum = it.betterParseInt()
-                                    mutableMatchNum = newMatchNum
-                                    updateMatchNum(newMatchNum)
-                                    if(newMatchNum != 0)
-                                        loadStratData(newMatchNum, isRedAlliance)
-
-                                },
-                                keyboardOptions = KeyboardOptions.Default.copy(
-                                    keyboardType = KeyboardType.Number
+                                    .width(150.dp)
+                                    .fillMaxHeight(0.5f),
+                                border = BorderStroke(2.dp, color = Color.Yellow),
+                                shape = RectangleShape,
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = defaultSecondary,
+                                    contentColor = defaultOnPrimary
                                 ),
-                                colors = androidx.compose.material.TextFieldDefaults.textFieldColors(
-                                    textColor = Color.White,
-                                    backgroundColor = defaultSecondary,
-                                    focusedIndicatorColor = Color.Yellow,
-                                )
-                            )
+                                onClick = {
+                                    humanNetScored.value += 1
+
+                                    saveStratData.value = true
+                                    stratTeamDataArray.getOrPut(compKey) { hashMapOf() }
+                                        .getOrPut(stratMatch) { hashMapOf() }
+                                        .set(nodes.isRedAlliance, createStratOutput(stratMatch))
+                                }
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .align(Alignment.CenterVertically)
+                                        .fillMaxWidth()
+                                ) {
+                                    Text(
+                                        text = "Scored",
+                                        fontSize = 12.sp,
+                                        modifier = Modifier.align(Alignment.CenterStart)
+                                    )
+                                    Text(
+                                        text = humanNetScored.value.toString(),
+                                        fontSize = 12.sp,
+                                        modifier = Modifier.align(Alignment.CenterEnd)
+                                    )
+                                }
+                            }
+                            OutlinedButton(
+                                modifier = Modifier
+                                    .width(150.dp)
+                                    .fillMaxHeight(),
+                                border = BorderStroke(2.dp, color = Color.Yellow),
+                                shape = RectangleShape,
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = defaultSecondary,
+                                    contentColor = defaultOnPrimary
+                                ),
+                                onClick = {
+                                    humanNetMissed.value += 1
+
+                                    saveStratData.value = true
+                                    stratTeamDataArray.getOrPut(compKey) { hashMapOf() }
+                                        .getOrPut(stratMatch) { hashMapOf() }
+                                        .set(nodes.isRedAlliance, createStratOutput(stratMatch))
+                                }
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .align(Alignment.CenterVertically)
+                                        .fillMaxWidth()
+                                ) {
+                                    Text(
+                                        text = "Missed",
+                                        fontSize = 12.sp,
+                                        modifier = Modifier.align(Alignment.CenterStart)
+                                    )
+                                    Text(
+                                        text = humanNetMissed.value.toString(),
+                                        fontSize = 12.sp,
+                                        modifier = Modifier.align(Alignment.CenterEnd)
+                                    )
+                                }
+                            }
                         }
-                    }
-                    Column(modifier = Modifier.padding(0.dp), horizontalAlignment = Alignment.End) {
+                        Column(modifier = Modifier.padding(0.dp)) {
+                            OutlinedButton(
+                                modifier = Modifier
+                                    .width(50.dp)
+                                    .fillMaxHeight(0.5f),
+                                border = BorderStroke(2.dp, color = Color.Yellow),
+                                shape = RectangleShape,
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = defaultSecondary,
+                                    contentColor = defaultOnPrimary
+                                ),
+                                onClick = {
+                                    humanNetScored.value -= 1
+                                    if (humanNetScored.value < 0) humanNetScored.value = 0
+
+                                    saveStratData.value = true
+                                    stratTeamDataArray.getOrPut(compKey) { hashMapOf() }
+                                        .getOrPut(stratMatch) { hashMapOf() }
+                                        .set(nodes.isRedAlliance, createStratOutput(stratMatch))
+                                }
+                            ) {
+                                Text(
+                                    text = "-",
+                                    fontSize = 12.sp,
+                                    modifier = Modifier.align(Alignment.CenterVertically)
+                                )
+                            }
+                            OutlinedButton(
+                                modifier = Modifier
+                                    .width(50.dp)
+                                    .fillMaxHeight(),
+                                border = BorderStroke(2.dp, color = Color.Yellow),
+                                shape = RectangleShape,
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = defaultSecondary,
+                                    contentColor = defaultOnPrimary
+                                ),
+                                onClick = {
+                                    humanNetMissed.value -= 1
+                                    if (humanNetMissed.value < 0) humanNetMissed.value = 0
+
+                                    saveStratData.value = true
+                                    stratTeamDataArray.getOrPut(compKey) { hashMapOf() }
+                                        .getOrPut(stratMatch) { hashMapOf() }
+                                        .set(isRedAlliance, createStratOutput(stratMatch))
+                                }
+                            ) {
+                                Text(
+                                    text = "-",
+                                    fontSize = 12.sp,
+                                    modifier = Modifier.align(Alignment.CenterVertically)
+                                )
+                            }
+                        }
+                        Spacer(modifier = Modifier.weight(1f))
                         OutlinedButton(
                             modifier = Modifier
-                                .width(125.dp)
-                                .fillMaxHeight(0.5f),
+                                .width(150.dp)
+                                .fillMaxHeight(1f),
                             border = BorderStroke(2.dp, color = Color.Yellow),
                             shape = RectangleShape,
                             enabled = false,
                             colors = ButtonDefaults.buttonColors(
-                                disabledContainerColor = if (isRedAlliance) Color.Red else Color.Blue,
+                                disabledContainerColor = defaultSecondary,
                                 disabledContentColor = defaultOnPrimary
                             ),
                             onClick = { }
                         ) {
-                            Text(
-                                text = "${if (isRedAlliance) "Red" else "Blue"} Alliance",
-                                fontSize = 12.sp,
-                                modifier = Modifier.align(Alignment.CenterVertically)
-                            )
-                        }
-                        OutlinedButton(
-                            modifier = Modifier
-                                .width(125.dp)
-                                .fillMaxHeight(),
-                            border = BorderStroke(2.dp, color = Color.Yellow),
-                            shape = RectangleShape,
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = defaultSecondary,
-                                contentColor = defaultOnPrimary
-                            ),
-                            onClick = {
-                                saveStratDataSit.value = true
+                            Column(
+                                modifier = Modifier.padding(0.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(
+                                    text = "Current Match",
+                                    fontSize = 12.sp
+                                )
+                                androidx.compose.material.TextField(
+                                    value = if (mutableMatchNum.toString() == "0") "" else mutableMatchNum.toString(),
+                                    onValueChange = {
+                                        if (saveStratData.value && isSynced()) {
+                                            stratTeamDataArray.getOrPut(compKey) { hashMapOf() }
+                                                .getOrPut(stratMatch) { hashMapOf() }
+                                                .set(isRedAlliance, createStratOutput(stratMatch))
+                                            createScoutStratDataFile(
+                                                compKey,
+                                                stratMatch.toString(),
+                                                isRedAlliance,
+                                                createStratOutput(stratMatch)
+                                            )
+                                        }
 
-                                if(saveStratData.value && isSynced()) {
-                                    stratTeamDataArray.getOrPut(compKey) { hashMapOf() }.getOrPut(stratMatch) { hashMapOf() }.set(isRedAlliance, createStratOutput(stratMatch))
-                                    createScoutStratDataFile(
-                                        compKey,
-                                        stratMatch.toString(), isRedAlliance, createStratOutput(
-                                            stratMatch)
+                                        saveStratData.value = false
+
+                                        val newMatchNum = it.betterParseInt()
+                                        mutableMatchNum = newMatchNum
+                                        updateMatchNum(newMatchNum)
+                                        if (newMatchNum != 0)
+                                            loadStratData(newMatchNum, isRedAlliance)
+
+                                    },
+                                    keyboardOptions = KeyboardOptions.Default.copy(
+                                        keyboardType = KeyboardType.Number
+                                    ),
+                                    colors = androidx.compose.material.TextFieldDefaults.textFieldColors(
+                                        textColor = Color.White,
+                                        backgroundColor = defaultSecondary,
+                                        focusedIndicatorColor = Color.Yellow,
                                     )
-                                    backStack.pop()
-
-                                    saveStratData.value = false
-                                } else {
-                                    saveStratDataPopup.value = true
-                                }
+                                )
                             }
-                        ) {
-                            Text(
-                                text = "Main",
-                                fontSize = 12.sp,
-                                modifier = Modifier.align(Alignment.CenterVertically)
-                            )
+                        }
+                        Column(modifier = Modifier.padding(0.dp), horizontalAlignment = Alignment.End) {
+                            OutlinedButton(
+                                modifier = Modifier
+                                    .width(125.dp)
+                                    .fillMaxHeight(0.5f),
+                                border = BorderStroke(2.dp, color = Color.Yellow),
+                                shape = RectangleShape,
+                                enabled = false,
+                                colors = ButtonDefaults.buttonColors(
+                                    disabledContainerColor = if (isRedAlliance) Color.Red else Color.Blue,
+                                    disabledContentColor = defaultOnPrimary
+                                ),
+                                onClick = { }
+                            ) {
+                                Text(
+                                    text = "${if (isRedAlliance) "Red" else "Blue"} Alliance",
+                                    fontSize = 12.sp,
+                                    modifier = Modifier.align(Alignment.CenterVertically)
+                                )
+                            }
+                            OutlinedButton(
+                                modifier = Modifier
+                                    .width(125.dp)
+                                    .fillMaxHeight(),
+                                border = BorderStroke(2.dp, color = Color.Yellow),
+                                shape = RectangleShape,
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = defaultSecondary,
+                                    contentColor = defaultOnPrimary
+                                ),
+                                onClick = {
+                                    saveStratDataSit.value = true
+
+                                    if (saveStratData.value && isSynced()) {
+                                        stratTeamDataArray.getOrPut(compKey) { hashMapOf() }
+                                            .getOrPut(stratMatch) { hashMapOf() }
+                                            .set(isRedAlliance, createStratOutput(stratMatch))
+                                        createScoutStratDataFile(
+                                            compKey,
+                                            stratMatch.toString(), isRedAlliance, createStratOutput(
+                                                stratMatch
+                                            )
+                                        )
+                                        backStack.pop()
+
+                                        saveStratData.value = false
+                                    } else {
+                                        saveStratDataPopup.value = true
+                                    }
+                                }
+                            ) {
+                                Text(
+                                    text = "Main",
+                                    fontSize = 12.sp,
+                                    modifier = Modifier.align(Alignment.CenterVertically)
+                                )
+                            }
                         }
                     }
                 }
@@ -351,6 +384,12 @@ actual fun StratMenu(
                 ),
                 onClick = {
                     saveStratDataSit.value = false
+                    if(stratTeamDataArray.getOrPut(compKey) { hashMapOf() }.getOrPut(stratMatch) { hashMapOf() }.isEmpty()){
+                        totalScoutXp.value += xpPerMatch * 0.75f
+                        updateScoutXP(totalScoutXp, updatedXP)
+                        scoutingRanks.get(scoutName.value)?.set(match.value.betterParseInt(), xpPerMatch)
+                    }
+
 
                     if(saveStratData.value && isSynced()) {
                         stratTeamDataArray.getOrPut(compKey) { hashMapOf() }.getOrPut(stratMatch) { hashMapOf() }.set(isRedAlliance, createStratOutput(stratMatch))

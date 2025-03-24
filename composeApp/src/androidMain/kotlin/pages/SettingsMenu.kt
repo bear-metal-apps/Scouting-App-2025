@@ -45,9 +45,7 @@ actual fun SettingsMenu(
     mainMenuBackStack: BackStack<RootNode.NavTarget>,
 ) {
     var themeExpanded by remember { mutableStateOf(false) }
-    var totalScoutXP = mutableStateOf(5000f)
-    var rankImage = mutableStateOf("")
-    var updatedXP = mutableStateOf(true)
+    var rankImage = mutableStateOf("PolyCarb.png")
 
 
     Column(modifier = Modifier
@@ -202,8 +200,16 @@ actual fun SettingsMenu(
             OutlinedButton(
                 onClick = {
                     //SyncScoutData
-                    updateScoutXP(totalScoutXP, rankImage, updatedXP)
-                    updatedXP.value = true
+                    updateScoutXP(totalScoutXp, updatedXP)
+                    when(rankIndex){
+                        0 -> rankImage.value = "PolyCarb.png"
+                        1 -> rankImage.value = "Copper.png"
+                        2 -> rankImage.value = "Aluminum.png"
+                        3 -> rankImage.value = "Titanium.png"
+                        4 -> rankImage.value = "Gold.png"
+                        5 -> rankImage.value = "StainlessSteel.png"
+                        6 -> rankImage.value = "BearMetalRank.png"
+                    }
                 },
                 modifier = Modifier.fillMaxWidth(xpInRank.value.div(maxXpList[rankIndex].minus(maxXpList[rankIndex-1]))),
                 shape = CircleShape,

@@ -348,13 +348,13 @@ actual fun MatchMenuTop(
             }
         }
         HorizontalDivider(color = getCurrentTheme().primaryVariant, thickness = 3.dp)
-        if(activeXPBar.value){
+        if(activeXPBar.value && updatedXP.value){
             Text(
-                text = "${xpInRank.value}/${maxXpList[rankIndex]}",
+                text = "${xpInRank.value}/${maxXpList[rankIndex].minus(maxXpList[rankIndex-1])} XP",
                 maxLines = 1,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
-                    .fillMaxWidth(xpInRank.value/maxXpList[rankIndex])
+                    .fillMaxWidth(xpInRank.value.div(maxXpList[rankIndex].minus(maxXpList[rankIndex-1])))
                     .background((Color.Green - Color(15,15,15)), CircleShape)
             )
             HorizontalDivider(color = getCurrentTheme().primaryVariant, thickness = 3.dp)

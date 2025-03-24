@@ -103,6 +103,12 @@ actual fun EndGameMenu(
                 colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
                 onClick = {
                     if(saveData.value) {
+                        if (scoutingRanks.get(scoutName.value)?.get(match.value.betterParseInt()) == null) {
+                            totalScoutXp.value += xpPerMatch
+                            updateScoutXP(totalScoutXp, updatedXP)
+                            scoutingRanks.get(scoutName.value)?.set(match.value.betterParseInt(), xpPerMatch)
+                        }
+
                         //Save temp data
                         teamDataArray.get(compKey)?.get(match.value.betterParseInt())?.set(robotStartPosition.intValue, createOutput(team, robotStartPosition))
 
@@ -112,7 +118,6 @@ actual fun EndGameMenu(
                         reset()
                         matchFirst.value = true
                         backStack.push(AutoTeleSelectorNode.NavTarget.AutoScouting)
-
                         //Grab team from TBA for next match
                         try{
                             team.intValue = getTeamsOnAlliance(match.value.betterParseInt(), isRedAliance.value)[tempRobotStart.value].number

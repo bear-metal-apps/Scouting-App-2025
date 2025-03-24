@@ -26,6 +26,7 @@ import compKey
 import createTabletDataFile
 import deleteAllTBAMatchData
 import deleteAllTBATeamData
+import deleteRankData
 import deleteScoutMatchData
 import deleteScoutPitsData
 import deleteScoutStratData
@@ -519,6 +520,7 @@ actual fun LoginMenu(
                                     deleteScoutMatchData()
                                     deleteScoutStratData()
                                     deleteScoutPitsData()
+                                    deleteRankData()
                                 } else {
                                     password = ""
                                 }

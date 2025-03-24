@@ -273,7 +273,8 @@ actual class MainMenu actual constructor(
                                 openError.value = true
                             }
                             stringTeam.value = team.value.toString()
-
+//                            getScoutData();
+                            updateScoutXP(totalScoutXp, updatedXP)
                             backStack.push(RootNode.NavTarget.MatchScouting)
                         } else if (robotStartPosition.value < 8) {
                             val redAlliance = robotStartPosition.value == 6

@@ -25,6 +25,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
@@ -39,6 +40,7 @@ import defaultError
 import defaultOnPrimary
 import defaultPrimaryVariant
 import getCurrentTheme
+import minus
 import nodes.*
 import nodes.RootNode
 import nodes.algaeBarge
@@ -140,10 +142,10 @@ actual fun PitsScoutMenu(
                     //color = defaultOnPrimary,
                 )
             }
-            Column {
+            Row(Modifier.fillMaxWidth()) {
                 Text(
                     text = "Team Name: ",
-                    fontSize = 20.sp,
+                    fontSize = 16.sp,
                     color = defaultOnPrimary
                 )
                 OutlinedTextField(
@@ -158,11 +160,12 @@ actual fun PitsScoutMenu(
                         cursorColor = Color.Yellow
                     ),
                     shape = RoundedCornerShape(15.dp),
-                    modifier = Modifier.size(300.dp, 60.dp)
+                    modifier = Modifier.fillMaxWidth(3/8f)
+//                        .size(300.dp, 60.dp)
                 )
                 Text(
                     text = "Team Number: ",
-                    fontSize = 20.sp,
+                    fontSize = 16.sp,
                     color = defaultOnPrimary,
                 )
                 OutlinedTextField(
@@ -182,11 +185,23 @@ actual fun PitsScoutMenu(
                     ),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     shape = RoundedCornerShape(15.dp),
-                    modifier = Modifier.size(120.dp, 60.dp)
+                    modifier = Modifier.fillMaxWidth()
+//                        .size(120.dp, 60.dp)
                 )
             }
             Spacer(modifier = Modifier.height(7.5.dp))
             HorizontalDivider(color = Color.Yellow, thickness = 2.dp)
+            if (activeXPBar.value && updatedXP.value) {
+                Text(
+                    text = "${xpInRank.value}/${maxXpList[rankIndex].minus(maxXpList[rankIndex - 1])} XP",
+                    maxLines = 1,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .fillMaxWidth(xpInRank.value.div(maxXpList[rankIndex].minus(maxXpList[rankIndex - 1])))
+                        .background((Color.Green - Color(15, 15, 15)), CircleShape)
+                )
+                HorizontalDivider(color = getCurrentTheme().primaryVariant, thickness = 3.dp)
+            }
             Spacer(modifier = Modifier.height(7.5.dp))
 
             OutlinedButton(
@@ -1057,6 +1072,12 @@ actual fun PitsScoutMenu(
                             }
                             photoArray.addAll(addList)
                             photoArray.removeAll(removeList)
+
+                            if(pitsTeamDataArray.getOrPut(compKey){ hashMapOf() }.isEmpty()){
+                                totalScoutXp.value += xpPerMatch * 0.75f
+                                updateScoutXP(totalScoutXp, updatedXP)
+                                scoutingRanks.get(scoutName.value)?.set(match.value.betterParseInt(), xpPerMatch)
+                            }
 
                             pitsTeamDataArray.getOrPut(compKey){ hashMapOf() }.set(scoutedTeamNumber.value.betterParseInt(), createPitsOutput(mutableIntStateOf(parseInt(scoutedTeamNumber.value))))
                             println(pitsTeamDataArray)

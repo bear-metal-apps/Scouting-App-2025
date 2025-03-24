@@ -11,6 +11,7 @@ import java.lang.Integer.parseInt
 var matchFolder: File? = null
 var stratFolder: File? = null
 var pitsFolder: File? = null
+var rankFolder: File? = null
 
 var tbaDataFolder: File? = null
 var TBAMatchDataFolder = File(tbaDataFolder, "MatchData")
@@ -19,6 +20,7 @@ var TBATeamDataFolder = File(tbaDataFolder, "TeamData")
 var imagesFolder: File? = null
 
 var tabletDatafile: File? = null
+
 
 fun createScoutMatchDataFolder(context: Context) {
     matchFolder = File(context.filesDir, "ScoutMatchDataFolder")
@@ -36,6 +38,7 @@ fun initFileMaker(context: Context) {
     createScoutMatchDataFolder(context)
     createScoutStratDataFolder(context)
     createScoutPitsDataFolder(context)
+
 
     // Initialize TBA folders.
     tbaDataFolder = File(context.filesDir, "TBAData")
@@ -91,6 +94,33 @@ fun createScoutPitsDataFolder(context: Context) {
         println("Pits images folder found")
     }
 
+}
+
+fun createScoutingRankFolder(context: Context){
+    rankFolder = File(context.filesDir, "ScoutRankFolder")
+
+    if (!rankFolder!!.exists()) {
+        rankFolder!!.mkdirs()
+        println("Made rank data folder")
+    } else {
+        println("Match rank folder found")
+    }
+}
+
+fun createScoutRankDataFile(compKey: String, match: String, Xp: Float) {
+    val file = File(stratFolder, "Comp${compKey}Match${match}.json")
+    file.delete()
+    file.createNewFile()
+
+    file.writeText(Xp.toString())
+
+    file.forEachLine {
+        try {
+            println("Saved file Comp${compKey}Match${match}.json: $it")
+        } catch (e: Exception) {
+            println(e.message)
+        }
+    }
 }
 
 
@@ -281,6 +311,20 @@ fun deleteScoutStratData() {
     }
 }
 
+fun deleteRankData() {
+    repeat(10) {
+        try {
+            for ((index) in rankFolder?.listFiles()?.withIndex()!!) {
+                rankFolder?.listFiles()?.get(index)?.deleteRecursively()
+            }
+            scoutingRanks.clear()
+        } catch (_: IndexOutOfBoundsException) {
+        }
+    }
+}
+
+
+
 object TBAFileManager {
     fun readJsonFile(file: File, default: JSONObject = JSONObject()): JSONObject {
         if (!file.exists() || file.length() == 0L) return default
@@ -448,8 +492,10 @@ fun sendMatchData(client: Client) {
             val jsonObject = gson.fromJson(value1, JsonObject::class.java)
 
             client.sendData(jsonObject.toString(), "match")
+            client.sendData(scoutingRanks.toMap().toString(), "rank")
 
-            Log.i("Client", "Message Sent: ${jsonObject.toString()}")
+            Log.i("Client", "Message Sent: ${jsonObject}")
+            Log.i("Client", "Message Sent: ${scoutingRanks.toMap()}")
         }
     }
 }
@@ -462,9 +508,13 @@ fun sendStratData(client: Client) {
         for((key1, value1) in value.entries) {
             val jsonObject = gson.fromJson(value1, JsonObject::class.java)
 
+
             client.sendData(jsonObject.toString(), "strat")
+            client.sendData(scoutingRanks.toString(), "rank")
 
             Log.i("Client", "Message Sent: $jsonObject")
+            Log.i("Client", "Message Sent: ${scoutingRanks}")
+
 
         }
     }
@@ -481,7 +531,9 @@ fun sendPitsData(client: Client) {
         val jsonObject = gson.fromJson(value, JsonObject::class.java)
 
         client.sendData(jsonObject.toString(), "pit")
+        client.sendData(scoutingRanks.toString(), "rank")
 
         Log.i("Client", "Message Sent: $jsonObject")
+        Log.i("Client", "Message Sent: ${scoutingRanks}")
     }
 }
