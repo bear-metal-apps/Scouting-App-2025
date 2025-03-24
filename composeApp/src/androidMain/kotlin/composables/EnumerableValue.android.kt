@@ -29,6 +29,7 @@ import getCurrentTheme
 import minus
 import nodes.betterParseInt
 import nodes.createOutput
+import nodes.effects
 import nodes.jsonObject
 import nodes.match
 import nodes.redoList
@@ -46,7 +47,7 @@ actual fun EnumerableValue(label: String, value: MutableIntState, alignment: Ali
     OutlinedButton(
         border = BorderStroke(2.dp, color = getCurrentTheme().primaryVariant),
         shape = RectangleShape,
-        colors = ButtonDefaults.buttonColors(containerColor = if(pressed) flashColor else backgroundColor),
+        colors = ButtonDefaults.buttonColors(containerColor = if(pressed && effects.value) flashColor else backgroundColor),
         onClick = {
             undoList.push(arrayOf("number" ,value, value.value))
             value.value += 1
@@ -72,7 +73,7 @@ actual fun EnumerableValue(label: String, value: MutableIntState, alignment: Ali
                 OutlinedButton(
                     border = BorderStroke(1.dp, color = getCurrentTheme().primaryVariant),
                     shape = RoundedCornerShape(2.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = if (pressed) flashColor else (backgroundColor - Color(20,20,20))),
+                    colors = ButtonDefaults.buttonColors(containerColor = if (pressed && effects.value) flashColor else (backgroundColor - Color(20,20,20))),
                     onClick = {
                         if(value.value != 0){
                             undoList.push(arrayOf("number", value, value.value))
