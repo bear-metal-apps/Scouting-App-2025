@@ -34,6 +34,7 @@ import nodes.match
 import nodes.redoList
 import nodes.undoList
 import nodes.saveData
+import nodes.startTimer
 import nodes.teamDataArray
 
 @Composable
@@ -53,6 +54,8 @@ actual fun EnumerableValue(label: String, value: MutableIntState, alignment: Ali
             saveData.value = true
             teamDataArray.get(compKey)?.get(match.value.betterParseInt())?.set(jsonObject.get("robotStartPosition").asInt, createOutput(mutableIntStateOf(jsonObject.get("team").asInt), mutableIntStateOf(
                 jsonObject.get("robotStartPosition").asInt)))
+
+            startTimer.value = true
         },
         interactionSource = interact,
         contentPadding = PaddingValues(0.dp, 0.dp),
@@ -79,6 +82,8 @@ actual fun EnumerableValue(label: String, value: MutableIntState, alignment: Ali
                         saveData.value = true
                         teamDataArray.get(compKey)?.get(match.value.betterParseInt())?.set(jsonObject.get("robotStartPosition").asInt, createOutput(mutableIntStateOf(jsonObject.get("team").asInt), mutableIntStateOf(
                             jsonObject.get("robotStartPosition").asInt)))
+
+                        startTimer.value = true
                     },
                     interactionSource = interact,
                     modifier = Modifier.align(alignment).padding(0.dp).offset(0.dp,2.dp)

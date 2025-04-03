@@ -28,7 +28,7 @@ class SettingsNode(
 val miniMinus = mutableStateOf(true)
 val highContrast = mutableStateOf(true)
 val effects = mutableStateOf(true)
-val teleFlash = mutableStateOf(true)
+val canTeleFlash = mutableStateOf(true)
 val matchNumberButtons = mutableStateOf(true)
 val activeXPBar = mutableStateOf(true)
 
@@ -129,3 +129,4 @@ fun updateScoutXP(totalScoutXp : MutableState<Float>, updateXP: MutableState<Boo
     }
     updatedXP.value = true
 }
+var canChangeRobotStartPosition = mutableStateOf(false)

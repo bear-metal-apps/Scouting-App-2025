@@ -44,11 +44,12 @@ fun Comments(text: MutableState<String>) {
                 },
                 shape = RoundedCornerShape(25.dp),
                 onValueChange = {
-                    if(text.value == "No Comments"){
-                        text.value = ""
-                    }else{
-                        text.value = it
-                    }
+                    text.value = it
+//                    if(text.value == "No Comments"){
+//                        text.value = ""
+//                    }else{
+//                        text.value = it
+//                    }
                     //val oldText = text.value
 
 //                    isScrollEnabled.value = false

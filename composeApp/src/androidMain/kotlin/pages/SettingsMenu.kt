@@ -4,20 +4,33 @@ import android.media.MediaPlayer
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.OutlinedButton
+import androidx.compose.material.Switch
+import androidx.compose.material.SwitchDefaults
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ChevronLeft
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -27,16 +40,15 @@ import defaultPrimaryVariant
 import defaultSecondary
 import getCurrentTheme
 import nodes.RootNode
+import nodes.canChangeRobotStartPosition
+import nodes.canTeleFlash
+import nodes.effects
+import nodes.highContrast
+import nodes.matchNumberButtons
 import nodes.miniMinus
-import kotlinx.coroutines.delay
-import nodes.*
-import org.jetbrains.compose.resources.ExperimentalResourceApi
-import org.jetbrains.compose.resources.painterResource
 import org.tahomarobotics.scouting.algaeColor
 import org.tahomarobotics.scouting.coralColor
 import theme
-import minus
-import org.tahomarobotics.scouting.R
 import themeDefault
 
 @OptIn(ExperimentalResourceApi::class)
@@ -45,6 +57,7 @@ actual fun SettingsMenu(
     mainMenuBackStack: BackStack<RootNode.NavTarget>,
 ) {
     var themeExpanded by remember { mutableStateOf(false) }
+    var effectsChecked by remember { mutableStateOf(false) }
     var rankImage = mutableStateOf("PolyCarb.png")
 
 
@@ -82,7 +95,11 @@ actual fun SettingsMenu(
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
         )
-        HorizontalDivider(thickness = 2.dp, color = getCurrentTheme().primaryVariant)
+        HorizontalDivider(
+            color = defaultPrimaryVariant,
+            thickness = 3.dp,
+            modifier = Modifier.padding(8.dp)
+        )
 //        Row {
 //            DropdownMenu(
 //                expanded = themeExpanded,
@@ -167,8 +184,8 @@ actual fun SettingsMenu(
         Row {
 
             Switch(
-                checked = teleFlash.value,
-                onCheckedChange = { teleFlash.value = !teleFlash.value },
+                checked = canTeleFlash.value,
+                onCheckedChange = { canTeleFlash.value = !canTeleFlash.value },
                 colors = SwitchDefaults.colors(
                     checkedThumbColor = getCurrentTheme().primaryVariant,
                     checkedTrackColor = getCurrentTheme().secondaryVariant,
@@ -287,6 +304,7 @@ actual fun SettingsMenu(
                     .padding(28.dp)
             )
         }
+
         Row {
             Switch(
                 checked = matchNumberButtons.value,
@@ -310,13 +328,45 @@ actual fun SettingsMenu(
                     .padding(28.dp)
             )
         }
-        HorizontalDivider(thickness = 2.dp, color = getCurrentTheme().primaryVariant)
+
+        Row {
+            Switch(
+                checked = canChangeRobotStartPosition.value,
+                onCheckedChange = { canChangeRobotStartPosition.value = !canChangeRobotStartPosition.value },
+                colors = SwitchDefaults.colors(
+                    checkedThumbColor = getCurrentTheme().primaryVariant,
+                    checkedTrackColor = getCurrentTheme().secondaryVariant,
+                    uncheckedThumbColor = getCurrentTheme().error,
+                    uncheckedTrackColor = getCurrentTheme().onPrimary,
+                ),
+                modifier = Modifier
+                    .scale(2f)
+                    .padding(25.dp)
+
+            )
+            Text(
+                text = "Can change robot start position in match scouting",
+                fontSize = 25.sp,
+                color = getCurrentTheme().onPrimary,
+                modifier = Modifier
+                    .padding(28.dp)
+            )
+        }
+
+        HorizontalDivider(
+            color = defaultPrimaryVariant,
+            thickness = 3.dp,
+            modifier = Modifier.padding(8.dp)
+        )
+
         OutlinedButton(
             border = BorderStroke(3.dp, Color.Yellow),
             shape = RoundedCornerShape(12.dp),
             colors = ButtonDefaults.buttonColors(backgroundColor = defaultSecondary),
             onClick = {
+                effectsChecked = false
                 theme = themeDefault()
+                canChangeRobotStartPosition.value = false
             },
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
