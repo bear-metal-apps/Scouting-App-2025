@@ -122,6 +122,7 @@ actual fun MatchMenuTop(
         }
 
         createJson(team, robotStartPosition)
+        createRankJson(0)
         loadData(
             parseInt(match.value), team, robotStartPosition
         )
@@ -349,13 +350,19 @@ actual fun MatchMenuTop(
         }
         HorizontalDivider(color = getCurrentTheme().primaryVariant, thickness = 3.dp)
         if(activeXPBar.value && updatedXP.value){
+            var width = 1f
+            if(xpInRank.value.toDouble().div(maxXpList[rankIndex].toDouble().minus(minimumXpinRank.toDouble())) < 0.25){
+                width = 1/4f
+            }else{
+                width = xpInRank.value.div(maxXpList[rankIndex].minus(minimumXpinRank))
+            }
             Text(
-                text = "${xpInRank.value}/${maxXpList[rankIndex].minus(maxXpList[rankIndex-1])} XP",
+                text = "${xpInRank.value}/${maxXpList[rankIndex].minus(minimumXpinRank)} XP",
                 maxLines = 1,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
-                    .fillMaxWidth(xpInRank.value.div(maxXpList[rankIndex].minus(maxXpList[rankIndex-1])))
-                    .background((Color.Green - Color(15,15,15)), CircleShape)
+                            .fillMaxWidth(width)
+                            .background((Color.Green - Color(15,15,15)), CircleShape)
             )
             HorizontalDivider(color = getCurrentTheme().primaryVariant, thickness = 3.dp)
         }

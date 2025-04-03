@@ -197,6 +197,7 @@ actual fun SettingsMenu(
         HorizontalDivider(thickness = 2.dp, color = getCurrentTheme().primaryVariant)
 //        AsyncImage()
         if (updatedXP.value){
+            Text(rankImage.value.removeSuffix(".png"))
             OutlinedButton(
                 onClick = {
                     //SyncScoutData
@@ -219,11 +220,34 @@ actual fun SettingsMenu(
                 border = BorderStroke(2.dp, getCurrentTheme().primaryVariant),
             ){
                 Text(
-                    text = "${xpInRank.value}/${maxXpList[rankIndex].minus(maxXpList[rankIndex-1])} XP",
+                    text = "${xpInRank.value}/${maxXpList[rankIndex].minus(minimumXpinRank)} XP",
                     )
 
             }
 
+        }
+        Row {
+            Switch(
+                checked = activeXPBar.value,
+                onCheckedChange = { activeXPBar.value = !activeXPBar.value },
+                colors = SwitchDefaults.colors(
+                    checkedThumbColor = getCurrentTheme().primaryVariant,
+                    checkedTrackColor = getCurrentTheme().secondaryVariant,
+                    uncheckedThumbColor = getCurrentTheme().error,
+                    uncheckedTrackColor = getCurrentTheme().onPrimary,
+                ),
+                modifier = Modifier
+                    .scale(2f)
+                    .padding(25.dp)
+
+            )
+            Text(
+                text = "Display XP-Bar",
+                fontSize = 25.sp,
+                color = getCurrentTheme().onPrimary,
+                modifier = Modifier
+                    .padding(28.dp)
+            )
         }
         HorizontalDivider(thickness = 2.dp, color = getCurrentTheme().primaryVariant)
         Text(
@@ -234,12 +258,12 @@ actual fun SettingsMenu(
                 .align(Alignment.CenterHorizontally)
         )
         HorizontalDivider(thickness = 2.dp, color = getCurrentTheme().primaryVariant)
-        Text(
-            text = "TODO Put algae and coral column move-ability to here",
-            fontSize = 18.sp,
-            color = getCurrentTheme().onPrimary,
-            modifier = Modifier,
-        )
+//        Text(
+//            text = "TODO Put algae and coral column move-ability to here",
+//            fontSize = 18.sp,
+//            color = getCurrentTheme().onPrimary,
+//            modifier = Modifier,
+//        )
         Row {
             Switch(
                 checked = miniMinus.value,

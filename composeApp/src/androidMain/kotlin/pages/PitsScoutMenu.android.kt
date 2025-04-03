@@ -193,11 +193,11 @@ actual fun PitsScoutMenu(
             HorizontalDivider(color = Color.Yellow, thickness = 2.dp)
             if (activeXPBar.value && updatedXP.value) {
                 Text(
-                    text = "${xpInRank.value}/${maxXpList[rankIndex].minus(maxXpList[rankIndex - 1])} XP",
+                    text = "${xpInRank.value}/${maxXpList[rankIndex].minus(minimumXpinRank)} XP",
                     maxLines = 1,
                     textAlign = TextAlign.Center,
                     modifier = Modifier
-                        .fillMaxWidth(xpInRank.value.div(maxXpList[rankIndex].minus(maxXpList[rankIndex - 1])))
+                        .fillMaxWidth(xpInRank.value.div(maxXpList[rankIndex].minus(minimumXpinRank)))
                         .background((Color.Green - Color(15, 15, 15)), CircleShape)
                 )
                 HorizontalDivider(color = getCurrentTheme().primaryVariant, thickness = 3.dp)

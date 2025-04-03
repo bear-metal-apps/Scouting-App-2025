@@ -269,7 +269,7 @@ fun createOutput(team: MutableIntState, robotStartPosition: MutableIntState): St
         addProperty("event_key", compKey)
         addProperty("match", match.value)
         addProperty("scout_name", scoutName.value)
-        addProperty("notes", notes.value)
+        addProperty("notes", notes.value.split("^").get(0) + "^${xpPerMatch}")
         addProperty("robotStartPosition", robotStartPosition.intValue)
         add("auto", JsonObject().apply {
             addProperty("stop", autoStop.intValue)
@@ -395,7 +395,7 @@ fun loadData(match: Int, team: MutableIntState, robotStartPosition: MutableIntSt
 //        park.value = jsonObject.getAsJsonObject("endgame").get("park").asBoolean
 //        deep.value = jsonObject.getAsJsonObject("endgame").get("deep").asBoolean
 //        shallow.value = jsonObject.getAsJsonObject("endgame").get("shallow").asBoolean
-        notes.value = if(jsonObject.get("notes").asString == "No Comments") "" else jsonObject.get("notes").asString
+        notes.value = if(jsonObject.get("notes").asString == "No Comments") "" else jsonObject.get("notes").asString.split("^").get(0)
 
         saveData.value = true
 
@@ -444,5 +444,4 @@ fun reset() {
     deep.value = false
     shallow.value = false
     notes.value = ""
-
 }

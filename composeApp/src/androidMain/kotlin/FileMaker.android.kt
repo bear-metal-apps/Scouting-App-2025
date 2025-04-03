@@ -33,11 +33,23 @@ fun createScoutMatchDataFolder(context: Context) {
     }
 }
 
+fun createScoutRankDataFolder(context: Context) {
+    rankFolder = File(context.filesDir, "ScoutRankDataFolder")
+
+    if (!rankFolder!!.exists()) {
+        rankFolder!!.mkdirs()
+        println("Made rank data folder")
+    } else {
+        println("Rank data folder found")
+    }
+}
+
 fun initFileMaker(context: Context) {
     // Existing folders for scouting data.
     createScoutMatchDataFolder(context)
     createScoutStratDataFolder(context)
     createScoutPitsDataFolder(context)
+    createScoutRankDataFolder(context)
 
 
     // Initialize TBA folders.
@@ -94,17 +106,6 @@ fun createScoutPitsDataFolder(context: Context) {
         println("Pits images folder found")
     }
 
-}
-
-fun createScoutingRankFolder(context: Context){
-    rankFolder = File(context.filesDir, "ScoutRankFolder")
-
-    if (!rankFolder!!.exists()) {
-        rankFolder!!.mkdirs()
-        println("Made rank data folder")
-    } else {
-        println("Match rank folder found")
-    }
 }
 
 fun createScoutRankDataFile(compKey: String, match: String, Xp: Float) {

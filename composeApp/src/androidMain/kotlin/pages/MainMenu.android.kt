@@ -137,9 +137,7 @@ actual class MainMenu actual constructor(
                     8 -> textLabel = "Pits"
                 }
                 Text(
-                    text = textLabel,
-                    fontSize = 32.sp,
-                    modifier = Modifier
+                    text = textLabel, fontSize = 32.sp, modifier = Modifier
                         .align(Alignment.Center)
                         .padding(8.dp)
                 )
@@ -161,9 +159,7 @@ actual class MainMenu actual constructor(
             }
 
             HorizontalDivider(
-                color = defaultPrimaryVariant,
-                thickness = 3.dp,
-                modifier = Modifier.padding(8.dp)
+                color = defaultPrimaryVariant, thickness = 3.dp, modifier = Modifier.padding(8.dp)
             )
 
             androidx.compose.material.OutlinedTextField(
@@ -257,6 +253,9 @@ actual class MainMenu actual constructor(
                 colors = ButtonDefaults.buttonColors(containerColor = defaultSecondary),
                 onClick = {
                     if (scoutName.value != "") {
+//                        getScoutData();
+//                        scoutingRanks.set(scoutName.value, ArrayList<Float>())
+                        updateScoutXP(totalScoutXp, updatedXP)
                         if (robotStartPosition.value < 6) {
                             val scope = CoroutineScope(Dispatchers.Default)
                             scope.launch {
@@ -273,8 +272,6 @@ actual class MainMenu actual constructor(
                                 openError.value = true
                             }
                             stringTeam.value = team.value.toString()
-//                            getScoutData();
-                            updateScoutXP(totalScoutXp, updatedXP)
                             backStack.push(RootNode.NavTarget.MatchScouting)
                         } else if (robotStartPosition.value < 8) {
                             val redAlliance = robotStartPosition.value == 6
@@ -329,8 +326,7 @@ actual class MainMenu actual constructor(
                         .fillMaxWidth()
                 ) {
                     Row(
-                        Modifier
-                            .fillMaxWidth()
+                        Modifier.fillMaxWidth()
                     ) {
                         Icon(
                             if (isInternetAvailable) Icons.Rounded.CheckCircleOutline else Icons.Rounded.ErrorOutline,
@@ -340,9 +336,10 @@ actual class MainMenu actual constructor(
                                 .size(32.dp)
                                 .align(Alignment.CenterVertically)
                         )
-                        Text("WiFi Connection", modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                            .padding(8.dp)
+                        Text(
+                            "WiFi Connection", modifier = Modifier
+                                .align(Alignment.CenterVertically)
+                                .padding(8.dp)
                         )
                         Spacer(modifier = Modifier.weight(1f))
                         if (!isInternetAvailable(context)) {
@@ -354,8 +351,7 @@ actual class MainMenu actual constructor(
                                 border = BorderStroke(3.dp, getCurrentTheme().secondaryVariant),
                                 shape = RoundedCornerShape(12.dp),
                                 colors = androidx.compose.material.ButtonDefaults.outlinedButtonColors(
-                                    backgroundColor = defaultSecondary,
-                                    contentColor = getCurrentTheme().onPrimary
+                                    backgroundColor = defaultSecondary, contentColor = getCurrentTheme().onPrimary
                                 ),
                                 modifier = Modifier
                                     .align(Alignment.CenterVertically)
@@ -388,7 +384,6 @@ actual class MainMenu actual constructor(
                                             sendMatchData(
                                                 client = client!!,
                                             )
-                                            client!!.disconnect()
 
                                         } else if (robotStartPosition.value < 8) {
                                             sendStratData(
@@ -399,6 +394,8 @@ actual class MainMenu actual constructor(
                                                 client = client!!,
                                             )
                                         }
+                                        //TODO sendRankData(client = client!!,)
+                                        client!!.disconnect()
                                     }
                                 },
                                 border = BorderStroke(2.dp, getCurrentTheme().secondaryVariant),
