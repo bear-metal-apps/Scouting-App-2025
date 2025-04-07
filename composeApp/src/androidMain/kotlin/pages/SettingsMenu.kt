@@ -40,12 +40,21 @@ import defaultPrimaryVariant
 import defaultSecondary
 import getCurrentTheme
 import nodes.RootNode
+import nodes.activeXPBar
 import nodes.canChangeRobotStartPosition
 import nodes.canTeleFlash
 import nodes.effects
 import nodes.highContrast
 import nodes.matchNumberButtons
+import nodes.maxXpList
 import nodes.miniMinus
+import nodes.minimumXpinRank
+import nodes.rankIndex
+import nodes.totalScoutXp
+import nodes.updateScoutXP
+import nodes.updatedXP
+import nodes.xpInRank
+import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.tahomarobotics.scouting.algaeColor
 import org.tahomarobotics.scouting.coralColor
 import theme
@@ -229,7 +238,7 @@ actual fun SettingsMenu(
                         6 -> rankImage.value = "BearMetalRank.png"
                     }
                 },
-                modifier = Modifier.fillMaxWidth(xpInRank.value.div(maxXpList[rankIndex].minus(maxXpList[rankIndex-1]))),
+                modifier = Modifier.fillMaxWidth(xpInRank.value.div(maxXpList[rankIndex].minus(minimumXpinRank))),
                 shape = CircleShape,
                 colors = ButtonDefaults.outlinedButtonColors(
                     backgroundColor = Color.Green//getCurrentTheme().primary
