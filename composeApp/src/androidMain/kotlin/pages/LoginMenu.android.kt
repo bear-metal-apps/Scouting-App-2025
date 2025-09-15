@@ -32,13 +32,7 @@ import deleteScoutStratData
 import getCurrentTheme
 import grabTabletDataFile
 import initFileMaker
-import nodes.RootNode
-import nodes.createJson
-import nodes.createTabletDataOutput
-import nodes.permPhotosList
-import nodes.pitsReset
-import nodes.reset
-import nodes.stratReset
+import nodes.*
 import redAlliance
 import writeTabletDataFile
 import java.io.File
@@ -63,7 +57,8 @@ actual fun LoginMenu(
         "2025wabon",
         "2025waahs",
         "2025pncmp",
-        "2025hop"
+        "2025hop",
+        "2025cc"
     )
 
     createTabletDataFile(context)
@@ -210,6 +205,25 @@ actual fun LoginMenu(
                         text = {
                             Text(
                                 text = "Houston",
+                                color = getCurrentTheme().onPrimary,
+                                modifier = Modifier.background(color = getCurrentTheme().onSurface)
+                            )
+                        }
+                    )
+                    DropdownMenuItem(
+                        onClick = {
+                            if (comp.value != "Chezy Champs") {
+                                comp.value = "Chezy Champs"
+                                compKey = tbaMatches[5]
+//                            teamData?.clear()
+//                            matchData?.clear()
+                            }
+                            compDD = false
+
+                        },
+                        text = {
+                            Text(
+                                text = "Chezy Champs",
                                 color = getCurrentTheme().onPrimary,
                                 modifier = Modifier.background(color = getCurrentTheme().onSurface)
                             )
