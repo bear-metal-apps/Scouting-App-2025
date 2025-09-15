@@ -34,6 +34,7 @@ import compKey
 import createScoutMatchDataFolder
 import createScoutPitsDataFolder
 import createScoutStratDataFolder
+import createSettingsDataFile
 import defaultPrimaryVariant
 import defaultSecondary
 import getCurrentTheme
@@ -46,6 +47,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import loadMatchDataFiles
 import loadPitsDataFiles
+import loadSettingsDataFile
 import loadStratDataFiles
 import nodes.*
 import org.jetbrains.compose.resources.ExperimentalResourceApi
@@ -100,6 +102,9 @@ actual class MainMenu actual constructor(
 
             createScoutStratDataFolder(context)
             loadStratDataFiles()
+
+            createSettingsDataFile(context)
+            loadSettingsDataFile(context)
 
             first = false
         }

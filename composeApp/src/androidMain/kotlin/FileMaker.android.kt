@@ -1,5 +1,6 @@
 import android.content.Context
 import android.util.Log
+import androidx.compose.ui.platform.LocalContext
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import nodes.*
@@ -19,6 +20,7 @@ var TBATeamDataFolder = File(tbaDataFolder, "TeamData")
 var imagesFolder: File? = null
 
 var tabletDatafile: File? = null
+var settingsDataFile: File? = null
 
 fun createScoutMatchDataFolder(context: Context) {
     matchFolder = File(context.filesDir, "ScoutMatchDataFolder")
@@ -28,36 +30,6 @@ fun createScoutMatchDataFolder(context: Context) {
         println("Made match data folder")
     } else {
         println("Match data folder found")
-    }
-}
-
-fun initFileMaker(context: Context) {
-    // Existing folders for scouting data.
-    createScoutMatchDataFolder(context)
-    createScoutStratDataFolder(context)
-    createScoutPitsDataFolder(context)
-
-    // Initialize TBA folders.
-    tbaDataFolder = File(context.filesDir, "TBAData")
-    if (!tbaDataFolder!!.exists()) {
-        tbaDataFolder!!.mkdirs()
-        println("Made tba data folder")
-    } else {
-        println("tba data folder found")
-    }
-    TBAMatchDataFolder = File(tbaDataFolder, "MatchData")
-    if (!TBAMatchDataFolder.exists()) {
-        TBAMatchDataFolder.mkdirs()
-        println("Made match data subfolder")
-    } else {
-        println("Match data subfolder found")
-    }
-    TBATeamDataFolder = File(tbaDataFolder, "TeamData")
-    if (!TBATeamDataFolder.exists()) {
-        TBATeamDataFolder.mkdirs()
-        println("Made team data subfolder")
-    } else {
-        println("Team data subfolder found")
     }
 }
 
@@ -91,6 +63,36 @@ fun createScoutPitsDataFolder(context: Context) {
         println("Pits images folder found")
     }
 
+}
+
+fun initFileMaker(context: Context) {
+    // Existing folders for scouting data.
+    createScoutMatchDataFolder(context)
+    createScoutStratDataFolder(context)
+    createScoutPitsDataFolder(context)
+
+    // Initialize TBA folders.
+    tbaDataFolder = File(context.filesDir, "TBAData")
+    if (!tbaDataFolder!!.exists()) {
+        tbaDataFolder!!.mkdirs()
+        println("Made tba data folder")
+    } else {
+        println("tba data folder found")
+    }
+    TBAMatchDataFolder = File(tbaDataFolder, "MatchData")
+    if (!TBAMatchDataFolder.exists()) {
+        TBAMatchDataFolder.mkdirs()
+        println("Made match data subfolder")
+    } else {
+        println("Match data subfolder found")
+    }
+    TBATeamDataFolder = File(tbaDataFolder, "TeamData")
+    if (!TBATeamDataFolder.exists()) {
+        TBATeamDataFolder.mkdirs()
+        println("Made team data subfolder")
+    } else {
+        println("Team data subfolder found")
+    }
 }
 
 
@@ -136,6 +138,25 @@ fun createScoutPitsDataFile(compKey: String, team: Int, data: String) {
     file.forEachLine {
         try {
             println("Saved file Comp${compKey}Team${team}.json: $it")
+        } catch (e: Exception) {
+            println(e.message)
+        }
+    }
+}
+
+fun createSettingsDataFile(context: Context) {
+    settingsDataFile = File(context.filesDir, "SettingsData.json")
+    if(!settingsDataFile!!.exists()) {
+        settingsDataFile!!.createNewFile()
+    }
+}
+
+fun writeSettingsDataFile(data: String) {
+    settingsDataFile!!.writeText(data)
+
+    settingsDataFile!!.forEachLine {
+        try {
+            println("Saved data to SettingsData.json: $it")
         } catch (e: Exception) {
             println(e.message)
         }
@@ -228,6 +249,25 @@ fun loadPitsDataFiles() {
     }
 }
 
+fun loadSettingsDataFile(context: Context) {
+    val gson = Gson()
+
+    try {
+        var json = gson.fromJson(settingsDataFile!!.readText(), jsonObject::class.java)
+
+        miniMinus.value = json.getAsJsonObject("settings").get("miniMinus").asBoolean
+        highContrast.value = json.getAsJsonObject("settings").get("highContrast").asBoolean
+        effects.value = json.getAsJsonObject("settings").get("effects").asBoolean
+        canTeleFlash.value = json.getAsJsonObject("settings").get("canTeleFlash").asBoolean
+        matchNumberButtons.value = json.getAsJsonObject("settings").get("matchNumberButtons").asBoolean
+        canChangeRobotStartPosition.value = json.getAsJsonObject("settings").get("canChangeRobotStartPosition").asBoolean
+    } catch (e: NullPointerException) {
+        settingsDataFile!!.createNewFile()
+        settingsDataFile!!.writeText(createSettingsDataOutput())
+    }
+
+}
+
 fun grabTabletDataFile(): String {
     val gson = Gson()
 
@@ -238,6 +278,9 @@ fun grabTabletDataFile(): String {
     }
 }
 
+fun deleteTabletDataFile() {
+    tabletDatafile?.delete()
+}
 
 fun deleteScoutMatchData() {
     repeat(10) {

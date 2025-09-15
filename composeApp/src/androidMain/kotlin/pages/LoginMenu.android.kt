@@ -45,8 +45,9 @@ actual fun LoginMenu(
     robotStartPosition: MutableIntState
 ) {
     val context = LocalContext.current
-    
+
     initFileMaker(context)
+    createTabletDataFile(context)
     
     val logo = File("Logo.png")
     var compDD by remember { mutableStateOf(false) }
@@ -61,11 +62,10 @@ actual fun LoginMenu(
         "2025cc"
     )
 
-    createTabletDataFile(context)
     // Cannot get robotStartPosition variable in rootnode from FileMaker.kt, so doing some logic here:
     val gson = Gson()
     val tabletData = gson.fromJson(grabTabletDataFile(), JsonObject::class.java)
-    if (tabletData != null && tabletData != JsonObject() && tabletData.has("robotStartPosition")) {
+    if (tabletData != null && !tabletData.isEmpty && tabletData != JsonObject() && tabletData.has("robotStartPosition")) {
         if (robotStartPosition.intValue != 8) {
             robotStartPosition.intValue = tabletData.get("robotStartPosition").asInt
             println("loaded robot start position: ${robotStartPosition.intValue}")
